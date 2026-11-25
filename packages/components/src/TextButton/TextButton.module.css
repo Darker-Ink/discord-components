@@ -1,0 +1,37 @@
+.textButton {
+  background: initial;
+  box-sizing: border-box;
+  color: inherit;
+  display: inline-flex;
+  flex-grow: 0;
+  flex-shrink: 0;
+  font-size: medium;
+  font-weight: 400;
+  gap: var(--space-4);
+  margin: 0;
+  max-width: 100%;
+  padding: 0;
+  text-align: start;
+  text-decoration: none;
+  width: -moz-min-content;
+  width: min-content;
+}
+.textButton:disabled {
+  opacity: 0.5;
+}
+.textButton:hover:not(:disabled) .text,
+:where(:global(.decorate-links)) .text {
+  text-decoration: underline;
+}
+.primary {
+  color: var(--text-brand);
+}
+.secondary {
+  color: var(--text-strong);
+}
+.always-white {
+  color: var(--white);
+}
+.critical {
+  color: var(--text-feedback-critical);
+}
