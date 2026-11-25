@@ -45,7 +45,7 @@ const chunkCssUrl = extractFn('p.k=e=>{if(');
 const APP_ROOT_MODULES = ['844222', '116711', '86182', '559106', '750506', '337836', '638274'];
 
 // Playground configs and the webpack module that exposes them.
-const playgroundModules = { mana: '352611', payments: '582695', nitro: '582695', identity: '582695' };
+const playgroundModules = { mana: '352611', void: '352611', payments: '582695', nitro: '582695', identity: '582695' };
 
 const requireName = (src) => src.match(/^\/\/.*\n\((?:function)?\s*\(([\w$]*),?([\w$]*),?([\w$]*)\)/)?.[3];
 const depCache = new Map();
