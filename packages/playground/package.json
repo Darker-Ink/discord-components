@@ -11,6 +11,7 @@
   "dependencies": {
     "@discord-components/components": "workspace:*",
     "@discord-components/icons": "workspace:*",
+    "@discord-components/messages": "workspace:*",
     "@discord-components/tokens": "workspace:*",
     "clsx": "^2.1.1",
     "react": "^19.3.1",
