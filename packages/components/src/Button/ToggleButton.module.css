@@ -1,0 +1,129 @@
+.toggleButton:disabled:disabled {
+  cursor: not-allowed;
+  pointer-events: auto;
+}
+.toggleButton:is([aria-pressed], [data-selection-mode='single'], [data-selection-mode='multiple']) {
+  background-color: var(--__toggle-control-background-default);
+  border-color: var(--__toggle-control-border-default);
+  color: var(--__toggle-control-color-default);
+  transition:
+    background-color 50ms ease-in,
+    color 50ms ease-in,
+    border-color 50ms ease-in,
+    opacity 50ms ease-in;
+}
+.toggleButton:is([aria-pressed], [data-selection-mode='single'], [data-selection-mode='multiple']):is(
+    :hover,
+    [data-hovered]
+  ):not(:disabled):not([data-disabled]) {
+  background-color: var(--__toggle-control-background-hover);
+  border-color: var(--__toggle-control-border-hover);
+  color: var(--__toggle-control-color-hover);
+  transition:
+    background-color 0.15s ease-out,
+    color 0.15s ease-out,
+    border-color 0.15s ease-out,
+    opacity 0.15s ease-out;
+}
+.toggleButton:is([aria-pressed], [data-selection-mode='single'], [data-selection-mode='multiple']):is(
+    [aria-pressed='true'],
+    [data-selected]
+  ) {
+  background-color: var(--__toggle-control-background-selected);
+  border-color: var(--__toggle-control-border-selected);
+  color: var(--__toggle-control-color-selected);
+}
+.toggleButton:is([aria-pressed], [data-selection-mode='single'], [data-selection-mode='multiple']):is(
+    [aria-pressed='true'],
+    [data-selected]
+  ):is(:hover, [data-hovered]):not(:active):not([data-pressed]):not(:disabled):not([data-disabled]) {
+  background-color: var(--__toggle-control-background-selected-hover);
+  border-color: var(--__toggle-control-border-selected-hover);
+  color: var(--__toggle-control-color-selected-hover);
+}
+.toggleButton:is([aria-pressed], [data-selection-mode='single'], [data-selection-mode='multiple']):is(
+    :active,
+    [data-pressed]
+  ):not(:disabled):not([data-disabled]) {
+  background-color: var(--__toggle-control-background-active);
+  border-color: var(--__toggle-control-border-active);
+  color: var(--__toggle-control-color-active);
+}
+.toggleButton:is([aria-pressed], [data-selection-mode='single'], [data-selection-mode='multiple']):is(
+    [aria-pressed='true'],
+    [data-selected]
+  ):is(:active, [data-pressed]):not(:disabled):not([data-disabled]) {
+  background-color: var(--__toggle-control-background-selected-active);
+}
+.standard {
+  --__toggle-control-color-default: var(--togglebutton-icon-default);
+  --__toggle-control-background-default: transparent;
+  --__toggle-control-border-default: transparent;
+  --__toggle-control-color-hover: var(--togglebutton-icon-hover);
+  --__toggle-control-background-hover: var(--control-secondary-background-hover);
+  --__toggle-control-border-hover: var(--control-secondary-border-hover);
+  --__toggle-control-color-selected: var(--togglebutton-icon-selected);
+  --__toggle-control-background-selected: var(--togglebutton-background-selected);
+  --__toggle-control-border-selected: var(--togglebutton-border-selected);
+  --__toggle-control-color-selected-hover: var(--togglebutton-icon-selected-hover);
+  --__toggle-control-background-selected-hover: var(--togglebutton-background-selected-hover);
+  --__toggle-control-border-selected-hover: var(--togglebutton-border-selected);
+  --__toggle-control-color-active: var(--togglebutton-icon-active);
+  --__toggle-control-background-active: var(--control-secondary-background-active);
+  --__toggle-control-border-active: var(--togglebutton-border-active);
+  --__toggle-control-background-selected-active: var(--togglebutton-background-selected-active);
+}
+.labeled {
+  --__toggle-control-color-default: var(--control-secondary-text-default);
+  --__toggle-control-background-default: var(--control-secondary-background-default);
+  --__toggle-control-border-default: var(--control-secondary-border-default);
+  --__toggle-control-color-hover: var(--control-secondary-text-hover);
+  --__toggle-control-background-hover: var(--control-secondary-background-hover);
+  --__toggle-control-border-hover: var(--control-secondary-border-hover);
+  --__toggle-control-color-selected: var(--control-secondary-text-default);
+  --__toggle-control-background-selected: var(--togglebutton-background-selected);
+  --__toggle-control-border-selected: var(--togglebutton-border-selected);
+  --__toggle-control-color-selected-hover: var(--control-secondary-text-hover);
+  --__toggle-control-background-selected-hover: var(--togglebutton-background-selected-hover);
+  --__toggle-control-border-selected-hover: var(--togglebutton-border-selected);
+  --__toggle-control-color-active: var(--control-secondary-text-active);
+  --__toggle-control-background-active: var(--control-secondary-background-active);
+  --__toggle-control-border-active: var(--togglebutton-border-selected);
+  --__toggle-control-background-selected-active: var(--togglebutton-background-selected-active);
+}
+.critical {
+  --__toggle-control-color-default: var(--togglebutton-critical-icon-default);
+  --__toggle-control-background-default: transparent;
+  --__toggle-control-border-default: transparent;
+  --__toggle-control-color-hover: var(--togglebutton-critical-icon-hover);
+  --__toggle-control-background-hover: var(--control-secondary-background-hover);
+  --__toggle-control-border-hover: var(--control-secondary-border-hover);
+  --__toggle-control-color-selected: var(--togglebutton-critical-icon-selected);
+  --__toggle-control-background-selected: var(--togglebutton-critical-background-selected);
+  --__toggle-control-border-selected: transparent;
+  --__toggle-control-color-selected-hover: var(--togglebutton-critical-icon-selected-hover);
+  --__toggle-control-background-selected-hover: var(--togglebutton-critical-background-selected-hover);
+  --__toggle-control-border-selected-hover: transparent;
+  --__toggle-control-color-active: var(--togglebutton-critical-icon-active);
+  --__toggle-control-background-active: var(--control-secondary-background-active);
+  --__toggle-control-border-active: var(--togglebutton-critical-border-active);
+  --__toggle-control-background-selected-active: var(--togglebutton-background-selected-active);
+}
+.iconOnly {
+  --__toggle-control-color-default: var(--togglebutton-icon-only-icon-default);
+  --__toggle-control-background-default: transparent;
+  --__toggle-control-border-default: transparent;
+  --__toggle-control-color-hover: var(--togglebutton-icon-only-icon-hover);
+  --__toggle-control-background-hover: var(--control-icon-only-background-hover);
+  --__toggle-control-border-hover: var(--control-icon-only-border-hover);
+  --__toggle-control-color-selected: var(--togglebutton-icon-only-icon-selected);
+  --__toggle-control-background-selected: transparent;
+  --__toggle-control-border-selected: transparent;
+  --__toggle-control-color-selected-hover: var(--togglebutton-icon-only-icon-selected-hover);
+  --__toggle-control-background-selected-hover: var(--control-icon-only-background-hover);
+  --__toggle-control-border-selected-hover: var(--control-icon-only-border-hover);
+  --__toggle-control-color-active: var(--togglebutton-icon-only-icon-active);
+  --__toggle-control-background-active: var(--control-icon-only-background-active);
+  --__toggle-control-border-active: var(--control-icon-only-border-active);
+  --__toggle-control-background-selected-active: var(--control-icon-only-background-active);
+}
