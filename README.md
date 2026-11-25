@@ -39,6 +39,7 @@ pnpm assets:fetch                  # every JS/CSS chunk of the current build -> 
 pnpm assets:split                  # one file per webpack module -> .cache/modules/<id>.js
 pnpm assets:css <module-id|suffix> # rebuild a CSS module as .module.css
 node scripts/extract-tokens.mjs    # regenerate packages/tokens/src/*.css
+node scripts/extract-icons.mjs     # regenerate packages/icons/src (one component per Discord icon)
 ```
 
 A component's class map module (`{button:"button_F7qvhY",…}`) gives the suffix of its CSS module;
