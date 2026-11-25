@@ -30,3 +30,4 @@ export * from './ToggleIconButton';
 export * from './TextButton';
 export * from './ButtonGroup';
 export * from './Button';
+export * from './Switch';
