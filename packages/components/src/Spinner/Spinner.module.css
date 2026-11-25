@@ -1,0 +1,215 @@
+@keyframes spinner-wandering-cubes {
+  25% {
+    transform: translateX(22px) rotate(-90deg) scale(0.5);
+  }
+  50% {
+    transform: translateX(22px) translateY(22px) rotate(-180deg);
+  }
+  75% {
+    transform: translateX(0) translateY(22px) rotate(-270deg) scale(0.5);
+  }
+  to {
+    transform: rotate(-1turn);
+  }
+}
+@keyframes spinner-chasing-dots-rotate {
+  to {
+    transform: rotate(1turn);
+  }
+}
+@keyframes spinner-chasing-dots-bounce {
+  0%,
+  to {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1);
+  }
+}
+@keyframes spinner-pulsing-ellipsis {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes spinner-low-motion {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes spinner-spinning-circle-rotate {
+  to {
+    transform: rotate(1turn);
+  }
+}
+@keyframes spinner-spinning-circle-dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 130, 200;
+  }
+  to {
+    stroke-dasharray: 130, 200;
+    stroke-dashoffset: -124;
+  }
+}
+.spinner {
+  display: flex;
+}
+.inner,
+.spinner {
+  align-items: center;
+  justify-content: center;
+}
+.inner {
+  contain: paint;
+  display: inline-flex;
+  height: 32px;
+  position: relative;
+  width: 32px;
+}
+.wanderingCubes .item {
+  background-color: var(--brand-400);
+  height: 10px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 10px;
+}
+:global(.app-focused) .wanderingCubes .item {
+  animation: spinner-wandering-cubes 1.8s ease-in-out infinite;
+}
+:global(.app-focused) .wanderingCubes .item:last-child {
+  animation-delay: -0.9s;
+}
+:global(.app-focused) .chasingDots {
+  animation: spinner-chasing-dots-rotate 2s linear infinite;
+}
+.chasingDots .item {
+  background-color: var(--brand-500);
+  border-radius: 100%;
+  display: inline-block;
+  height: 60%;
+  position: absolute;
+  top: 0;
+  width: 60%;
+}
+.chasingDots .item:last-child {
+  bottom: 0;
+  top: auto;
+}
+:global(.app-focused) .chasingDots .item {
+  animation: spinner-chasing-dots-bounce 2s ease-in-out infinite;
+}
+:global(.app-focused) .chasingDots .item:last-child {
+  animation-delay: -1s;
+}
+.pulsingEllipsis {
+  display: flex;
+  height: auto;
+  justify-content: center;
+  position: relative;
+  width: 28px;
+}
+.pulsingEllipsis .item {
+  background-color: var(--primary-100);
+  border-radius: 3px;
+  display: inline-block;
+  height: 6px;
+  margin-right: 2px;
+  opacity: 0.3;
+  width: 6px;
+}
+:global(.app-focused) .pulsingEllipsis .item {
+  animation: spinner-pulsing-ellipsis 1.4s ease-in-out infinite;
+}
+:global(.app-focused) .pulsingEllipsis .item:nth-of-type(2) {
+  animation-delay: 0.2s;
+}
+:global(.app-focused) .pulsingEllipsis .item:nth-of-type(3) {
+  animation-delay: 0.4s;
+}
+.lowMotion .item {
+  background-color: var(--interactive-text-default);
+  border-radius: 3px;
+  display: inline-block;
+  height: 6px;
+  margin-right: 2px;
+  opacity: 0.3;
+  width: 6px;
+}
+:global(.app-focused) .lowMotion .item {
+  animation: spinner-low-motion 1.4s ease-in-out infinite;
+}
+:global(.app-focused) .lowMotion .item:nth-of-type(2) {
+  animation-delay: 0.2s;
+}
+:global(.app-focused) .lowMotion .item:nth-of-type(3) {
+  animation-delay: 0.4s;
+}
+.spinningCircle {
+  width: 100%;
+}
+.spinningCircleInner {
+  transform: rotate(280deg);
+}
+.circular {
+  height: 100%;
+  width: 100%;
+}
+:global(.app-focused) .circular {
+  animation: spinner-spinning-circle-rotate 2s linear infinite;
+}
+.path {
+  stroke-dasharray: 1, 200;
+  stroke-dashoffset: 0;
+  fill: none;
+  stroke-width: 6;
+  stroke-miterlimit: 10;
+  stroke-linecap: round;
+  stroke: var(--brand-500);
+}
+:global(.app-focused) .path {
+  animation: spinner-spinning-circle-dash 2s ease-in-out infinite;
+}
+.path2 {
+  stroke: var(--text-brand);
+  opacity: 0.6;
+}
+:global(.app-focused) .path2 {
+  animation-delay: 0.15s;
+}
+.path3 {
+  stroke: var(--text-brand);
+}
+:global(.app-focused) .path3 {
+  animation-delay: 0.23s;
+}
+:global(.theme-light) .path3 {
+  opacity: 0.3;
+}
+:global(.app-focused) :global(.stop-animation) .pulsingEllipsis .item {
+  animation: none;
+}
+:global(.app-focused) .stopAnimation .chasingDots,
+:global(.app-focused) .stopAnimation .circular,
+:global(.app-focused) .stopAnimation .item,
+:global(.app-focused) .stopAnimation .path {
+  animation: none;
+}

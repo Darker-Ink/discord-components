@@ -264,6 +264,8 @@
   --blurple-33-hsl: 230.164 calc(var(--saturation-factor, 1) * 93.846%) 74.51%;
   --blurple-36: hsl(var(--blurple-36-hsl)/1);
   --blurple-36-hsl: 230.625 calc(var(--saturation-factor, 1) * 91.429%) 72.549%;
+  --blurple-38: hsl(var(--blurple-38-hsl)/1);
+  --blurple-38-hsl: 231.364 calc(var(--saturation-factor, 1) * 90.411%) 71.373%;
   --blurple-45: hsl(var(--blurple-45-hsl)/1);
   --blurple-45-hsl: 232.966 calc(var(--saturation-factor, 1) * 86.826%) 67.255%;
   --blurple-50: hsl(var(--blurple-50-hsl)/1);
@@ -582,6 +584,8 @@
   --black-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 0%;
   --brand-360: var(--blurple-29);
   --brand-360-hsl: var(--blurple-29-hsl);
+  --brand-400: var(--blurple-38);
+  --brand-400-hsl: var(--blurple-38-hsl);
   --brand-500: var(--blurple-50);
   --brand-500-hsl: var(--blurple-50-hsl);
   --brand-560: var(--blurple-59);
