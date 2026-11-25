@@ -1,10 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import { ThemeTypes, type Theme } from '@discord-components/tokens';
 import { ControlsPanel, getDefaultProps } from './ControlsPanel';
 import styles from './Playground.module.css';
 import type { Collection, Story } from './types';
 import { useRootClasses } from './useRootClasses';
+import { parseOverrides, readLocation, writeLocation } from './url';
 
 const THEME_OPTIONS: { label: string; value: Theme }[] = [
   { label: 'Light', value: ThemeTypes.LIGHT },
@@ -21,8 +22,17 @@ export const ControlsLayout = {
 
 type ControlsLayoutType = (typeof ControlsLayout)[keyof typeof ControlsLayout];
 
-const StoryView = ({ story, controlsLayout }: { story: Story; controlsLayout: ControlsLayoutType }) => {
-  const [props, setProps] = useState(() => getDefaultProps(story.controls));
+interface StoryViewProps {
+  story: Story;
+  controlsLayout: ControlsLayoutType;
+  initialOverrides?: Record<string, string>;
+}
+
+const StoryView = ({ story, controlsLayout, initialOverrides = {} }: StoryViewProps) => {
+  const [props, setProps] = useState(() => ({
+    ...getDefaultProps(story.controls),
+    ...parseOverrides(story.controls, initialOverrides),
+  }));
   const Component = story.component;
   const showControls = controlsLayout !== ControlsLayout.HIDDEN && story.controls != null;
 
@@ -54,17 +64,37 @@ const StoryView = ({ story, controlsLayout }: { story: Story; controlsLayout: Co
 
 StoryView.displayName = 'StoryView';
 
+// Renders a single story with no chrome, laid out exactly like the reference server's story page,
+// so the two can be screenshotted and diffed.
+const EmbeddedStory = ({ story, overrides }: { story: Story; overrides: Record<string, string> }) => {
+  const Component = story.component;
+  const props = { ...getDefaultProps(story.controls), ...parseOverrides(story.controls, overrides) };
+  return (
+    <div data-story={story.id} style={{ padding: 24 }}>
+      <Component {...props} />
+    </div>
+  );
+};
+
+EmbeddedStory.displayName = 'EmbeddedStory';
+
+const initialLocation = readLocation();
+
 export const Playground = ({ collections }: { collections: Collection[] }) => {
-  const [theme, setTheme] = useState<Theme>(ThemeTypes.DARK);
+  const [theme, setTheme] = useState<Theme>(initialLocation.theme ?? ThemeTypes.DARK);
   const [controlsLayout, setControlsLayout] = useState<ControlsLayoutType>(ControlsLayout.RIGHT);
-  const [collectionId, setCollectionId] = useState(collections[0]?.id);
-  const [storyId, setStoryId] = useState<string | null>(null);
+  const [collectionId, setCollectionId] = useState(initialLocation.collection ?? collections[0]?.id);
+  const [storyId, setStoryId] = useState<string | null>(initialLocation.story);
   const [query, setQuery] = useState('');
 
   useRootClasses(theme);
 
   const collection = collections.find((c) => c.id === collectionId) ?? collections[0];
   const story = collection?.groups.flatMap((g) => g.stories).find((s) => s.id === storyId) ?? null;
+
+  useEffect(() => {
+    if (!initialLocation.embed) writeLocation(collection?.id, story?.id ?? null, theme);
+  }, [collection, story, theme]);
 
   const groups = useMemo(() => {
     const search = query.trim().toLowerCase();
@@ -75,7 +105,22 @@ export const Playground = ({ collections }: { collections: Collection[] }) => {
   }, [collection, query]);
 
   const Provider = collection?.Provider;
-  const view = story != null ? <StoryView key={story.id} story={story} controlsLayout={controlsLayout} /> : null;
+
+  if (initialLocation.embed) {
+    if (story == null) return null;
+    const embedded = <EmbeddedStory story={story} overrides={initialLocation.overrides} />;
+    return Provider != null ? <Provider>{embedded}</Provider> : embedded;
+  }
+
+  const view =
+    story != null ? (
+      <StoryView
+        key={story.id}
+        story={story}
+        controlsLayout={controlsLayout}
+        initialOverrides={story.id === initialLocation.story ? initialLocation.overrides : undefined}
+      />
+    ) : null;
 
   return (
     <div className={styles.root} data-testid="component-playground">
