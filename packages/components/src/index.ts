@@ -4,3 +4,4 @@ export * from './AccessibilityPreferences';
 export * from './ManaContext';
 export * from './Theme';
 export * from './Spinner';
+export * from './FocusRing';
