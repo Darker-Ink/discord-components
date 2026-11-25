@@ -35,3 +35,4 @@ export * from './RadioGroup';
 export * from './CheckboxGroup';
 export * from './TabBar';
 export * from './Chip';
+export * from './Badge';
