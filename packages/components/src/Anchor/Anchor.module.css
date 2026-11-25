@@ -1,0 +1,26 @@
+.anchor {
+  color: var(--text-link);
+  -webkit-text-decoration: var(--link-decoration);
+  text-decoration: var(--link-decoration);
+}
+.anchorUnderlineOnHover:hover {
+  text-decoration: underline;
+}
+:global(.enable-forced-colors) .anchor,
+:global(.enable-forced-colors) .anchorUnderlineOnHover {
+  background-color: Canvas;
+  color: LinkText !important;
+  text-decoration: underline;
+}
+:global(.enable-forced-colors) .anchor svg,
+:global(.enable-forced-colors) .anchorUnderlineOnHover svg {
+  color: currentColor;
+}
+:global(.enable-forced-colors) .anchor:not([href]),
+:global(.enable-forced-colors) .anchorUnderlineOnHover:not([href]) {
+  background-color: ButtonFace;
+  color: ButtonText !important;
+}
+:global(.decorate-links) {
+  --link-decoration: underline;
+}
