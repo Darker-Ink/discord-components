@@ -21,3 +21,4 @@ export * from './Form';
 export * from './InputField';
 export * from './CharacterCount';
 export * from './Divider';
+export * from './IndicatorDot';

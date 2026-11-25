@@ -16,7 +16,7 @@ export interface SelectOption<T = unknown> {
 
 export type Control =
   | (BaseControl<boolean> & { type: 'boolean' })
-  | (BaseControl<string> & { type: 'text' })
+  | (BaseControl<string | undefined> & { type: 'text' })
   | (BaseControl<string> & { type: 'color' })
   | (BaseControl<number> & { type: 'number'; minValue?: number })
   | (BaseControl<number> & { type: 'slider'; minValue: number; maxValue: number; markers?: number[] })
