@@ -8,3 +8,4 @@ export * from './FocusRing';
 export * from './Scroller';
 export * from './Card';
 export * from './HiddenVisually';
+export * from './Clickable';
