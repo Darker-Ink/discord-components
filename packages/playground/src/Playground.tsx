@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
+import { TabBar } from '@discord-components/components';
 import { ThemeTypes, type Theme } from '@discord-components/tokens';
 import { AppRoot } from './AppRoot';
 import { ControlsPanel, getDefaultProps } from './ControlsPanel';
@@ -171,23 +172,28 @@ export const Playground = ({ collections }: { collections: Collection[] }) => {
                 aria-label="Search stories"
                 onChange={(e) => setQuery(e.target.value)}
               />
-              {groups.length === 0 && <p>No results</p>}
-              {groups.map((group) => (
-                <section key={group.title}>
-                  <h3>{group.title}</h3>
-                  {group.stories.map((s) => (
-                    <button
-                      key={s.id}
-                      type="button"
-                      aria-current={s.id === story?.id}
-                      data-testid={`playground-story-${s.id}`}
-                      onClick={() => setStoryId(s.id)}
-                    >
-                      {s.name}
-                    </button>
-                  ))}
-                </section>
-              ))}
+              {groups.length === 0 ? (
+                <p>No results</p>
+              ) : (
+                <TabBar
+                  // An empty id rather than null, so TabBar doesn't select the first story by default.
+                  selectedItem={story?.id ?? ''}
+                  orientation="vertical"
+                  onItemSelect={(id) => {
+                    if (id != null) setStoryId(String(id));
+                  }}
+                >
+                  {groups.flatMap((group, index) => [
+                    <TabBar.Header key={`${group.title}-header`}>{group.title}</TabBar.Header>,
+                    ...group.stories.map((s) => (
+                      <TabBar.Item key={s.id} id={s.id} aria-label={s.name}>
+                        <span data-testid={`playground-story-${s.id}`}>{s.name}</span>
+                      </TabBar.Item>
+                    )),
+                    index < groups.length - 1 ? <TabBar.Separator key={`${group.title}-separator`} /> : null,
+                  ])}
+                </TabBar>
+              )}
             </nav>
             <div className={styles.content}>{Provider != null ? <Provider>{view}</Provider> : view}</div>
           </div>

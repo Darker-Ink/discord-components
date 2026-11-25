@@ -33,3 +33,4 @@ export * from './Button';
 export * from './Switch';
 export * from './RadioGroup';
 export * from './CheckboxGroup';
+export * from './TabBar';
