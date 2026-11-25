@@ -75,12 +75,36 @@ const closure = (ids) => {
   }
   return [...seen].filter((id) => fs.existsSync(path.join(MODULES, `${id}.js`)));
 };
+// CSS of lazily loaded chunks isn't among the boot stylesheets; find it through the class-map
+// modules in the closure (their `_abcdef` suffix) so those components render styled.
+const cssFiles = fs.readdirSync(ASSETS).filter((f) => f.endsWith('.css'));
+const entryCss = new Set(stylesheets.map((href) => path.basename(href)));
+const cssBySuffix = new Map();
+const stylesheetsFor = (suffix) => {
+  if (!cssBySuffix.has(suffix)) {
+    const needle = `_${suffix}`;
+    cssBySuffix.set(
+      suffix,
+      cssFiles.filter((f) => !entryCss.has(f) && fs.readFileSync(path.join(ASSETS, f), 'utf8').includes(needle)),
+    );
+  }
+  return cssBySuffix.get(suffix);
+};
 const closureJs = (ids) => {
+  const lazyCss = new Set();
   const parts = closure(ids).map((id) => {
     const src = fs.readFileSync(path.join(MODULES, `${id}.js`), 'utf8').replace(/^\/\/.*\n/, '');
+    if (/exports=\{/.test(src)) {
+      for (const [, suffix] of src.matchAll(/"[\w/-]+_([\w-]{6})"/g))
+        stylesheetsFor(suffix).forEach((f) => lazyCss.add(f));
+    }
     return `${JSON.stringify(id)}:${src.trim().replace(/;$/, '')}`;
   });
-  return `self.__ref.register({${parts.join(',\n')}});\n`;
+  const links = [...lazyCss].map(
+    (f) =>
+      `if (!document.querySelector('link[href="/assets/${f}"]')) document.head.appendChild(Object.assign(document.createElement('link'), { rel: 'stylesheet', href: '/assets/${f}' }));`,
+  );
+  return `${links.join('\n')}\nself.__ref.register({${parts.join(',\n')}});\n`;
 };
 
 const runtime = `
