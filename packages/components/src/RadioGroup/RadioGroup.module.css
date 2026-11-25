@@ -1,0 +1,232 @@
+@keyframes dotIn {
+  0% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1.2);
+  }
+  75% {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@keyframes fillIn {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  1% {
+    opacity: 1;
+  }
+  35% {
+    transform: scale(0.33);
+  }
+  40% {
+    transform: scale(1.15);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes dotOut {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1);
+  }
+  99% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: scale(0);
+  }
+}
+@keyframes fillOut {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  99% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: scale(0);
+  }
+}
+.radioIndicator {
+  display: 'block';
+  image-rendering: crisp-edges;
+  overflow: 'visible';
+}
+.innerDotRadio,
+.outerRadioBase,
+.outerRadioFill,
+.radioIndicator {
+  transform-box: fill-box;
+  transform-origin: center;
+  will-change: transform, opacity;
+  fill: none;
+  overflow: visible;
+}
+.radioGroupOption {
+  --custom-radio-size: 20px;
+  --custom-radio-icon-size: 20px;
+  --custom-radio-text-start: calc(var(--custom-radio-size) + var(--space-12));
+  --custom-radio-icon-offset: calc(var(--custom-radio-icon-size) + var(--space-4));
+  border-radius: var(--radius-sm);
+  box-sizing: border-box;
+  display: block;
+  min-height: var(--custom-radio-size);
+  padding-inline-start: var(--custom-radio-text-start);
+  position: relative;
+}
+.withLeadingIcon {
+  padding-inline-start: calc(var(--custom-radio-text-start) + var(--custom-radio-icon-offset));
+}
+.radioGroupOption > .radioIndicator {
+  height: var(--custom-radio-size);
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  position: absolute;
+  width: var(--custom-radio-size);
+}
+.radioIndicator,
+.standaloneRadioIndicator {
+  background: transparent;
+  border-radius: var(--radius-lg);
+  box-sizing: border-box;
+  display: block;
+}
+.outerRadioBase {
+  fill: var(--radio-background-default);
+  stroke: var(--radio-border-default);
+  stroke-width: 2;
+}
+.outerRadioFill {
+  fill: none;
+}
+.radioGroupOption[data-selected] .outerRadioBase,
+.standaloneRadioIndicator[data-selected='true'] .outerRadioBase {
+  fill: var(--radio-background-selected-default);
+  stroke: var(--radio-border-selected-default);
+}
+.radioGroupOption[data-selected] .outerRadioFill,
+.standaloneRadioIndicator[data-selected='true'] .outerRadioFill {
+  fill: var(--radio-background-selected-default);
+  stroke: var(--radio-border-selected-default);
+  stroke-width: 2;
+}
+.radioGroupOption[data-selected] .innerDotRadio,
+.standaloneRadioIndicator[data-selected='true'] .innerDotRadio {
+  fill: var(--radio-thumb-background-active);
+  opacity: 1;
+}
+.animateIn .outerRadioFill {
+  animation: fillIn 225ms cubic-bezier(0.33, 0, 0.67, 1) forwards;
+}
+.animateIn .innerDotRadio {
+  animation: dotIn 333ms cubic-bezier(0.26, 0.21, 0.67, 1) forwards;
+}
+.animateOut .outerRadioFill {
+  animation: fillOut 0.16s cubic-bezier(0.33, 0, 0.67, 1) both;
+}
+.animateOut .innerDotRadio {
+  fill: var(--radio-thumb-background-active);
+  animation: dotOut 0.25s cubic-bezier(0.33, 0, 0.25, 1) both;
+}
+.radioGroupOption:not([data-selected]):not([data-disabled]):hover {
+  cursor: pointer;
+}
+.radioGroupOption:not([data-selected]):not([data-disabled]):hover .outerRadioBase {
+  fill: var(--radio-background-hover);
+  stroke: var(--radio-border-hover);
+}
+.radioGroupOption[data-selected]:not([data-disabled]):hover {
+  cursor: pointer;
+}
+.radioGroupOption[data-selected]:not([data-disabled]):hover .outerRadioBase {
+  fill: var(--radio-background-selected-hover);
+  stroke: var(--radio-border-selected-hover);
+}
+.radioGroupOption[data-selected]:not([data-disabled]):hover .outerRadioFill {
+  fill: var(--radio-background-selected-hover);
+  stroke: var(--radio-border-selected-hover);
+}
+.radioGroupOption[data-disabled],
+.standaloneRadioIndicator[data-disabled='true'] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.group {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  padding: var(--space-8) 0 var(--space-4);
+}
+.radioItemIcon {
+  color: var(--icon-strong);
+  height: var(--custom-radio-icon-size);
+  inset-block-start: 0;
+  inset-inline-start: var(--custom-radio-text-start);
+  position: absolute;
+  width: var(--custom-radio-icon-size);
+}
+.description {
+  margin-block-start: var(--space-4);
+}
+.withLeadingIcon .description {
+  margin-inline-start: calc(var(--custom-radio-icon-offset) * -1);
+}
+:global(.enable-forced-colors) .outerRadioBorderStroke {
+  stroke: ButtonText;
+  opacity: 1;
+}
+:global(.enable-forced-colors) .outerRadioBase {
+  fill: Canvas;
+}
+:global(.enable-forced-colors) .innerDotRadio {
+  fill: HighlightText;
+}
+:global(.enable-forced-colors) .radioGroupOption[data-disabled] {
+  opacity: 1;
+}
+:global(.enable-forced-colors) .radioGroupOption[data-disabled],
+:global(.enable-forced-colors) .radioGroupOption[data-disabled]:hover {
+  color: GrayText;
+}
+:global(.enable-forced-colors) .radioGroupOption[data-selected] .outerRadioBase {
+  fill: Highlight;
+}
+:global(.enable-forced-colors) .radioGroupOption[data-selected] .outerRadioBorderStroke {
+  stroke: HighlightText;
+  opacity: 1;
+}
+:global(.enable-forced-colors) .radioGroupOption[data-disabled] .outerRadioBase {
+  fill: Canvas;
+}
+:global(.enable-forced-colors) .radioGroupOption[data-disabled] .outerRadioBorderStroke {
+  stroke: GrayText;
+  opacity: 1;
+}
+:global(.enable-forced-colors) .radioGroupOption[data-disabled] .innerDotRadio,
+:global(.enable-forced-colors) .standaloneRadioIndicator[data-disabled='true'] .innerDotRadio {
+  fill: GrayText;
+}
+:global(.enable-forced-colors) .standaloneRadioIndicator[data-disabled='true'] {
+  opacity: 1;
+}
+:global(.enable-forced-colors) .standaloneRadioIndicator[data-disabled='true'] .outerRadioBase {
+  fill: Canvas;
+}
+:global(.enable-forced-colors) .standaloneRadioIndicator[data-disabled='true'] .outerRadioBorderStroke {
+  stroke: GrayText;
+  opacity: 1;
+}
