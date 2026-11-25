@@ -43,10 +43,16 @@ export const Video = ({
     if (playOnHover) videoRef.current?.pause();
   };
 
-  // Detaching the source stops the browser from keeping the download alive after unmount.
-  useLayoutEffect(
-    () => () => {
-      const video = videoRef.current;
+  // Detaching the source stops the browser from keeping the download alive after unmount. React's StrictMode
+  // re-runs effects on the same element, so the source is put back when the effect runs again.
+  const src = props.src;
+  useLayoutEffect(() => {
+    const video = videoRef.current;
+    if (video != null && src != null && video.getAttribute('src') == null) {
+      video.setAttribute('src', src);
+      video.load();
+    }
+    return () => {
       if (video == null) return;
       video.removeAttribute('src');
       Array.from(video.children).forEach((child) => {
@@ -61,9 +67,8 @@ export const Video = ({
       } catch {
         // Ignore: the element may already be detached.
       }
-    },
-    [],
-  );
+    };
+  }, [src]);
 
   useLayoutEffect(() => {
     assignRef(ref, videoRef.current);

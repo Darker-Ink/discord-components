@@ -106,7 +106,7 @@ ObscuredTextInner.displayName = 'ObscuredTextInner';
 
 const SpoilerWarning = ({ className }: { className?: string }) => {
   const { i18n } = useMediaContext();
-  return <div className={clsx(styles.spoilerWarning, className)}>{i18n.SPOILER}</div>;
+  return <div className={clsx(styles.spoilerWarning, styles.obscureWarning, className)}>{i18n.SPOILER}</div>;
 };
 
 SpoilerWarning.displayName = 'SpoilerWarning';
@@ -122,7 +122,7 @@ const SensitiveContentWarning = ({
 }) => {
   const { i18n } = useMediaContext();
   return (
-    <div className={clsx(styles.explicitContentWarning, className)}>
+    <div className={clsx(styles.explicitContentWarning, styles.obscureWarning, className)}>
       {obscureOnly ? null : (
         <>
           <ImageWarningIcon size="lg" color={tokens.colors.WHITE} />
