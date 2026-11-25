@@ -44,28 +44,47 @@ const useKeyboardMode = () => {
   return enabled;
 };
 
-const RootElement = ({ theme, children }: { theme: Theme; children: ReactNode }) => {
+const NO_EXPERIMENTS: readonly string[] = [];
+
+const RootElement = ({
+  theme,
+  experiments,
+  children,
+}: {
+  theme: Theme;
+  experiments: readonly string[];
+  children: ReactNode;
+}) => {
   const { reducedMotion, keyboardModeEnabled } = useContext(AccessibilityPreferencesContext);
-  useRootClasses(theme, { keyboardMode: keyboardModeEnabled, reducedMotion: reducedMotion.enabled });
+  useRootClasses(theme, { keyboardMode: keyboardModeEnabled, reducedMotion: reducedMotion.enabled, experiments });
   return children;
 };
 
 RootElement.displayName = 'RootElement';
 
 // The providers Discord's client puts around everything it renders: accessibility settings, the
-// Mana context (strings, theme), the theme context and a focus ring scope over the whole document.
-export const AppRoot = ({ theme, children }: { theme: Theme; children: ReactNode }) => {
+// Mana context (strings, theme, experiments), the theme context and a focus ring scope over the whole
+// document.
+export const AppRoot = ({
+  theme,
+  experiments = NO_EXPERIMENTS,
+  children,
+}: {
+  theme: Theme;
+  experiments?: readonly string[];
+  children: ReactNode;
+}) => {
   const keyboardMode = useKeyboardMode();
   const bodyRef = useRef<Element>(document.body);
   const manaContext = useMemo(
-    () => ({ ...DEFAULT_MANA_CONTEXT, theme, saturation: 1, experiments: { enabledExperiments: [] } }),
-    [theme],
+    () => ({ ...DEFAULT_MANA_CONTEXT, theme, saturation: 1, experiments: { enabledExperiments: [...experiments] } }),
+    [theme, experiments],
   );
   return (
     <AccessibilityPreferencesProvider keyboardModeEnabled={keyboardMode}>
       <ManaContextProvider value={manaContext}>
         <ThemeContextProvider theme={theme}>
-          <RootElement theme={theme}>
+          <RootElement theme={theme} experiments={experiments}>
             <FocusRingScope containerRef={bodyRef}>{children}</FocusRingScope>
           </RootElement>
         </ThemeContextProvider>

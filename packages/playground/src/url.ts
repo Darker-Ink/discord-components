@@ -5,11 +5,13 @@ export interface PlaygroundLocation {
   collection: string | null;
   story: string | null;
   theme: Theme | null;
+  /** Client experiments to turn on, from `?experiments=a,b` (all off by default, as in the client). */
+  experiments: string[];
   embed: boolean;
   overrides: Record<string, string>;
 }
 
-const RESERVED = new Set(['collection', 'story', 'theme', 'embed']);
+const RESERVED = new Set(['collection', 'story', 'theme', 'experiments', 'embed']);
 
 export const readLocation = (): PlaygroundLocation => {
   const params = new URLSearchParams(window.location.search);
@@ -17,16 +19,23 @@ export const readLocation = (): PlaygroundLocation => {
     collection: params.get('collection'),
     story: params.get('story'),
     theme: params.get('theme') as Theme | null,
+    experiments: params.get('experiments')?.split(',').filter(Boolean) ?? [],
     embed: params.has('embed'),
     overrides: Object.fromEntries([...params].filter(([key]) => !RESERVED.has(key))),
   };
 };
 
-export const writeLocation = (collection: string | undefined, story: string | null, theme: Theme) => {
+export const writeLocation = (
+  collection: string | undefined,
+  story: string | null,
+  theme: Theme,
+  experiments: string[],
+) => {
   const params = new URLSearchParams();
   if (collection != null) params.set('collection', collection);
   if (story != null) params.set('story', story);
   params.set('theme', theme);
+  if (experiments.length > 0) params.set('experiments', experiments.join(','));
   window.history.replaceState(null, '', `?${params}`);
 };
 

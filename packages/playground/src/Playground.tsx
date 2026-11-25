@@ -92,7 +92,7 @@ export const Playground = ({ collections }: { collections: Collection[] }) => {
   const story = collection?.groups.flatMap((g) => g.stories).find((s) => s.id === storyId) ?? null;
 
   useEffect(() => {
-    if (!initialLocation.embed) writeLocation(collection?.id, story?.id ?? null, theme);
+    if (!initialLocation.embed) writeLocation(collection?.id, story?.id ?? null, theme, initialLocation.experiments);
   }, [collection, story, theme]);
 
   const groups = useMemo(() => {
@@ -108,7 +108,11 @@ export const Playground = ({ collections }: { collections: Collection[] }) => {
   if (initialLocation.embed) {
     if (story == null) return null;
     const embedded = <EmbeddedStory story={story} overrides={initialLocation.overrides} />;
-    return <AppRoot theme={theme}>{Provider != null ? <Provider>{embedded}</Provider> : embedded}</AppRoot>;
+    return (
+      <AppRoot theme={theme} experiments={initialLocation.experiments}>
+        {Provider != null ? <Provider>{embedded}</Provider> : embedded}
+      </AppRoot>
+    );
   }
 
   const view =
@@ -122,7 +126,7 @@ export const Playground = ({ collections }: { collections: Collection[] }) => {
     ) : null;
 
   return (
-    <AppRoot theme={theme}>
+    <AppRoot theme={theme} experiments={initialLocation.experiments}>
       <div className={styles.root} data-testid="component-playground">
         <div className={styles.group}>
           {collections.map((c) => (
