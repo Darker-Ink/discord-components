@@ -2,10 +2,14 @@ import { useContext, useEffect, useMemo, useRef, useState, type ReactNode } from
 import {
   AccessibilityPreferencesContext,
   AccessibilityPreferencesProvider,
+  AppLayerContainer,
+  AppLayerProvider,
+  appLayerContext,
   DEFAULT_MANA_CONTEXT,
   FocusRingManager,
   FocusRingScope,
   ManaContextProvider,
+  PopoverPortalTarget,
   ThemeContextProvider,
 } from '@discord-components/components';
 import type { Theme } from '@discord-components/tokens';
@@ -62,6 +66,21 @@ const RootElement = ({
 
 RootElement.displayName = 'RootElement';
 
+const CONTENTS = { display: 'contents' } as const;
+
+// The containers the client renders after the app's content for things that float above it:
+// floating layers (tooltips, FloatingLayer) portal into #popover-portal, popouts into the app layer.
+const LayerContainers = () => (
+  <div style={CONTENTS}>
+    <div style={CONTENTS}>
+      <PopoverPortalTarget />
+      <AppLayerContainer />
+    </div>
+  </div>
+);
+
+LayerContainers.displayName = 'LayerContainers';
+
 // The providers Discord's client puts around everything it renders: accessibility settings, the
 // Mana context (strings, theme, experiments), the theme context and a focus ring scope over the whole
 // document.
@@ -77,7 +96,13 @@ export const AppRoot = ({
   const keyboardMode = useKeyboardMode();
   const bodyRef = useRef<Element>(document.body);
   const manaContext = useMemo(
-    () => ({ ...DEFAULT_MANA_CONTEXT, theme, saturation: 1, experiments: { enabledExperiments: [...experiments] } }),
+    () => ({
+      ...DEFAULT_MANA_CONTEXT,
+      theme,
+      saturation: 1,
+      experiments: { enabledExperiments: [...experiments] },
+      defaultLayerContext: appLayerContext,
+    }),
     [theme, experiments],
   );
   return (
@@ -85,7 +110,12 @@ export const AppRoot = ({
       <ManaContextProvider value={manaContext}>
         <ThemeContextProvider theme={theme}>
           <RootElement theme={theme} experiments={experiments}>
-            <FocusRingScope containerRef={bodyRef}>{children}</FocusRingScope>
+            <FocusRingScope containerRef={bodyRef}>
+              <AppLayerProvider>
+                {children}
+                <LayerContainers />
+              </AppLayerProvider>
+            </FocusRingScope>
           </RootElement>
         </ThemeContextProvider>
       </ManaContextProvider>

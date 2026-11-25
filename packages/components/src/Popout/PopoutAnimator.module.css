@@ -1,0 +1,66 @@
+:global(.full-motion) .translate.animatorTop {
+  transform: translate3d(0, -10px, 0);
+}
+:global(.full-motion) .translate.animatorBottom {
+  transform: translate3d(0, 10px, 0);
+}
+:global(.full-motion) .translate.animatorLeft {
+  transform: translate3d(-10px, 0, 0);
+}
+:global(.full-motion) .translate.animatorRight {
+  transform: translate3d(10px, 0, 0);
+}
+:global(.full-motion) .translate.animatorCenter {
+  transform: translate3d(0, -10px, 0);
+}
+:global(.full-motion) .translate.didRender {
+  transform: translateZ(0);
+  transition: transform 0.2s ease-out;
+}
+:global(.full-motion) .translate[data-popout-animating='false'] {
+  position: relative;
+  transform: none;
+  transition: none;
+  z-index: 0;
+}
+:global(.full-motion) .scale {
+  opacity: 0;
+  transform: scale(0.01);
+}
+:global(.full-motion) .scale.animatorTop {
+  transform-origin: bottom center;
+}
+:global(.full-motion) .scale.animatorBottom {
+  transform-origin: top center;
+}
+:global(.full-motion) .scale.animatorLeft {
+  transform-origin: top right;
+}
+:global(.full-motion) .scale.animatorRight {
+  transform-origin: top left;
+}
+:global(.full-motion) .scale.animatorRight {
+  transform-origin: top center;
+}
+:global(.full-motion) .scale.didRender {
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    transform 0.12s ease-out,
+    opacity 0.12s ease-out;
+}
+:global(.full-motion) .scale[data-popout-animating='false'] {
+  position: relative;
+  transform: none;
+  transition: none;
+  z-index: 0;
+}
+.fade {
+  opacity: 0;
+}
+.fade.didRender {
+  opacity: 1;
+  position: relative;
+  transition: opacity 0.08s ease-out;
+  z-index: 0;
+}

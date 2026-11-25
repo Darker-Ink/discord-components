@@ -39,8 +39,10 @@ const extractFn = (marker) => {
 const chunkJsUrl = extractFn('p.u=e=>{if(');
 const chunkCssUrl = extractFn('p.k=e=>{if(');
 
-// Modules the app root wrapper needs (accessibility, Mana and theme contexts, focus rings).
-const APP_ROOT_MODULES = ['844222', '116711', '86182', '559106'];
+// Modules the app root wrapper needs (accessibility, Mana and theme contexts, focus rings, and the
+// app's layers: the App layer provider/container, the #popover-portal target and the class that
+// makes their wrappers display: contents).
+const APP_ROOT_MODULES = ['844222', '116711', '86182', '559106', '750506', '337836', '638274'];
 
 // Playground configs and the webpack module that exposes them.
 const playgroundModules = { mana: '352611', payments: '582695', nitro: '582695', identity: '582695' };
@@ -168,18 +170,26 @@ window.ref = (() => {
     root = ReactDOM.createRoot(document.getElementById('root'));
   };
   // Mirrors the client's root: accessibility settings (844222), the Mana context (116711) and the
-  // theme context (86182) for the current theme, and a focus ring scope (559106) over document.body.
+  // theme context (86182) for the current theme, a focus ring scope (559106) over document.body, and
+  // the App layer (750506) whose container the client renders after the app content together with
+  // the #popover-portal target (337836), inside two display: contents wrappers (638274).
   const appRoot = (element) => {
     const h = React.createElement;
     const theme = document.documentElement.className.match(/theme-(\\w+)/)?.[1] ?? 'darker';
     const a11y = req('844222').C;
     const mana = req('116711');
     const a11yValue = { ...a11y._currentValue, reducedMotion: { enabled: matchMedia('(prefers-reduced-motion: reduce)').matches, rawValue: 'auto' }, keyboardModeEnabled: keyboardMode, minToastDurationMs: 3000 };
-    const manaValue = { ...mana.VO._currentValue, theme, saturation: 1, experiments: { enabledExperiments: [] } };
+    const layers = req('750506');
+    const contents = req('638274').P;
+    const manaValue = { ...mana.VO._currentValue, theme, saturation: 1, experiments: { enabledExperiments: [] }, defaultLayerContext: layers.uY };
     return h(a11y.Provider, { value: a11yValue },
       h(mana.GE, { value: manaValue },
         h(req('86182').w, { theme },
-          h(req('559106').xp, { containerRef: { current: document.body } }, element))));
+          h(req('559106').xp, { containerRef: { current: document.body } },
+            h(layers.Yf, null,
+              element,
+              h('div', { className: contents },
+                h('div', { className: contents }, h(req('337836').P), h(layers.C8))))))));
   };
   const rerender = () => root.render(appRoot(lastElement));
   const render = (element) => new Promise((resolve) => { lastElement = element; rerender(); setTimeout(resolve, 50); });

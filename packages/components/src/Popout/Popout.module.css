@@ -1,0 +1,15 @@
+.loadingPopout {
+  background-color: var(--background-base-lower);
+  display: flex;
+  justify-content: center;
+  padding: 8px;
+}
+
+.loader {
+  align-items: center;
+  background-color: var(--background-base-lowest);
+  border-radius: 8px;
+  display: flex;
+  height: 80px;
+  justify-content: center;
+}

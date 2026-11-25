@@ -36,3 +36,7 @@ export * from './CheckboxGroup';
 export * from './TabBar';
 export * from './Chip';
 export * from './Badge';
+export * from './Layer';
+export * from './FloatingLayer';
+export * from './Dialog';
+export * from './Popout';
