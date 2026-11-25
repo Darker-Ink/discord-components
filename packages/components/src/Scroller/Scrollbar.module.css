@@ -1,0 +1,75 @@
+/* Scrollbar styles shared by scrollable controls; each variant composes the base .scrollbar. */
+.scrollbar::-webkit-scrollbar-corner {
+  background: none;
+  border: none;
+}
+.scrollbarDefault {
+  composes: scrollbar;
+}
+.scrollbarDefault::-webkit-scrollbar {
+  height: var(--custom-scrollbar-scrollbar-width, 14px);
+  width: var(--custom-scrollbar-scrollbar-width, 14px);
+}
+.scrollbarDefault::-webkit-scrollbar-thumb,
+.scrollbarDefault::-webkit-scrollbar-track {
+  background-clip: padding-box;
+  border-color: transparent;
+  border-radius: var(--custom-scrollbar-border-radius, calc(var(--custom-scrollbar-scrollbar-width, 14px) / 2));
+  border-style: solid;
+  border-width: var(--custom-scrollbar-scrollbar-margin, 3px);
+}
+.scrollbarDefault::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-auto-thumb);
+}
+.scrollbarDefault::-webkit-scrollbar-track {
+  background-color: var(--scrollbar-auto-track);
+  border-width: initial;
+}
+.scrollbarGhost {
+  composes: scrollbar;
+}
+.scrollbarGhost::-webkit-scrollbar {
+  height: var(--custom-scrollbar-scrollbar-width, 14px);
+  width: var(--custom-scrollbar-scrollbar-width, 14px);
+}
+.scrollbarGhost::-webkit-scrollbar-thumb,
+.scrollbarGhost::-webkit-scrollbar-track {
+  background-clip: padding-box;
+  border-radius: var(--custom-scrollbar-border-radius, calc(var(--custom-scrollbar-scrollbar-width, 14px) / 2));
+  border-style: solid;
+  border-width: var(--custom-scrollbar-scrollbar-margin, 3px);
+}
+.scrollbarGhost::-webkit-scrollbar-thumb {
+  background-color: var(--opacity-black-40);
+  border-color: transparent;
+}
+.scrollbarGhost::-webkit-scrollbar-track {
+  background-color: var(--opacity-black-8);
+  border-color: transparent;
+  border-width: initial;
+}
+.scrollbarGhostHairline {
+  composes: scrollbar;
+}
+.scrollbarGhostHairline::-webkit-scrollbar {
+  height: 4px;
+  width: 4px;
+}
+.scrollbarGhostHairline::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--primary-800-hsl) / 0.6);
+  border-radius: 2px;
+  cursor: move;
+}
+.scrollbarGhostHairline::-webkit-scrollbar-track {
+  background-color: transparent;
+  border: none;
+}
+:global(.enable-forced-colors) .scrollbar::-webkit-scrollbar-track {
+  background-color: Canvas;
+  border-radius: 0;
+  border-width: 1px;
+}
+:global(.enable-forced-colors) .scrollbar::-webkit-scrollbar-thumb {
+  background-color: CanvasText;
+  border-width: 1px;
+}

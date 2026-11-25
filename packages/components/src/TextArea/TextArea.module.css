@@ -1,0 +1,60 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}
+.textArea {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: transparent;
+  border: none;
+  color: inherit;
+  font-size: inherit;
+  height: auto;
+  padding: var(--space-12) 10px;
+  resize: none;
+  width: 100%;
+}
+.textArea:disabled {
+  cursor: not-allowed;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+.textArea::-moz-placeholder {
+  color: var(--input-placeholder-text-default);
+  -moz-user-select: none;
+  user-select: none;
+}
+.textArea::placeholder {
+  color: var(--input-placeholder-text-default);
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+.resizeable {
+  resize: auto;
+}
+.inputMaxLength {
+  position: relative;
+}
+.flex {
+  display: flex;
+  flex: 1 1 auto;
+}
+.characterCount,
+.maxLength {
+  bottom: 12px;
+  color: var(--text-muted);
+  font-family: var(--font-code);
+  font-size: 12px;
+  inset-inline-end: 14px;
+  pointer-events: none;
+  position: absolute;
+}
+.errorOverflow {
+  color: var(--text-feedback-critical);
+}
+.errorMessage {
+  margin-top: 1px;
+}
