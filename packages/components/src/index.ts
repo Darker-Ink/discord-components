@@ -55,3 +55,4 @@ export * from './CloseButton';
 export * from './PlayPauseButton';
 export * from './GradientWrapper';
 export * from './Popover';
+export * from './VideoPopover';
