@@ -1,0 +1,85 @@
+.track {
+  background-color: var(--progressbar-track-background);
+  overflow: hidden;
+  position: relative;
+  transform: translateZ(0);
+  width: 100%;
+  --custom-progressbar-indicator-color: var(--progressbar-indicator-background);
+}
+:global(.custom-theme-background) .track {
+  --custom-progressbar-indicator-color: var(--custom-theme-text-color);
+}
+.fill {
+  background-color: var(--custom-progressbar-indicator-color);
+  width: 100%;
+}
+.animating {
+  transition: transform 0.2s ease-out;
+}
+.xs {
+  border-radius: 2px;
+  height: 2px;
+}
+.sm {
+  height: 4px;
+}
+.md,
+.sm {
+  border-radius: 3px;
+}
+.md {
+  height: 6px;
+}
+.lg {
+  border-radius: 4px;
+  height: 8px;
+}
+.indeterminate {
+  background-color: var(--custom-progressbar-indicator-color);
+  position: absolute;
+  top: 0;
+  width: auto;
+}
+.indeterminateBar1 {
+  animation: indeterminate1 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+  animation-play-state: paused;
+}
+.indeterminateBar1.animating {
+  animation-play-state: running;
+}
+.indeterminateBar2 {
+  animation: indeterminate2 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) infinite;
+  animation-delay: 1.15s;
+  animation-play-state: paused;
+}
+.indeterminateBar2.animating {
+  animation-play-state: running;
+}
+@keyframes indeterminate1 {
+  0% {
+    left: -35%;
+    right: 100%;
+  }
+  60% {
+    left: 100%;
+    right: -90%;
+  }
+  to {
+    left: 100%;
+    right: -90%;
+  }
+}
+@keyframes indeterminate2 {
+  0% {
+    left: -200%;
+    right: 100%;
+  }
+  60% {
+    left: 107%;
+    right: -8%;
+  }
+  to {
+    left: 107%;
+    right: -8%;
+  }
+}

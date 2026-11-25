@@ -14,3 +14,4 @@ export * from './AccessibilityAnnouncer';
 export * from './hooks';
 export * from './tokens';
 export * from './HeadingLevel';
+export * from './ProgressBar';
