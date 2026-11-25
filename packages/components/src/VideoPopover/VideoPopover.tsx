@@ -77,9 +77,13 @@ interface PreviewVideoProps {
 const PreviewVideo = ({ ref, autoPlay, ...props }: PreviewVideoProps) => {
   const { reducedMotion } = useContext(AccessibilityPreferencesContext);
   const videoRef = useRef<HTMLVideoElement>(null);
-  useLayoutEffect(
-    () => () => {
-      const video = videoRef.current;
+  const { src } = props;
+  useLayoutEffect(() => {
+    // Remounting (e.g. StrictMode's effect replay) restores the source released below.
+    const mounted = videoRef.current;
+    if (mounted != null && !mounted.hasAttribute('src')) mounted.setAttribute('src', src);
+    return () => {
+      const video = mounted;
       if (video == null) return;
       video.removeAttribute('src');
       try {
@@ -87,9 +91,10 @@ const PreviewVideo = ({ ref, autoPlay, ...props }: PreviewVideoProps) => {
       } catch {
         // Nothing left to release.
       }
-    },
-    [],
-  );
+    };
+    // Only on unmount; src changes are rendered by React.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   useLayoutEffect(() => {
     if (typeof ref === 'function') {
       ref(null);
