@@ -29,8 +29,9 @@ if (/^\d+$/.test(target)) {
   [suffix] = suffixes;
 }
 
-const HASHED_CLASS = /\.(-?[A-Za-z_][\w-]*?)_([\w-]{6})(?![\w-])/g;
-const ANY_CLASS = /\.(-?[A-Za-z_][\w-]*)/g;
+// Class names may contain CSS escapes, e.g. `.body-md\/medium_RAOoio`.
+const HASHED_CLASS = /\.(-?(?:[A-Za-z_]|\\.)(?:[\w-]|\\.)*?)_([\w-]{6})(?![\w-])/g;
+const ANY_CLASS = /\.(-?(?:[A-Za-z_]|\\.)(?:[\w-]|\\.)*)/g;
 const own = (name) => name.endsWith(`_${suffix}`);
 const foreign = new Set();
 const globals = new Set();
