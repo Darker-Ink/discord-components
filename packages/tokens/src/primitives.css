@@ -431,6 +431,8 @@
   --yellow-new-28-hsl: 38.698 calc(var(--saturation-factor, 1) * 100%) 66.863%;
   --yellow-new-29: hsl(var(--yellow-new-29-hsl)/1);
   --yellow-new-29-hsl: 38.844 calc(var(--saturation-factor, 1) * 100%) 66.078%;
+  --yellow-new-30: hsl(var(--yellow-new-30-hsl)/1);
+  --yellow-new-30-hsl: 38.644 calc(var(--saturation-factor, 1) * 100%) 65.294%;
   --yellow-new-36: hsl(var(--yellow-new-36-hsl)/1);
   --yellow-new-36-hsl: 39.505 calc(var(--saturation-factor, 1) * 98.058%) 59.608%;
   --yellow-new-38: hsl(var(--yellow-new-38-hsl)/1);
@@ -540,6 +542,7 @@
   --opacity-yellow-32-hsl: 39.435 calc(var(--saturation-factor, 1) * 100%) 48.627%;
   --opacity-yellow-36-hsl: 39.435 calc(var(--saturation-factor, 1) * 100%) 48.627%;
   --opacity-yellow-72-hsl: 39.435 calc(var(--saturation-factor, 1) * 100%) 48.627%;
+  --opacity-white-8: hsl(var(--opacity-white-8-hsl)/0.0784313725490196);
   --opacity-white-8-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 100%;
   --opacity-white-12-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 100%;
   --opacity-white-20: hsl(var(--opacity-white-20-hsl)/0.2);
@@ -573,8 +576,13 @@
   --opacity-black-60: hsl(var(--opacity-black-60-hsl)/0.6);
   --opacity-black-60-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 0%;
   --opacity-black-64-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 0%;
+  --opacity-black-68: hsl(var(--opacity-black-68-hsl)/0.6784313725490196);
+  --opacity-black-68-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 0%;
   --opacity-black-72-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 0%;
+  --opacity-black-88: hsl(var(--opacity-black-88-hsl)/0.8784313725490196);
+  --opacity-black-88-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 0%;
   --opacity-black-92-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 0%;
+  --transparent: hsl(var(--transparent-hsl)/0);
   --transparent-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 0%;
   --red-345-hsl: var(--red-new-30-hsl);
   --red-400: var(--red-new-46);
@@ -609,6 +617,8 @@
   --primary-100-hsl: var(--neutral-2-hsl);
   --primary-160: var(--neutral-6);
   --primary-160-hsl: var(--neutral-6-hsl);
+  --primary-200: var(--neutral-8);
+  --primary-200-hsl: var(--neutral-8-hsl);
   --primary-300: var(--neutral-15);
   --primary-300-hsl: var(--neutral-15-hsl);
   --primary-330: var(--neutral-19);
@@ -820,6 +830,11 @@
   --custom-scrollbar-scrollbar-width: 14px;
   --custom-scrollbar-scrollbar-margin: 3px;
   --custom-scrollbar-border-radius: calc(var(--custom-scrollbar-scrollbar-width)/2);
+  --custom-button-link-underline-width: 1px;
+  --custom-button-link-underline-offset: 1px;
+  --custom-button-link-underline-stop: calc(
+    var(--custom-button-link-underline-width) + var(--custom-button-link-underline-offset)
+  );
   --font-weight-extrabold: 800;
   --custom-guild-list-padding: var(--space-md);
   --custom-guild-list-width: calc(var(--guildbar-avatar-size) + var(--custom-guild-list-padding) * 2);
