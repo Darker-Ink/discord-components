@@ -1,5 +1,23 @@
-import { Text, TextVariants } from '@discord-components/components';
+import { Card, ScrollerAuto, Text, TextVariants, type TextProps } from '@discord-components/components';
 import type { StoryGroup } from '../../types';
+import styles from './text.module.css';
+
+const TypographyScales = (props: Omit<TextProps, 'variant'>) => (
+  <ScrollerAuto className={styles.variants}>
+    {TextVariants.map((variant) => (
+      <Card key={variant} className={styles.card}>
+        <Text {...props} variant={variant}>
+          {props.children}
+        </Text>
+        <Text variant="body-xs/normal" color="text-subtle">
+          {variant}
+        </Text>
+      </Card>
+    ))}
+  </ScrollerAuto>
+);
+
+TypographyScales.displayName = 'TypographyScales';
 
 const text: StoryGroup = {
   title: 'Text',
@@ -35,6 +53,12 @@ const text: StoryGroup = {
         },
         children: { label: 'Text', type: 'text', defaultValue: 'Hello, world!' },
       },
+    },
+    {
+      name: 'Typography Scales',
+      id: 'text-scales',
+      component: TypographyScales,
+      controls: { children: { label: 'Text', type: 'text', defaultValue: 'Hello, world!' } },
     },
   ],
 };
