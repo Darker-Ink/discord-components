@@ -7,3 +7,10 @@ export {
   type JumpSectionProps,
 } from './jumpSection';
 export { useFocusLock, type FocusLockOptions } from './useFocusLock';
+export {
+  DEFAULT_MODAL_CONTEXT,
+  ModalContext,
+  ModalTransitionState,
+  type ModalContextValue,
+  type ModalTransitionStateValue,
+} from './ModalContext';

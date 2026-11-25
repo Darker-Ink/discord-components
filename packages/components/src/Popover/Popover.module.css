@@ -1,0 +1,165 @@
+.popoverRoot {
+  isolation: isolate;
+}
+.popover {
+  background: var(--background-surface-high);
+  border-radius: var(--radius-md);
+  box-shadow:
+    inset 0 0 0 1px var(--border-subtle),
+    var(--shadow-high);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  padding: var(--space-16);
+  position: relative;
+  text-align: center;
+  --custom-popover-caret-gradient-color-start: transparent;
+  --custom-popover-caret-gradient-color-end: transparent;
+}
+:where(.popover) {
+  max-width: var(--custom-popover-width);
+  width: var(--custom-popover-width);
+}
+.popoverGradientWrapper {
+  background: var(--background-surface-high);
+  border-radius: var(--radius-md);
+  box-shadow:
+    inset 0 0 0 1px var(--border-subtle),
+    var(--shadow-high);
+  --custom-popover-caret-gradient-color-start: var(--custom-gradient-color-start);
+  --custom-popover-caret-gradient-color-end: var(--custom-gradient-color-end);
+}
+.popoverContentWithGradient {
+  background: transparent;
+  border-radius: var(--radius-md);
+  box-shadow: none;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  max-width: var(--custom-popover-width);
+  padding: var(--space-16);
+  position: relative;
+  text-align: center;
+  width: var(--custom-popover-width);
+}
+.popover--video,
+.popoverContentWithGradient.popover--video {
+  padding: var(--space-4);
+}
+.popover--video .footer,
+.popover--video .header {
+  padding: 0 var(--space-16);
+}
+.popover--video .actionBar {
+  padding: 0 var(--space-16) var(--space-16);
+}
+.closeButton {
+  inset-inline-end: var(--space-4);
+  position: absolute;
+  top: var(--space-4);
+  z-index: 2;
+}
+.header {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: var(--space-20) 0;
+  position: relative;
+  z-index: 1;
+}
+.headerWithBadge {
+}
+.title {
+  text-align: center;
+}
+.headerBody,
+.title {
+  margin: 0;
+  text-wrap: pretty;
+}
+.headerBody {
+  color: var(--text-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.badgeContainer {
+  margin-bottom: var(--space-12);
+}
+.content {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+.graphic {
+  margin: var(--space-16) auto var(--space-20);
+  width: 100%;
+}
+.graphic--md,
+.graphic--sm {
+  max-width: 144px;
+}
+.graphic--lg {
+  max-width: 160px;
+}
+.graphic--video {
+  max-width: 232px;
+}
+.footer {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  text-align: center;
+}
+.footerText {
+  color: var(--text-muted);
+  margin: 0;
+}
+.footerLink {
+  color: var(--text-link);
+  margin: 0;
+}
+.actionBar {
+  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  justify-content: center;
+}
+.actionBar .actions {
+  flex: 1;
+  min-width: unset;
+}
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+.multistepIndicator {
+  color: var(--text-muted);
+  margin-inline-start: var(--space-4);
+  margin-top: var(--space-4);
+  opacity: 0.7;
+}
+.multistepActionLayout {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+.caretIcon .caretFill {
+  fill: var(--background-surface-high);
+}
+.caretIcon .caretGradient {
+  fill: var(--custom-popover-caret-gradient-color, transparent);
+}
+.caretIcon .caretStroke {
+  stroke: var(--border-subtle);
+  stroke-opacity: 1;
+}
