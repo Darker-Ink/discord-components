@@ -18,7 +18,7 @@ export type Control =
   | (BaseControl<boolean> & { type: 'boolean' })
   | (BaseControl<string | undefined> & { type: 'text' })
   | (BaseControl<string> & { type: 'color' })
-  | (BaseControl<number> & { type: 'number'; minValue?: number })
+  | (BaseControl<number | undefined> & { type: 'number'; minValue?: number })
   | (BaseControl<number> & { type: 'slider'; minValue: number; maxValue: number; markers?: number[] })
   | (BaseControl<unknown> & {
       type: 'select';

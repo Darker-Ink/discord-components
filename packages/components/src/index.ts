@@ -46,3 +46,6 @@ export * from './Tooltip';
 export * from './RichTooltip';
 export * from './TagGroup';
 export * from './Tabs';
+export * from './TextInput';
+export * from './SearchBar';
+export * from './NumberInput';
