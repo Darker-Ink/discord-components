@@ -10,3 +10,4 @@ export * from './Card';
 export * from './HiddenVisually';
 export * from './Clickable';
 export * from './Anchor';
+export * from './AccessibilityAnnouncer';
