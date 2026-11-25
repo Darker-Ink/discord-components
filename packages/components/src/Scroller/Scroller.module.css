@@ -1,0 +1,118 @@
+.scrollerBase {
+  box-sizing: border-box;
+  flex: 1 1 auto;
+  min-height: 0;
+  position: relative;
+}
+.scrollbarGutter {
+  scrollbar-gutter: stable both-edges;
+}
+.scrollbarGutterStable {
+  scrollbar-gutter: stable;
+}
+.thin::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+.thin::-webkit-scrollbar-track {
+  background-color: var(--scrollbar-thin-track);
+  border: 2px solid var(--scrollbar-thin-track);
+  border-color: var(--scrollbar-thin-track);
+}
+.thin::-webkit-scrollbar-thumb {
+  background-clip: padding-box;
+  background-color: var(--scrollbar-thin-thumb);
+  border: 2px solid transparent;
+  border-radius: 4px;
+  min-height: 40px;
+}
+.thin::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+.auto::-webkit-scrollbar {
+  height: 16px;
+  width: 16px;
+}
+.auto::-webkit-scrollbar-track {
+  background-color: var(--scrollbar-auto-track);
+}
+.auto::-webkit-scrollbar-thumb,
+.auto::-webkit-scrollbar-track {
+  background-clip: padding-box;
+  border: 4px solid transparent;
+  border-radius: 8px;
+}
+.auto::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-auto-thumb);
+  min-height: 40px;
+}
+.auto::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+:global(.custom-theme-background) .customTheme.auto::-webkit-scrollbar-track {
+  background-color: var(--background-mod-muted);
+}
+.none::-webkit-scrollbar {
+  height: 0;
+  width: 0;
+}
+.fade::-webkit-scrollbar-thumb,
+.fade::-webkit-scrollbar-track {
+  visibility: hidden;
+}
+.fade:hover::-webkit-scrollbar-thumb,
+.fade:hover::-webkit-scrollbar-track {
+  visibility: visible;
+}
+.scrolling.fade:focus-within::-webkit-scrollbar-thumb,
+.scrolling.fade:focus-within::-webkit-scrollbar-track {
+  visibility: visible;
+}
+:global(.has-webkit-scrollbar) .fade:hover {
+  will-change: scroll-position;
+}
+:global(.no-webkit-scrollbar) .thin {
+  scrollbar-color: var(--scrollbar-thin-thumb) var(--scrollbar-thin-track);
+  scrollbar-width: thin;
+}
+:global(.no-webkit-scrollbar) .thin.fade.scrolling,
+:global(.no-webkit-scrollbar) .thin.fade:hover {
+  scrollbar-color: var(--scrollbar-thin-thumb) var(--scrollbar-thin-track);
+}
+:global(.no-webkit-scrollbar) .auto {
+  scrollbar-color: var(--scrollbar-auto-scrollbar-color-thumb) var(--scrollbar-auto-scrollbar-color-track);
+  scrollbar-width: auto;
+}
+:global(.no-webkit-scrollbar) .auto.fade.scrolling,
+:global(.no-webkit-scrollbar) .auto.fade:hover {
+  scrollbar-color: var(--scrollbar-auto-scrollbar-color-thumb) var(--scrollbar-auto-scrollbar-color-track);
+}
+:global(.no-webkit-scrollbar) .none {
+  scrollbar-width: none;
+}
+:global(.no-webkit-scrollbar) .fade {
+  scrollbar-color: transparent transparent;
+}
+.content {
+  position: relative;
+}
+.disableScrollAnchor {
+  overflow-anchor: none;
+}
+.managedReactiveScroller {
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+.pointerCover {
+  inset: 0;
+  position: absolute;
+  z-index: 9999;
+}
+:global(.enable-forced-colors) .auto::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+:global(.enable-forced-colors) .auto::-webkit-scrollbar-track {
+  border-radius: 0;
+  border-width: 1px;
+}

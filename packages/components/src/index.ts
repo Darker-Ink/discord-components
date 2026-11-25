@@ -5,3 +5,4 @@ export * from './ManaContext';
 export * from './Theme';
 export * from './Spinner';
 export * from './FocusRing';
+export * from './Scroller';
