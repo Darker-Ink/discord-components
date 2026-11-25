@@ -28,3 +28,4 @@ export * from './IconButton';
 export * from './ToggleButton';
 export * from './ToggleIconButton';
 export * from './TextButton';
+export * from './ButtonGroup';
