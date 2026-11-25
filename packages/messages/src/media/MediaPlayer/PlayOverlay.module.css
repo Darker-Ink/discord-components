@@ -1,0 +1,39 @@
+.cover {
+  align-items: center;
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  pointer-events: none;
+  position: absolute;
+}
+.cover.active {
+  cursor: pointer;
+  pointer-events: auto;
+}
+.cover.active:hover .iconWrapper {
+  opacity: 0.8;
+}
+.cover.active:active .iconWrapper {
+  transform: translateY(1px);
+}
+.iconWrapper {
+  background-color: var(--black);
+  border-radius: 24px;
+  color: var(--white);
+  opacity: 0.6;
+  padding: 12px;
+  transition:
+    opacity 0.25s,
+    color 0.25s;
+}
+.icon {
+  display: block;
+  height: 24px;
+  margin-inline: 1px -1px;
+  width: 24px;
+}
+:global(.enable-forced-colors) .iconWrapper {
+  background-color: ButtonFace;
+  color: ButtonText;
+  opacity: 1;
+}

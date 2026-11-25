@@ -135,9 +135,15 @@ importers:
       '@discord-components/tokens':
         specifier: workspace:*
         version: link:../tokens
+      '@react-spring/web':
+        specifier: ^10.1.2
+        version: 10.1.2(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      react-focus-rings:
+        specifier: ^1.3.0
+        version: 1.3.0(react@19.3.1)
     devDependencies:
       '@types/react':
         specifier: ^19.3.3

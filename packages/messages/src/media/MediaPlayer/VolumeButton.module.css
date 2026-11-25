@@ -1,0 +1,26 @@
+.container {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  position: relative;
+}
+.volumeButton {
+  cursor: pointer;
+  line-height: 0;
+}
+.volumeButtonSlider {
+  bottom: calc(100% + 16px);
+  display: none;
+  inset-inline: -78px 0;
+  position: absolute;
+  -webkit-app-region: no-drag;
+  pointer-events: none;
+}
+.volumeButtonSlider.sliderVisible {
+  display: initial;
+}
+.mediaBar {
+  overflow: hidden;
+  pointer-events: auto;
+}

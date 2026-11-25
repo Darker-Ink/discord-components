@@ -1,0 +1,130 @@
+.imageWrapper {
+  display: block;
+  overflow: hidden;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  user-select: text;
+}
+:where(.imageWrapper) {
+  border-radius: 3px;
+  position: relative;
+}
+.clickableWrapper,
+.loadingOverlay {
+  height: 100%;
+  width: 100%;
+}
+.imageWrapperBackground {
+  background: var(--opacity-black-4);
+}
+.imagePlaceholder {
+  background: var(--background-gradient-chat, var(--background-base-low));
+  display: block;
+  position: absolute;
+  top: 0;
+  transition: none;
+}
+:global(.full-motion) .imagePlaceholder {
+  transition: opacity 0.2s ease;
+}
+.imageErrorWrapper {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  justify-content: center;
+  overflow: hidden;
+  padding: var(--space-8) 0;
+}
+.imageErrorIllustration {
+  min-height: 0;
+}
+.imageErrorIllustration > img {
+  display: block;
+  height: 100%;
+  max-height: 100%;
+  max-width: 160px;
+  -o-object-fit: contain;
+  object-fit: contain;
+  width: 100%;
+}
+.imageErrorText {
+  flex-shrink: 0;
+}
+:global(.full-motion) .imagePlaceholderFastFade {
+  transition: opacity 50ms ease;
+}
+.imagePlaceholderVisible {
+  opacity: 1;
+}
+.imageLoadingOverlay,
+.imagePlaceholderHidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.imageLoadingOverlay {
+  background-color: var(--opacity-black-48);
+  border-radius: 100%;
+  box-sizing: border-box;
+  display: flex;
+  height: 24px;
+  inset-inline-end: 0;
+  margin: 4px;
+  overflow: hidden;
+  padding: 3px;
+  position: absolute;
+  top: 0;
+  transition: none;
+  width: 24px;
+}
+:global(.full-motion) .imageLoadingOverlay {
+  transition: opacity 0.2s ease;
+}
+.imageLoadingOverlayVisible {
+  opacity: 1;
+  pointer-events: auto;
+}
+:global(.full-motion) .imageLoadingOverlayVisible {
+  transition: opacity 0.8s ease;
+}
+.cornerLoadingSpinner {
+  height: 100%;
+  opacity: 0.75;
+  width: 100%;
+}
+:global(.theme-dark) .cornerLoadingSpinner circle,
+:global(.theme-light) .cornerLoadingSpinner circle {
+  stroke: var(--white);
+}
+.imageAccessory {
+  inset-inline-start: 6px;
+  position: absolute;
+  top: 6px;
+  z-index: 3;
+}
+.imageZoom {
+  cursor: nesw-resize;
+  cursor: zoom-in;
+}
+.clickable {
+  cursor: pointer;
+}
+.originalLink {
+  inset: 0;
+  position: absolute;
+  z-index: 1;
+}
+.imageClickable {
+  border-radius: inherit;
+}
+:global(.background-opacity-low) .imageWrapper,
+:global(.background-opacity-medium) .imageWrapper {
+  opacity: 0.6;
+}
+:global(.overlay-unlocked) .imageWrapper {
+  opacity: 1;
+}
+:global(.enable-forced-colors) .originalLink {
+  border: 2px solid ButtonText;
+}

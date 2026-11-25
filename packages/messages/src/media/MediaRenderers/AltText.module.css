@@ -1,0 +1,78 @@
+.imageContent {
+  display: flex;
+  flex: auto;
+  flex-flow: column nowrap;
+}
+.imageContainer {
+  display: flex;
+  flex: auto;
+  flex-flow: row nowrap;
+  height: 100%;
+  width: 100%;
+}
+.altText {
+  display: inline-block;
+  margin: 0.25rem 0 0.75rem;
+}
+.mediaMosaicAltTextContainer {
+  position: relative;
+}
+.mediaMosaicVideoAltTextContainer {
+  inset-inline-start: 4.5px;
+  position: absolute;
+  top: 4px;
+}
+.mediaMosaicAltText {
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 4px;
+  bottom: 4px;
+  color: var(--white);
+  font-size: 14px;
+  font-weight: var(--font-weight-semibold);
+  inset-inline-start: 4.5px;
+  line-height: 18px;
+  padding: 7px 8px;
+  position: absolute;
+  transition: background-color 0.2s ease-in-out;
+  z-index: 1;
+}
+.mediaMosaicAltText.reducedSize {
+  font-size: 12px;
+  padding: 0 4px;
+}
+.mediaMosaicVideoAltText {
+  bottom: inherit;
+  inset-inline-start: inherit;
+  position: inherit;
+}
+.mediaMosaicAltText:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+  transition: background-color 0.2s ease-in-out;
+}
+.mediaMosaicAltText:focus {
+  background-color: #000;
+  transition: background-color 0.2s ease-in-out;
+}
+.mediaMosaicAltText:active {
+  background-color: var(--background-mod-normal);
+  transition: background-color 0.2s ease-in-out;
+}
+.mediaMosaicAltTextPopout {
+  background-color: var(--background-surface-high);
+  border-radius: 8px;
+  box-shadow: var(--shadow-border), var(--shadow-high);
+  color: var(--text-default);
+  display: flex;
+  flex-direction: column;
+  max-width: 360px;
+  padding: 13.5px 12px;
+}
+.mediaMosaicAltTextPopoutTitle {
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  margin-bottom: 9.5px;
+  text-transform: none;
+}
+.mediaMosaicAltTextPopoutDescription {
+  word-break: break-word;
+}

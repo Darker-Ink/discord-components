@@ -1,0 +1,13 @@
+.controlIcon {
+  color: var(--interactive-text-default);
+  display: flex;
+  height: 24px;
+  width: 24px;
+}
+.controlIcon.active,
+.controlIcon:hover {
+  color: var(--interactive-text-active);
+}
+.lineHeightReset {
+  line-height: 0;
+}

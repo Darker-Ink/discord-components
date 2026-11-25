@@ -1,0 +1,123 @@
+.button {
+  align-items: center;
+  background: none;
+  border: 1px solid var(--opacity-white-8);
+  border-radius: 8px;
+  box-sizing: border-box;
+  display: flex;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  justify-content: center;
+  line-height: 16px;
+  padding: 2px 16px;
+  position: relative;
+  transition-duration: 0.2s;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+.button:disabled,
+.button[aria-disabled='true'] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.button .contents {
+  --button--underline-color: transparent;
+  background-image: linear-gradient(
+    to top,
+    transparent,
+    transparent var(--custom-button-link-underline-offset),
+    var(--button--underline-color) var(--custom-button-link-underline-offset),
+    var(--button--underline-color) var(--custom-button-link-underline-stop),
+    transparent var(--custom-button-link-underline-stop)
+  );
+}
+:global(.highlight-void-buttons) .button {
+  box-shadow: 0 0 4px 4px var(--yellow-new-30);
+}
+.lookBlank {
+  background: transparent;
+  border: 0;
+  color: currentColor;
+  margin: 0;
+  padding: 0;
+}
+.grow {
+  width: auto;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button,
+:global(.enable-forced-colors):global(.theme-light) .button {
+  background-color: ButtonFace;
+  transition: none;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button .contents,
+:global(.enable-forced-colors):global(.theme-light) .button .contents {
+  color: ButtonText;
+  forced-color-adjust: none;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button .contents svg,
+:global(.enable-forced-colors):global(.theme-light) .button .contents svg {
+  color: currentColor;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button:hover,
+:global(.enable-forced-colors):global(.theme-light) .button:hover {
+  background-color: ButtonFace;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button:hover .contents,
+:global(.enable-forced-colors):global(.theme-light) .button:hover .contents {
+  color: ButtonText;
+  text-decoration: underline;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button:disabled,
+:global(.enable-forced-colors):global(.theme-dark) .button[aria-disabled='true'],
+:global(.enable-forced-colors):global(.theme-light) .button:disabled,
+:global(.enable-forced-colors):global(.theme-light) .button[aria-disabled='true'] {
+  background-color: Canvas;
+  border-color: GrayText !important;
+  opacity: 1;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button:disabled .contents,
+:global(.enable-forced-colors):global(.theme-dark) .button[aria-disabled='true'] .contents,
+:global(.enable-forced-colors):global(.theme-light) .button:disabled .contents,
+:global(.enable-forced-colors):global(.theme-light) .button[aria-disabled='true'] .contents {
+  color: GrayText;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button:active,
+:global(.enable-forced-colors):global(.theme-dark) .button[aria-expanded='true'],
+:global(.enable-forced-colors):global(.theme-dark) .button[aria-selected='true'],
+:global(.enable-forced-colors):global(.theme-light) .button:active,
+:global(.enable-forced-colors):global(.theme-light) .button[aria-expanded='true'],
+:global(.enable-forced-colors):global(.theme-light) .button[aria-selected='true'] {
+  background-color: HighlightText;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button:active .contents,
+:global(.enable-forced-colors):global(.theme-dark) .button[aria-expanded='true'] .contents,
+:global(.enable-forced-colors):global(.theme-dark) .button[aria-selected='true'] .contents,
+:global(.enable-forced-colors):global(.theme-light) .button:active .contents,
+:global(.enable-forced-colors):global(.theme-light) .button[aria-expanded='true'] .contents,
+:global(.enable-forced-colors):global(.theme-light) .button[aria-selected='true'] .contents {
+  color: Highlight;
+  text-decoration: underline;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button:active:hover,
+:global(.enable-forced-colors):global(.theme-dark) .button[aria-expanded='true']:hover,
+:global(.enable-forced-colors):global(.theme-dark) .button[aria-selected='true']:hover,
+:global(.enable-forced-colors):global(.theme-light) .button:active:hover,
+:global(.enable-forced-colors):global(.theme-light) .button[aria-expanded='true']:hover,
+:global(.enable-forced-colors):global(.theme-light) .button[aria-selected='true']:hover {
+  background-color: HighlightText;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button:active:hover .contents,
+:global(.enable-forced-colors):global(.theme-dark) .button[aria-expanded='true']:hover .contents,
+:global(.enable-forced-colors):global(.theme-dark) .button[aria-selected='true']:hover .contents,
+:global(.enable-forced-colors):global(.theme-light) .button:active:hover .contents,
+:global(.enable-forced-colors):global(.theme-light) .button[aria-expanded='true']:hover .contents,
+:global(.enable-forced-colors):global(.theme-light) .button[aria-selected='true']:hover .contents {
+  color: Highlight;
+}
+.lookBlank {
+  border: none;
+}
+
+.colorBrand {
+}

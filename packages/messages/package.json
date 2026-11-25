@@ -12,7 +12,9 @@
     "@discord-components/components": "workspace:*",
     "@discord-components/icons": "workspace:*",
     "@discord-components/tokens": "workspace:*",
-    "clsx": "^2.1.1"
+    "@react-spring/web": "^10.1.2",
+    "clsx": "^2.1.1",
+    "react-focus-rings": "^1.3.0"
   },
   "devDependencies": {
     "@types/react": "^19.3.3",
