@@ -1,0 +1,61 @@
+.chip {
+  align-self: center;
+  border-radius: var(--radius-round);
+  box-sizing: border-box;
+  display: inline-block;
+  padding: 0 var(--space-8);
+  text-align: center;
+  text-transform: uppercase;
+}
+.with-icon {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--space-4);
+}
+.icon {
+  flex: 0 0 auto;
+}
+.blurple-light {
+  background-color: var(--chip-blurple-light-background);
+  color: var(--chip-blurple-light-text);
+}
+.blurple-dark {
+  background-color: var(--chip-blurple-dark-background);
+  color: var(--chip-blurple-dark-text);
+}
+.green-light {
+  background-color: var(--chip-green-light-background);
+  color: var(--chip-green-light-text);
+}
+.green-dark {
+  background-color: var(--chip-green-dark-background);
+  color: var(--chip-green-dark-text);
+}
+.orange-light {
+  background-color: var(--chip-orange-light-background);
+  color: var(--chip-orange-light-text);
+}
+.yellow-light {
+  background-color: var(--chip-yellow-light-background);
+  color: var(--chip-yellow-light-text);
+}
+.red-light {
+  background-color: var(--chip-red-light-background);
+  color: var(--chip-red-light-text);
+}
+.red-dark {
+  background-color: var(--chip-red-dark-background);
+  color: var(--chip-red-dark-text);
+}
+.gray-light {
+  background-color: var(--chip-gray-light-background);
+  color: var(--chip-gray-light-text);
+}
+.gray-medium {
+  background-color: var(--chip-gray-medium-background);
+  color: var(--chip-gray-medium-text);
+}
+.gray-dark {
+  background-color: var(--chip-gray-dark-background);
+  color: var(--chip-gray-dark-text);
+}
