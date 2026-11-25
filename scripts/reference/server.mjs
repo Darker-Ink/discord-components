@@ -17,6 +17,7 @@ const ROOT = path.resolve('.cache');
 const ASSETS = path.join(ROOT, 'assets');
 const MODULES = path.join(ROOT, 'modules');
 const PORT = Number(process.argv[2] ?? 5174);
+const ORIGIN = process.env.DISCORD_ORIGIN ?? 'https://canary.discord.com';
 
 const html = fs.readFileSync(path.join(ROOT, 'app.html'), 'utf8');
 const entryJs =
@@ -203,7 +204,7 @@ const send = (res, status, type, body) => {
 };
 
 http
-  .createServer((req, res) => {
+  .createServer(async (req, res) => {
     const url = new URL(req.url, `http://localhost:${PORT}`);
     try {
       if (url.pathname === '/') return send(res, 200, 'text/html', page(helpers));
@@ -216,7 +217,12 @@ http
       if (story) return send(res, 200, 'text/html', page(helpers + storyScript(story[1], story[2])));
       if (url.pathname.startsWith('/assets/')) {
         const file = path.join(ASSETS, path.basename(url.pathname));
-        if (!fs.existsSync(file)) return send(res, 404, 'text/plain', 'not found');
+        if (!fs.existsSync(file)) {
+          // Fonts and images referenced only from CSS aren't crawled by fetch-assets; pull them on demand.
+          const upstream = await fetch(`${ORIGIN}${url.pathname}`);
+          if (!upstream.ok) return send(res, 404, 'text/plain', 'not found');
+          fs.writeFileSync(file, Buffer.from(await upstream.arrayBuffer()));
+        }
         const ext = path.extname(file);
         const types = {
           '.js': 'text/javascript',
