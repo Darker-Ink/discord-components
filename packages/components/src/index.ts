@@ -23,3 +23,4 @@ export * from './CharacterCount';
 export * from './Divider';
 export * from './IndicatorDot';
 export * from './TextArea';
+export * from './Checkbox';
