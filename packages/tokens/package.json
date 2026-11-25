@@ -8,8 +8,9 @@
   ],
   "exports": {
     ".": "./src/index.ts",
-    "./tokens.css": "./src/tokens.css",
     "./fonts.css": "./src/fonts.css",
+    "./primitives.css": "./src/primitives.css",
+    "./themes/*.css": "./src/themes/*.css",
     "./base.css": "./src/base.css"
   }
 }

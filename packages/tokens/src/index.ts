@@ -1,5 +1,9 @@
 import './fonts.css';
-import './tokens.css';
+import './primitives.css';
+import './themes/light.css';
+import './themes/ash.css';
+import './themes/dark.css';
+import './themes/onyx.css';
 import './base.css';
 
-export { ThemeTypes, themeClassName, type Theme } from './themes';
+export { ThemeTypes, themeClassName, type Theme } from './theme-types';
