@@ -570,3 +570,11 @@
   --legacy-elevation-high: 0 2px 10px 0 var(--opacity-black-20);
   --legacy-elevation-border: 0 0 0 1px hsl(var(--primary-700-hsl)/0.6);
 }
+
+.mana-badge-refresh .theme-dark,
+.mana-badge-refresh.theme-dark {
+  --badge-expressive-border: hsl(var(--opacity-white-8-hsl)/0.0784313725490196);
+  --badge-inverted-border: hsl(var(--opacity-black-8-hsl)/0.0784313725490196);
+  --badge-primary-border: hsl(var(--opacity-white-8-hsl)/0.0784313725490196);
+  --badge-secondary-border: hsl(var(--opacity-white-8-hsl)/0.0784313725490196);
+}

@@ -172,11 +172,14 @@
   --neutral-80-hsl: 228 calc(var(--saturation-factor, 1) * 6.849%) 14.314%;
   --neutral-82: hsl(var(--neutral-82-hsl)/1);
   --neutral-82-hsl: 240 calc(var(--saturation-factor, 1) * 5.882%) 13.333%;
+  --neutral-83: hsl(var(--neutral-83-hsl)/1);
   --neutral-83-hsl: 225 calc(var(--saturation-factor, 1) * 6.25%) 12.549%;
   --neutral-86: hsl(var(--neutral-86-hsl)/1);
   --neutral-86-hsl: 240 calc(var(--saturation-factor, 1) * 7.143%) 10.98%;
   --neutral-88: hsl(var(--neutral-88-hsl)/1);
   --neutral-88-hsl: 225 calc(var(--saturation-factor, 1) * 8%) 9.804%;
+  --neutral-89: hsl(var(--neutral-89-hsl)/1);
+  --neutral-89-hsl: 240 calc(var(--saturation-factor, 1) * 6.383%) 9.216%;
   --neutral-91: hsl(var(--neutral-91-hsl)/1);
   --neutral-91-hsl: 220 calc(var(--saturation-factor, 1) * 7.317%) 8.039%;
   --neutral-92: hsl(var(--neutral-92-hsl)/1);
@@ -296,6 +299,8 @@
   --green-new-14-hsl: 136.901 calc(var(--saturation-factor, 1) * 53.383%) 73.922%;
   --green-new-15: hsl(var(--green-new-15-hsl)/1);
   --green-new-15-hsl: 136.056 calc(var(--saturation-factor, 1) * 51.079%) 72.745%;
+  --green-new-16: hsl(var(--green-new-16-hsl)/1);
+  --green-new-16-hsl: 136.438 calc(var(--saturation-factor, 1) * 50.345%) 71.569%;
   --green-new-20: hsl(var(--green-new-20-hsl)/1);
   --green-new-20-hsl: 137.368 calc(var(--saturation-factor, 1) * 44.706%) 66.667%;
   --green-new-22: hsl(var(--green-new-22-hsl)/1);
@@ -537,6 +542,10 @@
   --opacity-yellow-72-hsl: 39.435 calc(var(--saturation-factor, 1) * 100%) 48.627%;
   --opacity-white-8-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 100%;
   --opacity-white-12-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 100%;
+  --opacity-white-20: hsl(var(--opacity-white-20-hsl)/0.2);
+  --opacity-white-20-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 100%;
+  --opacity-white-28: hsl(var(--opacity-white-28-hsl)/0.2784313725490196);
+  --opacity-white-28-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 100%;
   --opacity-white-40: hsl(var(--opacity-white-40-hsl)/0.4);
   --opacity-white-40-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 100%;
   --opacity-black-1-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 0%;
@@ -557,8 +566,12 @@
   --opacity-black-40: hsl(var(--opacity-black-40-hsl)/0.4);
   --opacity-black-40-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 0%;
   --opacity-black-44-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 0%;
+  --opacity-black-48: hsl(var(--opacity-black-48-hsl)/0.47843137254901963);
+  --opacity-black-48-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 0%;
   --opacity-black-52-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 0%;
   --opacity-black-56-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 0%;
+  --opacity-black-60: hsl(var(--opacity-black-60-hsl)/0.6);
+  --opacity-black-60-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 0%;
   --opacity-black-64-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 0%;
   --opacity-black-72-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 0%;
   --opacity-black-92-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 0%;
@@ -572,6 +585,8 @@
   --yellow-300-hsl: var(--yellow-new-36-hsl);
   --yellow-400: var(--yellow-new-63);
   --yellow-400-hsl: var(--yellow-new-63-hsl);
+  --green-230: var(--green-new-16);
+  --green-230-hsl: var(--green-new-16-hsl);
   --green-360: var(--green-new-40);
   --green-360-hsl: var(--green-new-40-hsl);
   --green-400: var(--green-new-45);
@@ -612,11 +627,16 @@
   --primary-560-hsl: var(--neutral-64-hsl);
   --primary-600: var(--neutral-69);
   --primary-600-hsl: var(--neutral-69-hsl);
+  --primary-630-hsl: var(--neutral-73-hsl);
   --primary-645: var(--neutral-75);
   --primary-645-hsl: var(--neutral-75-hsl);
   --primary-660: var(--neutral-79);
   --primary-660-hsl: var(--neutral-79-hsl);
+  --primary-700: var(--neutral-83);
   --primary-700-hsl: var(--neutral-83-hsl);
+  --primary-760: var(--neutral-89);
+  --primary-760-hsl: var(--neutral-89-hsl);
+  --primary-800-hsl: var(--neutral-92-hsl);
   --plum-5: var(--neutral-12);
   --plum-5-hsl: var(--neutral-12-hsl);
   --plum-6: var(--neutral-15);
@@ -741,6 +761,7 @@
   --badge-border-width: 0px;
   --button-border-radius: 2147483647px;
   --button-border-radius-lg: 2147483647px;
+  --chat-markup-line-height: 1.375rem;
   --control-input-height-md: 40px;
   --control-input-height-sm: 32px;
   --control-item-height-md: 40px;
@@ -795,6 +816,10 @@
   --legacy-elevation-low: 0 1px 5px var(--opacity-black-20);
   --legacy-elevation-high: 0 2px 10px 0 var(--opacity-black-8);
   --legacy-elevation-border: 0 0 0 1px hsl(var(--primary-300-hsl)/0.3);
+  --custom-embed-spoiler-blur-radius: 44px;
+  --custom-scrollbar-scrollbar-width: 14px;
+  --custom-scrollbar-scrollbar-margin: 3px;
+  --custom-scrollbar-border-radius: calc(var(--custom-scrollbar-scrollbar-width)/2);
   --font-weight-extrabold: 800;
   --custom-guild-list-padding: var(--space-md);
   --custom-guild-list-width: calc(var(--guildbar-avatar-size) + var(--custom-guild-list-padding) * 2);
@@ -956,4 +981,7 @@
   --font-display-marketing-header:
     'ABC Ginto Discord Nord', 'gg sans', serif, 'Microsoft JhengHei', 微軟正黑體, 'Microsoft JhengHei UI',
     'Microsoft YaHei', 微軟雅黑, 宋体, SimSun, 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+.mana-badge-refresh {
+  --badge-border-width: 1px;
 }
