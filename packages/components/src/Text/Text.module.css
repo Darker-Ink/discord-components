@@ -1,0 +1,22 @@
+.defaultColor {
+  color: var(--text-default);
+}
+.lineClamp1 {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lineClamp2Plus {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.selectable {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  user-select: text;
+}
+.tabularNumbers {
+  font-variant-numeric: tabular-nums;
+}
