@@ -51,3 +51,5 @@ export * from './SearchBar';
 export * from './NumberInput';
 export * from './SelectInputField';
 export * from './Heading';
+export * from './CloseButton';
+export * from './PlayPauseButton';
