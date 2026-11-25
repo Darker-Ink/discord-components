@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import { ThemeTypes, type Theme } from '@discord-components/tokens';
+import { AppRoot } from './AppRoot';
 import { ControlsPanel, getDefaultProps } from './ControlsPanel';
 import styles from './Playground.module.css';
 import type { Collection, Story } from './types';
-import { useRootClasses } from './useRootClasses';
 import { parseOverrides, readLocation, writeLocation } from './url';
 
 const THEME_OPTIONS: { label: string; value: Theme }[] = [
@@ -87,8 +87,6 @@ export const Playground = ({ collections }: { collections: Collection[] }) => {
   const [storyId, setStoryId] = useState<string | null>(initialLocation.story);
   const [query, setQuery] = useState('');
 
-  useRootClasses(theme);
-
   const collection = collections.find((c) => c.id === collectionId) ?? collections[0];
   const story = collection?.groups.flatMap((g) => g.stories).find((s) => s.id === storyId) ?? null;
 
@@ -109,7 +107,7 @@ export const Playground = ({ collections }: { collections: Collection[] }) => {
   if (initialLocation.embed) {
     if (story == null) return null;
     const embedded = <EmbeddedStory story={story} overrides={initialLocation.overrides} />;
-    return Provider != null ? <Provider>{embedded}</Provider> : embedded;
+    return <AppRoot theme={theme}>{Provider != null ? <Provider>{embedded}</Provider> : embedded}</AppRoot>;
   }
 
   const view =
@@ -123,77 +121,79 @@ export const Playground = ({ collections }: { collections: Collection[] }) => {
     ) : null;
 
   return (
-    <div className={styles.root} data-testid="component-playground">
-      <div className={styles.group}>
-        {collections.map((c) => (
-          <button
-            key={c.id}
-            type="button"
-            title={`${c.name} Design System`}
-            aria-pressed={c.id === collection?.id}
-            onClick={() => {
-              setCollectionId(c.id);
-              setStoryId(null);
-            }}
-          >
-            {c.name}
-          </button>
-        ))}
-      </div>
-      <div className={styles.content}>
-        <div className={styles.header}>
-          <span>{collection?.name ?? 'Design System'}</span>
-          {story != null && <span> › {story.name}</span>}
-          <div className={styles.headerRight}>
-            <select value={theme} aria-label="Theme" onChange={(e) => setTheme(e.target.value as Theme)}>
-              {THEME_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
-            <select
-              value={controlsLayout}
-              aria-label="Controls layout"
-              onChange={(e) => setControlsLayout(e.target.value as ControlsLayoutType)}
+    <AppRoot theme={theme}>
+      <div className={styles.root} data-testid="component-playground">
+        <div className={styles.group}>
+          {collections.map((c) => (
+            <button
+              key={c.id}
+              type="button"
+              title={`${c.name} Design System`}
+              aria-pressed={c.id === collection?.id}
+              onClick={() => {
+                setCollectionId(c.id);
+                setStoryId(null);
+              }}
             >
-              <option value={ControlsLayout.RIGHT}>Right Side</option>
-              <option value={ControlsLayout.BOTTOM}>Bottom</option>
-              <option value={ControlsLayout.HIDDEN}>Hidden</option>
-            </select>
+              {c.name}
+            </button>
+          ))}
+        </div>
+        <div className={styles.content}>
+          <div className={styles.header}>
+            <span>{collection?.name ?? 'Design System'}</span>
+            {story != null && <span> › {story.name}</span>}
+            <div className={styles.headerRight}>
+              <select value={theme} aria-label="Theme" onChange={(e) => setTheme(e.target.value as Theme)}>
+                {THEME_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={controlsLayout}
+                aria-label="Controls layout"
+                onChange={(e) => setControlsLayout(e.target.value as ControlsLayoutType)}
+              >
+                <option value={ControlsLayout.RIGHT}>Right Side</option>
+                <option value={ControlsLayout.BOTTOM}>Bottom</option>
+                <option value={ControlsLayout.HIDDEN}>Hidden</option>
+              </select>
+            </div>
+          </div>
+          <div className={styles.page}>
+            <nav className={styles.sidebar}>
+              <input
+                type="search"
+                value={query}
+                placeholder="Search stories…"
+                aria-label="Search stories"
+                onChange={(e) => setQuery(e.target.value)}
+              />
+              {groups.length === 0 && <p>No results</p>}
+              {groups.map((group) => (
+                <section key={group.title}>
+                  <h3>{group.title}</h3>
+                  {group.stories.map((s) => (
+                    <button
+                      key={s.id}
+                      type="button"
+                      aria-current={s.id === story?.id}
+                      data-testid={`playground-story-${s.id}`}
+                      onClick={() => setStoryId(s.id)}
+                    >
+                      {s.name}
+                    </button>
+                  ))}
+                </section>
+              ))}
+            </nav>
+            <div className={styles.content}>{Provider != null ? <Provider>{view}</Provider> : view}</div>
           </div>
         </div>
-        <div className={styles.page}>
-          <nav className={styles.sidebar}>
-            <input
-              type="search"
-              value={query}
-              placeholder="Search stories…"
-              aria-label="Search stories"
-              onChange={(e) => setQuery(e.target.value)}
-            />
-            {groups.length === 0 && <p>No results</p>}
-            {groups.map((group) => (
-              <section key={group.title}>
-                <h3>{group.title}</h3>
-                {group.stories.map((s) => (
-                  <button
-                    key={s.id}
-                    type="button"
-                    aria-current={s.id === story?.id}
-                    data-testid={`playground-story-${s.id}`}
-                    onClick={() => setStoryId(s.id)}
-                  >
-                    {s.name}
-                  </button>
-                ))}
-              </section>
-            ))}
-          </nav>
-          <div className={styles.content}>{Provider != null ? <Provider>{view}</Provider> : view}</div>
-        </div>
       </div>
-    </div>
+    </AppRoot>
   );
 };
 
