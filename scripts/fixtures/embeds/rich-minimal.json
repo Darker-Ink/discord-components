@@ -1,0 +1,16 @@
+{
+  "story": "embed-fixtures",
+  "data": {
+    "embeds": [
+      { "type": "rich", "description": "Just a description, no color." },
+      { "type": "rich", "title": "White color is ignored", "color": 16777215 },
+      { "type": "rich", "title": "Title without a link", "description": "Black color", "color": 0 },
+      {
+        "type": "rich",
+        "author": { "name": "Author without link or icon" },
+        "footer": { "text": "Footer without icon" }
+      },
+      { "type": "rich", "title": "Timestamp only footer", "timestamp": "2024-12-25T08:30:00.000Z" }
+    ]
+  }
+}

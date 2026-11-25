@@ -1,0 +1,22 @@
+{
+  "story": "embed-fixtures",
+  "data": {
+    "embeds": [
+      {
+        "type": "image",
+        "url": "{{assets}}/landscape.png",
+        "thumbnail": {
+          "url": "{{assets}}/landscape.png",
+          "proxy_url": "{{assets}}/landscape.png",
+          "width": 1280,
+          "height": 720
+        }
+      },
+      {
+        "type": "image",
+        "url": "{{assets}}/small.png",
+        "thumbnail": { "url": "{{assets}}/small.png", "proxy_url": "{{assets}}/small.png", "width": 240, "height": 160 }
+      }
+    ]
+  }
+}

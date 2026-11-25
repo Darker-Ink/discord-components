@@ -1,0 +1,33 @@
+{
+  "story": "embed-fixtures",
+  "data": {
+    "embeds": [
+      {
+        "type": "rich",
+        "url": "https://discord.com",
+        "title": "Rich embed title",
+        "description": "A rich embed with every text part filled in.\nDescriptions keep their line breaks.",
+        "color": 5793266,
+        "provider": { "name": "Example Provider", "url": "https://example.com" },
+        "author": {
+          "name": "Embed Author",
+          "url": "https://example.com/author",
+          "icon_url": "{{assets}}/avatar.png",
+          "proxy_icon_url": "{{assets}}/avatar.png"
+        },
+        "fields": [
+          { "name": "Inline one", "value": "First value", "inline": true },
+          { "name": "Inline two", "value": "Second value", "inline": true },
+          { "name": "Inline three", "value": "Third value", "inline": true },
+          { "name": "Full width", "value": "A field that is not inline takes the whole row.", "inline": false }
+        ],
+        "footer": {
+          "text": "Footer text",
+          "icon_url": "{{assets}}/icon.png",
+          "proxy_icon_url": "{{assets}}/icon.png"
+        },
+        "timestamp": "2025-03-14T15:09:26.000Z"
+      }
+    ]
+  }
+}

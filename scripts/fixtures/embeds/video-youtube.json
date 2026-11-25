@@ -1,0 +1,23 @@
+{
+  "story": "embed-fixtures",
+  "data": {
+    "embeds": [
+      {
+        "type": "video",
+        "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        "title": "A YouTube video",
+        "description": "Provider videos show their thumbnail with a play pill until clicked.",
+        "color": 16711680,
+        "author": { "name": "Some Channel", "url": "https://www.youtube.com/@channel" },
+        "provider": { "name": "YouTube", "url": "https://www.youtube.com" },
+        "thumbnail": {
+          "url": "{{assets}}/landscape.png",
+          "proxy_url": "{{assets}}/landscape.png",
+          "width": 1280,
+          "height": 720
+        },
+        "video": { "url": "https://www.youtube.com/embed/dQw4w9WgXcQ", "width": 1280, "height": 720 }
+      }
+    ]
+  }
+}

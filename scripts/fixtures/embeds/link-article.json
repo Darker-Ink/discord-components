@@ -1,0 +1,36 @@
+{
+  "story": "embed-fixtures",
+  "data": {
+    "embeds": [
+      {
+        "type": "link",
+        "url": "https://example.com/post",
+        "title": "A link preview",
+        "description": "Link embeds show a small thumbnail beside the text.",
+        "provider": { "name": "Example" },
+        "thumbnail": {
+          "url": "{{assets}}/square.png",
+          "proxy_url": "{{assets}}/square.png",
+          "width": 512,
+          "height": 512
+        }
+      },
+      {
+        "type": "article",
+        "url": "https://example.com/article",
+        "title": "An article",
+        "description": "Articles show their thumbnail as a large image.",
+        "color": 1752220,
+        "provider": { "name": "Example News", "url": "https://example.com" },
+        "author": { "name": "Staff writer", "url": "https://example.com/staff" },
+        "thumbnail": { "url": "{{assets}}/wide.png", "proxy_url": "{{assets}}/wide.png", "width": 1600, "height": 400 }
+      },
+      {
+        "type": "link",
+        "url": "https://example.com/plain",
+        "title": "Link without media",
+        "description": "Only text."
+      }
+    ]
+  }
+}

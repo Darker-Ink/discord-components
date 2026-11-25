@@ -1,0 +1,9 @@
+{
+  "story": "embed-fixtures",
+  "data": {
+    "embeds": [
+      { "type": "rich", "title": "Embed with a remove button", "description": "Hover to show it.", "color": 3447003 }
+    ],
+    "props": { "canSuppressEmbeds": true }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "story": "embed-fixtures",
+  "data": {
+    "embeds": [
+      {
+        "type": "rich",
+        "url": "https://example.com/gallery",
+        "title": "Gallery",
+        "description": "Embeds sharing a url merge into one embed with a mosaic of their images.",
+        "color": 10181046,
+        "image": {
+          "url": "{{assets}}/landscape.png",
+          "proxy_url": "{{assets}}/landscape.png",
+          "width": 1280,
+          "height": 720
+        }
+      },
+      {
+        "type": "rich",
+        "url": "https://example.com/gallery",
+        "image": { "url": "{{assets}}/square.png", "proxy_url": "{{assets}}/square.png", "width": 512, "height": 512 }
+      },
+      {
+        "type": "rich",
+        "url": "https://example.com/gallery",
+        "image": {
+          "url": "{{assets}}/portrait.png",
+          "proxy_url": "{{assets}}/portrait.png",
+          "width": 600,
+          "height": 900
+        }
+      },
+      {
+        "type": "rich",
+        "url": "https://example.com/gallery",
+        "image": { "url": "{{assets}}/wide.png", "proxy_url": "{{assets}}/wide.png", "width": 1600, "height": 400 }
+      }
+    ]
+  }
+}

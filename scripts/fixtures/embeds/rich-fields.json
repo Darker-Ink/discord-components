@@ -1,0 +1,27 @@
+{
+  "story": "embed-fixtures",
+  "data": {
+    "embeds": [
+      {
+        "type": "rich",
+        "title": "Field grid",
+        "color": 15548997,
+        "fields": [
+          { "name": "A", "value": "inline", "inline": true },
+          { "name": "B", "value": "inline", "inline": true },
+          { "name": "C", "value": "not inline" },
+          { "name": "D", "value": "inline", "inline": true },
+          { "name": "E", "value": "inline", "inline": true },
+          { "name": "F", "value": "inline", "inline": true },
+          { "name": "G", "value": "inline, wraps to a new row", "inline": true },
+          {
+            "name": "H",
+            "value": "A long field value that wraps over several lines because it is much longer than the column it sits in.",
+            "inline": false
+          },
+          { "name": "I", "value": "inline", "inline": true }
+        ]
+      }
+    ]
+  }
+}

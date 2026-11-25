@@ -1,0 +1,48 @@
+{
+  "story": "embed-fixtures",
+  "data": {
+    "embeds": [
+      {
+        "type": "rich",
+        "title": "Rich embed with image and thumbnail",
+        "description": "The image spans the embed; the thumbnail sits top right.",
+        "color": 5763719,
+        "image": {
+          "url": "{{assets}}/landscape.png",
+          "proxy_url": "{{assets}}/landscape.png",
+          "width": 1280,
+          "height": 720
+        },
+        "thumbnail": {
+          "url": "{{assets}}/thumbnail.png",
+          "proxy_url": "{{assets}}/thumbnail.png",
+          "width": 160,
+          "height": 160
+        },
+        "footer": { "text": "With footer" }
+      },
+      {
+        "type": "rich",
+        "title": "Portrait image",
+        "color": 15105570,
+        "image": {
+          "url": "{{assets}}/portrait.png",
+          "proxy_url": "{{assets}}/portrait.png",
+          "width": 600,
+          "height": 900
+        }
+      },
+      {
+        "type": "rich",
+        "description": "Small image, narrower than 300px",
+        "image": {
+          "url": "{{assets}}/small.png",
+          "proxy_url": "{{assets}}/small.png",
+          "width": 240,
+          "height": 160,
+          "description": "Alt text for the small image"
+        }
+      }
+    ]
+  }
+}

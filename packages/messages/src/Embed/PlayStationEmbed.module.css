@@ -1,0 +1,6 @@
+.embedIFrame {
+  opacity: 0.8;
+}
+.embedIFrame:hover {
+  opacity: 1;
+}
