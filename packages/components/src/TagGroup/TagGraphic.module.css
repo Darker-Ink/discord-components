@@ -1,0 +1,38 @@
+.avatar,
+.image {
+  flex-shrink: 0;
+  height: 16px;
+  -o-object-fit: contain;
+  object-fit: contain;
+  width: 16px;
+}
+.avatar[data-size='sm'],
+.avatar[data-size='xs'],
+.image[data-size='sm'],
+.image[data-size='xs'] {
+  height: 12px;
+  width: 12px;
+}
+.avatar {
+  background-color: #000;
+  -o-object-fit: cover;
+  object-fit: cover;
+  overflow: hidden;
+}
+.avatar,
+.roleDot {
+  border-radius: var(--radius-round);
+}
+.roleDot {
+  border: 1px solid var(--text-strong);
+  box-sizing: border-box;
+  display: block;
+  flex-shrink: 0;
+  height: 16px;
+  width: 16px;
+}
+.roleDot[data-size='sm'],
+.roleDot[data-size='xs'] {
+  height: 12px;
+  width: 12px;
+}

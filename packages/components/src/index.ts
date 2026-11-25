@@ -44,3 +44,4 @@ export * from './KeyCombo';
 export * from './Graphic';
 export * from './Tooltip';
 export * from './RichTooltip';
+export * from './TagGroup';
