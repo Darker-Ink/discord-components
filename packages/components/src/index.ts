@@ -49,3 +49,4 @@ export * from './Tabs';
 export * from './TextInput';
 export * from './SearchBar';
 export * from './NumberInput';
+export * from './SelectInputField';

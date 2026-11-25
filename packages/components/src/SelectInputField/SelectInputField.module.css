@@ -1,0 +1,179 @@
+.selectFieldContainer {
+  align-self: flex-start;
+  max-width: 100%;
+}
+.selectFieldContainer.fullWidth {
+  align-self: unset;
+}
+.selectField {
+  align-items: stretch;
+  display: grid;
+  gap: 0;
+  grid-template-columns: 1fr auto auto;
+  grid-template-rows: 1fr;
+  width: 100%;
+}
+.selectField:not(.isInert).isFocused,
+.selectField:not(.isInert):focus-within {
+  outline: 2px solid var(--custom-input-focus-border-color);
+  outline-offset: -2px;
+}
+.selectField[data-read-only='true'] {
+  cursor: default !important;
+}
+.selectField[data-disabled='true'] {
+  cursor: not-allowed !important;
+  opacity: 0.5;
+}
+.selectButton,
+.selectFieldContent {
+  overflow: hidden;
+}
+.selectButton {
+  align-items: center;
+  background-color: transparent;
+  box-sizing: border-box;
+  display: flex;
+  gap: 4px;
+  max-width: 100%;
+  min-height: calc(var(--select-option-height) - 2px);
+  padding-inline-start: var(--space-4);
+  text-align: start;
+  width: 100%;
+}
+.selectButton.wrapTags {
+  flex-wrap: wrap;
+}
+.selectButton.multiSelect {
+  padding: 4px;
+}
+.multipleValues,
+.placeholder {
+  align-items: center;
+  box-sizing: border-box;
+  display: inline-flex;
+  justify-content: flex-start;
+  max-width: 100%;
+  padding-block: var(--space-xxs) var(--space-xxs);
+  padding-inline: var(--space-8) var(--space-4);
+}
+.placeholder {
+  color: var(--input-placeholder-text-default);
+}
+.multipleValues {
+  color: var(--text-strong);
+}
+.singleSelectOption {
+  flex-grow: 1;
+  padding-inline-start: var(--space-4);
+}
+.comboBoxInputScroller:not(.wrapTags) {
+  overflow: auto hidden;
+  scrollbar-width: none;
+}
+.comboBoxInputScroller:not(.wrapTags)::-webkit-scrollbar {
+  display: none;
+}
+.comboBoxInputContainer {
+  align-items: center;
+  display: flex;
+  gap: var(--space-4);
+  justify-content: flex-start;
+}
+.hasTags .comboBoxInputContainer {
+  padding: var(--space-4);
+}
+.wrapTags .comboBoxInputContainer {
+  flex-wrap: wrap;
+}
+.comboBoxInput {
+  max-height: 1lh;
+  min-height: calc(var(--select-option-height) - 2px);
+  min-width: min(12ch, 80%);
+  padding-inline: var(--space-12) var(--space-8);
+}
+.comboBoxInputScroller.hasTags .comboBoxInput {
+  margin: calc(var(--space-4) * -1) 0;
+  padding-inline-start: var(--space-8);
+}
+.chevronButton {
+  background-color: transparent;
+  line-height: 0;
+}
+.chevronButton,
+.loadingSpinner {
+  align-items: center;
+  color: var(--icon-strong);
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  padding-block: 0;
+  padding-inline: 0 var(--space-4);
+  width: 36px;
+}
+.isInert .chevronButton,
+.isInert .loadingSpinner {
+  cursor: not-allowed;
+}
+.chevronIcon {
+  display: block;
+  height: 20px;
+  transform: rotateX(0deg);
+  width: 20px;
+}
+.chevronIcon.isOpen {
+  transform: rotateX(180deg);
+}
+:global(.full-motion) .chevronIcon {
+  transition: transform 0.2s ease-out;
+}
+.clearButton {
+  background-color: transparent;
+  color: var(--icon-subtle);
+  line-height: 0;
+  padding: 0 var(--space-4);
+  transition: color 0.2s ease-out;
+}
+.clearButton:focus,
+.clearButton:hover {
+  color: var(--icon-strong);
+}
+.isInert .clearButton {
+  cursor: not-allowed;
+}
+.clearButton:last-child {
+  padding-block: 0;
+  padding-inline: 0 var(--space-4);
+  width: 36px;
+}
+.hiddenVisually {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  white-space: nowrap;
+  width: 1px;
+}
+.selectDropdown {
+  background-color: var(--background-surface-higher);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 2px 8px 0 var(--opacity-black-16);
+  box-sizing: border-box;
+  z-index: 10;
+}
+.variantUnsupportedPaymentModalCard {
+  --custom-input-background-color: var(--background-mod-subtle);
+  --custom-input-border-color: var(--border-subtle);
+  --custom-input-border-radius: var(--radius-md);
+}
+.variantUnsupportedPaymentModalCard .selectButton {
+  gap: var(--space-8);
+  min-height: 56px;
+  padding-block: var(--space-8);
+  padding-inline: var(--space-12) var(--space-4);
+}
