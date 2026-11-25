@@ -6,3 +6,4 @@ export * from './Theme';
 export * from './Spinner';
 export * from './FocusRing';
 export * from './Scroller';
+export * from './Card';
