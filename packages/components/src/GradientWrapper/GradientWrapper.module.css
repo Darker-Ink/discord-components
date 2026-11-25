@@ -1,0 +1,49 @@
+:where(.container) {
+  --custom-gradient-color-start: var(--blurple-50);
+  --custom-gradient-color-end: var(--blurple-50);
+  --custom-gradient-offset-bottom: 0%;
+  isolation: isolate;
+  position: relative;
+}
+:where(.container):before {
+  background: linear-gradient(
+    270deg in oklab,
+    var(--custom-gradient-color-end) 0,
+    var(--custom-gradient-color-start) 100%
+  );
+  border-radius: inherit;
+  bottom: var(--custom-gradient-offset-bottom);
+  content: '';
+  display: block;
+  left: 0;
+  -webkit-mask-image: radial-gradient(100% 100% at 50% 100%, var(--transparent) 60%, #000 100%);
+  mask-image: radial-gradient(100% 100% at 50% 100%, var(--transparent) 60%, #000 100%);
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: -1;
+}
+.purple {
+  --custom-gradient-color-start: var(--expressive-gradient-purple-start);
+  --custom-gradient-color-end: var(--expressive-gradient-purple-end);
+}
+.blue {
+  --custom-gradient-color-start: var(--expressive-gradient-blue-start);
+  --custom-gradient-color-end: var(--expressive-gradient-blue-end);
+}
+.green {
+  --custom-gradient-color-start: var(--expressive-gradient-green-start);
+  --custom-gradient-color-end: var(--expressive-gradient-green-end);
+}
+.pink {
+  --custom-gradient-color-start: var(--expressive-gradient-pink-start);
+  --custom-gradient-color-end: var(--expressive-gradient-pink-end);
+}
+.nitro-pink {
+  --custom-gradient-color-start: var(--expressive-gradient-nitro-pink-start);
+  --custom-gradient-color-end: var(--expressive-gradient-nitro-pink-end);
+}
+.nitro-green {
+  --custom-gradient-color-start: var(--expressive-gradient-nitro-green-start);
+  --custom-gradient-color-end: var(--expressive-gradient-nitro-green-end);
+}

@@ -53,3 +53,4 @@ export * from './SelectInputField';
 export * from './Heading';
 export * from './CloseButton';
 export * from './PlayPauseButton';
+export * from './GradientWrapper';
