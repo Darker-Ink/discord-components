@@ -39,6 +39,9 @@ const extractFn = (marker) => {
 const chunkJsUrl = extractFn('p.u=e=>{if(');
 const chunkCssUrl = extractFn('p.k=e=>{if(');
 
+// Modules the app root wrapper needs (accessibility, Mana and theme contexts, focus rings).
+const APP_ROOT_MODULES = ['844222', '116711', '86182', '559106'];
+
 // Playground configs and the webpack module that exposes them.
 const playgroundModules = { mana: '352611', payments: '582695', nitro: '582695', identity: '582695' };
 
@@ -151,20 +154,55 @@ ${stylesheets.map((href) => `<link rel="stylesheet" href="${href}">`).join('\n')
 </head>
 <body><div id="app-mount"><div id="root"></div></div>${body}</body></html>`;
 
-// 582128 is react, 379800 is react-dom/client.
+// 582128 is react, 379800 is react-dom/client. Everything rendered is wrapped in the providers
+// Discord's client puts around the app (see appRoot below).
 const helpers = `
 <script>
 window.ref = (() => {
   const { req, loadClosure } = window.__ref;
-  let React, ReactDOM, root;
+  let React, ReactDOM, root, lastElement = null, keyboardMode = false;
   const boot = async (ids) => {
-    await loadClosure(['582128', '379800', ...ids]);
+    await loadClosure(['582128', '379800', ...${JSON.stringify(APP_ROOT_MODULES)}, ...ids]);
     React = req('582128');
     ReactDOM = req('379800');
     root = ReactDOM.createRoot(document.getElementById('root'));
   };
-  const render = (element) => new Promise((resolve) => { root.render(element); setTimeout(resolve, 50); });
+  // Mirrors the client's root: accessibility settings (844222), the Mana context (116711) and the
+  // theme context (86182) for the current theme, and a focus ring scope (559106) over document.body.
+  const appRoot = (element) => {
+    const h = React.createElement;
+    const theme = document.documentElement.className.match(/theme-(\\w+)/)?.[1] ?? 'darker';
+    const a11y = req('844222').C;
+    const mana = req('116711');
+    const a11yValue = { ...a11y._currentValue, reducedMotion: { enabled: matchMedia('(prefers-reduced-motion: reduce)').matches, rawValue: 'auto' }, keyboardModeEnabled: keyboardMode, minToastDurationMs: 3000 };
+    const manaValue = { ...mana.VO._currentValue, theme, saturation: 1, experiments: { enabledExperiments: [] } };
+    return h(a11y.Provider, { value: a11yValue },
+      h(mana.GE, { value: manaValue },
+        h(req('86182').w, { theme },
+          h(req('559106').xp, { containerRef: { current: document.body } }, element))));
+  };
+  const rerender = () => root.render(appRoot(lastElement));
+  const render = (element) => new Promise((resolve) => { lastElement = element; rerender(); setTimeout(resolve, 50); });
   const setTheme = (theme) => { document.documentElement.className = document.documentElement.className.replace(/theme-\\w+/, 'theme-' + theme); };
+  // The client's keyboard mode: navigation keys switch focus rings on, a mouse press switches them off.
+  const NAV_KEYS = new Set(['Tab', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End', 'F6']);
+  const setKeyboardMode = (enabled) => {
+    if (enabled === keyboardMode || !root) return;
+    keyboardMode = enabled;
+    const rings = req('559106').oP;
+    rings.setRingsEnabled(enabled);
+    enabled ? rings.enableAnimationTracking() : rings.disableAnimationTracking();
+    document.documentElement.classList.toggle('keyboard-mode', enabled);
+    document.documentElement.classList.toggle('mouse-mode', !enabled);
+    rerender();
+  };
+  const isTextField = (el) => el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement || el?.isContentEditable;
+  window.addEventListener('keydown', (e) => {
+    if (e.ctrlKey || e.altKey || e.metaKey) return;
+    if (e.key !== 'Tab' && (e.shiftKey || isTextField(document.activeElement))) return;
+    if (NAV_KEYS.has(e.key)) setKeyboardMode(true);
+  }, true);
+  window.addEventListener('mousedown', () => setKeyboardMode(false), true);
   return { boot, render, setTheme, req, get React() { return React; } };
 })();
 </script>`;
