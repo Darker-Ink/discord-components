@@ -1,0 +1,36 @@
+.container {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  pointer-events: none;
+  position: relative;
+  width: 100%;
+}
+.aspect-ratio-21\/9 {
+  aspect-ratio: 21/9;
+}
+.aspect-ratio-16\/9 {
+  aspect-ratio: 16/9;
+}
+.aspect-ratio-6\/4 {
+  aspect-ratio: 6/4;
+}
+.aspect-ratio-2\/1 {
+  aspect-ratio: 2/1;
+}
+.aspect-ratio-1\/1 {
+  aspect-ratio: 1/1;
+}
+.image,
+.video {
+  max-height: 100%;
+  max-width: 100%;
+  position: absolute;
+}
+.lottie,
+.rive {
+  height: 100%;
+  width: 100%;
+}

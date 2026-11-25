@@ -40,3 +40,7 @@ export * from './Layer';
 export * from './FloatingLayer';
 export * from './Dialog';
 export * from './Popout';
+export * from './KeyCombo';
+export * from './Graphic';
+export * from './Tooltip';
+export * from './RichTooltip';

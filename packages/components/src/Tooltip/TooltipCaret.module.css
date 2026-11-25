@@ -1,0 +1,65 @@
+.caret {
+  --custom-caret-half-width: 8px;
+  --custom-caret-half-height: 7px;
+  --custom-caret-edge-offset-horizontal: 16px;
+  --custom-caret-edge-offset-vertical: 10px;
+  --custom-caret-horizontal-distance: 11px;
+  --custom-caret-border-overlap: 5px;
+  pointer-events: none;
+  position: absolute;
+  transform-origin: center;
+}
+.caret--bottom {
+  top: calc(100% - var(--custom-caret-border-overlap));
+  transform: rotate(0deg);
+}
+.caret--top {
+  bottom: calc(100% - var(--custom-caret-border-overlap));
+  transform: rotate(180deg);
+}
+.caret--left {
+  inset-inline-start: calc(var(--custom-caret-horizontal-distance) * -1);
+  transform: rotate(90deg);
+}
+.caret--right {
+  inset-inline-end: calc(var(--custom-caret-horizontal-distance) * -1);
+  transform: rotate(-90deg);
+}
+:is(.caret--top, .caret--bottom).caret--center {
+  inset-inline-start: 50%;
+  margin-inline-start: calc(var(--custom-caret-half-width) * -1);
+}
+:is(.caret--top, .caret--bottom).caret--start {
+  inset-inline-start: var(--custom-caret-edge-offset-horizontal);
+  margin-inline-start: calc(var(--custom-caret-half-width) * -1);
+}
+:is(.caret--top, .caret--bottom).caret--end {
+  inset-inline-end: var(--custom-caret-edge-offset-horizontal);
+  margin-inline-end: calc(var(--custom-caret-half-width) * -1);
+}
+:is(.caret--left, .caret--right).caret--center {
+  margin-top: calc(var(--custom-caret-half-height) * -1);
+  top: 50%;
+}
+:is(.caret--left, .caret--right).caret--start {
+  margin-top: calc(var(--custom-caret-half-height) * -1);
+  top: var(--custom-caret-edge-offset-vertical);
+}
+:is(.caret--left, .caret--right).caret--end {
+  bottom: var(--custom-caret-edge-offset-vertical);
+  margin-bottom: calc(var(--custom-caret-half-height) * -1);
+}
+.caret--custom {
+  --custom-caret-offset-x: 0;
+  --custom-caret-offset-y: 0;
+}
+.caret--bottom.caret--custom,
+.caret--top.caret--custom {
+  inset-inline-start: 50%;
+  margin-inline-start: calc(var(--custom-caret-offset-x) - var(--custom-caret-half-width));
+}
+.caret--left.caret--custom,
+.caret--right.caret--custom {
+  margin-top: calc(var(--custom-caret-offset-y) - var(--custom-caret-half-height));
+  top: 50%;
+}
