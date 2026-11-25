@@ -25,3 +25,4 @@ export * from './IndicatorDot';
 export * from './TextArea';
 export * from './Checkbox';
 export * from './IconButton';
+export * from './ToggleButton';
