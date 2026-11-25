@@ -104,7 +104,8 @@ export const TextAreaAutosize = ({
 }: TextAreaAutosizeProps) => {
   const elementRef = useRef<HTMLTextAreaElement | null>(null);
   const value = props.value as string | undefined;
-  const [height, setHeight] = useState(() => calculateHeight(elementRef.current, props.rows, maxRows, value));
+  // Nothing to measure before the textarea mounts.
+  const [height, setHeight] = useState<number | undefined>(undefined);
   useLayoutEffect(() => {
     setHeight(calculateHeight(elementRef.current, props.rows, maxRows, value));
   }, [props.rows, maxRows, value]);
