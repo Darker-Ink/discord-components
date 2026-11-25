@@ -24,3 +24,4 @@ export * from './Divider';
 export * from './IndicatorDot';
 export * from './TextArea';
 export * from './Checkbox';
+export * from './IconButton';
