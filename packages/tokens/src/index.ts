@@ -8,3 +8,4 @@ import './base.css';
 
 export { ThemeTypes, themeClassName, type Theme } from './theme-types';
 export { SemanticColors, type SemanticColor } from './colors';
+export * from './values';

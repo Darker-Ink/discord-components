@@ -1,0 +1,180 @@
+// Generates packages/tokens/src/values.ts: the data behind Discord's JS design tokens (module
+// `646514` in the build), for code that needs concrete values rather than CSS variables, e.g.
+// colors animated with react-spring or sizes measured in JS.
+//
+//   node scripts/extract-token-values.mjs
+//
+// The module is evaluated in node and its tables are read back: semantic colors per theme (with
+// experiment and high contrast overrides), raw colors, shadows and the spacing scales. Module
+// tokens and density-dependent space tokens are functions in the build; they are tabulated for
+// every density, with and without each experiment they check.
+import fs from 'node:fs';
+import path from 'node:path';
+import vm from 'node:vm';
+import * as prettier from 'prettier';
+
+const MODULES = path.resolve('.cache/modules');
+const OUT = path.resolve('packages/tokens/src/values.ts');
+const TOKENS_MODULE = '646514';
+const DENSITIES = ['compact', 'cozy', 'default'];
+
+const html = fs.readFileSync(path.resolve('.cache/app.html'), 'utf8');
+const build = html.match(/BUILD_NUMBER":"(\d+)"/)?.[1];
+
+const read = (id) => fs.readFileSync(path.join(MODULES, `${id}.js`), 'utf8').replace(/^\/\/.*\n/, '');
+
+// Capture the module's private tables right before it builds the public token object.
+const patchTokensModule = (src) => {
+  const marker = 'let P=';
+  const at = src.indexOf(marker);
+  if (at < 0) throw new Error('token module layout changed: marker not found');
+  return `${src.slice(0, at)}globalThis.__tokenTables={m,g,T,S,N,C,R,L,y,O};${src.slice(at)}`;
+};
+
+const cache = new Map();
+const req = (id) => {
+  id = String(id);
+  if (cache.has(id)) return cache.get(id).exports;
+  const module = { id, exports: {} };
+  cache.set(id, module);
+  let src = read(id);
+  if (id === TOKENS_MODULE) src = patchTokensModule(src);
+  vm.runInThisContext(src)(module, module.exports, req);
+  return module.exports;
+};
+req.d = (e, t, n) => {
+  for (const [k, get] of Object.entries(t ?? {})) if (!(k in e)) Object.defineProperty(e, k, { enumerable: true, get });
+  for (const [k, value] of Object.entries(n ?? {}))
+    if (!(k in e)) Object.defineProperty(e, k, { enumerable: true, value });
+};
+req.n = (e) => {
+  const getter = e && e.__esModule ? () => e.default : () => e;
+  req.d(getter, { a: getter });
+  return getter;
+};
+req.r = (e) => Object.defineProperty(e, '__esModule', { value: true });
+req.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t);
+req.nmd = (e) => ((e.paths = []), e.children || (e.children = []), e);
+req.g = globalThis;
+
+const tokens = Object.values(req(TOKENS_MODULE)).find((v) => v?.colors && v?.modules);
+const {
+  m: semantic,
+  g: raw,
+  T: experiments,
+  S: highContrast,
+  N: shadows,
+  C: spacing,
+  R: layout,
+  L: space,
+  y: spacePx,
+  O: modules,
+} = globalThis.__tokenTables;
+const THEMES = Object.values(tokens.themes);
+
+const pair = (entry) => {
+  const out = {};
+  if (entry.raw != null) out.raw = entry.raw;
+  if (entry.opacity != null) out.opacity = entry.opacity;
+  return out;
+};
+const byTheme = (value, fn) => Object.fromEntries(THEMES.filter((t) => t in value).map((t) => [t, fn(value[t])]));
+
+const semanticColors = Object.fromEntries(
+  Object.entries(semantic).map(([name, value]) => [name, { category: value.category, ...byTheme(value, pair) }]),
+);
+const experimentColors = Object.fromEntries(
+  Object.entries(experiments).map(([name, byExperiment]) => [
+    name,
+    Object.fromEntries(Object.entries(byExperiment).map(([exp, value]) => [exp, byTheme(value, pair)])),
+  ]),
+);
+const highContrastColors = Object.fromEntries(
+  Object.entries(highContrast).map(([name, value]) => [name, byTheme(value, pair)]),
+);
+
+// Experiment names a resolver may check, found in its source.
+const experimentsIn = (fn) => [
+  ...new Set(
+    [...fn.toString().matchAll(/"([a-z][a-z0-9-]*)"(?:===|:)/g)].map((m) => m[1]).filter((n) => !DENSITIES.includes(n)),
+  ),
+];
+const tabulate = (resolve) => {
+  const names = experimentsIn(resolve);
+  // `fallback` is what an unknown density gets, which isn't always the 'default' density's value.
+  const row = (enabledExperiments) => ({
+    ...Object.fromEntries(DENSITIES.map((density) => [density, resolve({ density, enabledExperiments })])),
+    fallback: resolve({ density: undefined, enabledExperiments }),
+  });
+  const out = { default: row([]) };
+  if (names.length) out.experiments = Object.fromEntries(names.map((name) => [name, row([name])]));
+  return out;
+};
+const moduleTokens = Object.fromEntries(
+  Object.entries(modules).map(([group, entries]) => [
+    group,
+    Object.fromEntries(Object.entries(entries).map(([name, token]) => [name, tabulate(token.resolve)])),
+  ]),
+);
+const spaceTokens = Object.fromEntries(
+  Object.entries(space).map(([name, token]) => [
+    name,
+    {
+      css: token.css,
+      ...Object.fromEntries(DENSITIES.map((d) => [d, token.resolve(d)])),
+      fallback: token.resolve(undefined),
+    },
+  ]),
+);
+
+const ts = (value) => JSON.stringify(value);
+const source = `// Generated by scripts/extract-token-values.mjs from Discord build ${build}. Do not edit by hand.
+/* eslint-disable */
+
+export type TokenTheme = ${THEMES.map((t) => `'${t}'`).join(' | ')};
+export type TokenDensity = ${DENSITIES.map((d) => `'${d}'`).join(' | ')};
+export interface ColorRef {
+  raw?: string;
+  opacity?: number;
+}
+export type DensityValues<T> = Record<TokenDensity, T> & { fallback?: T };
+export interface DensityTable<T> {
+  default: DensityValues<T>;
+  experiments?: Record<string, DensityValues<T>>;
+}
+export interface ShadowValue {
+  boxShadow: string;
+  filter: string;
+  nativeStyles: Record<string, unknown>;
+}
+
+export const SEMANTIC_COLORS = ${ts(semanticColors)} as const satisfies Record<string, { category: string } & Partial<Record<TokenTheme, ColorRef>>>;
+
+export const SEMANTIC_COLOR_EXPERIMENTS: Record<string, Record<string, Partial<Record<TokenTheme, ColorRef>>>> = ${ts(experimentColors)};
+
+export const SEMANTIC_COLOR_HIGH_CONTRAST: Record<string, Partial<Record<TokenTheme, ColorRef>>> = ${ts(highContrastColors)};
+
+export const RAW_COLORS = ${ts(raw)} as const satisfies Record<string, string>;
+
+export const SHADOWS = ${ts(shadows)} as const satisfies Record<string, Record<TokenTheme, ShadowValue>>;
+
+export const RADII = ${ts(tokens.radii)} as const;
+
+export const SPACING = ${ts(spacing)} as const;
+
+export const LAYOUT = ${ts(layout)} as const;
+
+export const SPACE = ${ts(spaceTokens)} as const satisfies Record<string, { css: string } & DensityValues<unknown>>;
+
+export const SPACE_PX = ${ts(spacePx)} as const;
+
+export const MODULES = ${ts(moduleTokens)} as const satisfies Record<string, Record<string, DensityTable<unknown>>>;
+`;
+
+const config = await prettier.resolveConfig(OUT);
+fs.writeFileSync(OUT, await prettier.format(source, { ...config, filepath: OUT }));
+console.log(
+  `wrote ${path.relative(process.cwd(), OUT)}: ${Object.keys(semanticColors).length} semantic colors, ` +
+    `${Object.keys(raw).length} raw colors, ${Object.keys(shadows).length} shadows, ` +
+    `${Object.keys(moduleTokens).length} module groups`,
+);
