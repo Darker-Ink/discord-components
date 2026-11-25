@@ -1,0 +1,18 @@
+.fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+.legend {
+  align-items: center;
+  display: flex;
+  gap: var(--space-8);
+}
+.description,
+.legend {
+  margin-bottom: var(--space-12);
+}
+.legend + .description {
+  margin-bottom: 0;
+  margin-top: -8px;
+}
