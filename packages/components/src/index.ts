@@ -57,3 +57,4 @@ export * from './GradientWrapper';
 export * from './Popover';
 export * from './VideoPopover';
 export * from './EditableText';
+export * from './Slider';
