@@ -13,7 +13,8 @@
     "@discord-components/tokens": "workspace:*",
     "@react-spring/web": "^10.1.2",
     "clsx": "^2.1.1",
-    "react-aria-components": "^1.22.1"
+    "react-aria-components": "^1.22.1",
+    "react-focus-rings": "^1.3.0"
   },
   "devDependencies": {
     "@types/react": "^19.3.3",
