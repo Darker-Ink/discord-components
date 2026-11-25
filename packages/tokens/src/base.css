@@ -132,6 +132,15 @@ code {
   font-size: 14px;
   line-height: 16px;
 }
+body,
+html {
+  height: 100%;
+  width: 100%;
+}
+body {
+  background: var(--background-base-lowest);
+  text-rendering: optimizeLegibility;
+}
 ::-moz-placeholder {
   font-family: var(--font-primary);
   text-rendering: optimizeLegibility;
