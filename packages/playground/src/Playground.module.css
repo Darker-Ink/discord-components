@@ -1,0 +1,125 @@
+.root {
+  --custom-playground-offset-top: calc(var(--custom-app-top-bar-height) + var(--space-4));
+  background: var(--background-base-lowest);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+  padding-top: var(--custom-playground-offset-top);
+}
+.group {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  width: var(--custom-guild-list-width);
+}
+.header {
+  border-inline-start: 1px solid var(--app-frame-border);
+  border-start-start-radius: var(--radius-md);
+  border-top: 1px solid var(--app-frame-border);
+}
+.headerDivider {
+  margin-inline-end: var(--space-12);
+}
+.headerRight {
+  gap: var(--space-4);
+  margin-inline-start: auto;
+  padding-inline-end: var(--space-8);
+}
+.copyLinkSplit,
+.headerRight {
+  align-items: center;
+  display: flex;
+}
+.sidebar {
+  background: var(--background-base-lowest);
+  border-inline-end: 1px solid var(--border-subtle);
+  border-inline-start: 1px solid var(--border-subtle);
+  overflow-y: auto;
+  padding: var(--space-16);
+  padding-bottom: var(--space-24);
+  width: 280px;
+}
+.deprecationNotice {
+  border-radius: 0;
+}
+.page {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: 1fr;
+  height: 100%;
+  min-height: 0;
+  padding-bottom: var(--custom-playground-offset-top);
+}
+.content,
+.main {
+  flex: 1;
+  height: 100%;
+  min-height: 0;
+}
+.main {
+  display: flex;
+}
+.mainRightLayout {
+  flex-direction: row;
+}
+.mainBottomLayout {
+  flex-direction: column;
+}
+.canvas {
+  background-color: var(--background-base-lower);
+  flex: 1;
+  overflow: auto;
+  padding: var(--space-24);
+  padding-bottom: var(--space-32);
+}
+.controls {
+  background: var(--background-base-lowest);
+  overflow-y: auto;
+  padding: var(--space-16);
+  padding-bottom: var(--space-24);
+}
+.controlsRight {
+  border-inline-start: 1px solid var(--border-subtle);
+  width: 300px;
+}
+.controlsBottom {
+  border-block-start: 1px solid var(--border-subtle);
+  max-height: 300px;
+}
+.controlsSection {
+  margin-bottom: 24px;
+}
+.controlHint {
+  margin-top: calc(var(--space-12) * -1);
+}
+.colorControl {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+.colorControlInput {
+  align-items: center;
+  display: flex;
+  gap: var(--space-8);
+}
+.colorSwatch {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: none;
+  cursor: pointer;
+  height: 40px;
+  width: 40px;
+}
+.storyContent {
+  background: var(--background-surface-high);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  contain: layout;
+  container-type: inline-size;
+  padding: var(--space-24);
+}
