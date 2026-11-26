@@ -6,3 +6,4 @@ export {
   type FloatingBoundary,
   type UseDropdownFloatingOptions,
 } from './useDropdownFloating';
+export { useStableCallback } from './useStableCallback';

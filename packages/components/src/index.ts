@@ -61,3 +61,4 @@ export * from './Slider';
 export * from './Toolbar';
 export * from './ModalStack';
 export * from './ModalRoot';
+export * from './InlineNotice';
