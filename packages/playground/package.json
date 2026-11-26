@@ -13,6 +13,7 @@
     "@discord-mana/icons": "workspace:*",
     "@discord-mana/markdown": "workspace:*",
     "@discord-mana/messages": "workspace:*",
+    "@discord-mana/slate": "workspace:*",
     "@discord-mana/tokens": "workspace:*",
     "@internationalized/date": "3.12.4",
     "chroma-js": "2.4.2",
