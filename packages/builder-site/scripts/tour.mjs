@@ -6,7 +6,7 @@
 // Screenshots go to test-results/tour (or TOUR_OUT).
 import fs from 'node:fs';
 import path from 'node:path';
-import { chromium } from 'playwright-core';
+import { chromium, devices } from 'playwright-core';
 
 const BASE = (process.argv[2] ?? 'http://localhost:5175').replace(/\/$/, '');
 const THEMES = (process.argv[3] ?? 'light,ash,dark,onyx').split(',');
@@ -71,7 +71,7 @@ for (const theme of THEMES) {
 
   // A button selected, its style popout open.
   await start(theme, /^Components v2 example/);
-  await page.locator('[data-builder-canvas]').getByText('Read the docs').click();
+  await page.locator('[data-builder-canvas]').getByText('View map').click();
   await settle();
   await shot(theme, '06-cv2-button-selected');
   await page.getByRole('button', { name: /^Style/ }).click();
@@ -80,7 +80,7 @@ for (const theme of THEMES) {
   await page.keyboard.press('Escape');
 
   // Dragging a gallery in from the palette.
-  const item = page.locator('nav[aria-label="Components"] button[aria-label^="Media gallery:"]');
+  const item = page.locator('nav[aria-label="Components"] button[aria-label="Media gallery"]');
   const from = await item.boundingBox();
   const container = await page.locator('[data-builder-kind="container"]').first().boundingBox();
   await page.mouse.move(from.x + 20, from.y + 10);
@@ -95,7 +95,7 @@ for (const theme of THEMES) {
 
   // A select menu's options.
   await start(theme, /^Blank message/);
-  await page.locator('nav[aria-label="Components"] button[aria-label^="Select menu:"]').click();
+  await page.locator('nav[aria-label="Components"] button[aria-label="Select menu"]').click();
   await settle(400);
   await page.getByRole('button', { name: 'Options and settings' }).click();
   await settle(400);
@@ -106,12 +106,58 @@ for (const theme of THEMES) {
   await page.getByRole('tab', { name: /^Send/ }).click();
   await settle();
   await shot(theme, '11-send');
+}
 
-  // Mobile.
-  await page.setViewportSize({ width: 390, height: 844 });
-  await start(theme);
-  await shot(theme, '12-mobile');
-  await page.setViewportSize({ width: 1440, height: 900 });
+// Phones (touch, device emulation): the key flows in every theme.
+for (const theme of THEMES) {
+  for (const [device, size] of [
+    ['iPhone 13', { width: 390, height: 844 }],
+    ['Pixel 7', { width: 360, height: 740 }],
+  ]) {
+    const context = await browser.newContext({ ...devices[device], viewport: size });
+    const phone = await context.newPage();
+    const name = `${theme}-phone-${size.width}`;
+    const snap = async (label) => {
+      await phone.screenshot({ path: path.join(OUT, `${name}-${label}.png`) });
+      console.log(`${name}-${label}.png`);
+    };
+    await phone.goto(BASE, { waitUntil: 'networkidle' });
+    await phone.evaluate((value) => {
+      localStorage.clear();
+      localStorage.setItem('discord-mana:theme', value);
+    }, theme);
+    await phone.reload({ waitUntil: 'networkidle' });
+    await phone.waitForTimeout(500);
+    await snap('01-message');
+    const embedBox = await phone.locator('[data-builder-kind="embed"]').first().boundingBox();
+    await phone
+      .locator('[data-builder-kind="embed"]')
+      .first()
+      .tap({ position: { x: embedBox.width - 6, y: 4 } });
+    await phone.waitForTimeout(400);
+    await snap('02-selected');
+    await phone.locator('[data-builder-kind="embed"] [aria-label="Embed title"]').tap();
+    await phone.waitForTimeout(400);
+    await snap('03-editing');
+    const tab = (label) =>
+      phone.locator('nav[aria-label="Message tools"]').getByRole('button', { name: new RegExp(`^${label}`) });
+    for (const [label, file] of [
+      ['Add', '04-add'],
+      ['Issues', '05-issues'],
+      ['JSON', '06-json'],
+      ['Send', '07-send'],
+    ]) {
+      await tab(label).tap();
+      await phone.waitForTimeout(450);
+      await snap(file);
+      await phone.getByRole('dialog').getByRole('button', { name: 'Close' }).tap();
+      await phone.waitForTimeout(250);
+    }
+    await phone.locator('header').getByRole('button', { name: 'More', exact: true }).tap();
+    await phone.waitForTimeout(350);
+    await snap('08-more');
+    await context.close();
+  }
 }
 
 await browser.close();

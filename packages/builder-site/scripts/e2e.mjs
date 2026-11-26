@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* global process, console, document, window, navigator, localStorage, fetch, URL */
+/* global process, console, document, window, navigator, localStorage, fetch, URL, getComputedStyle */
 // End-to-end checks of the builder site in a real browser, against a running server:
 //   pnpm --filter @discord-mana/builder-site dev
 //   CHROMIUM_PATH=/opt/pw-browsers/chromium node scripts/e2e.mjs http://localhost:5175
@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
-import { chromium } from 'playwright-core';
+import { chromium, devices } from 'playwright-core';
 
 const BASE = (process.argv[2] ?? 'http://localhost:5175').replace(/\/$/, '');
 const PLAYGROUND = process.env.OURS_URL ?? 'http://localhost:5173';
@@ -43,7 +43,7 @@ const settle = (ms = 250) => page.waitForTimeout(ms);
 // ---------------------------------------------------------------------------------------------------------
 // Helpers
 
-const paletteItem = (label) => page.locator(`nav[aria-label="Components"] button[aria-label^="${label}:"]`);
+const paletteItem = (label) => page.locator(`nav[aria-label="Components"] button[aria-label="${label}"]`);
 const embeds = () => page.locator('[data-builder-canvas] [data-builder-kind="embed"]');
 const fields = (embed) => embed.locator('[data-builder-kind="embedField"]');
 
@@ -70,7 +70,7 @@ const dragFromPalette = async (label, to) => drag(await center(paletteItem(label
 
 // Clicking the channel outside the message clears the selection.
 const deselect = async () => {
-  await page.getByRole('heading', { name: /^Build a message in/ }).click();
+  await page.getByRole('heading', { name: /^Welcome to #/ }).click();
   await settle();
 };
 
@@ -133,7 +133,7 @@ await step('builds a classic message by typing in place', async () => {
     ['Alpha', 'One'],
     ['Beta', 'Two'],
   ]) {
-    await first.getByRole('button', { name: 'Add field' }).click();
+    await first.getByRole('button', { name: 'Field', exact: true }).click();
     await settle(400);
     await page.keyboard.type(name, { delay: 5 });
     await typeInto(fields(first).last().locator('[aria-label="Field value"]'), value);
@@ -349,7 +349,7 @@ await step('sends to a (mocked) webhook and shows Discord’s answer', async () 
   assert.match(await page.locator('[data-builder-canvas]').innerText(), /E2E Hook/, 'previews the webhook’s name');
   const payload = await page.evaluate(() => JSON.parse(localStorage.getItem('discord-mana-builder:draft')));
   await page.getByRole('button', { name: 'Send', exact: true }).click();
-  await page.getByText('Message 323456789012345678 was posted').waitFor();
+  await page.getByText('Message 323456789012345678').waitFor();
   await shot('07-sent');
   assert.equal(requests.length, 1);
   const url = new URL(requests[0].url);
@@ -397,7 +397,7 @@ await step('keyboard: select, move with Alt+arrows, duplicate and delete', async
   await page.keyboard.press('Alt+ArrowUp');
   await settle();
   let names = await fields(embeds().nth(0)).locator('[aria-label="Field name"]').allInnerTexts();
-  assert.deepEqual(names, ['Checked as you type', 'Drag to reorder']);
+  assert.deepEqual(names, ['Fixed', 'New']);
   await page.keyboard.press('Control+d');
   await settle();
   assert.equal(await fields(embeds().nth(0)).count(), 3);
@@ -409,7 +409,7 @@ await step('keyboard: select, move with Alt+arrows, duplicate and delete', async
   await page.keyboard.press('Control+z');
   await settle();
   names = await fields(embeds().nth(0)).locator('[aria-label="Field name"]').allInnerTexts();
-  assert.deepEqual(names, ['Drag to reorder', 'Checked as you type']);
+  assert.deepEqual(names, ['New', 'Fixed']);
 });
 
 await step('keyboard drag: Space picks up, arrows move, Space drops', async () => {
@@ -421,12 +421,12 @@ await step('keyboard drag: Space picks up, arrows move, Space drops', async () =
   await settle();
   await shot('09-keyboard-drag');
   const announced = await page.locator('[data-live-announcer]').innerText();
-  assert.match(announced, /Picked up Field “Checked as you type”/);
+  assert.match(announced, /Picked up Field “Fixed”/);
   assert.match(announced, /goes first in Embed/);
   await page.keyboard.press('Space');
   await settle(400);
   const names = await fields(embeds().nth(0)).locator('[aria-label="Field name"]').allInnerTexts();
-  assert.deepEqual(names, ['Checked as you type', 'Drag to reorder']);
+  assert.deepEqual(names, ['Fixed', 'New']);
   await page.keyboard.press('Control+z');
 });
 
@@ -441,7 +441,7 @@ await step('context menu: right-click a node', async () => {
   await page.keyboard.press('Escape');
 });
 
-await step('every theme renders, desktop and mobile, without sideways scrolling', async () => {
+await step('every theme renders on desktop', async () => {
   for (const theme of THEMES) {
     await page.evaluate((value) => localStorage.setItem('discord-mana:theme', value), theme);
     await page.setViewportSize({ width: 1440, height: 900 });
@@ -453,14 +453,218 @@ await step('every theme renders, desktop and mobile, without sideways scrolling'
       .click({ position: { x: 6, y: 4 } });
     await settle(300);
     await shot(`theme-${theme}-desktop-selected`);
-    await page.setViewportSize({ width: 390, height: 844 });
-    await settle(400);
-    await shot(`theme-${theme}-mobile`);
-    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-    assert.ok(overflow <= 0, `${theme}: ${overflow}px of sideways scroll on a phone`);
   }
   await page.evaluate(() => localStorage.setItem('discord-mana:theme', 'dark'));
   await page.setViewportSize({ width: 1440, height: 900 });
+});
+
+// ---------------------------------------------------------------------------------------------------------
+// Phones: device emulation (touch, mobile viewport), one fresh context per device.
+
+/** A long press, then a drag, with real touch events (Playwright's touchscreen only taps). */
+const touchDrag = async (target, from, to) => {
+  const cdp = await target.context().newCDPSession(target);
+  const point = (x, y) => [{ x: Math.round(x), y: Math.round(y), radiusX: 4, radiusY: 4, force: 1, id: 0 }];
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: point(from.x, from.y) });
+  await target.waitForTimeout(550);
+  const steps = 16;
+  for (let index = 1; index <= steps; index++) {
+    const x = from.x + ((to.x - from.x) * index) / steps;
+    const y = from.y + ((to.y - from.y) * index) / steps;
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: point(x, y) });
+    await target.waitForTimeout(16);
+  }
+  await target.waitForTimeout(200);
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  await target.waitForTimeout(400);
+  await cdp.detach();
+};
+
+const PHONES = [
+  { name: 'iPhone 13', slug: 'iphone-13' },
+  { name: 'Pixel 7', slug: 'pixel-7' },
+];
+
+for (const phone of PHONES) {
+  const mobile = await browser.newContext({ ...devices[phone.name] });
+  await mobile.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: BASE });
+  const m = await mobile.newPage();
+  const mobileErrors = [];
+  m.on('pageerror', (error) => mobileErrors.push(error.message));
+  const mshot = (name) => m.screenshot({ path: path.join(OUT, `${phone.slug}-${name}.png`) });
+  const mEmbed = () => m.locator('[data-builder-canvas] [data-builder-kind="embed"]').first();
+  const mFields = () => mEmbed().locator('[data-builder-kind="embedField"]');
+  const fieldNames = () => mFields().locator('[aria-label="Field name"]').allInnerTexts();
+  const done = async () => {
+    const button = m.getByRole('button', { name: 'Done', exact: true });
+    if (await button.isVisible()) await button.tap();
+    await m.waitForTimeout(250);
+  };
+  const openSheet = async (name) => {
+    await m
+      .locator('nav[aria-label="Message tools"]')
+      .getByRole('button', { name: new RegExp(`^${name}`) })
+      .tap();
+    await m.waitForTimeout(400);
+  };
+  const closeSheet = async () => {
+    await m.getByRole('dialog').getByRole('button', { name: 'Close' }).tap();
+    await m.waitForTimeout(300);
+  };
+  const mJSON = async () => {
+    await openSheet('JSON');
+    const json = JSON.parse(await m.locator('textarea[aria-label="Message JSON"]').inputValue());
+    await closeSheet();
+    return json;
+  };
+
+  await m.goto(BASE, { waitUntil: 'networkidle' });
+  await m.evaluate(() => localStorage.clear());
+  await m.reload({ waitUntil: 'networkidle' });
+  await m.waitForTimeout(400);
+
+  await step(`${phone.name}: no sideways scroll, tab bar in reach`, async () => {
+    await mshot('01-start');
+    const overflow = await m.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    assert.ok(overflow <= 0, `${overflow}px of sideways scroll`);
+    for (const name of ['Add', 'Issues', 'JSON', 'Send']) {
+      const box = await m
+        .locator('nav[aria-label="Message tools"]')
+        .getByRole('button', { name: new RegExp(`^${name}`) })
+        .boundingBox();
+      assert.ok(box.height >= 44 && box.width >= 44, `${name} is ${box.width}x${box.height}`);
+    }
+  });
+
+  await step(`${phone.name}: tap a title and type`, async () => {
+    await mEmbed().locator('[aria-label="Embed title"]').tap();
+    await m.waitForTimeout(400);
+    await m.keyboard.press('End');
+    await m.keyboard.type(' hotfix', { delay: 10 });
+    await mshot('02-editing-title');
+    await m.locator('[data-builder-canvas]').locator('[aria-label="Message content"]').tap();
+    await m.waitForTimeout(300);
+    await done();
+    assert.equal((await mJSON()).embeds[0].title, 'Update 2.4 hotfix');
+  });
+
+  await step(`${phone.name}: add a field from the Add sheet`, async () => {
+    const box = await mEmbed().boundingBox();
+    await mEmbed().tap({ position: { x: box.width - 6, y: 4 } });
+    await m.waitForTimeout(300);
+    await openSheet('Add');
+    await mshot('03-add-sheet');
+    await m.getByRole('dialog').getByRole('button', { name: 'Field', exact: true }).tap();
+    await m.waitForTimeout(500);
+    await m.keyboard.type('Notes', { delay: 10 });
+    await m.waitForTimeout(200);
+    await mshot('04-field-added');
+    await done();
+    assert.deepEqual(await fieldNames(), ['New', 'Fixed', 'Notes']);
+  });
+
+  await step(`${phone.name}: long-press drag to reorder, and Move up in the bar`, async () => {
+    // Tap outside to finish editing; then a long press on the field's text picks it up.
+    const canvas = await m.locator('[data-builder-canvas]').boundingBox();
+    await m.locator('[data-builder-canvas]').tap({ position: { x: canvas.width / 2, y: canvas.height - 16 } });
+    await m.waitForTimeout(300);
+    assert.equal(await m.evaluate(() => document.activeElement?.isContentEditable ?? false), false);
+    const first = await mFields().nth(0).boundingBox();
+    const third = await mFields().nth(2).boundingBox();
+    await touchDrag(
+      m,
+      { x: third.x + third.width - 6, y: third.y + 6 },
+      { x: first.x + first.width / 2, y: first.y + 2 },
+    );
+    await done();
+    assert.deepEqual(await fieldNames(), ['Notes', 'New', 'Fixed']);
+    await mFields()
+      .nth(2)
+      .tap({ position: { x: 4, y: 4 } });
+    await m.waitForTimeout(300);
+    await mshot('05-dock');
+    const dock = m.getByRole('toolbar');
+    for (const button of await dock.getByRole('button').all()) {
+      const box = await button.boundingBox();
+      if (box != null && box.width > 0) assert.ok(box.height >= 36, `toolbar button ${box.height}px tall`);
+    }
+    await dock.getByRole('button', { name: 'Move up' }).tap();
+    await m.waitForTimeout(300);
+    assert.deepEqual(await fieldNames(), ['Notes', 'Fixed', 'New']);
+    await done();
+  });
+
+  await step(`${phone.name}: More menu, Issues and JSON sheets`, async () => {
+    await m.getByRole('button', { name: 'More', exact: true }).tap();
+    await m.waitForTimeout(300);
+    await mshot('06-more-menu');
+    assert.ok(await m.getByRole('menuitem', { name: 'Copy link' }).isVisible());
+    await m.keyboard.press('Escape');
+    await m
+      .getByRole('button', { name: 'More', exact: true })
+      .tap()
+      .catch(() => undefined);
+    await m.waitForTimeout(200);
+    await openSheet('Issues');
+    await mshot('07-issues-sheet');
+    await closeSheet();
+    await openSheet('JSON');
+    await mshot('08-json-sheet');
+    await closeSheet();
+  });
+
+  await step(`${phone.name}: send from the Send sheet to a mocked webhook`, async () => {
+    const requests = [];
+    await m.route('https://discord.com/api/webhooks/**', async (route) => {
+      const request = route.request();
+      if (request.method() === 'GET') {
+        await route.fulfill({
+          json: { id: '123456789012345678', name: 'Phone Hook', avatar: null, channel_id: '1', application_id: null },
+        });
+        return;
+      }
+      requests.push(request.postDataJSON());
+      await route.fulfill({ json: { id: '423456789012345678', channel_id: '1', content: '' } });
+    });
+    await openSheet('Send');
+    const input = m.locator('input[type="password"]').first();
+    await input.tap();
+    const fontSize = await input.evaluate((element) => parseFloat(getComputedStyle(element).fontSize));
+    assert.ok(fontSize >= 16, `inputs are ${fontSize}px (phones zoom in on smaller ones)`);
+    await input.fill(WEBHOOK);
+    await m.waitForTimeout(800);
+    await mshot('09-send-sheet');
+    await m.getByRole('dialog').getByRole('button', { name: 'Send', exact: true }).tap();
+    await m.getByText('Message 423456789012345678').waitFor();
+    await mshot('10-sent');
+    assert.equal(requests.length, 1);
+    assert.equal(requests[0].embeds[0].title, 'Update 2.4 hotfix');
+    await closeSheet();
+  });
+
+  await step(`${phone.name}: no page errors`, async () => {
+    assert.deepEqual(
+      mobileErrors.map((error) => error.slice(0, 300)),
+      [],
+    );
+  });
+  await mobile.close();
+}
+
+await step('a 360px phone and a 768px tablet don’t scroll sideways', async () => {
+  for (const [width, height, name] of [
+    [360, 740, 'phone-360'],
+    [768, 1024, 'tablet-768'],
+  ]) {
+    const context = await browser.newContext({ viewport: { width, height }, hasTouch: true, isMobile: width < 700 });
+    const tab = await context.newPage();
+    await tab.goto(BASE, { waitUntil: 'networkidle' });
+    await tab.waitForTimeout(400);
+    await tab.screenshot({ path: path.join(OUT, `${name}.png`) });
+    const overflow = await tab.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    assert.ok(overflow <= 0, `${name}: ${overflow}px of sideways scroll`);
+    await context.close();
+  }
 });
 
 await step('no page errors', async () => {
@@ -470,9 +674,6 @@ await step('no page errors', async () => {
   );
 });
 
-await browser.close();
-
-// The message built above, checked against <Message> pixel by pixel (needs the playground).
 const reachable = async (url) => {
   for (const host of ['localhost', '127.0.0.1', '[::1]']) {
     const ok = await fetch(url.replace('localhost', host)).then(
@@ -484,6 +685,68 @@ const reachable = async (url) => {
   return false;
 };
 const playgroundUp = await reachable(PLAYGROUND);
+
+// The playground's "Tag builder" story: a MessageBuilder restricted to text in one container.
+if (playgroundUp) {
+  await step('restrictions: a tag builder offers only what it allows, and removes what it doesn’t', async () => {
+    const context = await browser.newContext({ viewport: { width: 1300, height: 800 } });
+    const tag = await context.newPage();
+    await tag.goto(`${PLAYGROUND}/?embed&collection=messages&story=builder-tag&theme=darker`, {
+      waitUntil: 'networkidle',
+    });
+    await tag.waitForTimeout(500);
+    const palette = await tag
+      .locator('nav[aria-label="Components"] button')
+      .evaluateAll((buttons) => buttons.map((button) => button.getAttribute('aria-label')));
+    assert.deepEqual(palette, ['Container', 'Text', 'Separator']);
+    assert.equal(await tag.getByRole('radiogroup', { name: 'Message type' }).count(), 0, 'no mode switch');
+    await tag.getByRole('tab', { name: /^JSON/ }).click();
+    await tag.waitForTimeout(200);
+    const disallowed = {
+      flags: 1 << 15,
+      username: 'Someone else',
+      components: [
+        {
+          type: 17,
+          components: [
+            { type: 10, content: 'Allowed text' },
+            { type: 12, items: [{ media: { url: 'https://example.com/a.png' } }] },
+            { type: 1, components: [{ type: 2, style: 1, label: 'Nope', custom_id: 'nope' }] },
+          ],
+        },
+        { type: 17, components: [{ type: 10, content: 'A second container' }] },
+      ],
+    };
+    await tag.locator('textarea[aria-label="Message JSON"]').fill(JSON.stringify(disallowed));
+    await tag.waitForTimeout(600);
+    await tag.getByRole('tab', { name: /^Issues/ }).click();
+    await tag.waitForTimeout(300);
+    await tag.screenshot({ path: path.join(OUT, 'tag-builder-restricted.png') });
+    assert.match(await tag.getByText(/aren’t allowed here/).innerText(), /\d+ parts aren’t allowed here/);
+    await tag.getByRole('button', { name: 'Remove', exact: true }).click();
+    await tag.waitForTimeout(400);
+    await tag.screenshot({ path: path.join(OUT, 'tag-builder-cleaned.png') });
+    assert.equal(await tag.getByText(/allowed here/).count(), 0);
+    await tag.getByRole('tab', { name: /^JSON/ }).click();
+    const cleaned = JSON.parse(await tag.locator('textarea[aria-label="Message JSON"]').inputValue());
+    assert.equal(cleaned.username, undefined);
+    // One container is allowed: the gallery and buttons go, the second container's text is kept outside it.
+    assert.deepEqual(
+      cleaned.components.map((component) => component.type),
+      [17, 10],
+    );
+    assert.deepEqual(
+      cleaned.components[0].components.map((component) => component.type),
+      [10],
+    );
+    await context.close();
+  });
+}
+
+await browser.close();
+
+// The message built above, checked against <Message> pixel by pixel (needs the playground).
+
 if (playgroundUp && exported != null && fs.existsSync(path.join(OUT, 'built-cv2.json'))) {
   await step('the built message renders exactly like <Message> (all themes)', async () => {
     const output = execFileSync(
