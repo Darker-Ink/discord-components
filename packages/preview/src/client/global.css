@@ -10,7 +10,7 @@ body {
 html[data-page='viewer'] body {
   background: var(--background-base-lower);
 }
-html[data-page='home'] body {
+html[data-page='site'] body {
   background: var(--background-base-lowest);
 }
 /* An iframe whose color scheme differs from its parent's gets an opaque backdrop, so reset it too. */

@@ -15,7 +15,7 @@ const readStored = (): PreviewTheme | null => {
 const systemTheme = (): PreviewTheme => (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
 
 /** The home page's theme: the visitor's last pick, else their OS preference. */
-export const useHomeTheme = () => {
+export const useSiteTheme = () => {
   const [theme, setThemeState] = useState<PreviewTheme>(() => readStored() ?? systemTheme());
   const setTheme = useCallback((next: PreviewTheme) => {
     setThemeState(next);
