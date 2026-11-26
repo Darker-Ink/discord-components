@@ -247,6 +247,10 @@ export const ChannelTextArea = ({
           [styles.error]: error != null,
         })}
       >
+        {inline || flush || guildId == null || type !== ChatInputTypes.NORMAL ? null : (
+          // The new member action bar's slot (empty for members).
+          <div className={styles.floatingBars} />
+        )}
         <div
           ref={scrollerRef}
           className={clsx(innerClassName, styles.scrollableContainer, {

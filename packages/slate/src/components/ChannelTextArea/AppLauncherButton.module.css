@@ -1,0 +1,119 @@
+.buttonContainer {
+  border-radius: 8px;
+  margin-top: unset;
+  transition-duration: 0.2s;
+}
+.buttonContainer:hover {
+  background-color: var(--interactive-background-selected);
+}
+.button {
+  align-items: center;
+  background: unset;
+  border: unset;
+  border-radius: 8px;
+  color: var(--interactive-text-default);
+  cursor: pointer;
+  display: flex;
+  height: auto;
+  justify-content: center;
+  min-height: var(--space-32);
+  min-width: var(--space-32);
+  width: unset;
+}
+.button:hover {
+  color: var(--interactive-text-active);
+}
+.button:active {
+  color: var(--interactive-text-active);
+}
+.buttonActive {
+  color: var(--interactive-text-active);
+}
+.channelAppLauncher {
+  align-content: flex-end;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+.hiddenAppLauncherAnchor {
+  height: 0;
+  width: 0;
+}
+.entrypointAnimation {
+  height: 44px;
+  width: 44px;
+}
+.entrypointAnimation .buttonContainer:hover {
+  background-color: transparent;
+}
+.animationGlow {
+  bottom: -44px;
+  height: 132px;
+  inset-inline-start: -32px;
+  width: 108px;
+}
+.animationTrinkets {
+  bottom: -24px;
+  height: 100px;
+  inset-inline-start: -24px;
+  width: 100px;
+}
+.channelAppLauncherButtonPopoutIconContainer {
+  border-radius: 8px;
+  outline: 2px solid var(--brand-500);
+  overflow: hidden;
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+}
+:global(.full-motion) .channelAppLauncherButtonPopoutIcon {
+  animation: channelAppLauncherButtonPopoutIconAnimation 3s;
+  animation-delay: 10ms;
+  transform: translateY(-100%);
+}
+@keyframes channelAppLauncherButtonPopoutIconAnimation {
+  0% {
+    transform: translateY(-100%);
+  }
+  6% {
+    transform: translateY(0);
+  }
+  94% {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+.channelAppLauncherButtonPopoutIconShimmerContainer {
+  inset-inline-end: 0;
+  position: absolute;
+  top: 0;
+}
+.channelAppLauncherButtonPopoutIconShimmer {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  margin-top: auto;
+  transform: translateX(-100%);
+}
+:global(.full-motion) .channelAppLauncherButtonPopoutIconShimmer {
+  animation: channelAppLauncherButtonPopoutIconShimmerAnimation 3s;
+}
+@keyframes channelAppLauncherButtonPopoutIconShimmerAnimation {
+  0% {
+    transform: translateX(-100%);
+  }
+  10% {
+    transform: translateX(-100%);
+  }
+  22% {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}

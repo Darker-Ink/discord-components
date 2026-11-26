@@ -20,8 +20,10 @@ import buttonStyles from './ChannelTextAreaButton.module.css';
 import styles from './ChannelTextArea.module.css';
 import emojiStyles from './EmojiButton.module.css';
 import giftStyles from './GiftButton.module.css';
+import appLauncherStyles from './AppLauncherButton.module.css';
 import lottieStyles from './LottieIcon.module.css';
 import sendStyles from './sendButton.module.css';
+import appsAnimation from './lottie/apps.json';
 import gifAnimation from './lottie/gif.json';
 import giftAnimation from './lottie/gift.json';
 import stickerAnimation from './lottie/sticker.json';
@@ -119,11 +121,23 @@ export const LottieIcon = ({
 
 LottieIcon.displayName = 'LottieIcon';
 
-const useLottieButton = (animationData: object) => {
+const APP_LAUNCHER_MARKERS: Record<string, LottieMarker> = {
+  hover: { name: 'hover', start: 0, duration: 59 },
+  click: { name: 'click', start: 68, duration: 26 },
+};
+
+// The expression picker's id, which the picker buttons point `aria-controls` at.
+let pickerCount = 0;
+const usePickerId = () => {
+  const [id] = useState(() => `uid_${++pickerCount}`);
+  return id;
+};
+
+const useLottieButton = (animationData: object, markers: Record<string, LottieMarker> = HOVER_MARKERS) => {
   const ref = useRef<LottieIconHandle>(null);
   const Component = useCallback(
-    () => <LottieIcon ref={ref} animationData={animationData} markers={HOVER_MARKERS} />,
-    [animationData],
+    () => <LottieIcon ref={ref} animationData={animationData} markers={markers} />,
+    [animationData, markers],
   );
   return {
     Component,
@@ -160,6 +174,7 @@ export interface ChannelTextAreaButtonProps {
   'aria-expanded'?: boolean;
   'aria-haspopup'?: React.AriaAttributes['aria-haspopup'];
   'aria-controls'?: string;
+  'aria-keyshortcuts'?: string;
 }
 
 /** A chat bar button (GIF, sticker, gift, send): a clickable whose icon scales in. */
@@ -177,8 +192,13 @@ export const ChannelTextAreaButton = memo(
     onDoubleClick,
     onMouseEnter,
     onMouseLeave,
-    ...aria
-  }: ChannelTextAreaButtonProps) => {
+    'aria-label': ariaLabel,
+    'aria-expanded': ariaExpanded,
+    'aria-haspopup': ariaHasPopup,
+    'aria-controls': ariaControls,
+    'aria-keyshortcuts': ariaKeyShortcuts,
+    // Only the listed props reach the element (a wrapping tooltip's aria-describedby doesn't, like the client).
+  }: ChannelTextAreaButtonProps & Record<string, unknown>) => {
     const transition = useTransition(children != null, {
       ...ICON_TRANSITION,
       keys: (shown: boolean) => (shown ? 'children' : 'icon'),
@@ -186,7 +206,11 @@ export const ChannelTextAreaButton = memo(
     return (
       <Clickable
         innerRef={ref}
-        {...aria}
+        aria-label={ariaLabel}
+        aria-expanded={ariaExpanded}
+        aria-haspopup={ariaHasPopup}
+        aria-controls={ariaControls}
+        aria-keyshortcuts={ariaKeyShortcuts}
         aria-disabled={disabled}
         tabIndex={disabled ? -1 : 0}
         className={clsx(className, buttonStyles.button, {
@@ -303,6 +327,12 @@ export const AttachButton = ({
   <>
     <div className={attachStyles.uploadInput}>
       <input
+        className="file-input"
+        tabIndex={-1}
+        multiple
+        accept=""
+        aria-hidden
+        type="file"
         style={{
           position: 'absolute',
           top: 0,
@@ -313,11 +343,6 @@ export const AttachButton = ({
           cursor: 'pointer',
           fontSize: 0,
         }}
-        className="file-input"
-        type="file"
-        multiple
-        tabIndex={-1}
-        aria-hidden
       />
     </div>
     <div className={attachStyles.attachWrapper}>
@@ -326,6 +351,7 @@ export const AttachButton = ({
         childClassName={attachStyles.attachButtonInner}
         isActive={false}
         aria-label={ariaLabel}
+        aria-expanded={false}
         aria-haspopup="menu"
         onClick={onClick}
       >
@@ -340,16 +366,20 @@ AttachButton.displayName = 'AttachButton';
 const LottieButton = ({
   animationData,
   label,
+  tooltip,
   className,
   onClick,
 }: {
   animationData: object;
   label: string;
+  /** The GIF button carries a tooltip that only shows after a GIF is favourited. */
+  tooltip?: string;
   className?: string;
   onClick?: () => void;
 }) => {
   const { Component, events, play } = useLottieButton(animationData);
-  return (
+  const pickerId = usePickerId();
+  const button = (
     <div className={clsx(EXPRESSION_PICKER_BUTTON, styles.buttonContainer)}>
       <ChannelTextAreaButton
         className={clsx(styles.button, className)}
@@ -362,10 +392,18 @@ const LottieButton = ({
         aria-label={label}
         aria-expanded={false}
         aria-haspopup="dialog"
+        aria-controls={pickerId}
       >
         <Component />
       </ChannelTextAreaButton>
     </div>
+  );
+  return tooltip != null ? (
+    <Tooltip text={tooltip} shouldShow={false}>
+      {button}
+    </Tooltip>
+  ) : (
+    button
   );
 };
 
@@ -381,7 +419,7 @@ const GiftButton = ({ onClick }: { onClick?: () => void }) => {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <Tooltip ariaHidden={false} text="Upgrade your friends! Gift them awesome chat perks with Nitro.">
+      <Tooltip text="Upgrade your friends! Gift them awesome chat perks with Nitro.">
         <ChannelTextAreaButton
           className={styles.button}
           isActive={false}
@@ -418,7 +456,36 @@ export interface ChannelTextAreaButtonsProps {
   showSubmitButton?: boolean;
   /** False collapses the GIF and sticker buttons (narrow chat bars). */
   showAllButtons?: boolean;
+  /** The Apps button (app commands and activities) for inputs with commands. */
+  showAppLauncher?: boolean;
+  onAppLauncherClick?: () => void;
 }
+
+/** The Apps button: opens the app launcher. */
+export const AppLauncherButton = ({ onClick }: { onClick?: () => void }) => {
+  const { Component, events, play } = useLottieButton(appsAnimation, APP_LAUNCHER_MARKERS);
+  return (
+    <div className={clsx(appLauncherStyles.buttonContainer, 'app-launcher-entrypoint')}>
+      <Clickable
+        tabIndex={0}
+        className={appLauncherStyles.button}
+        onClick={() => {
+          onClick?.();
+          play();
+        }}
+        aria-label="Apps"
+        aria-expanded={false}
+        aria-haspopup="dialog"
+        focusProps={{ offset: { top: 4, bottom: 4, left: -4, right: -4 } }}
+        {...events}
+      >
+        <Component />
+      </Clickable>
+    </div>
+  );
+};
+
+AppLauncherButton.displayName = 'AppLauncherButton';
 
 /** The buttons right of the input: gift, GIF, sticker, emoji and send, as the input type allows. */
 export const ChannelTextAreaButtons = memo(
@@ -434,13 +501,22 @@ export const ChannelTextAreaButtons = memo(
     showGiftButton = true,
     showSubmitButton = false,
     showAllButtons = true,
+    showAppLauncher = true,
+    onAppLauncherClick,
   }: ChannelTextAreaButtonsProps) => {
+    const emojiPickerId = usePickerId();
     const buttons: ReactNode[] = [];
     if (type.gifts?.button != null && showGiftButton && !disabled)
       buttons.push(<GiftButton key="gift" onClick={onGiftClick} />);
     if (type.gifs?.button != null && showAllButtons && !disabled)
       buttons.push(
-        <LottieButton key="gif" animationData={gifAnimation} label="Open GIF picker" onClick={onGifClick} />,
+        <LottieButton
+          key="gif"
+          animationData={gifAnimation}
+          label="Open GIF picker"
+          tooltip="Send GIF"
+          onClick={onGifClick}
+        />,
       );
     if (type.stickers?.button != null && showAllButtons && !disabled)
       buttons.push(
@@ -455,9 +531,16 @@ export const ChannelTextAreaButtons = memo(
     if (type.emojis?.button != null && !disabled)
       buttons.push(
         <div key="emoji" className={clsx(EXPRESSION_PICKER_BUTTON, styles.buttonContainer)}>
-          <EmojiButton className={styles.emojiButton} onClick={onEmojiClick} active={false} />
+          <EmojiButton
+            className={styles.emojiButton}
+            onClick={onEmojiClick}
+            active={false}
+            aria-controls={emojiPickerId}
+          />
         </div>,
       );
+    if (showAppLauncher && type.commands?.enabled)
+      buttons.push(<AppLauncherButton key="appLauncher" onClick={onAppLauncherClick} />);
     if (type.submit?.button != null && (type.submit.ignorePreference || showSubmitButton))
       buttons.push(<SendButton key="submit" onClick={onSubmit} disabled={disabled || isEmpty} />);
     return buttons.length === 0 ? null : <div className={styles.buttons}>{buttons}</div>;

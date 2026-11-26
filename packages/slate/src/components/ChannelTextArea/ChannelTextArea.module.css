@@ -110,6 +110,7 @@
   height: var(--custom-channel-textarea-text-area-height);
 }
 .flushContainer {
+  composes: inlineContainer;
   background: unset;
   border: none;
 }
@@ -137,6 +138,7 @@
   min-height: calc(var(--custom-channel-textarea-text-area-height) * 2);
 }
 .innerDisabled {
+  composes: inner;
   cursor: not-allowed;
 }
 .sansAttachButton {
@@ -235,6 +237,7 @@
   }
 }
 .textAreaDisabled {
+  composes: textArea;
   pointer-events: none;
 }
 .buttons {
@@ -263,6 +266,7 @@
   position: relative;
 }
 .emojiButton {
+  composes: button;
   border-radius: 8px;
   transition-duration: 0.2s;
 }
@@ -380,5 +384,6 @@
   background-color: CanvasText;
 }
 .announcementScrollableContainer {
+  composes: scrollableContainer;
   max-height: calc(var(--custom-channel-textarea-text-area-max-height) + 80px);
 }
