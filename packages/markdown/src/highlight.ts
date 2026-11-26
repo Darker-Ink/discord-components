@@ -1,9 +1,9 @@
-import { GRAMMAR_PACKAGES } from './grammars';
-
 // Code block syntax highlighting. The client highlights with Arborium (tree-sitter grammars compiled to
 // WebAssembly), loading each language's grammar the first time a code block uses it. The same library and its
-// grammars are npm packages (`@arborium/arborium`, `@arborium/<language>`) this package depends on; each grammar
-// is a lazy chunk of the app's bundle. Apps can plug in another engine with `setCodeHighlighter`.
+// grammars are npm packages (`@arborium/arborium`, `@arborium/<language>`); apps install the ones they want and
+// import `@discord-mana/markdown/languages/<language>` (or `/languages/all`), which registers them here. Each
+// grammar is a lazy chunk of the app's bundle. Without a registered language, its code stays plain text. Apps can
+// plug in another engine with `setCodeHighlighter`.
 
 export const HIGHLIGHT_LANGUAGES = new Set([
   'ada',
@@ -271,42 +271,80 @@ export interface CodeHighlighter {
   loadGrammar: (language: string) => Promise<CodeGrammar | null>;
 }
 
+/** An Arborium grammar package's module (`@arborium/<language>/grammar.js`). */
+export interface CodeGrammarModule {
+  default: (options: { module_or_path: unknown }) => Promise<unknown>;
+  language_id: () => string;
+  injection_languages: () => string[];
+}
+
+/** How to load one language: its grammar module and the URL of its WebAssembly. */
+export interface CodeLanguageLoader {
+  js: () => Promise<CodeGrammarModule>;
+  wasm: () => URL;
+}
+
+/** Loads Arborium itself (`@arborium/arborium`, its host module and the host's WebAssembly). */
+export interface CodeHighlighterHost {
+  arborium: () => Promise<unknown>;
+  hostJs: () => Promise<unknown>;
+  hostWasm: () => URL;
+}
+
 interface ArboriumModule {
   setConfig: (config: Record<string, unknown>) => void;
   loadGrammar: (language: string) => Promise<{ highlight: (source: string) => string | Promise<string> } | null>;
 }
 
-const NO_CDN_ERROR = 'grammars only load from the installed @arborium packages';
-
+const languages = new Map<string, CodeLanguageLoader>();
+let host: CodeHighlighterHost | null = null;
 let arboriumModule: Promise<ArboriumModule> | null = null;
 
+const UNREGISTERED = 'language not registered';
+
 // Arborium's loader fetches its host and grammars from a CDN by default; every resolver points it at the
-// installed packages instead.
-const loadArborium = () =>
-  (arboriumModule ??= import('@arborium/arborium').then((module) => {
-    const arborium = module as unknown as ArboriumModule;
+// registered packages instead.
+const loadArborium = (registered: CodeHighlighterHost) =>
+  (arboriumModule ??= registered.arborium().then((module) => {
+    const arborium = module as ArboriumModule;
     arborium.setConfig({
       logger: { debug: () => {}, info: () => {}, warn: () => {}, error: () => {} },
-      resolveHostJs: () => import('@arborium/arborium/arborium_host.js'),
-      resolveHostWasm: () => fetch(new URL('@arborium/arborium/arborium_host_bg.wasm', import.meta.url)),
+      resolveHostJs: () => registered.hostJs(),
+      resolveHostWasm: () => fetch(registered.hostWasm()),
       resolveJs: ({ language }: { language: string }) => {
-        const grammar = GRAMMAR_PACKAGES[language];
-        return grammar != null ? grammar.js() : Promise.reject(new Error(NO_CDN_ERROR));
+        const loader = languages.get(language);
+        return loader != null ? loader.js() : Promise.reject(new Error(UNREGISTERED));
       },
       resolveWasm: ({ language }: { language: string }) => {
-        const grammar = GRAMMAR_PACKAGES[language];
-        return grammar != null ? fetch(grammar.wasm()) : Promise.reject(new Error(NO_CDN_ERROR));
+        const loader = languages.get(language);
+        return loader != null ? fetch(loader.wasm()) : Promise.reject(new Error(UNREGISTERED));
       },
     });
     return arborium;
   }));
 
-/** Highlights with `@arborium/arborium` and the grammar packages installed with this package. */
+/** Registers Arborium (done by the `languages/*` entries, which import it). */
+export const registerCodeHighlighterHost = (next: CodeHighlighterHost) => {
+  host ??= next;
+};
+
+/** Registers a language's Arborium grammar (done by `@discord-mana/markdown/languages/<language>`). */
+export const registerCodeLanguage = (name: string, loader: CodeLanguageLoader) => {
+  languages.set(name, loader);
+  // A code block may have looked the language up before it was registered.
+  grammars.delete(name);
+  for (const key of htmlCache.keys()) if (key.startsWith(`${name}\0`)) htmlCache.delete(key);
+};
+
+/** The languages registered for highlighting. */
+export const getRegisteredCodeLanguages = () => [...languages.keys()];
+
+/** Highlights with Arborium and the grammars registered through the `languages/*` entries. */
 export const arboriumHighlighter: CodeHighlighter = {
   loadGrammar: async (language) => {
-    if (GRAMMAR_PACKAGES[language] == null) return null;
+    if (host == null || !languages.has(language)) return null;
     try {
-      const arborium = await loadArborium();
+      const arborium = await loadArborium(host);
       const grammar = await arborium.loadGrammar(language);
       return grammar == null ? null : { highlightToHtml: (code) => grammar.highlight(code) };
     } catch {

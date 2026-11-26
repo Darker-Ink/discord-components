@@ -172,6 +172,25 @@ importers:
 
   packages/markdown:
     dependencies:
+      '@discord-mana/components':
+        specifier: workspace:*
+        version: link:../components
+      '@discord-mana/icons':
+        specifier: workspace:*
+        version: link:../icons
+      '@discord-mana/messages':
+        specifier: workspace:*
+        version: link:../messages
+      '@discord-mana/tokens':
+        specifier: workspace:*
+        version: link:../tokens
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      moment:
+        specifier: 2.30.1
+        version: 2.30.1
+    devDependencies:
       '@arborium/ada':
         specifier: 2.18.2
         version: 2.18.2
@@ -472,25 +491,6 @@ importers:
       '@arborium/zsh':
         specifier: 2.18.2
         version: 2.18.2
-      '@discord-mana/components':
-        specifier: workspace:*
-        version: link:../components
-      '@discord-mana/icons':
-        specifier: workspace:*
-        version: link:../icons
-      '@discord-mana/messages':
-        specifier: workspace:*
-        version: link:../messages
-      '@discord-mana/tokens':
-        specifier: workspace:*
-        version: link:../tokens
-      clsx:
-        specifier: ^2.1.1
-        version: 2.1.1
-      moment:
-        specifier: 2.30.1
-        version: 2.30.1
-    devDependencies:
       '@types/react':
         specifier: ^19.3.3
         version: 19.3.3
@@ -571,6 +571,306 @@ importers:
         specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
     devDependencies:
+      '@arborium/ada':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/agda':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/arborium':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/asciidoc':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/asm':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/awk':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/bash':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/batch':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/c':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/c-sharp':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/caddy':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/capnp':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/cedar':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/cedarschema':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/clojure':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/cmake':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/commonlisp':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/cpp':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/css':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/d':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/dart':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/devicetree':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/diff':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/dockerfile':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/dot':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/elisp':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/elixir':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/elm':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/erlang':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/fish':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/fsharp':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/gleam':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/glsl':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/go':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/graphql':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/groovy':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/haskell':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/hcl':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/hlsl':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/html':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/idris':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/ini':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/java':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/javascript':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/jinja2':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/jq':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/json':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/julia':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/kotlin':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/lean':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/lua':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/markdown':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/matlab':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/meson':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/ninja':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/nix':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/objc':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/ocaml':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/perl':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/php':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/postscript':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/powershell':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/prolog':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/python':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/query':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/r':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/rego':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/rescript':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/ron':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/ruby':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/rust':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/scala':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/scheme':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/scss':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/solidity':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/sparql':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/sql':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/ssh-config':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/starlark':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/styx':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/svelte':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/swift':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/textproto':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/thrift':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/tlaplus':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/toml':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/tsx':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/typescript':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/typst':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/verilog':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/vhdl':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/vim':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/vue':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/wit':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/x86asm':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/xml':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/yaml':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/yuri':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/zig':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/zsh':
+        specifier: 2.18.2
+        version: 2.18.2
       '@types/chroma-js':
         specifier: 2.4.4
         version: 2.4.4

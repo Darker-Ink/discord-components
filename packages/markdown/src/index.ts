@@ -37,10 +37,16 @@ export {
   HIGHLIGHT_LANGUAGES,
   HIGHLIGHT_LANGUAGE_ALIASES,
   arboriumHighlighter,
+  getRegisteredCodeLanguages,
   normalizeCodeLanguage,
+  registerCodeHighlighterHost,
+  registerCodeLanguage,
   setCodeHighlighter,
   type CodeGrammar,
+  type CodeGrammarModule,
   type CodeHighlighter,
+  type CodeHighlighterHost,
+  type CodeLanguageLoader,
 } from './highlight';
 export {
   CodeBlock,

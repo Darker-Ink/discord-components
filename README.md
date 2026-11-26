@@ -91,7 +91,26 @@ import { Markdown, parse } from '@discord-mana/markdown';
 parse('`code` and :tada:', { preset: 'embedDescription', rules: ['inlineCode', 'emoji'] }); // the AST
 ```
 
-Mentions, channels, roles, servers, slash commands and emoji images come from the same `resolvers` as `Message` (`MessageResolversContext`); unknown ones show what Discord shows (`@unknown-user`, `#unknown-channel`…). Clicks on mentions and links go to `onMarkdownInteraction` in `MessageActionsContext`. Code blocks are highlighted with Arborium like the client. Each language's grammar is an npm dependency (`@arborium/<language>`) that your bundler splits into its own chunk and loads the first time a code block uses it; nothing is fetched from a CDN (`setCodeHighlighter` swaps the engine).
+Mentions, channels, roles, servers, slash commands and emoji images come from the same `resolvers` as `Message` (`MessageResolversContext`); unknown ones show what Discord shows (`@unknown-user`, `#unknown-channel`…). Clicks on mentions and links go to `onMarkdownInteraction` in `MessageActionsContext`. Code blocks are highlighted with Arborium like the client, for the languages you enable (see below); `setCodeHighlighter` swaps in another engine.
+
+### Syntax highlighting
+
+The client highlights code blocks with Arborium (tree-sitter grammars compiled to WebAssembly). Grammars are optional peer dependencies, so nothing is installed or bundled until you pick languages. Install Arborium and the grammars you want, and import their entries once (e.g. next to your app's root):
+
+```bash
+npm i @arborium/arborium @arborium/rust @arborium/python
+```
+
+```ts
+import '@discord-mana/markdown/languages/rust';
+import '@discord-mana/markdown/languages/python';
+// or every language Discord highlights (installs about 180 MB of grammars):
+// import '@discord-mana/markdown/languages/all';
+```
+
+Each grammar becomes its own chunk that loads the first time a code block uses it (plain text shows meanwhile), and nothing is fetched from a CDN. Code in a language you haven't enabled stays plain text. Aliases work like in Discord (`js`, `ts`, `py`, `rs`, `sh`, `yml`, `c#`…) once their language is enabled.
+
+Languages: `ada`, `agda`, `asciidoc`, `asm`, `awk`, `bash`, `batch`, `c`, `c-sharp`, `caddy`, `capnp`, `cedar`, `cedarschema`, `clojure`, `cmake`, `commonlisp`, `cpp`, `css`, `d`, `dart`, `devicetree`, `diff`, `dockerfile`, `dot`, `elisp`, `elixir`, `elm`, `erlang`, `fish`, `fsharp`, `gleam`, `glsl`, `go`, `graphql`, `groovy`, `haskell`, `hcl`, `hlsl`, `html`, `idris`, `ini`, `java`, `javascript`, `jinja2`, `jq`, `json`, `julia`, `kotlin`, `lean`, `lua`, `markdown`, `matlab`, `meson`, `ninja`, `nix`, `objc`, `ocaml`, `perl`, `php`, `postscript`, `powershell`, `prolog`, `python`, `query`, `r`, `rego`, `rescript`, `ron`, `ruby`, `rust`, `scala`, `scheme`, `scss`, `solidity`, `sparql`, `sql`, `ssh-config`, `starlark`, `styx`, `svelte`, `swift`, `textproto`, `thrift`, `tlaplus`, `toml`, `tsx`, `typescript`, `typst`, `verilog`, `vhdl`, `vim`, `vue`, `wit`, `x86asm`, `xml`, `yaml`, `yuri`, `zig`, `zsh`. Discord also highlights `luau` and `ansi`: `luau` has no Arborium package (it stays plain), and ` ```ansi ` blocks need no grammar.
 
 ## Playground
 
