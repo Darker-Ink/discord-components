@@ -21,3 +21,9 @@ export {
   type ModalListContentProps,
   type ModalScrollbarType,
 } from './ModalContent';
+export {
+  LegacyModalCloseButton,
+  LegacyModalFooter,
+  LegacyModalHeader,
+  type LegacyModalCloseButtonProps,
+} from './ModalParts';

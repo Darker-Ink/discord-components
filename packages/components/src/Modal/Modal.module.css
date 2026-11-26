@@ -1,0 +1,417 @@
+.outerContainer {
+  align-items: center;
+  container: modal-container/inline-size;
+  height: 100vh;
+  justify-content: center;
+  padding: calc(var(--custom-app-top-bar-height) + var(--space-24)) var(--space-24);
+  pointer-events: none;
+  width: calc(100vw - var(--devtools-sidebar-width, 0px));
+}
+.container,
+.outerContainer {
+  box-sizing: border-box;
+  display: flex;
+  position: relative;
+}
+.container {
+  --custom-border-radius: var(--radius-md);
+  background: var(--background-surface-high);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--custom-border-radius);
+  box-shadow: var(--shadow-high);
+  color: var(--text-default);
+  flex-direction: column;
+  max-height: 100%;
+  pointer-events: auto;
+  width: 100%;
+}
+.exiting :global(.focus-rings-ring) {
+  visibility: hidden;
+}
+.padding-size-sm {
+  --custom-modal-padding: var(--space-24);
+  --custom-modal-padding-sm: var(--space-8);
+  --custom-modal-padding-md: var(--space-16);
+  --custom-modal-padding-top: var(--custom-modal-padding-sm);
+  --custom-modal-padding-bottom: var(--custom-modal-padding-md);
+}
+.padding-size-lg,
+.padding-size-sm {
+  padding-bottom: var(--custom-modal-padding-bottom);
+  padding-top: var(--custom-modal-padding-top);
+}
+.padding-size-lg {
+  --custom-modal-padding: var(--space-32);
+  --custom-modal-padding-sm: var(--space-16);
+  --custom-modal-padding-md: var(--space-16);
+  --custom-modal-padding-top: calc(var(--space-24) - var(--custom-modal-padding-md));
+  --custom-modal-padding-bottom: var(--custom-modal-padding-md);
+}
+.size-sm {
+  max-height: min(720px, 100%);
+  max-width: 400px;
+}
+.size-md {
+  max-height: min(800px, 100%);
+  max-width: 480px;
+}
+.maxHeightViewport {
+  max-height: 100%;
+}
+.size-lg {
+  max-width: 680px;
+}
+.size-xl {
+  max-width: 960px;
+}
+.size-xxl {
+  max-width: 1280px;
+}
+@container (min-width: 1080px) {
+  .size-xxl {
+    width: calc(80vw - var(--devtools-sidebar-width, 0));
+  }
+}
+@media (max-height: 550px) and (pointer: coarse), (max-width: 485px) {
+  .fullScreenOnMobile {
+    height: 100dvh;
+    padding: 0;
+  }
+}
+@media (max-height: 550px) and (pointer: coarse), (max-width: 485px) {
+  .fullScreenOnMobile .container {
+    --custom-border-radius: 0;
+    --custom-modal-padding-top: var(--custom-modal-padding-sm);
+    border: none;
+    height: 100%;
+    overflow-y: auto;
+  }
+}
+@media (max-height: 550px) and (pointer: coarse), (max-width: 485px) {
+  :global(.platform-linux) .fullScreenOnMobile .container,
+  :global(.platform-osx) .fullScreenOnMobile .container,
+  :global(.platform-win) .fullScreenOnMobile .container {
+    --custom-modal-padding-top: calc(var(--custom-app-top-bar-height) + var(--custom-modal-padding-sm));
+  }
+}
+@media (max-height: 550px) {
+  .container {
+    overflow-y: auto;
+  }
+}
+@media (max-height: 550px) {
+  .container .body {
+    flex-shrink: 0;
+    scrollbar-gutter: auto;
+  }
+}
+@media (max-height: 550px) {
+  .container .body::-webkit-scrollbar {
+    width: 0;
+  }
+}
+@media (max-height: 550px) {
+  .container .headerGradient:before {
+    left: 0;
+    right: 0;
+    top: calc(var(--custom-modal-padding-top) * -1);
+  }
+}
+.section {
+  box-sizing: border-box;
+  flex-grow: 0;
+  flex-shrink: 0;
+  padding: var(--custom-modal-padding-md) var(--custom-modal-padding) var(--custom-modal-padding-sm);
+  transition-duration: var(--expand-structural-duration);
+  transition-property: padding;
+  transition-timing-function: var(--expand-easing-function);
+}
+.sectionHidden {
+  overflow: hidden;
+  padding: 0 var(--custom-modal-padding) 0;
+  transition-delay: var(--collapse-fade-duration);
+  transition-duration: var(--collapse-structural-duration);
+  transition-timing-function: var(--collapse-easing-function);
+}
+.header {
+  position: relative;
+}
+.headerCentered {
+  text-align: center;
+}
+.headerLayout {
+  align-items: stretch;
+  display: flex;
+}
+.headerStepIndicator {
+  margin-bottom: var(--space-24);
+  width: 120px;
+}
+.headerGradient:before {
+  border-radius: var(--custom-border-radius) var(--custom-border-radius) 0 0;
+  left: -1.5px;
+  right: -1.5px;
+  top: calc((var(--custom-modal-padding-top) + 1.5px) * -1);
+}
+.headerGraphic {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  padding-bottom: calc(var(--space-24) - var(--space-8));
+  padding-top: calc(var(--space-24) - var(--space-4));
+  width: 100%;
+}
+.headerGraphicContainer {
+  box-sizing: border-box;
+  max-width: 288px;
+  width: 100%;
+}
+.headerGraphicAnimated {
+  margin: 0 calc(var(--space-12) * -1);
+  padding-bottom: calc(var(--space-12) - var(--space-8));
+  padding-top: 0;
+  width: calc(100% + var(--space-24));
+}
+.headerGraphicAnimated .headerGraphicContainer {
+  max-width: 352px;
+}
+@media (max-height: 720px) {
+  .headerGraphicContainer > * {
+    max-height: 15vh;
+  }
+}
+@media (max-height: 720px) {
+  @supports (max-height: 1dvh) {
+    .headerGraphicContainer > * {
+      max-height: 15dvh;
+    }
+  }
+}
+@media (max-height: 430px) {
+  .headerGraphic {
+    display: none;
+  }
+}
+@media (max-height: 430px) {
+  .headerCentered .headerLeadingSpacer,
+  .headerCentered .headerTrailingSpacer {
+    max-height: 0;
+  }
+}
+.headerLeading,
+.headerLeadingSpacer {
+  margin-left: calc((var(--custom-modal-padding) - var(--space-8)) * -1);
+  margin-top: calc(var(--custom-modal-padding-md) * -1);
+  padding-right: var(--space-12);
+}
+.headerTrailing,
+.headerTrailingSpacer {
+  margin-right: calc((var(--custom-modal-padding) - var(--space-8)) * -1);
+  margin-top: calc(var(--custom-modal-padding-md) * -1);
+  padding-left: var(--space-12);
+}
+.headerLeading,
+.headerLeadingSpacer,
+.headerTrailing,
+.headerTrailingSpacer {
+  align-items: flex-start;
+  box-sizing: border-box;
+  display: flex;
+  flex-grow: 0;
+  flex-shrink: 0;
+  gap: var(--space-8);
+  min-width: var(--space-4);
+}
+.headerLeadingAbsolute {
+  left: var(--custom-modal-padding);
+}
+.headerLeadingAbsolute,
+.headerTrailingAbsolute {
+  position: absolute;
+  top: var(--custom-modal-padding-md);
+}
+.headerTrailingAbsolute {
+  right: var(--custom-modal-padding);
+}
+.headerMain {
+  box-sizing: border-box;
+  flex-grow: 1;
+  flex-shrink: 1;
+  min-width: 0;
+}
+.headerSubtitleWrapper {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-4);
+}
+.headerSubtitleIcon {
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+.headerCentered .headerSubtitleWrapper {
+  justify-content: center;
+}
+.headerSubtitle,
+.headerTitle {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+.headerBadge[data-position='top'] {
+  padding-bottom: calc(var(--space-16) - var(--space-8));
+}
+.body {
+  box-sizing: border-box;
+  min-height: 1px;
+  padding-left: 0;
+  padding-right: 0;
+}
+.body,
+.bodyList {
+  flex-grow: 0;
+  flex-shrink: 1;
+}
+.bodyList {
+  --custom-list-scrollbar-top-padding: 12px;
+  height: 100vh;
+  padding: var(--custom-list-scrollbar-top-padding) var(--custom-modal-padding);
+}
+:global(.has-webkit-scrollbar) .bodyList {
+  padding-inline-end: calc(var(--custom-modal-padding) - var(--space-16));
+}
+.bodyList::-webkit-scrollbar-thumb,
+.bodyList::-webkit-scrollbar-track {
+  margin-top: var(--custom-list-scrollbar-top-padding);
+}
+.bodySpacerTop {
+  flex-grow: 0;
+  padding-top: var(--custom-modal-padding-md);
+}
+.bodySpacerTopBorder {
+  border-bottom: 1px solid var(--border-subtle);
+}
+.bodySpacerBottom {
+  flex-grow: 0;
+  padding-bottom: var(--custom-modal-padding-sm);
+}
+.bodyScrollingSpacerBottom {
+  border-top: 1px solid var(--border-subtle);
+}
+.container > .bodyScrollingSpacerBottom:last-child {
+  border: none;
+  padding: 0;
+  position: relative;
+}
+.container > .bodyScrollingSpacerBottom:last-child:before {
+  background: linear-gradient(to top, var(--background-surface-high) 0, transparent 100%);
+  border-bottom-left-radius: var(--custom-border-radius);
+  bottom: 100%;
+  content: '';
+  display: block;
+  height: 60px;
+  left: 0;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  right: var(--space-16);
+  transition: opacity 0.2s ease-out 0s;
+  z-index: 1;
+}
+.container > .bodyScrollingSpacerBottom:last-child.showFade:before {
+  opacity: 1;
+}
+.container:has(> .bodyScrollingSpacerBottom:last-child) {
+  padding-bottom: 0;
+}
+.bodyControls {
+  padding: 0 var(--custom-modal-padding);
+  position: relative;
+}
+.bodyControls:after {
+  background: linear-gradient(to bottom, var(--background-surface-high) 0, transparent 100%);
+  content: '';
+  display: block;
+  height: 40px;
+  left: 0;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  right: var(--space-16);
+  top: 100%;
+  transition:
+    opacity 0.2s ease-out 0s,
+    visibility 0s ease-out 0.2s;
+  visibility: hidden;
+  z-index: 1;
+}
+.bodyControls.showFade:after {
+  opacity: 1;
+  transition:
+    opacity 0.2s ease-out 0s,
+    visibility 0s ease-out 0s;
+  visibility: visible;
+}
+.bodyInner {
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  overflow-y: hidden;
+  padding-left: var(--custom-modal-padding);
+  padding-right: var(--custom-modal-padding);
+  word-break: break-word;
+}
+:global(.has-webkit-scrollbar) .bodyInner {
+  padding-inline-end: calc(var(--custom-modal-padding) - var(--space-16));
+}
+.bodyControls + .body .bodyInner {
+  padding-top: var(--space-12);
+}
+.bodyInnerShouldScroll {
+  padding-bottom: var(--space-12);
+  padding-top: var(--space-12);
+}
+.footer {
+  overflow-wrap: break-word;
+  padding-bottom: 0;
+  word-break: break-word;
+}
+.actionBar {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--custom-modal-padding) var(--space-8);
+}
+.actionBarLeading {
+  flex-grow: 1;
+  flex-shrink: 1;
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+.actionBarTrailing {
+  display: flex;
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+  margin-left: auto;
+  max-width: 100%;
+}
+.actionButtonWrapper {
+  display: flex;
+}
+.actionBarTrailingFullWidth {
+  width: 100%;
+}
+.actionBarTrailingFullWidth .actionButtonWrapper {
+  flex: 1;
+}
+.actionBarCheckbox {
+  padding-inline-end: var(--space-8);
+}
+.actionBarLayoutChatInput {
+  align-items: flex-start;
+}
+.actionBarLayoutChatInput .actionBarLeading {
+  flex-basis: 60%;
+}
