@@ -87,3 +87,4 @@ export * from './Modal';
 export * from './LayerModal';
 export * from './Rive';
 export * from './NumberBadge';
+export * from './Notice';
