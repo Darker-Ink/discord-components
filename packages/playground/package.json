@@ -14,12 +14,14 @@
     "@discord-components/messages": "workspace:*",
     "@discord-components/tokens": "workspace:*",
     "@internationalized/date": "3.12.4",
+    "chroma-js": "2.4.2",
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },
   "devDependencies": {
+    "@types/chroma-js": "2.4.4",
     "@types/react": "^19.3.3",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.3.0",

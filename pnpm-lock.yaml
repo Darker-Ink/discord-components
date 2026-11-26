@@ -193,6 +193,9 @@ importers:
       '@internationalized/date':
         specifier: 3.12.4
         version: 3.12.4
+      chroma-js:
+        specifier: 2.4.2
+        version: 2.4.2
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -206,6 +209,9 @@ importers:
         specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
     devDependencies:
+      '@types/chroma-js':
+        specifier: 2.4.4
+        version: 2.4.4
       '@types/react':
         specifier: ^19.3.3
         version: 19.3.3

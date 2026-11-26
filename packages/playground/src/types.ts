@@ -35,7 +35,12 @@ export interface Story {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   component: ComponentType<any>;
   controls?: Controls;
+  /** Notes about the story (Discord's playground links its docs from the header; ours doesn't show them). */
   docs?: string;
+  /** Default values that replace the controls' own defaults (e.g. ones that depend on app state). */
+  useDefaultOverrides?: () => Record<string, unknown> | null;
+  /** Rendered above the controls. */
+  ControlsExtension?: ComponentType;
 }
 
 export interface StoryGroup {
@@ -48,4 +53,8 @@ export interface Collection {
   name: string;
   groups: StoryGroup[];
   Provider?: ComponentType<{ children: ReactNode }>;
+  /** Rendered at the end of the header, before the settings button. */
+  HeaderControl?: ComponentType;
+  /** Shown as a warning notice under the header. */
+  deprecationNotice?: ReactNode;
 }

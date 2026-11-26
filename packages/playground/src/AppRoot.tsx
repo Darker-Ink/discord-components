@@ -12,6 +12,7 @@ import {
   ThemeContextProvider,
 } from '@discord-components/components';
 import type { Theme } from '@discord-components/tokens';
+import type { ReducedMotionSetting, UIDensity } from './appSettings';
 import { dynamicGraphicComponents } from './dynamicGraphics';
 import { useRootClasses } from './useRootClasses';
 
@@ -53,14 +54,25 @@ const NO_EXPERIMENTS: readonly string[] = [];
 const RootElement = ({
   theme,
   experiments,
+  saturation,
+  density,
   children,
 }: {
   theme: Theme;
   experiments: readonly string[];
+  saturation: number;
+  density: UIDensity;
   children: ReactNode;
 }) => {
-  const { reducedMotion, keyboardModeEnabled } = useContext(AccessibilityPreferencesContext);
-  useRootClasses(theme, { keyboardMode: keyboardModeEnabled, reducedMotion: reducedMotion.enabled, experiments });
+  const { reducedMotion, keyboardModeEnabled, highContrastModeEnabled } = useContext(AccessibilityPreferencesContext);
+  useRootClasses(theme, {
+    keyboardMode: keyboardModeEnabled,
+    reducedMotion: reducedMotion.enabled,
+    highContrastMode: highContrastModeEnabled,
+    saturation,
+    density,
+    experiments,
+  });
   return children;
 };
 
@@ -72,10 +84,20 @@ RootElement.displayName = 'RootElement';
 export const AppRoot = ({
   theme,
   experiments = NO_EXPERIMENTS,
+  reducedMotion = 'auto',
+  highContrastMode = false,
+  saturation = 1,
+  density = 'default',
+  switchIconsEnabled = false,
   children,
 }: {
   theme: Theme;
   experiments?: readonly string[];
+  reducedMotion?: ReducedMotionSetting;
+  highContrastMode?: boolean;
+  saturation?: number;
+  density?: UIDensity;
+  switchIconsEnabled?: boolean;
   children: ReactNode;
 }) => {
   const keyboardMode = useKeyboardMode();
@@ -84,18 +106,23 @@ export const AppRoot = ({
     () => ({
       ...DEFAULT_MANA_CONTEXT,
       theme,
-      saturation: 1,
+      saturation,
       experiments: { enabledExperiments: [...experiments] },
       defaultLayerContext: appLayerContext,
       dynamicGraphicComponents,
     }),
-    [theme, experiments],
+    [theme, saturation, experiments],
   );
   return (
-    <AccessibilityPreferencesProvider keyboardModeEnabled={keyboardMode}>
+    <AccessibilityPreferencesProvider
+      keyboardModeEnabled={keyboardMode}
+      prefersReducedMotion={reducedMotion}
+      highContrastModeEnabled={highContrastMode}
+      switchIconsEnabled={switchIconsEnabled}
+    >
       <ManaContextProvider value={manaContext}>
         <ThemeContextProvider theme={theme}>
-          <RootElement theme={theme} experiments={experiments}>
+          <RootElement theme={theme} experiments={experiments} saturation={saturation} density={density}>
             <FocusRingScope containerRef={bodyRef}>
               <ModalLayerRoot>{children}</ModalLayerRoot>
               <AppToastContainer appContext="APP" />

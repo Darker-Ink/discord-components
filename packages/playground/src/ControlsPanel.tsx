@@ -1,8 +1,20 @@
 import { Fragment } from 'react';
+import chroma from 'chroma-js';
+import {
+  Checkbox,
+  Select,
+  Stack,
+  Text,
+  TextInput,
+  VoidSlider,
+  type ListboxOption,
+} from '@discord-components/components';
 import styles from './Playground.module.css';
-import type { Controls } from './types';
+import type { Controls, SelectOption } from './types';
 
 type Props = Record<string, unknown>;
+
+const DEFAULT_COLOR = '#000000';
 
 export const getDefaultProps = (controls: Controls | undefined): Props =>
   Object.fromEntries(Object.entries(controls ?? {}).map(([key, control]) => [key, control.defaultValue]));
@@ -10,17 +22,31 @@ export const getDefaultProps = (controls: Controls | undefined): Props =>
 const withDefaults = (controls: Controls, props: Props): Props =>
   Object.fromEntries(Object.entries(controls).map(([key, control]) => [key, props[key] ?? control.defaultValue]));
 
+// The native color input only takes #rrggbb.
+const toSwatchColor = (value: unknown) => {
+  if (value == null || value === '') return DEFAULT_COLOR;
+  try {
+    return chroma(value as string).hex();
+  } catch {
+    return DEFAULT_COLOR;
+  }
+};
+
+// Controls' options are plain label/value pairs; the select gets them as listbox options.
+const formatOption = (option: ListboxOption) => {
+  const { label, value } = option as SelectOption;
+  return { id: value as string, value, label };
+};
+
+const formatSliderValue = (value: number) => String(Math.round(1000 * value) / 1000);
+
 interface ControlsPanelProps {
   controls: Controls;
   props: Props;
   onPropsChange: (props: Props) => void;
 }
 
-// TODO: swap the native inputs for the library's own Select/Checkbox/TextInput/Slider once they exist,
-// matching Discord's playground.
 export const ControlsPanel = ({ controls, props, onPropsChange }: ControlsPanelProps) => {
-  const resolved = withDefaults(controls, props);
-
   const setProp = (key: string, value: unknown) => {
     const next = { ...props, [key]: value };
     const nextResolved = withDefaults(controls, next);
@@ -33,67 +59,85 @@ export const ControlsPanel = ({ controls, props, onPropsChange }: ControlsPanelP
     onPropsChange(next);
   };
 
+  const resolved = withDefaults(controls, props);
   const visible = Object.entries(controls).filter(([, control]) => control.isVisible?.(resolved) ?? true);
   if (visible.length === 0) return null;
 
   return (
     <div className={styles.controlsSection}>
-      {visible.map(([key, control]) => {
-        const value = resolved[key];
-        return (
-          <Fragment key={key}>
-            <label>
-              {control.label}
-              {control.type === 'select' && (
-                <select
-                  value={String(
-                    (control.getOptions?.(resolved) ?? control.options).findIndex((o) => o.value === value),
-                  )}
-                  onChange={(e) => {
-                    const options = control.getOptions?.(resolved) ?? control.options;
-                    setProp(key, options[Number(e.target.value)]?.value);
-                  }}
-                >
-                  {(control.getOptions?.(resolved) ?? control.options).map((o, i) => (
-                    <option key={o.label} value={i}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
-              )}
-              {control.type === 'boolean' && (
-                <input type="checkbox" checked={Boolean(value)} onChange={(e) => setProp(key, e.target.checked)} />
-              )}
-              {(control.type === 'text' || control.type === 'color') && (
-                <input
-                  type={control.type === 'color' ? 'color' : 'text'}
-                  value={String(value ?? '')}
-                  onChange={(e) => setProp(key, e.target.value)}
+      <Stack gap={16}>
+        {visible.map(([key, control]) => {
+          const value = props[key] ?? control.defaultValue;
+          return (
+            <Fragment key={String(key)}>
+              {control.type === 'select' && control.options != null && (
+                <Select
+                  label={control.label}
+                  value={value}
+                  onSelectionChange={(next) => setProp(key, next)}
+                  options={(control.getOptions?.(resolved) ?? control.options) as ListboxOption[]}
+                  formatOption={formatOption}
+                  selectionMode="single"
+                  fullWidth
                 />
               )}
+              {control.type === 'boolean' && (
+                <Checkbox checked={value as boolean} onChange={(next) => setProp(key, next)} label={control.label} />
+              )}
+              {control.type === 'text' && (
+                <TextInput value={value as string} onChange={(next) => setProp(key, next)} label={control.label} />
+              )}
               {control.type === 'number' && (
-                <input
+                <TextInput
                   type="number"
                   value={String(value)}
                   min={control.minValue}
-                  onChange={(e) => setProp(key, Number(e.target.value))}
+                  onChange={(next) => setProp(key, Number(next))}
+                  label={control.label}
                 />
               )}
               {control.type === 'slider' && (
-                <input
-                  type="range"
-                  value={Number(value)}
-                  min={control.minValue}
-                  max={control.maxValue}
-                  step={control.markers != null ? 1 : (control.maxValue - control.minValue) * 0.05}
-                  onChange={(e) => setProp(key, Number(e.target.value))}
+                <VoidSlider
+                  initialValue={value != null ? Number(value) : 0}
+                  value={value != null ? Number(value) : undefined}
+                  minValue={control.minValue}
+                  maxValue={control.maxValue}
+                  keyboardStep={control.markers != null ? 1 : (control.maxValue - control.minValue) * 0.05}
+                  markers={control.markers}
+                  asValueChanges={(next) => setProp(key, next)}
+                  handleSize={10}
+                  disabled={false}
+                  stickToMarkers={control.markers != null}
+                  fillStyles={{}}
+                  label={control.label}
+                  onValueRender={formatSliderValue}
                 />
               )}
-            </label>
-            {control.hint != null && <div className={styles.controlHint}>{control.hint}</div>}
-          </Fragment>
-        );
-      })}
+              {control.type === 'color' && (
+                <div className={styles.colorControl}>
+                  <Text variant="body-md/medium" color="text-strong" tag="label">
+                    {control.label}
+                  </Text>
+                  <div className={styles.colorControlInput}>
+                    <input
+                      type="color"
+                      className={styles.colorSwatch}
+                      value={toSwatchColor(value)}
+                      onChange={(event) => setProp(key, event.target.value)}
+                    />
+                    <TextInput value={(value as string | undefined) ?? ''} onChange={(next) => setProp(key, next)} />
+                  </div>
+                </div>
+              )}
+              {control.hint == null ? null : (
+                <Text variant="body-xs/normal" color="text-muted" className={styles.controlHint}>
+                  {control.hint}
+                </Text>
+              )}
+            </Fragment>
+          );
+        })}
+      </Stack>
     </div>
   );
 };

@@ -68,6 +68,11 @@ const voidGroups = Object.values(import.meta.glob<StoryGroup>('./void/*.tsx', { 
 
 export const collections: Collection[] = [
   { id: 'mana', name: 'Mana', groups: manaGroups.sort(byOrder(MANA_GROUP_ORDER)) },
-  { id: 'void', name: 'Void', groups: voidGroups.sort(byOrder(VOID_GROUP_ORDER)) },
+  {
+    id: 'void',
+    name: 'Void',
+    groups: voidGroups.sort(byOrder(VOID_GROUP_ORDER)),
+    deprecationNotice: 'Void is deprecated. Use Mana instead.',
+  },
   { id: 'messages', name: 'Messages', groups: messageGroups.sort(byOrder(MESSAGE_GROUP_ORDER)) },
 ];

@@ -1,152 +1,27 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import clsx from 'clsx';
-import { IconButton, Menu, MenuGroup, MenuItem, MenuRadioItem, Popout, TabBar } from '@discord-components/components';
-import { SettingsIcon } from '@discord-components/icons';
+import { useEffect, useMemo, useSyncExternalStore } from 'react';
+import {
+  BlobMask,
+  HeaderBar,
+  IconButton,
+  NavItem,
+  Notice,
+  NoticeColors,
+  ScrollerThin,
+  Tooltip,
+} from '@discord-components/components';
+import { XSmallIcon } from '@discord-components/icons';
 import { ThemeTypes, type Theme } from '@discord-components/tokens';
+import { useAppSettings, type ThemeSetting } from './appSettings';
 import { AppRoot } from './AppRoot';
-import { ControlsPanel, getDefaultProps } from './ControlsPanel';
+import { getDefaultProps } from './ControlsPanel';
+import { CopyLinkButton } from './CopyLinkButton';
+import { playgroundStore } from './playgroundStore';
 import styles from './Playground.module.css';
+import { SettingsButton } from './SettingsButton';
+import { StorySidebar } from './StorySidebar';
+import { StoryView } from './StoryView';
 import type { Collection, Story } from './types';
 import { parseOverrides, readLocation, writeLocation } from './url';
-
-const THEME_OPTIONS: { label: string; value: Theme }[] = [
-  { label: 'Light', value: ThemeTypes.LIGHT },
-  { label: 'Ash', value: ThemeTypes.ASH },
-  { label: 'Dark', value: ThemeTypes.DARK },
-  { label: 'Onyx', value: ThemeTypes.ONYX },
-];
-
-export const ControlsLayout = {
-  RIGHT: 'right',
-  BOTTOM: 'bottom',
-  HIDDEN: 'hidden',
-} as const;
-
-type ControlsLayoutType = (typeof ControlsLayout)[keyof typeof ControlsLayout];
-
-const noop = () => {};
-
-interface SettingsProps {
-  theme: Theme;
-  onThemeChange: (theme: Theme) => void;
-  controlsLayout: ControlsLayoutType;
-  onControlsLayoutChange: (layout: ControlsLayoutType) => void;
-}
-
-const CONTROLS_LAYOUT_OPTIONS: { id: string; label: string; value: ControlsLayoutType }[] = [
-  { id: 'controls-right', label: 'Right Side', value: ControlsLayout.RIGHT },
-  { id: 'controls-bottom', label: 'Bottom', value: ControlsLayout.BOTTOM },
-  { id: 'controls-hidden', label: 'Hidden', value: ControlsLayout.HIDDEN },
-];
-
-// Like Discord's playground settings menu: picking an item keeps the menu open.
-const SettingsMenu = ({ theme, onThemeChange, controlsLayout, onControlsLayoutChange }: SettingsProps) => (
-  <Menu
-    data-menu-migrated
-    onSelect={noop}
-    navId="playground-settings-menu"
-    onClose={noop}
-    aria-label="Playground Settings"
-  >
-    <MenuItem id="appearance" label="Appearance">
-      <MenuGroup key="theme-items">
-        {THEME_OPTIONS.map((option) => (
-          <MenuRadioItem
-            key={option.value}
-            id={option.value}
-            group="input-modes"
-            label={option.label}
-            checked={option.value === theme}
-            action={() => onThemeChange(option.value)}
-          />
-        ))}
-      </MenuGroup>
-      <MenuGroup key="controls-layout" label="Controls">
-        {CONTROLS_LAYOUT_OPTIONS.map((option) => (
-          <MenuRadioItem
-            key={option.id}
-            id={option.id}
-            group="controls-layout"
-            label={option.label}
-            action={() => onControlsLayoutChange(option.value)}
-            checked={controlsLayout === option.value}
-          />
-        ))}
-      </MenuGroup>
-    </MenuItem>
-  </Menu>
-);
-
-SettingsMenu.displayName = 'SettingsMenu';
-
-const SettingsButton = (props: SettingsProps) => {
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  return (
-    <Popout
-      targetElementRef={buttonRef}
-      renderPopout={() => <SettingsMenu {...props} />}
-      position="bottom"
-      align="center"
-      animation={Popout.Animation.SCALE}
-      onRequestClose={noop}
-    >
-      {(triggerProps) => (
-        <IconButton
-          size="sm"
-          icon={SettingsIcon}
-          aria-label="Settings"
-          variant="icon-only"
-          {...triggerProps}
-          buttonRef={buttonRef}
-        />
-      )}
-    </Popout>
-  );
-};
-
-SettingsButton.displayName = 'SettingsButton';
-
-interface StoryViewProps {
-  story: Story;
-  controlsLayout: ControlsLayoutType;
-  initialOverrides?: Record<string, string>;
-}
-
-const StoryView = ({ story, controlsLayout, initialOverrides = {} }: StoryViewProps) => {
-  const [props, setProps] = useState(() => ({
-    ...getDefaultProps(story.controls),
-    ...parseOverrides(story.controls, initialOverrides),
-  }));
-  const Component = story.component;
-  const showControls = controlsLayout !== ControlsLayout.HIDDEN && story.controls != null;
-
-  return (
-    <div
-      className={clsx(styles.main, {
-        [styles.mainBottomLayout]: controlsLayout === ControlsLayout.BOTTOM,
-        [styles.mainRightLayout]: controlsLayout === ControlsLayout.RIGHT,
-      })}
-    >
-      <div className={styles.canvas}>
-        <div className={styles.storyContent}>
-          <Component {...props} />
-        </div>
-      </div>
-      {showControls && (
-        <div
-          className={clsx(styles.controls, {
-            [styles.controlsBottom]: controlsLayout === ControlsLayout.BOTTOM,
-            [styles.controlsRight]: controlsLayout === ControlsLayout.RIGHT,
-          })}
-        >
-          <ControlsPanel controls={story.controls!} props={props} onPropsChange={setProps} />
-        </div>
-      )}
-    </div>
-  );
-};
-
-StoryView.displayName = 'StoryView';
 
 // Renders a single story with no chrome, laid out exactly like the reference server's story page,
 // so the two can be screenshotted and diffed.
@@ -164,27 +39,56 @@ EmbeddedStory.displayName = 'EmbeddedStory';
 
 const initialLocation = readLocation();
 
-export const Playground = ({ collections }: { collections: Collection[] }) => {
-  const [theme, setTheme] = useState<Theme>(initialLocation.theme ?? ThemeTypes.DARK);
-  const [controlsLayout, setControlsLayout] = useState<ControlsLayoutType>(ControlsLayout.RIGHT);
-  const [collectionId, setCollectionId] = useState(initialLocation.collection ?? collections[0]?.id);
-  const [storyId, setStoryId] = useState<string | null>(initialLocation.story);
-  const [query, setQuery] = useState('');
+playgroundStore.setState({
+  selectedCollection: initialLocation.collection,
+  selectedStory: initialLocation.story,
+  controlOverrides: Object.keys(initialLocation.overrides).length > 0 ? initialLocation.overrides : null,
+});
 
-  const collection = collections.find((c) => c.id === collectionId) ?? collections[0];
-  const story = collection?.groups.flatMap((g) => g.stories).find((s) => s.id === storyId) ?? null;
+const DARK_SCHEME_QUERY = '(prefers-color-scheme: dark)';
+
+const subscribeToColorScheme = (onChange: () => void) => {
+  const query = window.matchMedia(DARK_SCHEME_QUERY);
+  query.addEventListener('change', onChange);
+  return () => query.removeEventListener('change', onChange);
+};
+
+const useResolvedTheme = (setting: ThemeSetting): Theme => {
+  const systemDark = useSyncExternalStore(subscribeToColorScheme, () => window.matchMedia(DARK_SCHEME_QUERY).matches);
+  if (setting !== 'system') return setting;
+  return systemDark ? ThemeTypes.DARK : ThemeTypes.LIGHT;
+};
+
+// The standalone playground has nothing to close back to.
+const closePlayground = () => {};
+
+const selectCollection = (id: string) =>
+  playgroundStore.setState({ selectedCollection: id, selectedStory: null, controlOverrides: null, currentProps: null });
+
+const selectStory = (id: string) =>
+  playgroundStore.setState({ selectedStory: id, controlOverrides: null, currentProps: null });
+
+export const Playground = ({ collections }: { collections: Collection[] }) => {
+  const settings = useAppSettings();
+  const theme = useResolvedTheme(settings.theme);
+  const selectedCollection = playgroundStore.useField('selectedCollection');
+  const selectedStory = playgroundStore.useField('selectedStory');
+  const controlsLayout = playgroundStore.useField('controlsLayout');
+
+  const { collection, group, story } = useMemo(() => {
+    const found = selectedCollection != null ? collections.find((c) => c.id === selectedCollection) : collections[0];
+    if (found == null) return { collection: null, group: null, story: null };
+    const foundGroup = found.groups.find((g) => g.stories.some((s) => s.id === selectedStory));
+    return {
+      collection: found,
+      group: foundGroup,
+      story: foundGroup?.stories.find((s) => s.id === selectedStory) ?? null,
+    };
+  }, [selectedCollection, selectedStory, collections]);
 
   useEffect(() => {
-    if (!initialLocation.embed) writeLocation(collection?.id, story?.id ?? null, theme, initialLocation.experiments);
-  }, [collection, story, theme]);
-
-  const groups = useMemo(() => {
-    const search = query.trim().toLowerCase();
-    if (collection == null || search === '') return collection?.groups ?? [];
-    return collection.groups
-      .map((g) => ({ ...g, stories: g.stories.filter((s) => s.name.toLowerCase().includes(search)) }))
-      .filter((g) => g.stories.length > 0);
-  }, [collection, query]);
+    if (!initialLocation.embed) writeLocation(collection?.id, story?.id ?? null, theme, settings.experiments);
+  }, [collection, story, theme, settings.experiments]);
 
   const Provider = collection?.Provider;
 
@@ -198,80 +102,69 @@ export const Playground = ({ collections }: { collections: Collection[] }) => {
     );
   }
 
+  const collectionName = collection?.name ?? 'Design System';
+  const storyName = story?.name;
   const view =
-    story != null ? (
-      <StoryView
-        key={story.id}
-        story={story}
-        controlsLayout={controlsLayout}
-        initialOverrides={story.id === initialLocation.story ? initialLocation.overrides : undefined}
-      />
-    ) : null;
+    story != null && group != null ? <StoryView key={story.id} story={story} controlsLayout={controlsLayout} /> : null;
+  const HeaderControl = collection?.HeaderControl;
 
   return (
-    <AppRoot theme={theme} experiments={initialLocation.experiments}>
+    <AppRoot
+      theme={theme}
+      experiments={settings.experiments}
+      reducedMotion={settings.reducedMotion}
+      highContrastMode={settings.highContrastMode}
+      saturation={settings.saturation}
+      density={settings.uiDensity}
+      switchIconsEnabled={settings.switchIconsEnabled}
+    >
       <div className={styles.root} data-testid="component-playground">
         <div className={styles.group}>
           {collections.map((c) => (
-            <button
-              key={c.id}
-              type="button"
-              title={`${c.name} Design System`}
-              aria-pressed={c.id === collection?.id}
-              onClick={() => {
-                setCollectionId(c.id);
-                setStoryId(null);
-              }}
-            >
-              {c.name}
-            </button>
+            <BlobMask key={c.id}>
+              <Tooltip position="right" text={`${c.name} Design System`}>
+                <NavItem
+                  name={c.name}
+                  selected={(selectedCollection ?? collections[0]?.id) === c.id}
+                  onClick={() => selectCollection(c.id)}
+                />
+              </Tooltip>
+            </BlobMask>
           ))}
         </div>
         <div className={styles.content}>
-          <div className={styles.header}>
-            <span>{collection?.name ?? 'Design System'}</span>
-            {story != null && <span> › {story.name}</span>}
+          <HeaderBar className={styles.header}>
+            {collectionName != null ? <HeaderBar.Title>{collectionName}</HeaderBar.Title> : null}
+            {storyName != null ? (
+              <>
+                {collectionName != null ? <HeaderBar.Caret className={styles.headerDivider} /> : null}
+                <HeaderBar.Title>{storyName}</HeaderBar.Title>
+              </>
+            ) : null}
+            {collection != null ? <CopyLinkButton collection={collection} story={story} /> : null}
             <div className={styles.headerRight}>
-              <SettingsButton
-                theme={theme}
-                onThemeChange={setTheme}
-                controlsLayout={controlsLayout}
-                onControlsLayoutChange={setControlsLayout}
+              {HeaderControl != null ? <HeaderControl /> : null}
+              <SettingsButton />
+              <IconButton
+                size="sm"
+                icon={XSmallIcon}
+                aria-label="Close"
+                variant="icon-only"
+                onClick={closePlayground}
               />
             </div>
-          </div>
+          </HeaderBar>
+          {collection?.deprecationNotice != null && (
+            <Notice color={NoticeColors.WARNING} className={styles.deprecationNotice}>
+              {collection.deprecationNotice}
+            </Notice>
+          )}
           <div className={styles.page}>
-            <nav className={styles.sidebar}>
-              <input
-                type="search"
-                value={query}
-                placeholder="Search stories…"
-                aria-label="Search stories"
-                onChange={(e) => setQuery(e.target.value)}
-              />
-              {groups.length === 0 ? (
-                <p>No results</p>
-              ) : (
-                <TabBar
-                  // An empty id rather than null, so TabBar doesn't select the first story by default.
-                  selectedItem={story?.id ?? ''}
-                  orientation="vertical"
-                  onItemSelect={(id) => {
-                    if (id != null) setStoryId(String(id));
-                  }}
-                >
-                  {groups.flatMap((group, index) => [
-                    <TabBar.Header key={`${group.title}-header`}>{group.title}</TabBar.Header>,
-                    ...group.stories.map((s) => (
-                      <TabBar.Item key={s.id} id={s.id} aria-label={s.name}>
-                        <span data-testid={`playground-story-${s.id}`}>{s.name}</span>
-                      </TabBar.Item>
-                    )),
-                    index < groups.length - 1 ? <TabBar.Separator key={`${group.title}-separator`} /> : null,
-                  ])}
-                </TabBar>
-              )}
-            </nav>
+            <ScrollerThin fade className={styles.sidebar}>
+              {collection != null ? (
+                <StorySidebar groups={collection.groups} selectedStory={selectedStory} onStorySelect={selectStory} />
+              ) : null}
+            </ScrollerThin>
             <div className={styles.content}>{Provider != null ? <Provider>{view}</Provider> : view}</div>
           </div>
         </div>
