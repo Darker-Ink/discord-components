@@ -4,9 +4,9 @@
 // and the message accessories (699352 A: attachments, embeds, components, reactions…), inside
 // li.messageListItem with the list item's message classes (13673). The hover toolbar and popouts are left
 // out; the reply bar (448368) and the "used /command" line (267508) are included without their popouts.
-// Content renders as raw text (markdown is out of scope): the parsed content is replaced by the message's text,
-// keeping the client's custom content ("is thinking…") and the hidden single-link rule, and Text Displays'
-// parser returns the raw text.
+// Content renders as raw text unless the fixture sets `markdown: true`: the parsed content is replaced by the
+// message's text, keeping the client's custom content ("is thinking…") and the hidden single-link rule, and
+// Text Displays' parser returns the raw text. With `markdown`, everything goes through the client's markdown.
 // Stores that would be filled by the gateway are patched: the user store returns the author (so the avatar
 // resolves), the channel store the fixture's channel. Fixtures may set `now` (the clock is frozen there).
 async (ref, data) => {
@@ -99,12 +99,28 @@ async (ref, data) => {
   };
   // Components v2 Text Displays go through the markdown parser too; show their raw text.
   // Embed titles and descriptions too (renderEmbedTitle/renderEmbedDescription of the accessories).
+  // With `markdown: true` the fixture renders through the client's markdown renderer instead (354777).
   const parser = req('46054').A;
-  parser.parse =
-    parser.parseEmbedTitle =
-    parser.parseEmbedTitleWithoutLinks =
-    parser.parseRichEmbedText =
-      (text) => text;
+  if (!data.markdown)
+    parser.parse =
+      parser.parseEmbedTitle =
+      parser.parseEmbedTitleWithoutLinks =
+      parser.parseRichEmbedText =
+        (text) => text;
+  const markdownContent = (m, options) => {
+    const custom = customContent(m);
+    if (custom != null) return custom.content;
+    return req('354777').Ay(m, options).content;
+  };
+  const MESSAGE_OPTIONS = {
+    hideSimpleEmbedContent: true,
+    allowList: true,
+    allowHeading: true,
+    allowLinks: true,
+    previewLinkTarget: true,
+    allowGameMentions: true,
+  };
+  const REPLY_OPTIONS = { formatInline: true, allowLinks: true, allowHeading: true, allowList: true };
   const BaseMessage = req('491182').A;
   const MessageHeader = req('549587').Ay;
   const content = req('715628').A;
@@ -137,7 +153,12 @@ async (ref, data) => {
   const Reply = () => {
     const repliedAuthor = getReplyAuthor(referenced.message);
     const baseAuthor = getReplyAuthor(message);
-    const repliedContent = referenced.message != null ? rawContent(referenced.message) : null;
+    const repliedContent =
+      referenced.message == null
+        ? null
+        : data.markdown
+          ? markdownContent(referenced.message, REPLY_OPTIONS)
+          : rawContent(referenced.message);
     return h(RepliedMessage, {
       repliedAuthor,
       baseMessage: message,
@@ -185,7 +206,10 @@ async (ref, data) => {
           isInteracting: props.isInteracting ?? false,
           isAutomodBlockedMessage: false,
         }),
-        childrenMessageContent: content(messageProps, rawContent(message)),
+        childrenMessageContent: content(
+          messageProps,
+          data.markdown ? markdownContent(message, MESSAGE_OPTIONS) : rawContent(message),
+        ),
         hasReply: message.type === 19,
         'aria-labelledby': req('860227').fF(message),
         'aria-describedby': req('860227').ZD(message),

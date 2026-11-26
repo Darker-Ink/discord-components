@@ -59,7 +59,11 @@ for (const name of names) {
   await ref.evaluate(
     async ([source, data]) => {
       const render = (0, eval)(`(${source}\n)`);
-      await render(ref, data);
+      // Rendering once makes the client load the strings the rules read (unknown mentions, route names).
+      const element = await render(ref, data);
+      await ref.loadTranslations();
+      await ref.render(element);
+      await ref.loadTranslations();
     },
     [referenceSource, fixture.data],
   );

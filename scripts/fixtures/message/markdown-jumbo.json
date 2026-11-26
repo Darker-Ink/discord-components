@@ -1,0 +1,22 @@
+{
+  "story": "message-fixtures",
+  "now": "2026-11-26T12:30:00.000Z",
+  "data": {
+    "markdown": true,
+    "message": {
+      "content": "🎉🎉 😄",
+      "author": {
+        "id": "1000000000000000001",
+        "username": "wumpus",
+        "global_name": "Wumpus",
+        "avatar": "a1b2",
+        "discriminator": "0",
+        "avatar_url": "{{assets}}/avatar.png"
+      }
+    },
+    "emoji_urls": {
+      "🎉": "{{assets}}/emoji/1f389.svg",
+      "😄": "{{assets}}/emoji/1f604.svg"
+    }
+  }
+}
