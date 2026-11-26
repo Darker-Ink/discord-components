@@ -7,6 +7,8 @@ import type { ChatInputType } from '../../chatInputTypes';
 import styles from './CharacterCount.module.css';
 import upsellStyles from './PremiumUpsell.module.css';
 
+const noop = () => {};
+
 // The Nitro gradient the client defines once at its root for icons filled with `url(#…)`.
 let premiumGradientId: string | null = null;
 const PremiumGradient = () => {
@@ -46,7 +48,7 @@ const LongerMessagesUpsell = ({
   onLearnMore?: () => void;
 }) =>
   iconOnly ? (
-    <Clickable className={upsellStyles.iconOnly} onClick={onLearnMore}>
+    <Clickable className={upsellStyles.iconOnly} onClick={onLearnMore ?? noop}>
       <Tooltip text="Send longer messages with Discord Nitro!" position="top">
         <NitroWheelIcon size="md" color="currentColor" className={upsellStyles.premium} />
       </Tooltip>
@@ -56,7 +58,7 @@ const LongerMessagesUpsell = ({
       <PremiumGradient />
       <NitroWheelIcon size="md" className={upsellStyles.premium} color={`url(#${premiumGradientId ?? ''})`} />
       <Text className={upsellStyles.text} variant="body-sm/normal">
-        Send longer messages with <Anchor onClick={onLearnMore}>Discord Nitro!</Anchor>
+        Send longer messages with <Anchor onClick={onLearnMore ?? noop}>Discord Nitro!</Anchor>
       </Text>
     </div>
   );

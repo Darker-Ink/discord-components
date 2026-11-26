@@ -205,6 +205,7 @@ export const ChannelTextArea = ({
 
   const inline = type.layout === ChatInputLayouts.INLINE;
   const flush = type.layout === ChatInputLayouts.FLUSH;
+  // Sending only greys the bar out (types with `useDisabledStylesOnSubmit`); the editor stays editable.
   const showDisabledStyles = disabled || (submitting && type.submit?.useDisabledStylesOnSubmit === true);
   const isEdit = type === ChatInputTypes.EDIT;
   const attachButton =
@@ -286,13 +287,12 @@ export const ChannelTextArea = ({
                     editorClassName,
                     styles.textArea,
                     styles.textAreaSlate,
-                    { [styles.textAreaDisabled]: disabled || submitting },
+                    { [styles.textAreaDisabled]: disabled },
                   )}
                   id={id}
                   placeholder={placeholderText ?? undefined}
                   required={required}
                   disabled={disabled}
-                  submitting={submitting}
                   previewMarkdown={previewMarkdown}
                   spellcheckEnabled={spellcheckEnabled}
                   disableAutoFocus={type.disableAutoFocus ?? false}

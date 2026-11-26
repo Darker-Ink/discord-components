@@ -359,7 +359,23 @@ export const ChannelEditor = ({
     updateHeight();
     const observer = new ResizeObserver(updateHeight);
     observer.observe(node);
-    return () => observer.disconnect();
+    // Also measure after edits and image loads: a resize that happens while the observer is being replaced
+    // (React re-running effects) would otherwise leave the container at a stale height.
+    let frame = 0;
+    const schedule = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(updateHeight);
+    };
+    editor.events.addListener('onChange', schedule);
+    node.addEventListener('load', schedule, true);
+    schedule();
+    document.fonts?.ready.then(schedule);
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+      editor.events.removeListener('onChange', schedule);
+      node.removeEventListener('load', schedule, true);
+    };
   }, [editor, updateHeight]);
 
   const handleKeyDown = useCallback(
