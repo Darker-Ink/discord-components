@@ -88,3 +88,6 @@ export * from './LayerModal';
 export * from './Rive';
 export * from './NumberBadge';
 export * from './Notice';
+export * from './FormNotice';
+export * from './FormText';
+export * from './FormTitle';
