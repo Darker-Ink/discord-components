@@ -1,0 +1,117 @@
+{
+  "story": "message-fixtures",
+  "now": "2026-11-26T12:30:00.000Z",
+  "data": {
+    "message": {
+      "content": "",
+      "flags": 32768,
+      "author": {
+        "id": "1000000000000000002",
+        "username": "helper",
+        "global_name": null,
+        "avatar": "a1b2",
+        "discriminator": "0",
+        "bot": true,
+        "avatar_url": "{{assets}}/icon.png"
+      },
+      "components": [
+        {
+          "type": 12,
+          "items": [
+            {
+              "media": {
+                "url": "{{assets}}/attachments/photo-1.jpg",
+                "proxy_url": "{{assets}}/attachments/photo-1.jpg",
+                "width": 1600,
+                "height": 900,
+                "content_type": "image/jpeg",
+                "loading_state": 2
+              },
+              "description": "First"
+            },
+            {
+              "media": {
+                "url": "{{assets}}/attachments/photo-2.jpg",
+                "proxy_url": "{{assets}}/attachments/photo-2.jpg",
+                "width": 900,
+                "height": 1200,
+                "content_type": "image/jpeg",
+                "loading_state": 2
+              },
+              "spoiler": true
+            }
+          ]
+        },
+        {
+          "type": 14,
+          "divider": false,
+          "spacing": 2
+        },
+        {
+          "type": 13,
+          "file": {
+            "url": "{{assets}}/audio.mp3",
+            "proxy_url": "{{assets}}/audio.mp3",
+            "content_type": "audio/mpeg",
+            "loading_state": 2
+          },
+          "name": "notes.txt",
+          "size": 2048
+        },
+        {
+          "type": 13,
+          "file": {
+            "url": "{{assets}}/audio.mp3",
+            "proxy_url": "{{assets}}/audio.mp3",
+            "content_type": "audio/mpeg",
+            "loading_state": 2
+          },
+          "name": "secret.zip",
+          "size": 4096000,
+          "spoiler": true
+        },
+        {
+          "type": 17,
+          "spoiler": true,
+          "components": [
+            {
+              "type": 10,
+              "content": "A spoilered container"
+            }
+          ]
+        },
+        {
+          "type": 9,
+          "components": [
+            {
+              "type": 10,
+              "content": "Spoilered thumbnail"
+            }
+          ],
+          "accessory": {
+            "type": 11,
+            "spoiler": true,
+            "media": {
+              "url": "{{assets}}/square.png",
+              "proxy_url": "{{assets}}/square.png",
+              "width": 512,
+              "height": 512,
+              "content_type": "image/png",
+              "loading_state": 2
+            }
+          }
+        },
+        {
+          "type": 1,
+          "components": [
+            {
+              "type": 2,
+              "style": 6,
+              "sku_id": "1000000000000000777"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

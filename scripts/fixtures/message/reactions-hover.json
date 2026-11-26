@@ -1,0 +1,63 @@
+{
+  "story": "message-fixtures",
+  "now": "2026-11-26T12:30:00.000Z",
+  "data": {
+    "message": {
+      "content": "Reactions under a message",
+      "author": {
+        "id": "1000000000000000001",
+        "username": "wumpus",
+        "global_name": "Wumpus",
+        "avatar": "a1b2",
+        "discriminator": "0",
+        "avatar_url": "{{assets}}/avatar.png"
+      },
+      "reactions": [
+        {
+          "emoji": {
+            "id": null,
+            "name": "👍"
+          },
+          "count": 3,
+          "count_details": {
+            "burst": 0,
+            "normal": 3
+          },
+          "me": true,
+          "me_burst": false,
+          "burst_colors": []
+        },
+        {
+          "emoji": {
+            "id": "1000000000000000099",
+            "name": "blob",
+            "animated": false
+          },
+          "count": 12,
+          "count_details": {
+            "burst": 0,
+            "normal": 12
+          },
+          "me": false,
+          "me_burst": false,
+          "burst_colors": []
+        }
+      ]
+    },
+    "emoji_urls": {
+      "👍": "{{assets}}/small.png",
+      "1000000000000000099": "{{assets}}/icon.png"
+    },
+    "emoji_names": {
+      "👍": "thumbsup"
+    }
+  },
+  "actions": [
+    {
+      "hover": "[data-story] [aria-pressed=false]"
+    },
+    {
+      "wait": 300
+    }
+  ]
+}

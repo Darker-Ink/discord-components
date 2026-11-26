@@ -1,0 +1,74 @@
+{
+  "story": "message-fixtures",
+  "now": "2026-11-26T12:30:00.000Z",
+  "capture": "viewport",
+  "actions": [
+    {
+      "click": "[data-story] [aria-haspopup=listbox]"
+    },
+    {
+      "wait": 500
+    },
+    {
+      "hover": "[role=option] >> nth=1"
+    },
+    {
+      "wait": 300
+    }
+  ],
+  "data": {
+    "message": {
+      "content": "Pick one",
+      "author": {
+        "id": "1000000000000000002",
+        "username": "helper",
+        "global_name": null,
+        "avatar": "a1b2",
+        "discriminator": "0",
+        "bot": true,
+        "avatar_url": "{{assets}}/icon.png"
+      },
+      "components": [
+        {
+          "type": 1,
+          "components": [
+            {
+              "type": 3,
+              "custom_id": "rps",
+              "placeholder": "Make your move",
+              "options": [
+                {
+                  "label": "Rock",
+                  "value": "rock",
+                  "description": "Crushes scissors",
+                  "emoji": {
+                    "id": null,
+                    "name": "🪨"
+                  }
+                },
+                {
+                  "label": "Paper",
+                  "value": "paper",
+                  "description": "Covers rock"
+                },
+                {
+                  "label": "Scissors",
+                  "value": "scissors",
+                  "emoji": {
+                    "id": "1000000000000000099",
+                    "name": "blob"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "emoji_urls": {
+      "🪨": "{{assets}}/small.png",
+      "1000000000000000099": "{{assets}}/icon.png"
+    }
+  },
+  "dom": "[class*=layerContainer]"
+}
