@@ -15,7 +15,8 @@
 // Discord's playground is a dev tool inside the client, under the app's title bar; neither side has the
 // app frame here, so the `--custom-app-top-bar-height` gap at the top is empty on both. Collections that
 // only exist on one side (our "Messages") are hidden on ours (`--keep-extra-collections` keeps them), and
-// the header's "Docs" link, which ours leaves out, is hidden on Discord's.
+// the header's "Docs" link and the settings menu's Experiments submenu, which ours leaves out, are hidden on
+// Discord's.
 import fs from 'node:fs';
 import path from 'node:path';
 import { PNG } from 'pngjs';
@@ -257,9 +258,11 @@ const openRef = async (page, { collection, story, theme }) => {
     },
     { collection, story, theme },
   );
-  // Our header leaves out the story's "Docs" link (divider dot plus linked title) on purpose.
+  // Ours leaves out, on purpose, the header's "Docs" link (divider dot plus linked title) and the settings
+  // menu's Experiments submenu (client experiments aren't supported).
   await page.addStyleTag({
-    content: `${cls('header')} ${cls('dot')}, ${cls('header')} ${cls('titleWrapper')}:has(a) { display: none !important; }`,
+    content: `${cls('header')} ${cls('dot')}, ${cls('header')} ${cls('titleWrapper')}:has(a),
+      #playground-settings-menu-experiments { display: none !important; }`,
   });
 };
 
@@ -275,6 +278,12 @@ const openOurs = async (page, { collection, story, theme, layout }) => {
       content: `${cls('group')} > :nth-child(n+3) { display: none !important; }`,
     });
   }
+  // Discord shows the High Dynamic Range accessibility item only in an experiment (off in the reference);
+  // ours always shows it. Hide it with the separator before its group.
+  const hdr = '[role="group"]:has(> div > #playground-settings-menu-accessibility--hdr-dynamic-range)';
+  await page.addStyleTag({
+    content: `${hdr}, [role="separator"]:has(+ ${hdr}) { display: none !important; }`,
+  });
   if (layout && layout !== 'right') await setLayout(page, layout);
 };
 
