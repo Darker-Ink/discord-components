@@ -15,8 +15,9 @@
 // Discord's playground is a dev tool inside the client, under the app's title bar; neither side has the
 // app frame here, so the `--custom-app-top-bar-height` gap at the top is empty on both. Collections that
 // only exist on one side (our "Messages") are hidden on ours (`--keep-extra-collections` keeps them), and
-// the header's "Docs" link and the settings menu's Experiments submenu, which ours leaves out, are hidden on
-// Discord's.
+// the header's "Docs" link, the settings menu's Experiments submenu and the Void deprecation notice, which
+// ours leaves out, are hidden on Discord's. Ours fits the window instead of running past its bottom like
+// Discord's does under the client's top bar; Discord's gets the same fit for the comparison.
 import fs from 'node:fs';
 import path from 'node:path';
 import { PNG } from 'pngjs';
@@ -29,6 +30,7 @@ const THEMES = ['light', 'dark', 'darker', 'midnight'];
 
 // Elements are found by their CSS module class name, which both sides share (minus the hash).
 const cls = (name) => `[class*="${name}_"]`;
+const root = '[data-testid="component-playground"]';
 const sidebar = cls('sidebar');
 const controls = cls('controls');
 // The select's combobox is a zero-size focus target inside the visible trigger row.
@@ -258,11 +260,15 @@ const openRef = async (page, { collection, story, theme }) => {
     },
     { collection, story, theme },
   );
-  // Ours leaves out, on purpose, the header's "Docs" link (divider dot plus linked title) and the settings
-  // menu's Experiments submenu (client experiments aren't supported).
+  // Ours leaves out, on purpose, the header's "Docs" link (divider dot plus linked title), the settings
+  // menu's Experiments submenu (client experiments aren't supported) and the Void deprecation notice.
+  // Standalone, ours also fits the window (PlaygroundFrame.module.css); apply the same fit here.
   await page.addStyleTag({
     content: `${cls('header')} ${cls('dot')}, ${cls('header')} ${cls('titleWrapper')}:has(a),
-      #playground-settings-menu-experiments { display: none !important; }`,
+      #playground-settings-menu-experiments, ${cls('deprecationNotice')} { display: none !important; }
+      ${root} { box-sizing: border-box; }
+      ${root} > ${cls('content')} { display: flex; flex-direction: column; }
+      ${root} > ${cls('content')} > ${cls('page')} { flex: 1; height: auto; padding-bottom: 0; }`,
   });
 };
 
@@ -271,7 +277,7 @@ const openOurs = async (page, { collection, story, theme, layout }) => {
   if (story) params.set('story', story);
   params.set('theme', theme);
   await page.goto(`${OURS}/?${params}`);
-  await page.locator('[data-testid="component-playground"]').waitFor({ timeout: 30000 });
+  await page.locator('[data-testid="component-playground"]').waitFor();
   if (!keepExtra) {
     // Our extra collections have no counterpart in Discord's config.
     await page.addStyleTag({
@@ -289,6 +295,8 @@ const openOurs = async (page, { collection, story, theme, layout }) => {
 
 const capture = async (side, scenario, theme) => {
   const page = await browser.newPage({ viewport: size, deviceScaleFactor: 1, userAgent });
+  // Both dev servers can be slow to answer while they rebuild.
+  page.setDefaultTimeout(90000);
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
   const [collection, story = null] = scenario.target.split('/');
@@ -298,7 +306,7 @@ const capture = async (side, scenario, theme) => {
     // Through the menu like on ours, so both sides end in the same hover/focus state.
     if (options.layout && options.layout !== 'right') await setLayout(page, options.layout);
   } else await openOurs(page, options);
-  await page.locator('[data-testid="component-playground"]').waitFor({ timeout: 30000 });
+  await page.locator('[data-testid="component-playground"]').waitFor();
   await settle(page);
   if (scenario.run) await scenario.run(page);
   await page.waitForTimeout(200);
@@ -310,11 +318,15 @@ const capture = async (side, scenario, theme) => {
 let failures = 0;
 const runJob = async ({ scenario, theme }) => {
   let ref, ours;
-  try {
-    [ref, ours] = await Promise.all([capture('ref', scenario, theme), capture('ours', scenario, theme)]);
-  } catch (error) {
-    failures++;
-    return `${scenario.name} (${scenario.target}) ${theme}: failed: ${error.message.split('\n')[0]}`;
+  for (let attempt = 1; ; attempt++) {
+    try {
+      [ref, ours] = await Promise.all([capture('ref', scenario, theme), capture('ours', scenario, theme)]);
+      break;
+    } catch (error) {
+      if (attempt < 2) continue;
+      failures++;
+      return `${scenario.name} (${scenario.target}) ${theme}: failed: ${error.message.split('\n')[0]}`;
+    }
   }
   const { width, height } = ref.png;
   const diff = new PNG({ width, height });
