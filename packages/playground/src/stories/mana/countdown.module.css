@@ -1,0 +1,8 @@
+.backdrop {
+  background: var(--background-brand);
+  border-radius: var(--radius-md);
+  padding: var(--space-16);
+}
+.label {
+  color: var(--text-overlay-light);
+}
