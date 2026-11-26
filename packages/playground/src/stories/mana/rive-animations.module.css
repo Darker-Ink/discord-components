@@ -1,0 +1,27 @@
+.grid {
+  display: grid;
+  gap: var(--space-16);
+  grid-template-columns: repeat(auto-fill, 15vh);
+}
+.cell {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+.animationWrapper {
+  background: var(--background-mod-subtle);
+  border-radius: var(--radius-sm);
+  height: 15vh;
+  overflow: hidden;
+  width: 15vh;
+}
+.label {
+  max-width: 15vh;
+  text-align: center;
+  word-break: break-word;
+}
+.switchWrapper {
+  display: inline-flex;
+  margin-bottom: var(--space-24);
+}
