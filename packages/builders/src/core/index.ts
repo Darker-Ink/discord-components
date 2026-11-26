@@ -42,6 +42,8 @@ export {
   countNodeComponents,
   describeKind,
   inferSlot,
+  isTemplateAllowed,
+  type RuleOptions,
   type RuleResult,
 } from './rules';
 export {
@@ -104,6 +106,8 @@ export {
   useMessageBuilder,
   useNodeIssues,
   useNodeLocation,
+  useAllowedTemplates,
+  useBuilderRestrictions,
   type MessageBuilderApi,
   type MessageBuilderOptions,
   type MessageBuilderProviderProps,
@@ -122,3 +126,25 @@ export {
   type WebhookResult,
 } from './webhook';
 export { assignComponentIds, collectComponentIds } from './ids';
+export {
+  allowedModes,
+  areEmbedsAllowed,
+  componentNames,
+  countLimit,
+  describeComponentName,
+  effectiveLimit,
+  isComponentAllowed,
+  isEmbedPartAllowed,
+  isMessageFieldAllowed,
+  isModeAllowed,
+  isTightened,
+  mergeRestrictions,
+  restrictionPresets,
+  validateRestrictions,
+  type BuilderRestrictions,
+  type ComponentName,
+  type EmbedPart,
+  type MessageField,
+  type RestrictionLimits,
+} from './restrictions';
+export { sanitize } from './sanitize';

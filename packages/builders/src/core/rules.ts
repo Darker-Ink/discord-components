@@ -1,7 +1,20 @@
 // Nesting and capacity rules for editing: what may go where. These keep the document structurally valid
 // while dragging and inserting; everything else (lengths, required fields) is left to validation.
 import { limits } from './limits';
-import { isTemplateType, TEMPLATE_INFO, TEMPLATES } from './templates';
+import {
+  areEmbedsAllowed,
+  componentNames,
+  countLimit,
+  describeComponentName,
+  effectiveLimit,
+  isComponentAllowed,
+  isEmbedPartAllowed,
+  isModeAllowed,
+  isTightened,
+  type BuilderRestrictions,
+  type ComponentName,
+} from './restrictions';
+import { createNode, isTemplateType, TEMPLATE_INFO, TEMPLATES } from './templates';
 import type { TemplateType } from './templates';
 import { findNode, isAncestor, kindInSlot, slotChildren, walkNode } from './tree';
 import { ROOT_UID } from './types';
@@ -124,10 +137,20 @@ export const describeKind = (kind: ParentKind) => KIND_LABELS[kind];
 
 interface Candidate {
   kind: NodeKind;
-  componentCount: number;
+  /** The node (and everything under it), for new nodes: checked against the restrictions. */
+  node?: BuilderNode;
   /** Set when moving an existing node. */
   uid?: string;
 }
+
+/** Options of the rule checks: the node's kind (for nodes without a `type`) and the builder's restrictions. */
+export interface RuleOptions {
+  kind?: NodeKind;
+  restrictions?: BuilderRestrictions;
+}
+
+const toOptions = (options: NodeKind | RuleOptions | undefined): RuleOptions =>
+  typeof options === 'string' ? { kind: options } : (options ?? {});
 
 const resolveParent = (doc: BuilderDocument, parentId: string | null) => {
   if (parentId == null || parentId === ROOT_UID) return { node: doc as object, kind: 'message' as ParentKind };
@@ -135,7 +158,49 @@ const resolveParent = (doc: BuilderDocument, parentId: string | null) => {
   return location ? { node: location.node as object, kind: location.kind as ParentKind } : null;
 };
 
-const check = (doc: BuilderDocument, candidate: Candidate, target: NodeTarget): RuleResult => {
+const capitalize = (value: string) => value.replace(/^./, (c) => c.toUpperCase());
+
+/** Why the restrictions rule out a new node (or something in it), if they do. */
+const restrictionReason = (node: BuilderNode, kind: NodeKind, restrictions: BuilderRestrictions | undefined) => {
+  if (!restrictions) return null;
+  let reason: string | null = null;
+  walkNode(node, kind, (child, childKind) => {
+    if (reason) return;
+    if (childKind === 'embed' && !areEmbedsAllowed(restrictions)) reason = "Embeds aren't allowed in this builder";
+    else if (childKind === 'embedField' && !isEmbedPartAllowed(restrictions, 'fields')) {
+      reason = "Embed fields aren't allowed in this builder";
+    } else if (!NON_COMPONENT_KINDS.has(childKind) && !isComponentAllowed(restrictions, child as { type: number })) {
+      const [name] = componentNames(child as { type: number });
+      reason = `${name ? describeComponentName(name) : 'This component'} aren't allowed in this builder`;
+    } else if (
+      childKind === 'section' &&
+      !isComponentAllowed(restrictions, 'button') &&
+      !isComponentAllowed(restrictions, 'thumbnail')
+    ) {
+      reason = 'Sections need a button or thumbnail, and this builder allows neither';
+    }
+  });
+  return reason;
+};
+
+/** Components of each restriction name in a subtree (or the whole message). */
+const countNames = (nodes: readonly BuilderNode[], slot: SlotName) => {
+  const counts = new Map<ComponentName, number>();
+  for (const node of nodes) {
+    walkNode(node, kindInSlot(node, slot), (child, childKind) => {
+      if (NON_COMPONENT_KINDS.has(childKind)) return;
+      for (const name of componentNames(child as { type: number })) counts.set(name, (counts.get(name) ?? 0) + 1);
+    });
+  }
+  return counts;
+};
+
+const check = (
+  doc: BuilderDocument,
+  candidate: Candidate,
+  target: NodeTarget,
+  restrictions: BuilderRestrictions | undefined,
+): RuleResult => {
   const parent = resolveParent(doc, target.parentId);
   if (!parent) return fail('The target no longer exists');
   const slot = target.slot ?? inferSlot(parent.kind, candidate.kind);
@@ -143,13 +208,9 @@ const check = (doc: BuilderDocument, candidate: Candidate, target: NodeTarget): 
   if (!allowed.includes(candidate.kind)) {
     if (parent.kind === 'message' && slot === 'embeds') return fail('Components v2 messages cannot have embeds');
     if (parent.kind === 'message' && doc.mode === 'classic') {
-      return fail(
-        `${describeKind(candidate.kind)} needs a Components v2 message`.replace(/^./, (c) => c.toUpperCase()),
-      );
+      return fail(capitalize(`${describeKind(candidate.kind)} needs a Components v2 message`));
     }
-    return fail(
-      `${describeKind(candidate.kind)} can't go in ${describeKind(parent.kind)}`.replace(/^./, (c) => c.toUpperCase()),
-    );
+    return fail(capitalize(`${describeKind(candidate.kind)} can't go in ${describeKind(parent.kind)}`));
   }
 
   const moving = candidate.uid != null ? findNode(doc, candidate.uid) : null;
@@ -162,16 +223,20 @@ const check = (doc: BuilderDocument, candidate: Candidate, target: NodeTarget): 
       return fail("A node can't go inside itself");
     }
   }
+  if (candidate.node) {
+    const reason = restrictionReason(candidate.node, candidate.kind, restrictions);
+    if (reason) return fail(reason);
+  }
   const sameList =
     moving != null && (moving.parentId ?? ROOT_UID) === (target.parentId ?? ROOT_UID) && moving.slot === slot;
   const siblings = slotChildren(parent.node, slot).filter((node) => !(sameList && node.uid === candidate.uid));
 
+  const max = (key: Parameters<typeof effectiveLimit>[1]) => effectiveLimit(restrictions, key);
   const full = (limit: number, what: string) => (siblings.length >= limit ? fail(what) : OK);
   let result: RuleResult = OK;
   switch (parent.kind) {
     case 'message':
-      if (slot === 'embeds')
-        result = full(limits.message.embeds, `A message can have up to ${limits.message.embeds} embeds`);
+      if (slot === 'embeds') result = full(max('embeds'), `A message can have up to ${max('embeds')} embeds`);
       else if (doc.mode === 'classic') {
         result = full(
           limits.message.classicActionRows,
@@ -180,85 +245,116 @@ const check = (doc: BuilderDocument, candidate: Candidate, target: NodeTarget): 
       }
       break;
     case 'embed':
-      result = full(limits.embed.fields, `An embed can have up to ${limits.embed.fields} fields`);
+      result = full(max('embedFields'), `An embed can have up to ${max('embedFields')} fields`);
       break;
     case 'actionRow': {
       const kinds = siblings.map((node) => kindInSlot(node, 'components'));
       if (candidate.kind === 'button') {
-        if (kinds.some((kind) => kind !== 'button'))
+        if (kinds.some((kind) => kind !== 'button')) {
           result = fail('An action row with a select menu has no room for buttons');
-        else
-          result = full(limits.actionRow.buttons, `An action row can have up to ${limits.actionRow.buttons} buttons`);
+        } else {
+          result = full(max('actionRowButtons'), `An action row can have up to ${max('actionRowButtons')} buttons`);
+        }
       } else if (siblings.length > 0) result = fail('A select menu needs an action row of its own');
       break;
     }
     case 'section':
       if (slot === 'accessory') result = full(1, 'The section already has an accessory');
-      else
-        result = full(
-          limits.section.maxComponents,
-          `A section can have up to ${limits.section.maxComponents} text displays`,
-        );
+      else {
+        result = full(max('sectionComponents'), `A section can have up to ${max('sectionComponents')} text displays`);
+      }
       break;
     case 'stringSelect':
-      result = full(limits.select.options, `A select menu can have up to ${limits.select.options} options`);
+      result = full(max('selectOptions'), `A select menu can have up to ${max('selectOptions')} options`);
       break;
     case 'mediaGallery':
-      result = full(
-        limits.mediaGallery.maxItems,
-        `A media gallery can have up to ${limits.mediaGallery.maxItems} items`,
-      );
+      result = full(max('galleryItems'), `A media gallery can have up to ${max('galleryItems')} items`);
       break;
   }
-  if (!result.ok) return result;
+  if (!result.ok || moving || !candidate.node) return result;
 
-  if (doc.mode === 'cv2' && !moving && candidate.componentCount > 0) {
+  const added = countNodeComponents(candidate.node, candidate.kind);
+  if (added > 0) {
     const total = countComponents(doc);
-    if (total + candidate.componentCount > limits.components.total) {
-      return fail(`A message can have up to ${limits.components.total} components (${total} used)`);
+    const limit =
+      doc.mode === 'cv2' ? max('components') : isTightened(restrictions, 'components') ? max('components') : Infinity;
+    if (total + added > limit) return fail(`A message can have up to ${limit} components (${total} used)`);
+  }
+  if (restrictions?.counts) {
+    const adding = countNames([candidate.node], slot);
+    const existing = countNames(doc.components, 'components');
+    for (const [name, count] of adding) {
+      const limit = countLimit(restrictions, name);
+      if ((existing.get(name) ?? 0) + count > limit) {
+        return fail(`${describeComponentName(name)}: at most ${limit} in this builder`);
+      }
     }
   }
   return OK;
 };
 
-const candidateOf = (node: BuilderNode | TemplateType, kindHint?: NodeKind): Candidate => {
-  if (isTemplateType(node)) {
-    const info = TEMPLATE_INFO[node];
-    return { kind: info.kind, componentCount: info.componentCount };
-  }
-  const kind = kindHint ?? kindInSlot(node, 'components');
-  return { kind, componentCount: countNodeComponents(node, kind) };
+const candidateOf = (
+  node: BuilderNode | TemplateType,
+  kindHint: NodeKind | undefined,
+  restrictions: BuilderRestrictions | undefined,
+): Candidate => {
+  if (isTemplateType(node)) return { kind: TEMPLATE_INFO[node].kind, node: createNode(node, restrictions) };
+  return { kind: kindHint ?? kindInSlot(node, 'components'), node };
 };
 
 /**
- * Whether a new node (a template type, or a node with its kind) can be inserted at `target`, and why not.
- * Nodes without a `type` (embeds, fields, options, gallery items) need `kind`.
+ * Whether a new node (a template type, or a node) can be inserted at `target`, and why not. Nodes without a
+ * `type` (embeds, fields, options, gallery items) need `kind`. With `restrictions`, the node and everything
+ * in it must be allowed by them.
  */
 export const checkInsert = (
   doc: BuilderDocument,
   node: BuilderNode | TemplateType,
   target: NodeTarget,
-  kind?: NodeKind,
-): RuleResult => check(doc, candidateOf(node, kind), target);
+  options?: NodeKind | RuleOptions,
+): RuleResult => {
+  const { kind, restrictions } = toOptions(options);
+  return check(doc, candidateOf(node, kind, restrictions), target, restrictions);
+};
 
 export const canInsert = (
   doc: BuilderDocument,
   node: BuilderNode | TemplateType,
   target: NodeTarget,
-  kind?: NodeKind,
-) => checkInsert(doc, node, target, kind).ok;
+  options?: NodeKind | RuleOptions,
+) => checkInsert(doc, node, target, options).ok;
 
 /** Whether the node `uid` can move to `target`, and why not. Cheap enough for every dragover. */
-export const checkMove = (doc: BuilderDocument, uid: string, target: NodeTarget): RuleResult => {
+export const checkMove = (
+  doc: BuilderDocument,
+  uid: string,
+  target: NodeTarget,
+  { restrictions }: RuleOptions = {},
+): RuleResult => {
   const location = findNode(doc, uid);
   if (!location) return fail('The node no longer exists');
-  return check(doc, { kind: location.kind, componentCount: 0, uid }, target);
+  return check(doc, { kind: location.kind, uid }, target, restrictions);
 };
 
-export const canMove = (doc: BuilderDocument, uid: string, target: NodeTarget) => checkMove(doc, uid, target).ok;
+export const canMove = (doc: BuilderDocument, uid: string, target: NodeTarget, options?: RuleOptions) =>
+  checkMove(doc, uid, target, options).ok;
+
+/**
+ * Whether a template can be used at all under the restrictions (in some allowed mode, wherever it goes): for
+ * hiding palette entries. `allowedTemplates` answers for a specific place.
+ */
+export const isTemplateAllowed = (type: TemplateType, restrictions: BuilderRestrictions | undefined) => {
+  const info = TEMPLATE_INFO[type];
+  if (!info.modes.some((mode) => isModeAllowed(restrictions, mode))) return false;
+  return restrictionReason(createNode(type, restrictions), info.kind, restrictions) == null;
+};
 
 /** Template types that can be inserted at `target` right now (for "add" menus and palettes). */
-export const allowedTemplates = (doc: BuilderDocument, target: NodeTarget): TemplateType[] =>
-  TEMPLATES.filter((info) => info.modes.includes(doc.mode) && checkInsert(doc, info.type, target).ok).map(
-    (info) => info.type,
-  );
+export const allowedTemplates = (
+  doc: BuilderDocument,
+  target: NodeTarget,
+  { restrictions }: RuleOptions = {},
+): TemplateType[] =>
+  TEMPLATES.filter(
+    (info) => info.modes.includes(doc.mode) && checkInsert(doc, info.type, target, { restrictions }).ok,
+  ).map((info) => info.type);

@@ -13,7 +13,16 @@ import {
 } from './store';
 import { findNode } from './tree';
 import { ROOT_UID } from './types';
-import type { BuilderDocument, BuilderNode, NodeLocation, ValidationIssue, WebhookMessagePayload } from './types';
+import type { BuilderRestrictions } from './restrictions';
+import type { TemplateType } from './templates';
+import type {
+  BuilderDocument,
+  BuilderNode,
+  NodeLocation,
+  NodeTarget,
+  ValidationIssue,
+  WebhookMessagePayload,
+} from './types';
 import type { DocumentStats } from './validate';
 
 export interface MessageBuilderOptions extends Omit<BuilderStoreOptions, 'onChange'> {
@@ -40,7 +49,7 @@ export interface MessageBuilderApi {
   toJSON: () => WebhookMessagePayload;
 }
 
-const OPTION_KEYS = new Set(['value', 'defaultValue', 'onChange', 'limit', 'coalesceMs', 'validation']);
+const OPTION_KEYS = new Set(['value', 'defaultValue', 'onChange', 'limit', 'coalesceMs', 'validation', 'restrictions']);
 
 const isOptions = (value: unknown): value is MessageBuilderOptions =>
   typeof value === 'object' &&
@@ -78,13 +87,13 @@ export const useMessageBuilder = (
   init?: MessageBuilderOptions | BuilderDocument | WebhookMessagePayload,
 ): MessageBuilderApi => {
   const options: MessageBuilderOptions = isOptions(init) ? init : { defaultValue: init };
-  const { value, defaultValue, onChange, limit, coalesceMs, validation } = options;
+  const { value, defaultValue, onChange, limit, coalesceMs, validation, restrictions } = options;
   const [store] = useState(() =>
-    createBuilderStore(value ?? defaultValue, { onChange, limit, coalesceMs, validation }),
+    createBuilderStore(value ?? defaultValue, { onChange, limit, coalesceMs, validation, restrictions }),
   );
   useLayoutEffect(() => {
-    store.setOptions({ onChange, limit, coalesceMs, validation });
-  }, [store, onChange, limit, coalesceMs, validation]);
+    store.setOptions({ onChange, limit, coalesceMs, validation, restrictions });
+  }, [store, onChange, limit, coalesceMs, validation, restrictions]);
   useEffect(() => {
     if (value) store.sync(value);
   }, [store, value]);
@@ -212,3 +221,22 @@ export const useDocumentStats = (): DocumentStats =>
     useCallback((_state: BuilderState, store: BuilderStore) => store.getStats(), []),
     statsEqual,
   );
+
+/** The restrictions of the nearest builder (`undefined` when it has none). */
+export const useBuilderRestrictions = (): BuilderRestrictions | undefined =>
+  useBuilderSelector(useCallback((_state: BuilderState, store: BuilderStore) => store.getRestrictions(), []));
+
+const sameList = (a: readonly string[], b: readonly string[]) =>
+  a === b || (a.length === b.length && a.every((item, index) => item === b[index]));
+
+/** Template types that can be inserted at a target now, with the builder's restrictions (a stable array). */
+export const useAllowedTemplates = (target: NodeTarget): TemplateType[] => {
+  const { parentId, slot, index } = target;
+  return useBuilderSelector(
+    useCallback(
+      (_state: BuilderState, store: BuilderStore) => store.allowedTemplates({ parentId, slot, index }),
+      [parentId, slot, index],
+    ),
+    sameList,
+  );
+};

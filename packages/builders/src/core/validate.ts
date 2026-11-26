@@ -3,6 +3,7 @@
 import { limits, MessageFlag } from './limits';
 import { toJSON } from './json';
 import { countComponents } from './rules';
+import { effectiveLimit, validateRestrictions, type BuilderRestrictions, type RestrictionLimits } from './restrictions';
 import { nodeAtPath } from './tree';
 import type {
   BuilderDocument,
@@ -1187,7 +1188,12 @@ export const validateMessage = (payload: unknown, options: ValidateOptions = {})
       cv2 ? 'Add at least one component' : 'The message needs content, an embed, components, a file or a poll',
     );
   }
-  return ctx.issues;
+  if (!options.restrictions) return ctx.issues;
+  const restricted = validateRestrictions(payload, options.restrictions);
+  if (restricted.length === 0) return ctx.issues;
+  // A builder limit below Discord's replaces Discord's issue for the same thing.
+  const replaced = new Set(restricted.map((issue) => `${issue.code}\u0000${issue.path.join('.')}`));
+  return [...ctx.issues.filter((issue) => !replaced.has(`${issue.code}\u0000${issue.path.join('.')}`)), ...restricted];
 };
 
 // ---------------------------------------------------------------------------------------------------------
@@ -1280,11 +1286,33 @@ const SELECT_LIMITS = {
   max_values: limits.select.maxValues,
 };
 
+/** Which restriction limit lowers each `getLimit` field. */
+const RESTRICTED_FIELDS: Partial<Record<LimitKind, Record<string, keyof RestrictionLimits>>> = {
+  message: { content: 'content', username: 'username', thread_name: 'threadName', embeds: 'embeds' },
+  embed: {
+    title: 'embedTitle',
+    description: 'embedDescription',
+    'author.name': 'authorName',
+    'footer.text': 'footerText',
+    fields: 'embedFields',
+  },
+  embedField: { name: 'fieldName', value: 'fieldValue' },
+  button: { label: 'buttonLabel' },
+  textDisplay: { content: 'textDisplay' },
+  mediaGallery: { items: 'galleryItems' },
+  section: { components: 'sectionComponents' },
+  actionRow: { components: 'actionRowButtons' },
+  stringSelect: { options: 'selectOptions' },
+};
+
 /**
  * The maximum length (or item count) of a node's field, for counters: `getLimit('embed', 'title')` → 256,
- * `getLimit('message', 'content')` → 2000. `undefined` when the field has no limit.
+ * `getLimit('message', 'content')` → 2000, lowered by `restrictions` when given. `undefined` when the field has
+ * no limit.
  */
-export const getLimit = (kind: LimitKind, field: string): number | undefined => {
+export const getLimit = (kind: LimitKind, field: string, restrictions?: BuilderRestrictions): number | undefined => {
+  const restricted = restrictions ? RESTRICTED_FIELDS[kind]?.[field] : undefined;
+  if (restricted) return effectiveLimit(restrictions, restricted);
   if (kind === 'stringSelect' && field === 'options') return limits.select.options;
   if (
     kind === 'stringSelect' ||
@@ -1316,12 +1344,16 @@ export interface DocumentStats {
   textDisplayLimit: number;
 }
 
-const statsCache = new WeakMap<BuilderDocument, DocumentStats>();
+const statsCache = new WeakMap<BuilderDocument, { key: string; stats: DocumentStats }>();
 
-/** Totals for counters (characters across embeds, components, text display characters). Memoised. */
-export const getDocumentStats = (doc: BuilderDocument): DocumentStats => {
+/**
+ * Totals for counters (characters across embeds, components, text display characters), with the limits
+ * lowered by `restrictions` when given. Memoised.
+ */
+export const getDocumentStats = (doc: BuilderDocument, restrictions?: BuilderRestrictions): DocumentStats => {
+  const key = restrictions ? JSON.stringify(restrictions.limits ?? {}) : '';
   const cached = statsCache.get(doc);
-  if (cached) return cached;
+  if (cached && cached.key === key) return cached.stats;
   let textDisplayCharacters = 0;
   const countText = (components: readonly unknown[]) => {
     for (const component of components) {
@@ -1335,18 +1367,18 @@ export const getDocumentStats = (doc: BuilderDocument): DocumentStats => {
   countText(doc.components);
   const stats: DocumentStats = {
     contentLength: characterLength(doc.content),
-    contentLimit: limits.message.content,
+    contentLimit: effectiveLimit(restrictions, 'content'),
     embedCount: doc.embeds.length,
-    embedLimit: limits.message.embeds,
+    embedLimit: effectiveLimit(restrictions, 'embeds'),
     embedCharacters: doc.embeds.reduce((total, embed) => total + countEmbedCharacters(embed), 0),
-    embedCharacterLimit: limits.embed.total,
+    embedCharacterLimit: effectiveLimit(restrictions, 'embedTotal'),
     componentCount: countComponents(doc),
-    componentLimit: limits.components.total,
+    componentLimit: effectiveLimit(restrictions, 'components'),
     actionRowCount: doc.components.filter((node) => node.type === 1).length,
     actionRowLimit: limits.message.classicActionRows,
     textDisplayCharacters,
-    textDisplayLimit: limits.textDisplay.total,
+    textDisplayLimit: effectiveLimit(restrictions, 'textDisplayTotal'),
   };
-  statsCache.set(doc, stats);
+  statsCache.set(doc, { key, stats });
   return stats;
 };

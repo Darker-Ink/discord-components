@@ -1,5 +1,6 @@
 import { createUid } from './json';
-import type { BuilderMode, BuilderNode, NodeKind, TextDisplayNode } from './types';
+import { isComponentAllowed, type BuilderRestrictions } from './restrictions';
+import type { BuilderMode, BuilderNode, ButtonNode, NodeKind, TextDisplayNode, ThumbnailNode } from './types';
 
 export type TemplateType =
   | 'embed'
@@ -39,7 +40,7 @@ const shortId = () => Math.random().toString(36).slice(2, 8);
 
 const textDisplay = (content = ''): TextDisplayNode => ({ uid: createUid(), type: 10, content });
 
-const factories: Record<TemplateType, () => BuilderNode> = {
+const factories: Record<TemplateType, (restrictions?: BuilderRestrictions) => BuilderNode> = {
   embed: () => ({ uid: createUid(), description: '', fields: [] }),
   field: () => ({ uid: createUid(), name: '', value: '' }),
   'action-row': () => ({ uid: createUid(), type: 1, components: [] }),
@@ -62,25 +63,37 @@ const factories: Record<TemplateType, () => BuilderNode> = {
     return { uid: createUid(), label: 'Option', value: `option-${id}` };
   },
   'text-display': () => textDisplay(),
-  section: () => ({
-    uid: createUid(),
-    type: 9,
-    components: [textDisplay()],
-    accessory: { uid: createUid(), type: 2, style: 2, label: 'Button', custom_id: `button-${shortId()}` },
-  }),
+  section: (restrictions) => {
+    // The first accessory the builder allows: a button, a link button, then a thumbnail.
+    const accessories: (ButtonNode | ThumbnailNode)[] = [
+      { uid: createUid(), type: 2, style: 2, label: 'Button', custom_id: `button-${shortId()}` },
+      { uid: createUid(), type: 2, style: 5, label: 'Link', url: 'https://discord.com' },
+      { uid: createUid(), type: 11, media: { url: '' } },
+    ];
+    const accessory = accessories.find((node) => isComponentAllowed(restrictions, node));
+    return { uid: createUid(), type: 9, components: [textDisplay()], ...(accessory ? { accessory } : {}) };
+  },
   thumbnail: () => ({ uid: createUid(), type: 11, media: { url: '' } }),
   'media-gallery': () => ({ uid: createUid(), type: 12, items: [{ uid: createUid(), media: { url: '' } }] }),
   'gallery-item': () => ({ uid: createUid(), media: { url: '' } }),
   file: () => ({ uid: createUid(), type: 13, file: { url: 'attachment://' } }),
   separator: () => ({ uid: createUid(), type: 14, divider: true, spacing: 1 }),
-  container: () => ({ uid: createUid(), type: 17, components: [textDisplay()] }),
+  container: (restrictions) => ({
+    uid: createUid(),
+    type: 17,
+    components: isComponentAllowed(restrictions, 'textDisplay') ? [textDisplay()] : [],
+  }),
 };
 
 /**
  * A new node of a template type with fresh uids and defaults: buttons and selects get a unique `custom_id`,
- * text fields start empty so the editor shows its placeholders.
+ * text fields start empty so the editor shows its placeholders. With `restrictions`, default children are
+ * ones the builder allows (a section gets a thumbnail when buttons are off).
  */
-export const createNode = <T extends BuilderNode = BuilderNode>(type: TemplateType): T => factories[type]() as T;
+export const createNode = <T extends BuilderNode = BuilderNode>(
+  type: TemplateType,
+  restrictions?: BuilderRestrictions,
+): T => factories[type](restrictions) as T;
 
 const CLASSIC_AND_CV2: readonly BuilderMode[] = ['classic', 'cv2'];
 const CV2: readonly BuilderMode[] = ['cv2'];

@@ -18,6 +18,7 @@ import type {
   APIThumbnailComponent,
   APIUserSelectComponent,
 } from '@discord-mana/messages';
+import type { BuilderRestrictions } from './restrictions';
 
 // ---------------------------------------------------------------------------------------------------------
 // Request payloads (discord-api-types naming). The message/component/embed shapes come from
@@ -235,6 +236,8 @@ export interface ValidationIssue {
   nodeId?: string;
   /** Document issues only: the property of that node, dotted for nested ones (`author.name`, `media.url`). */
   field?: string;
+  /** Set when the issue comes from the builder's restrictions rather than from Discord's rules. */
+  restricted?: boolean;
 }
 
 export type ValidationTarget = 'webhook' | 'message' | 'interaction';
@@ -253,4 +256,6 @@ export interface ValidateOptions {
   files?: string[];
   /** Webhooks only: the `thread_id` query parameter (`thread_name` can't be used with it). */
   threadId?: string;
+  /** What this builder allows; anything else is reported with `restricted: true`. */
+  restrictions?: BuilderRestrictions;
 }

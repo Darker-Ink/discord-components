@@ -3,7 +3,9 @@
 import { convertToClassic, convertToCV2 } from './convert';
 import { createUid, reassignUids } from './json';
 import { limits } from './limits';
-import { checkInsert, checkMove, inferSlot } from './rules';
+import { isModeAllowed, type BuilderRestrictions } from './restrictions';
+import { checkInsert, checkMove, inferSlot, type RuleOptions } from './rules';
+import { sanitize } from './sanitize';
 import { createNode, isTemplateType, TEMPLATE_INFO } from './templates';
 import type { TemplateType } from './templates';
 import { componentKind, findNode, kindInSlot, NODE_SLOTS, replaceNode, setSlot, slotChildren, walkNode } from './tree';
@@ -46,17 +48,19 @@ export const insertNode = (
   doc: BuilderDocument,
   target: NodeTarget,
   nodeOrType: BuilderNode | TemplateType,
-  kind?: NodeKind,
+  options?: NodeKind | RuleOptions,
 ): InsertResult => {
+  const { kind, restrictions } =
+    typeof options === 'string' ? { kind: options, restrictions: undefined } : (options ?? {});
   const nodeKind = isTemplateType(nodeOrType)
     ? TEMPLATE_INFO[nodeOrType].kind
     : (kind ??
       (target.slot ? kindInSlot(nodeOrType, target.slot) : componentKind((nodeOrType as { type: number }).type)));
   const slot = resolveSlot(doc, target, nodeKind);
   if (!slot) return { doc, uid: null, reason: 'The target no longer exists' };
-  const result = checkInsert(doc, nodeOrType, { ...target, slot }, nodeKind);
+  const node = isTemplateType(nodeOrType) ? createNode(nodeOrType, restrictions) : reassignUids(nodeOrType, nodeKind);
+  const result = checkInsert(doc, node, { ...target, slot }, { kind: nodeKind, restrictions });
   if (!result.ok) return { doc, uid: null, reason: result.reason };
-  const node = isTemplateType(nodeOrType) ? createNode(nodeOrType) : reassignUids(nodeOrType, nodeKind);
   return { doc: insertAt(doc, node, target.parentId, slot, target.index), uid: node.uid };
 };
 
@@ -125,13 +129,13 @@ export const removeNode = (doc: BuilderDocument, uid: string) => {
  * Moves a node. `target.index` is its final position in the target list (like `arrayMove`), defaulting to
  * the end. Returns the same document when the move isn't allowed (see `checkMove`).
  */
-export const moveNode = (doc: BuilderDocument, uid: string, target: NodeTarget) => {
+export const moveNode = (doc: BuilderDocument, uid: string, target: NodeTarget, options: RuleOptions = {}) => {
   const location = findNode(doc, uid);
   if (!location) return doc;
   const slot = target.slot ?? resolveSlot(doc, target, location.kind);
   if (!slot) return doc;
   const resolved = { ...target, slot };
-  if (!checkMove(doc, uid, resolved).ok) return doc;
+  if (!checkMove(doc, uid, resolved, options).ok) return doc;
   const sameList = (location.parentId ?? ROOT_UID) === (target.parentId ?? ROOT_UID) && location.slot === slot;
   if (sameList) {
     if (slot === 'accessory') return doc;
@@ -171,12 +175,12 @@ const collectCustomIds = (doc: BuilderDocument) => {
 };
 
 /** A copy of the node right after it, with new uids, unique `custom_id`s and option values, no API `id`s. */
-export const duplicateNode = (doc: BuilderDocument, uid: string): InsertResult => {
+export const duplicateNode = (doc: BuilderDocument, uid: string, { restrictions }: RuleOptions = {}): InsertResult => {
   const location = findNode(doc, uid);
   if (!location) return { doc, uid: null, reason: 'The node no longer exists' };
   if (location.slot === 'accessory') return { doc, uid: null, reason: 'A section has only one accessory' };
   const target = { parentId: location.parentId, slot: location.slot, index: location.index + 1 };
-  const result = checkInsert(doc, location.node, target, location.kind);
+  const result = checkInsert(doc, location.node, target, { kind: location.kind, restrictions });
   if (!result.ok) return { doc, uid: null, reason: result.reason };
   const customIds = collectCustomIds(doc);
   const fix = (node: BuilderNode, kind: NodeKind): BuilderNode => {
@@ -211,17 +215,24 @@ export interface SetModeOptions {
    * embeds…). `false` removes it instead.
    */
   convert?: boolean;
+  /** A mode the restrictions don't allow isn't switched to; the result is sanitized against them. */
+  restrictions?: BuilderRestrictions;
 }
 
 /** Switches between classic messages (content, embeds, action rows) and Components v2. */
-export const setMode = (doc: BuilderDocument, mode: BuilderMode, { convert = true }: SetModeOptions = {}) => {
-  if (doc.mode === mode) return doc;
-  if (convert) return mode === 'cv2' ? convertToCV2(doc) : convertToClassic(doc);
-  if (mode === 'cv2') {
+export const setMode = (
+  doc: BuilderDocument,
+  mode: BuilderMode,
+  { convert = true, restrictions }: SetModeOptions = {},
+): BuilderDocument => {
+  if (doc.mode === mode || !isModeAllowed(restrictions, mode)) return doc;
+  let next: BuilderDocument;
+  if (convert) next = mode === 'cv2' ? convertToCV2(doc) : convertToClassic(doc);
+  else if (mode === 'cv2') {
     const { poll: _poll, sticker_ids: _stickers, ...rest } = doc;
-    return { ...rest, mode, content: '', embeds: [] };
-  }
-  return { ...doc, mode, components: doc.components.filter((node) => node.type === 1) };
+    next = { ...rest, mode, content: '', embeds: [] };
+  } else next = { ...doc, mode, components: doc.components.filter((node) => node.type === 1) };
+  return sanitize(next, restrictions);
 };
 
 /** Replaces the whole message (e.g. after importing JSON), keeping the root uid. */

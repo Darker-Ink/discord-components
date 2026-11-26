@@ -2,6 +2,9 @@
 // store around it that the React bindings subscribe to.
 import { duplicateNode, insertNode, moveNode, removeNode, setMode, updateNode, type SetModeOptions } from './actions';
 import { fromJSON, toJSON } from './json';
+import { allowedModes, isModeAllowed, type BuilderRestrictions } from './restrictions';
+import { allowedTemplates, checkInsert, checkMove, type RuleResult } from './rules';
+import { sanitize } from './sanitize';
 import type { TemplateType } from './templates';
 import { findNode } from './tree';
 import { ROOT_UID } from './types';
@@ -57,6 +60,8 @@ export interface HistoryOptions {
   limit?: number;
   /** Updates of the same fields of a node within this many ms merge into one undo step. Default 600. */
   coalesceMs?: number;
+  /** What the builder allows: inserts, moves, duplicates and mode switches respect it. */
+  restrictions?: BuilderRestrictions;
 }
 
 export const isBuilderDocument = (value: unknown): value is BuilderDocument =>
@@ -71,8 +76,21 @@ export const isBuilderDocument = (value: unknown): value is BuilderDocument =>
 export const toDocument = (value: BuilderDocument | WebhookMessagePayload | undefined | null): BuilderDocument =>
   isBuilderDocument(value) ? value : fromJSON(value ?? {});
 
-export const createBuilderState = (initial?: BuilderDocument | WebhookMessagePayload | null): BuilderState => ({
-  doc: toDocument(initial),
+/** An empty document starts in a mode the restrictions allow (a non-empty one is kept as it is). */
+const initialDocument = (
+  initial: BuilderDocument | WebhookMessagePayload | null | undefined,
+  restrictions: BuilderRestrictions | undefined,
+) => {
+  const doc = toDocument(initial);
+  const empty = doc.content === '' && doc.embeds.length === 0 && doc.components.length === 0;
+  return empty && !isModeAllowed(restrictions, doc.mode) ? { ...doc, mode: allowedModes(restrictions)[0] } : doc;
+};
+
+export const createBuilderState = (
+  initial?: BuilderDocument | WebhookMessagePayload | null,
+  restrictions?: BuilderRestrictions,
+): BuilderState => ({
+  doc: initialDocument(initial, restrictions),
   selection: null,
   past: [],
   future: [],
@@ -117,7 +135,10 @@ export const builderReducer = (
 ): BuilderState => {
   switch (action.type) {
     case 'insert': {
-      const { doc, uid, reason } = insertNode(state.doc, action.target, action.node, action.kind);
+      const { doc, uid, reason } = insertNode(state.doc, action.target, action.node, {
+        kind: action.kind,
+        restrictions: options.restrictions,
+      });
       const next = commit(state, doc, { changed: false, uid, reason }, options);
       return uid && action.select ? { ...next, selection: uid } : next;
     }
@@ -135,7 +156,7 @@ export const builderReducer = (
     case 'remove':
       return commit(state, removeNode(state.doc, action.uid), { changed: false }, options);
     case 'move': {
-      const doc = moveNode(state.doc, action.uid, action.target);
+      const doc = moveNode(state.doc, action.uid, action.target, { restrictions: options.restrictions });
       return commit(
         state,
         doc,
@@ -144,12 +165,15 @@ export const builderReducer = (
       );
     }
     case 'duplicate': {
-      const { doc, uid, reason } = duplicateNode(state.doc, action.uid);
+      const { doc, uid, reason } = duplicateNode(state.doc, action.uid, { restrictions: options.restrictions });
       const next = commit(state, doc, { changed: false, uid, reason }, options);
       return uid && action.select ? { ...next, selection: uid } : next;
     }
     case 'setMode': {
-      const setModeOptions: SetModeOptions = action.convert === undefined ? {} : { convert: action.convert };
+      const setModeOptions: SetModeOptions = {
+        restrictions: options.restrictions,
+        ...(action.convert === undefined ? {} : { convert: action.convert }),
+      };
       return commit(state, setMode(state.doc, action.mode, setModeOptions), { changed: false }, options);
     }
     case 'replace':
@@ -247,6 +271,14 @@ export interface BuilderStore {
   /** Sets the document without an undo step (for controlled components). */
   sync: (doc: BuilderDocument) => void;
   setOptions: (options: Partial<BuilderStoreOptions>) => void;
+  /** The builder's restrictions (`undefined` when it has none). */
+  getRestrictions: () => BuilderRestrictions | undefined;
+  /** `checkInsert`/`checkMove`/`allowedTemplates` on the current document with the store's restrictions. */
+  checkInsert: (node: BuilderNode | TemplateType, target: NodeTarget, kind?: NodeKind) => RuleResult;
+  checkMove: (uid: string, target: NodeTarget) => RuleResult;
+  allowedTemplates: (target: NodeTarget) => TemplateType[];
+  /** Removes what the restrictions don't allow from the document (one undo step). */
+  sanitize: () => void;
 }
 
 export const createBuilderStore = (
@@ -254,7 +286,7 @@ export const createBuilderStore = (
   options: BuilderStoreOptions = {},
 ): BuilderStore => {
   let config = { ...options };
-  let state = createBuilderState(initial);
+  let state = createBuilderState(initial, options.restrictions);
   let snapshot: BuilderSnapshot = { doc: state.doc, selection: null, canUndo: false, canRedo: false };
   const listeners = new Set<() => void>();
   let batchDepth = 0;
@@ -359,8 +391,20 @@ export const createBuilderStore = (
     },
     dispatch,
     actions,
-    getIssues: () => validateDocument(state.doc, config.validation),
-    getStats: () => getDocumentStats(state.doc),
+    getIssues: () =>
+      validateDocument(
+        state.doc,
+        config.restrictions ? { ...config.validation, restrictions: config.restrictions } : config.validation,
+      ),
+    getStats: () => getDocumentStats(state.doc, config.restrictions),
+    getRestrictions: () => config.restrictions,
+    checkInsert: (node, target, kind) =>
+      checkInsert(state.doc, node, target, { kind, restrictions: config.restrictions }),
+    checkMove: (uid, target) => checkMove(state.doc, uid, target, { restrictions: config.restrictions }),
+    allowedTemplates: (target) => allowedTemplates(state.doc, target, { restrictions: config.restrictions }),
+    sanitize: () => {
+      dispatch({ type: 'replace', doc: sanitize(state.doc, config.restrictions) });
+    },
     toJSON: () => toJSON(state.doc),
     sync: (doc) => {
       if (doc === state.doc) return;
@@ -373,7 +417,8 @@ export const createBuilderStore = (
     },
     setOptions: (next) => {
       const validationChanged =
-        'validation' in next && JSON.stringify(next.validation) !== JSON.stringify(config.validation);
+        ('validation' in next && JSON.stringify(next.validation) !== JSON.stringify(config.validation)) ||
+        ('restrictions' in next && JSON.stringify(next.restrictions) !== JSON.stringify(config.restrictions));
       config = { ...config, ...next };
       if (validationChanged) {
         // A new state object, so selectors (issues) run again.
