@@ -1,0 +1,255 @@
+import {
+  DEMO_PREVIEW_ID,
+  type Limits,
+  type PreviewContent,
+  type PreviewOptions,
+  type PreviewSummary,
+} from '../shared/api';
+import { EXAMPLE_MESSAGES, withOrigin } from '../shared/example';
+import { gunzipJson, gzipJson, hmacSign, hmacVerify, randomBase62 } from './crypto';
+import { HttpError, notFound } from './http';
+import type { ApiKeyRow } from './keys';
+import { parseCreateBody, parseSignBody } from './validate';
+
+export interface PreviewRow {
+  id: string;
+  key_id: string;
+  secret: number;
+  message_count: number;
+  size: number;
+  options: string;
+  created_at: number;
+  expires_at: number;
+}
+
+const PREVIEW_COLUMNS = 'id, key_id, secret, message_count, size, options, created_at, expires_at';
+const ID_RE = /^[0-9A-Za-z]{16}$/;
+
+export const previewPath = (id: string) => `/p/${id}`;
+
+const toSummary = (row: PreviewRow, origin: string): PreviewSummary => ({
+  id: row.id,
+  secret: row.secret === 1,
+  messageCount: row.message_count,
+  size: row.size,
+  options: JSON.parse(row.options) as PreviewOptions,
+  createdAt: new Date(row.created_at).toISOString(),
+  expiresAt: new Date(row.expires_at).toISOString(),
+  url: row.secret === 1 ? null : origin + previewPath(row.id),
+});
+
+/** A live (unexpired) preview by id, or null. */
+export const findPreview = async (env: Env, id: string) => {
+  if (!ID_RE.test(id)) return null;
+  const row = await env.DB.prepare(`SELECT ${PREVIEW_COLUMNS} FROM previews WHERE id = ? AND expires_at > ?`)
+    .bind(id, Date.now())
+    .first<PreviewRow>();
+  return row ?? null;
+};
+
+/** The caller's own preview; others' previews are indistinguishable from missing ones. */
+const findOwnPreview = async (env: Env, key: ApiKeyRow, id: string) => {
+  const row = await findPreview(env, id);
+  if (row == null || row.key_id !== key.id) throw notFound();
+  return row;
+};
+
+const signingSecret = (env: Env) => {
+  if (!env.SIGNING_SECRET) {
+    throw new HttpError(500, 'not_configured', 'The signing secret is not configured on this deployment.');
+  }
+  return env.SIGNING_SECRET;
+};
+
+const signedMessage = (id: string, exp: number) => `v1:${id}:${exp}`;
+
+export type AccessResult = 'ok' | 'missing_signature' | 'expired_signature' | 'invalid_signature';
+
+/** Checks the `exp`/`sig` query params of a request for a secret preview. */
+export const checkAccess = async (env: Env, row: PreviewRow, url: URL): Promise<AccessResult> => {
+  if (row.secret !== 1) return 'ok';
+  const exp = url.searchParams.get('exp');
+  const sig = url.searchParams.get('sig');
+  if (exp == null || sig == null) return 'missing_signature';
+  if (!/^\d{1,12}$/.test(exp)) return 'invalid_signature';
+  if (!env.SIGNING_SECRET) return 'invalid_signature';
+  if (!(await hmacVerify(env.SIGNING_SECRET, signedMessage(row.id, Number(exp)), sig))) return 'invalid_signature';
+  if (Number(exp) * 1000 <= Date.now()) return 'expired_signature';
+  return 'ok';
+};
+
+export const createPreview = async (env: Env, key: ApiKeyRow, body: unknown, limits: Limits, origin: string) => {
+  const now = new Date();
+  const input = parseCreateBody(body, limits, now);
+  const json = JSON.stringify(input.messages);
+  const size = new TextEncoder().encode(json).byteLength;
+  const data = await gzipJson(input.messages);
+  const id = randomBase62(16);
+  const createdAt = now.getTime();
+  const expiresAt = createdAt + input.expiresIn * 1000;
+
+  // The quota checks and the insert are one statement, so concurrent requests can't overshoot the limits.
+  const [insert] = await env.DB.batch([
+    env.DB.prepare(
+      `INSERT INTO previews (id, key_id, secret, message_count, size, options, created_at, expires_at)
+       SELECT ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8
+       WHERE (SELECT COUNT(*) FROM previews WHERE key_id = ?2 AND expires_at > ?7) < ?9
+         AND (SELECT COALESCE(SUM(size), 0) FROM previews WHERE key_id = ?2 AND expires_at > ?7) + ?5 <= ?10`,
+    ).bind(
+      id,
+      key.id,
+      input.secret ? 1 : 0,
+      input.messages.length,
+      size,
+      JSON.stringify(input.options),
+      createdAt,
+      expiresAt,
+      limits.maxPreviewsPerKey,
+      limits.maxStorageBytesPerKey,
+    ),
+    env.DB.prepare(
+      'INSERT INTO preview_payloads (preview_id, data) SELECT ?1, ?2 WHERE EXISTS (SELECT 1 FROM previews WHERE id = ?1)',
+    ).bind(id, data),
+  ]);
+  if (insert.meta.changes !== 1) {
+    throw new HttpError(403, 'quota_exceeded', 'This API key has reached its preview or storage limit.', {
+      maxPreviewsPerKey: limits.maxPreviewsPerKey,
+      maxStorageBytesPerKey: limits.maxStorageBytesPerKey,
+    });
+  }
+  return {
+    id,
+    url: input.secret ? null : origin + previewPath(id),
+    secret: input.secret,
+    messageCount: input.messages.length,
+    size,
+    expiresAt: new Date(expiresAt).toISOString(),
+  };
+};
+
+export const listPreviews = async (env: Env, key: ApiKeyRow, url: URL) => {
+  const limitParam = url.searchParams.get('limit');
+  const limit = limitParam == null ? 25 : Number(limitParam);
+  if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
+    throw new HttpError(400, 'invalid_query', '`limit` must be an integer from 1 to 100.');
+  }
+  const cursorParam = url.searchParams.get('cursor');
+  let cursor: { createdAt: number; id: string } | null = null;
+  if (cursorParam != null) {
+    const match = /^(\d{1,15})\.([0-9A-Za-z]{16})$/.exec(cursorParam);
+    if (match == null) throw new HttpError(400, 'invalid_query', '`cursor` is invalid.');
+    cursor = { createdAt: Number(match[1]), id: match[2] };
+  }
+  const now = Date.now();
+  const { results } = await (
+    cursor == null
+      ? env.DB.prepare(
+          `SELECT ${PREVIEW_COLUMNS} FROM previews WHERE key_id = ? AND expires_at > ?
+         ORDER BY created_at DESC, id DESC LIMIT ?`,
+        ).bind(key.id, now, limit + 1)
+      : env.DB.prepare(
+          `SELECT ${PREVIEW_COLUMNS} FROM previews WHERE key_id = ? AND expires_at > ?
+           AND (created_at < ? OR (created_at = ? AND id < ?))
+         ORDER BY created_at DESC, id DESC LIMIT ?`,
+        ).bind(key.id, now, cursor.createdAt, cursor.createdAt, cursor.id, limit + 1)
+  ).all<PreviewRow>();
+  const page = results.slice(0, limit);
+  const last = page[page.length - 1];
+  return {
+    previews: page.map((row) => toSummary(row, url.origin)),
+    nextCursor: results.length > limit && last != null ? `${last.created_at}.${last.id}` : null,
+  };
+};
+
+export const getOwnPreview = async (env: Env, key: ApiKeyRow, id: string, origin: string) =>
+  toSummary(await findOwnPreview(env, key, id), origin);
+
+export const signPreview = async (
+  env: Env,
+  key: ApiKeyRow,
+  id: string,
+  body: unknown,
+  limits: Limits,
+  origin: string,
+) => {
+  const expiresIn = parseSignBody(body, limits);
+  const row = await findOwnPreview(env, key, id);
+  const secret = signingSecret(env);
+  // A link never outlives the preview it points to.
+  const exp = Math.min(Math.floor(Date.now() / 1000) + expiresIn, Math.floor(row.expires_at / 1000));
+  const sig = await hmacSign(secret, signedMessage(row.id, exp));
+  const url = new URL(previewPath(row.id), origin);
+  url.searchParams.set('exp', String(exp));
+  url.searchParams.set('sig', sig);
+  return {
+    url: url.toString(),
+    expiresAt: new Date(exp * 1000).toISOString(),
+    expiresIn: exp - Math.floor(Date.now() / 1000),
+  };
+};
+
+export const deletePreview = async (env: Env, key: ApiKeyRow, id: string) => {
+  const [, deleted] = await env.DB.batch([
+    env.DB.prepare(
+      'DELETE FROM preview_payloads WHERE preview_id = ? AND EXISTS (SELECT 1 FROM previews WHERE id = ? AND key_id = ?)',
+    ).bind(id, id, key.id),
+    env.DB.prepare('DELETE FROM previews WHERE id = ? AND key_id = ?').bind(id, key.id),
+  ]);
+  if (deleted.meta.changes !== 1) throw notFound();
+};
+
+const accessError = (result: Exclude<AccessResult, 'ok'>) =>
+  new HttpError(
+    403,
+    result,
+    result === 'missing_signature'
+      ? 'This preview is private. Open it through a signed link.'
+      : result === 'expired_signature'
+        ? 'This signed link has expired.'
+        : 'This signed link is invalid.',
+  );
+
+/** What the viewer renders: public previews to anyone, secret ones only with a valid signature. */
+export const getPreviewContent = async (env: Env, id: string, url: URL, limits: Limits): Promise<PreviewContent> => {
+  if (id === DEMO_PREVIEW_ID) {
+    // Normalised like any preview, but not held to the deployment's message limit.
+    const demoLimits = {
+      ...limits,
+      maxMessagesPerPreview: Math.max(limits.maxMessagesPerPreview, EXAMPLE_MESSAGES.length),
+    };
+    const demo = parseCreateBody({ data: withOrigin(EXAMPLE_MESSAGES, url.origin) }, demoLimits, new Date());
+    return {
+      id,
+      messages: demo.messages,
+      options: { interactive: false, title: 'support-tickets', theme: null },
+      createdAt: '2026-11-26T09:20:10.000Z',
+      expiresAt: null,
+    };
+  }
+  const row = await findPreview(env, id);
+  if (row == null) throw notFound();
+  const access = await checkAccess(env, row, url);
+  if (access !== 'ok') throw accessError(access);
+  const payload = await env.DB.prepare('SELECT data FROM preview_payloads WHERE preview_id = ?')
+    .bind(row.id)
+    .first<{ data: ArrayBuffer | number[] }>();
+  if (payload == null) throw notFound();
+  return {
+    id: row.id,
+    messages: await gunzipJson<unknown[]>(payload.data),
+    options: JSON.parse(row.options) as PreviewOptions,
+    createdAt: new Date(row.created_at).toISOString(),
+    expiresAt: new Date(row.expires_at).toISOString(),
+  };
+};
+
+export const sweepExpired = async (env: Env) => {
+  const now = Date.now();
+  await env.DB.batch([
+    env.DB.prepare(
+      'DELETE FROM preview_payloads WHERE preview_id IN (SELECT id FROM previews WHERE expires_at <= ?)',
+    ).bind(now),
+    env.DB.prepare('DELETE FROM previews WHERE expires_at <= ?').bind(now),
+    env.DB.prepare('DELETE FROM key_creation_windows WHERE window_start < ?').bind(Math.floor(now / 1000) - 86400),
+  ]);
+};

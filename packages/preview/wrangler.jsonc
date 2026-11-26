@@ -1,0 +1,45 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "discord-mana-preview",
+  "main": "./src/worker/index.ts",
+  "compatibility_date": "2026-11-20",
+  "observability": { "enabled": true },
+  "assets": {
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    // Every request goes through the Worker so pages get their security headers (CSP, framing).
+    "run_worker_first": true,
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "discord-mana-preview",
+      // Replace with the id `wrangler d1 create discord-mana-preview` prints.
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations",
+    },
+  ],
+  // Per-key burst protection for the authenticated API (approximate, per location; period is 10 or 60 s).
+  "ratelimits": [{ "name": "API_RATE_LIMITER", "namespace_id": "1001", "simple": { "limit": 120, "period": 60 } }],
+  // Daily sweep of expired previews and old rate limit windows.
+  "triggers": { "crons": ["17 4 * * *"] },
+  "vars": {
+    // Largest accepted request body, in bytes (D1 caps a row at 2 MB; payloads are stored gzipped).
+    "MAX_BODY_BYTES": 1048576,
+    "MAX_MESSAGES_PER_PREVIEW": 200,
+    // Live (unexpired) previews one key may hold, and their combined JSON size in bytes.
+    "MAX_PREVIEWS_PER_KEY": 1000,
+    "MAX_STORAGE_BYTES_PER_KEY": 104857600,
+    // Preview lifetime: `ttl` in the request, defaulting to and capped by these (seconds).
+    "DEFAULT_PREVIEW_TTL_SECONDS": 2592000,
+    "MAX_PREVIEW_TTL_SECONDS": 31536000,
+    // Signed URL lifetime: `expiresIn` when signing, defaulting to and capped by these (seconds).
+    "DEFAULT_SIGNED_URL_TTL_SECONDS": 3600,
+    "MAX_SIGNED_URL_TTL_SECONDS": 604800,
+    // API keys one IP address may create per window.
+    "KEY_CREATION_LIMIT": 5,
+    "KEY_CREATION_WINDOW_SECONDS": 3600,
+  },
+  // Secrets (not in this file): SIGNING_SECRET, set with `wrangler secret put SIGNING_SECRET`
+  // (locally in .dev.vars).
+}

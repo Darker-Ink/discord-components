@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "pnpm --filter @discord-mana/playground dev",
     "build": "pnpm --filter discord-mana... build",
-    "typecheck": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json && pnpm --filter @discord-mana/preview typecheck",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
