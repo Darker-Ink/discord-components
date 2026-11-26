@@ -1,17 +1,19 @@
 import { useState } from 'react';
 import {
-  DateInput,
+  DatePicker,
   SearchableSelect,
   Select,
   Stack,
   TextInput,
   TimeInput,
-  type DateInputProps,
+  type DatePickerProps,
+  type TimeInputProps,
   type ListboxOption,
 } from '@discord-components/components';
 import type { StoryGroup } from '../../types';
 
-type Moment = NonNullable<DateInputProps['value']>;
+type DateValue = NonNullable<DatePickerProps['value']>;
+type Moment = NonNullable<TimeInputProps['value']>;
 
 const OPTIONS: ListboxOption<string>[] = [
   { id: 'red', value: 'red', label: 'Red' },
@@ -26,7 +28,7 @@ const OPTIONS: ListboxOption<string>[] = [
 
 const VoidInputsStory = ({ disabled, placeholder }: { disabled: boolean; placeholder: string }) => {
   const [value, setValue] = useState<string | null | undefined>(undefined);
-  const [date, setDate] = useState<Moment | undefined>(undefined);
+  const [date, setDate] = useState<DateValue | null>(null);
   const [time, setTime] = useState<Moment | undefined>(undefined);
   return (
     <Stack gap={8}>
@@ -47,7 +49,7 @@ const VoidInputsStory = ({ disabled, placeholder }: { disabled: boolean; placeho
         options={OPTIONS}
         placeholder={placeholder}
       />
-      <DateInput onSelect={setDate} value={date} disabled={disabled} />
+      <DatePicker label="Date" hideLabel value={date} onChange={setDate} disabled={disabled} />
       <TimeInput onChange={setTime} value={time} disabled={disabled} />
     </Stack>
   );

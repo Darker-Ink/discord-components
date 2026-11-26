@@ -49,17 +49,7 @@ const messageGroups = Object.values(
 );
 
 // Discord's older component collection, kept for app components that predate Mana.
-const VOID_GROUP_ORDER = [
-  'TabBar',
-  'Avatar',
-  'Badges',
-  'Notice',
-  'VoidInputs',
-  'Form Components',
-  'Menu',
-  'Stacked Avatars',
-  'Stacked Guild Icons',
-];
+const VOID_GROUP_ORDER = ['Avatar', 'Badges', 'VoidInputs', 'Menu', 'Stacked Avatars', 'Stacked Guild Icons'];
 
 const voidGroups = Object.values(import.meta.glob<StoryGroup>('./void/*.tsx', { eager: true, import: 'default' }));
 

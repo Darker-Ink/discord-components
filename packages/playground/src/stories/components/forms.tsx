@@ -10,8 +10,6 @@ import {
   CustomColorPicker,
   DEFAULT_ROLE_COLOR,
   DefaultColorButton,
-  FormText,
-  FormTextTypes,
   hex2int,
   int2hex,
   isValidHex,
@@ -21,10 +19,9 @@ import {
   type ButtonColor,
   type ButtonLook,
   type CopyInputMode,
-  type FormTextType,
 } from '@discord-components/components';
 import type { StoryGroup } from '../../types';
-import { keyOptions, LOREM, valueOptions } from './shared';
+import { keyOptions, valueOptions } from './shared';
 
 // The role colors Discord offers in server settings.
 const ROLE_COLORS = [
@@ -129,16 +126,6 @@ const CustomColorPickerStory = ({ value, suggestedColors, ...props }: CustomColo
 
 CustomColorPickerStory.displayName = 'CustomColorPickerStory';
 
-interface FormTextStoryProps {
-  type: FormTextType;
-  disabled: boolean;
-  children: string;
-}
-
-const FormTextStory = (props: FormTextStoryProps) => <FormText {...props} style={{ maxWidth: 480 }} />;
-
-FormTextStory.displayName = 'FormTextStory';
-
 const CharacterCountStory = ({ maxLength }: { maxLength: number | undefined }) => {
   const [value, setValue] = useState('Hello!');
   return (
@@ -200,21 +187,6 @@ const forms: StoryGroup = {
         eagerUpdate: { label: 'Eager Update', type: 'boolean', defaultValue: false },
         showEyeDropper: { label: 'Show Eye Dropper', type: 'boolean', defaultValue: false },
         suggestedColors: { label: 'Suggested Colors', type: 'boolean', defaultValue: false },
-      },
-    },
-    {
-      name: 'FormText',
-      id: 'form-text',
-      component: FormTextStory,
-      controls: {
-        type: {
-          label: 'Type',
-          type: 'select',
-          defaultValue: FormTextTypes.DEFAULT,
-          options: valueOptions(Object.values(FormTextTypes)),
-        },
-        disabled: { label: 'Disabled', type: 'boolean', defaultValue: false },
-        children: { label: 'Text', type: 'text', defaultValue: LOREM },
       },
     },
     {

@@ -21,7 +21,8 @@
 // fit for the comparison.
 //
 // Discord's controls panel renders slider controls with the legacy Void slider; ours uses the Mana Slider,
-// so the slider-control scenarios aren't expected to match.
+// which looks the same at rest and on hover; while dragging, its grabber grows and the value snaps to a
+// thousandth of the range, so slider-drag differs slightly.
 import fs from 'node:fs';
 import path from 'node:path';
 import { PNG } from 'pngjs';
@@ -48,7 +49,7 @@ const hover =
   };
 
 // Void groups that duplicate Mana components; ours removed them.
-const REMOVED_VOID_GROUPS = ['Select', 'Slider', 'Chip'];
+const REMOVED_VOID_GROUPS = ['Select', 'Slider', 'TabBar', 'Chip', 'Notice', 'Form Components'];
 
 const SCENARIOS = {
   'no-story': { target: 'mana' },
@@ -57,7 +58,7 @@ const SCENARIOS = {
   slider: { target: 'mana/slider' },
   'slider-control': { target: 'mana/progress-bar' },
   'number-controls': { target: 'mana/text-area' },
-  'color-controls': { target: 'void/notice' },
+  'color-controls': { target: 'void/number-badge' },
   'global-banner': { target: 'mana/global-banner' },
   'text-input': { target: 'mana/text-input' },
   'void-collection': { target: 'void' },
@@ -157,14 +158,17 @@ const SCENARIOS = {
   'slider-drag': {
     target: 'mana/progress-bar',
     run: async (page) => {
-      const box = await page.locator(`${controls} ${cls('grabber')}`).first().boundingBox();
+      const box = await page
+        .locator(`${controls} ${cls('grabber')}`)
+        .first()
+        .boundingBox();
       await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
       await page.mouse.down();
       await page.mouse.move(box.x - 60, box.y + box.height / 2, { steps: 5 });
       await page.waitForTimeout(300);
     },
   },
-  'color-swatch-hover': { target: 'void/notice', run: hover(`${controls} input[type="color"]`, 0) },
+  'color-swatch-hover': { target: 'void/number-badge', run: hover(`${controls} input[type="color"]`, 0) },
   'copy-split': {
     target: 'mana/button',
     run: async (page) => {
