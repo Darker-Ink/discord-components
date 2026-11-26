@@ -234,7 +234,8 @@ const execute = async (request: () => WebhookRequest, options: SendWebhookOption
   } catch (error) {
     return failure(0, (error as Error).message, 'INVALID_WEBHOOK_URL');
   }
-  const fetchImpl = options.fetch ?? globalThis.fetch;
+  // Called unbound, so the global fetch gets a wrapper (some browsers reject a detached `this`).
+  const fetchImpl = options.fetch ?? ((input: RequestInfo | URL, init?: RequestInit) => globalThis.fetch(input, init));
   const maxRetryDelay = options.maxRetryDelay ?? 5000;
   for (let attempt = 0; ; attempt++) {
     let response: Response;

@@ -92,8 +92,8 @@ const commit = (
   edit: BuilderState['lastEdit'] = null,
   merge = false,
 ): BuilderState => {
-  if (doc === state.doc)
-    return { ...state, result: { ...result, changed: false }, lastEdit: merge ? state.lastEdit : null };
+  // A no-op keeps the coalescing state, so an edit that changes nothing doesn't split a typing burst.
+  if (doc === state.doc) return { ...state, result: { ...result, changed: false } };
   const past = merge ? state.past : [...state.past, state.doc].slice(-limit);
   return {
     ...state,
