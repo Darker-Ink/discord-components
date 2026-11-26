@@ -7,24 +7,13 @@ interface RootClassOptions {
   highContrastMode?: boolean;
   saturation?: number;
   density?: 'compact' | 'default' | 'cozy';
-  experiments: readonly string[];
 }
 
-// Experiments the client also flags with a root class of the same name (tokens and styles key off it).
-const ROOT_CLASS_EXPERIMENTS = new Set(['mana-badge-refresh']);
-
 // Discord applies these to <html> in its RootElementContextProvider; tokens and component
-// styles key off them (theme, density, motion, input mode, the visual refresh flag, experiments).
+// styles key off them (theme, density, motion, input mode, the visual refresh flag).
 export const useRootClasses = (
   theme: Theme,
-  {
-    keyboardMode,
-    reducedMotion,
-    highContrastMode = false,
-    saturation = 1,
-    density = 'default',
-    experiments,
-  }: RootClassOptions,
+  { keyboardMode, reducedMotion, highContrastMode = false, saturation = 1, density = 'default' }: RootClassOptions,
 ) => {
   useLayoutEffect(() => {
     const root = document.documentElement;
@@ -44,9 +33,8 @@ export const useRootClasses = (
       'has-webkit-scrollbar',
       ...(saturation <= 0.4 ? ['low-saturation'] : []),
       ...(highContrastMode ? ['high-contrast-mode'] : []),
-      ...experiments.filter((experiment) => ROOT_CLASS_EXPERIMENTS.has(experiment)),
     ];
     document.documentElement.classList.add(...classes);
     return () => document.documentElement.classList.remove(...classes);
-  }, [theme, keyboardMode, reducedMotion, highContrastMode, saturation, density, experiments]);
+  }, [theme, keyboardMode, reducedMotion, highContrastMode, saturation, density]);
 };

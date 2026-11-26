@@ -49,17 +49,13 @@ const useKeyboardMode = () => {
   return enabled;
 };
 
-const NO_EXPERIMENTS: readonly string[] = [];
-
 const RootElement = ({
   theme,
-  experiments,
   saturation,
   density,
   children,
 }: {
   theme: Theme;
-  experiments: readonly string[];
   saturation: number;
   density: UIDensity;
   children: ReactNode;
@@ -71,7 +67,6 @@ const RootElement = ({
     highContrastMode: highContrastModeEnabled,
     saturation,
     density,
-    experiments,
   });
   return children;
 };
@@ -79,11 +74,10 @@ const RootElement = ({
 RootElement.displayName = 'RootElement';
 
 // The providers Discord's client puts around everything it renders: accessibility settings, the
-// Mana context (strings, theme, experiments), the theme context, a focus ring scope over the whole
+// Mana context (strings, theme), the theme context, a focus ring scope over the whole
 // document and the layers overlays render in (with the modal stack).
 export const AppRoot = ({
   theme,
-  experiments = NO_EXPERIMENTS,
   reducedMotion = 'auto',
   highContrastMode = false,
   saturation = 1,
@@ -92,7 +86,6 @@ export const AppRoot = ({
   children,
 }: {
   theme: Theme;
-  experiments?: readonly string[];
   reducedMotion?: ReducedMotionSetting;
   highContrastMode?: boolean;
   saturation?: number;
@@ -107,11 +100,10 @@ export const AppRoot = ({
       ...DEFAULT_MANA_CONTEXT,
       theme,
       saturation,
-      experiments: { enabledExperiments: [...experiments] },
       defaultLayerContext: appLayerContext,
       dynamicGraphicComponents,
     }),
-    [theme, saturation, experiments],
+    [theme, saturation],
   );
   return (
     <AccessibilityPreferencesProvider
@@ -122,7 +114,7 @@ export const AppRoot = ({
     >
       <ManaContextProvider value={manaContext}>
         <ThemeContextProvider theme={theme}>
-          <RootElement theme={theme} experiments={experiments} saturation={saturation} density={density}>
+          <RootElement theme={theme} saturation={saturation} density={density}>
             <FocusRingScope containerRef={bodyRef}>
               <ModalLayerRoot>{children}</ModalLayerRoot>
               <AppToastContainer appContext="APP" />
