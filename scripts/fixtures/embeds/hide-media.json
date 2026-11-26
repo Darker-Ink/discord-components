@@ -1,0 +1,31 @@
+{
+  "story": "embed-fixtures",
+  "data": {
+    "embeds": [
+      {
+        "type": "rich",
+        "title": "Media hidden by the user setting",
+        "description": "With link previews off, images, videos and thumbnails are left out.",
+        "color": 5793266,
+        "image": {
+          "url": "{{assets}}/landscape.png",
+          "proxy_url": "{{assets}}/landscape.png",
+          "width": 1280,
+          "height": 720
+        },
+        "thumbnail": {
+          "url": "{{assets}}/thumbnail.png",
+          "proxy_url": "{{assets}}/thumbnail.png",
+          "width": 160,
+          "height": 160
+        }
+      },
+      {
+        "type": "image",
+        "url": "{{assets}}/small.png",
+        "thumbnail": { "url": "{{assets}}/small.png", "proxy_url": "{{assets}}/small.png", "width": 240, "height": 160 }
+      }
+    ],
+    "props": { "hideMedia": true }
+  }
+}

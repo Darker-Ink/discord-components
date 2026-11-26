@@ -1,0 +1,22 @@
+{
+  "story": "embed-fixtures",
+  "data": {
+    "embeds": [
+      {
+        "type": "rich",
+        "title": "Age-gated embed",
+        "description": "Content flagged as explicit renders as placeholders until the viewer verifies their age.",
+        "color": 15548997,
+        "provider": { "name": "Provider" },
+        "author": { "name": "Author" },
+        "image": {
+          "url": "{{assets}}/landscape.png",
+          "proxy_url": "{{assets}}/landscape.png",
+          "width": 1280,
+          "height": 720
+        }
+      }
+    ],
+    "props": { "obscureReason": "explicit_content", "shouldAgeVerify": true }
+  }
+}

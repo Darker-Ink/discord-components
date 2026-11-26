@@ -63,14 +63,7 @@ export type RenderEmbedMarkdown = (text: string, context: EmbedMarkdownContext) 
 export interface MessageEmbedsProps extends Partial<
   Pick<
     EmbedProps,
-    | 'renderAudioComponent'
-    | 'renderImages'
-    | 'renderObscured'
-    | 'renderContentPlaceholder'
-    | 'renderStaticPlaceholderMedia'
-    | 'renderImageAccessory'
-    | 'shouldAgeVerify'
-    | 'allowFullScreen'
+    'renderAudioComponent' | 'renderGifFavoriteButton' | 'renderObscured' | 'shouldAgeVerify' | 'allowFullScreen'
   >
 > {
   /** The message's embeds, as the API sends them. */

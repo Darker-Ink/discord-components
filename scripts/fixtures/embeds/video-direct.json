@@ -1,0 +1,32 @@
+{
+  "story": "embed-fixtures",
+  "data": {
+    "embeds": [
+      {
+        "type": "video",
+        "url": "{{assets}}/gifv.mp4",
+        "thumbnail": {
+          "url": "{{assets}}/gifv-poster.png",
+          "proxy_url": "{{assets}}/gifv-poster.png",
+          "width": 480,
+          "height": 270
+        },
+        "video": { "url": "{{assets}}/gifv.mp4", "proxy_url": "{{assets}}/gifv.mp4", "width": 480, "height": 270 }
+      },
+      {
+        "type": "rich",
+        "title": "Rich embed with a video",
+        "description": "Rich embeds with a video keep their thumbnail hidden.",
+        "color": 5793266,
+        "thumbnail": {
+          "url": "{{assets}}/gifv-poster.png",
+          "proxy_url": "{{assets}}/gifv-poster.png",
+          "width": 480,
+          "height": 270
+        },
+        "url": "https://example.com/video",
+        "video": { "url": "{{assets}}/gifv.mp4", "proxy_url": "{{assets}}/gifv.mp4", "width": 480, "height": 270 }
+      }
+    ]
+  }
+}

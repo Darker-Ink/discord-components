@@ -1,0 +1,37 @@
+{
+  "story": "embed-fixtures",
+  "data": {
+    "embeds": [
+      {
+        "type": "link",
+        "url": "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT",
+        "title": "Spotify track",
+        "provider": { "name": "Spotify", "url": "https://open.spotify.com/" }
+      },
+      {
+        "type": "article",
+        "url": "https://music.apple.com/us/album/example/123456789?i=987654321",
+        "title": "Apple Music song",
+        "provider": { "name": "Apple Music", "url": "https://music.apple.com" }
+      },
+      {
+        "type": "rich",
+        "url": "https://music.amazon.com/albums/B000?iframe_url=https%3A%2F%2Fmusic.amazon.com%2Fembed%2FB000",
+        "title": "Amazon Music album",
+        "provider": { "name": "Amazon Music" },
+        "thumbnail": {
+          "url": "{{assets}}/square.png",
+          "proxy_url": "{{assets}}/square.png",
+          "width": 512,
+          "height": 512
+        }
+      },
+      {
+        "type": "link",
+        "url": "https://session-share.playstation.com/abc123",
+        "title": "PlayStation session",
+        "provider": { "name": "PlayStation" }
+      }
+    ]
+  }
+}

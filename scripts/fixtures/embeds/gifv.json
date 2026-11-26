@@ -1,0 +1,19 @@
+{
+  "story": "embed-fixtures",
+  "data": {
+    "embeds": [
+      {
+        "type": "gifv",
+        "url": "https://tenor.com/view/example-gif-1234",
+        "provider": { "name": "Tenor", "url": "https://tenor.co" },
+        "thumbnail": {
+          "url": "{{assets}}/gifv-poster.png",
+          "proxy_url": "{{assets}}/gifv-poster.png",
+          "width": 480,
+          "height": 270
+        },
+        "video": { "url": "{{assets}}/gifv.mp4", "proxy_url": "{{assets}}/gifv.mp4", "width": 480, "height": 270 }
+      }
+    ]
+  }
+}

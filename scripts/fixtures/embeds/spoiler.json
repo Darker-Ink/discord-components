@@ -1,0 +1,30 @@
+{
+  "story": "embed-fixtures",
+  "data": {
+    "embeds": [
+      {
+        "type": "rich",
+        "title": "Spoilered rich embed",
+        "description": "Hidden behind a spoiler until clicked.",
+        "color": 15844367,
+        "thumbnail": {
+          "url": "{{assets}}/thumbnail.png",
+          "proxy_url": "{{assets}}/thumbnail.png",
+          "width": 160,
+          "height": 160
+        }
+      },
+      {
+        "type": "image",
+        "url": "{{assets}}/landscape.png",
+        "thumbnail": {
+          "url": "{{assets}}/landscape.png",
+          "proxy_url": "{{assets}}/landscape.png",
+          "width": 1280,
+          "height": 720
+        }
+      }
+    ],
+    "props": { "obscureReason": "spoiler" }
+  }
+}

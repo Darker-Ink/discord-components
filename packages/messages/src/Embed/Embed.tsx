@@ -15,12 +15,16 @@ import { formatCalendarTimestamp } from '../formatTimestamp';
 import { useEmbedI18n } from './embedI18n';
 import { useMediaContext } from '../media/MediaContext';
 import markupStyles from '../markup/markup.module.css';
-import { ObscureReason, SENSITIVE_OBSCURE_REASONS } from '../media/constants';
+import { ImageReadyState, MediaLayoutType, ObscureReason, SENSITIVE_OBSCURE_REASONS } from '../media/constants';
+import { Image } from '../media/Image/Image';
+import { PlaceholderBlob } from '../MessagePlaceholder/PlaceholderBlob';
 import { MediaInteractionContext } from '../media/MediaInteractionContext';
 import { getMaxMediaSize, getVideoProvider, isInlineMediaEmbed, MEDIA_EMBED_TYPES } from './createEmbed';
 import { EmbedGIFV, EmbedVideo } from './EmbedVideo';
 import { fit } from '../media/sizing';
-import { getAttachmentSrc } from '../media/mediaUrl';
+import { getAttachmentSrc, isAnimatedImage } from '../media/mediaUrl';
+import { GifFavoriteButtonContext } from '../MediaMosaic/MediaMosaicItem';
+import { EmbedGallery } from './EmbedGallery';
 import {
   AmazonMusicEmbed,
   AppleMusicEmbed,
@@ -121,36 +125,10 @@ export interface EmbedProps {
   renderVideoComponent: RenderVideoComponent;
   renderLinkComponent: RenderLinkComponent;
   renderAudioComponent?: RenderAudioComponent;
-  /** Renders a set of images merged from embeds sharing a url (the media mosaic). */
-  renderImages?: (props: {
-    images: EmbedMedia[];
-    message: EmbedMessage;
-    autoPlayGif?: boolean;
-    hiddenSpoiler: boolean;
-    isVisible: boolean;
-    sourceMetadata: EmbedSourceMetadata;
-    renderImageComponent: RenderImageComponent;
-  }) => ReactNode;
   /** Wraps spoilered and explicit embeds in the blur/reveal overlay. */
   renderObscured?: RenderObscuredEmbed;
-  /** Renders a grey loading bar (used while age-gated content is hidden). */
-  renderContentPlaceholder?: (props: {
-    className: string;
-    width: number;
-    height: number;
-    opacity: number;
-  }) => ReactNode;
-  /** Renders an empty media box of the given size (used while age-gated media is hidden). */
-  renderStaticPlaceholderMedia?: (props: {
-    className?: string;
-    width: number;
-    height: number;
-    maxWidth: number;
-    maxHeight: number;
-  }) => ReactNode;
-  /** Gif favourite button and similar overlays on animated images. */
-  renderImageAccessory?: () => ReactNode;
-  isAnimated?: (props: { src: string; original?: string; animated: boolean; srcIsAnimated?: boolean }) => boolean;
+  /** The GIF favourite star for a gallery image (needs the app's favourites). */
+  renderGifFavoriteButton?: (image: EmbedMedia) => () => ReactNode;
   onImageHover?: () => void;
 }
 
@@ -175,18 +153,15 @@ export const Embed = (props: EmbedProps) => {
     renderVideoComponent,
     renderLinkComponent,
     renderAudioComponent,
-    renderImages,
     renderObscured,
-    renderContentPlaceholder,
-    renderStaticPlaceholderMedia,
-    renderImageAccessory,
-    isAnimated,
+    renderGifFavoriteButton,
     onImageHover,
   } = props;
   const i18n = useEmbedI18n();
   const mediaI18n = useMediaContext().i18n;
   const { locale } = useManaContext();
   const { disableAnimations } = useContext(MediaInteractionContext);
+  const renderImageAccessory = useContext(GifFavoriteButtonContext);
   const [isVisible, setIsVisible] = useState(obscureReason == null);
   const [videoControlsShown, setVideoControlsShown] = useState(false);
   const sourceMetadata = useMemo<EmbedSourceMetadata>(
@@ -200,8 +175,9 @@ export const Embed = (props: EmbedProps) => {
   const shouldObscure = obscureReason != null && SENSITIVE_OBSCURE_REASONS.has(obscureReason);
   const shouldShowStaticPlaceholder = shouldObscure && shouldAgeVerify;
 
-  const contentPlaceholder = (width: number, height: number) =>
-    renderContentPlaceholder?.({ className: styles.contentPlaceholder, width, height, opacity: 0.3 }) ?? null;
+  const contentPlaceholder = (width: number, height: number) => (
+    <PlaceholderBlob className={styles.contentPlaceholder} width={width} height={height} opacity={0.3} />
+  );
 
   const renderProvider = (linkable = true) => {
     const { provider } = embed;
@@ -362,16 +338,20 @@ export const Embed = (props: EmbedProps) => {
 
   const renderImagesSection = (hiddenSpoiler = false, visible = true) => {
     const { images } = embed;
-    if (images == null || message == null || renderImages == null) return null;
-    return renderImages({
-      images,
-      message,
-      autoPlayGif,
-      hiddenSpoiler,
-      isVisible: visible,
-      sourceMetadata,
-      renderImageComponent,
-    });
+    if (images == null || message == null) return null;
+    return (
+      <EmbedGallery
+        images={images}
+        message={message}
+        autoPlayGif={autoPlayGif}
+        hiddenSpoiler={hiddenSpoiler}
+        isVisible={visible}
+        sourceMetadata={sourceMetadata}
+        renderImageComponent={renderImageComponent}
+        defaultAlt={mediaI18n.IMAGE}
+        renderGifFavoriteButton={renderGifFavoriteButton}
+      />
+    );
   };
 
   const renderImage = (
@@ -382,8 +362,7 @@ export const Embed = (props: EmbedProps) => {
   ) => {
     if (image == null) return null;
     const src = getAttachmentSrc(image);
-    const animated =
-      isAnimated?.({ src, original: image.url, animated: false, srcIsAnimated: image.srcIsAnimated }) ?? false;
+    const animated = isAnimatedImage({ src, original: image.url, animated: false, srcIsAnimated: image.srcIsAnimated });
     const hasAlt = image.description != null && image.description !== '';
     return (
       <Fragment key={image.url}>
@@ -475,13 +454,18 @@ export const Embed = (props: EmbedProps) => {
       maxHeight: maxMediaHeight,
     });
     return (
-      renderStaticPlaceholderMedia?.({
-        className,
-        width,
-        height,
-        maxWidth: maxMediaWidth,
-        maxHeight: maxMediaHeight,
-      }) ?? null
+      <Image
+        className={className}
+        readyState={ImageReadyState.READY}
+        src=""
+        width={width}
+        height={height}
+        maxWidth={maxMediaWidth}
+        maxHeight={maxMediaHeight}
+        mediaLayoutType={MediaLayoutType.STATIC}
+        useFullWidth={false}
+        zoomable={false}
+      />
     );
   };
 

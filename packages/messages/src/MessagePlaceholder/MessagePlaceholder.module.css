@@ -1,0 +1,125 @@
+.wrapper {
+  box-sizing: border-box;
+  position: relative;
+  word-wrap: break-word;
+  background: var(--background-gradient-chat, var(--background-base-lower));
+  contain: paint layout;
+  flex: 0 0 auto;
+  overflow: hidden;
+  padding-inline-end: 1rem;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  user-select: text;
+}
+.compact.wrapper {
+  padding-bottom: 0.125rem;
+  padding-top: 0.125rem;
+}
+.cozy.wrapper {
+  padding-inline-start: 4.5rem;
+}
+:global(.a11y-font-scaled-up) .cozy.wrapper {
+  padding-inline-start: 72px;
+}
+.compact .contents {
+  display: flex;
+  flex-wrap: wrap;
+  height: 1.375rem;
+  overflow: hidden;
+  padding-inline-start: 5rem;
+}
+.compact .contents .content {
+  display: contents;
+}
+.cozy .content {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  height: 1.375rem;
+  overflow: hidden;
+  text-indent: 0;
+}
+.compact .content {
+  display: inline;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  user-select: text;
+}
+.blob {
+  flex: 0 0 auto;
+  height: 1rem;
+  line-height: 1.375rem;
+  margin-top: 0.1875rem;
+  vertical-align: middle;
+}
+.cozy .blob {
+  display: block;
+}
+.hidden {
+  visibility: hidden;
+}
+.compact .blob {
+  display: inline-block;
+}
+.cozy .header {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  height: 1.375rem;
+  line-height: 1.375rem;
+  overflow: hidden;
+  position: relative;
+}
+.compact .header {
+  margin-inline-end: 0.5rem;
+}
+.attachmentContainer {
+  padding-bottom: 0.125rem;
+  padding-top: 0.125rem;
+}
+.compact .attachmentContainer {
+  margin-top: 0.25rem;
+}
+.attachment {
+  height: 120px;
+  margin-top: 0.125rem;
+  width: 240px;
+}
+.compact .attachment {
+  margin-inline-start: 5rem;
+}
+.blob + .blob {
+  margin-inline-start: 0.25rem;
+}
+.header .blob + .blob {
+  margin-inline-start: 0.5rem;
+}
+.blob {
+  border-radius: 0.5rem;
+}
+.attachment {
+  border-radius: 6px;
+}
+.attachment,
+.avatar,
+.blob {
+  background-color: var(--text-default);
+}
+.avatar {
+  border-radius: 50%;
+  flex: 0 0 auto;
+  height: 2.5rem;
+  inset-inline-start: 1rem;
+  max-height: 40px;
+  max-width: 40px;
+  position: absolute;
+  top: 0.25rem;
+  width: 2.5rem;
+}
+:global(.a11y-font-scaled-up) .avatar {
+  inset-inline-start: 16px;
+  top: 4px;
+}
+.compactTimestamp {
+  margin-inline: -4rem 0.25rem;
+}
