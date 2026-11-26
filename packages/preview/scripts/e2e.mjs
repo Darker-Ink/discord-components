@@ -77,7 +77,9 @@ const interactionsPage = (src) => `<!doctype html><html><body style="margin:0;ba
   import { connectPreview } from '${BASE}/sdk/connect-preview.js';
   const bot = ${JSON.stringify({ id: '1000000000000000002', username: 'Helper', bot: true, avatar_url: `${BASE}/example/icon.png` })};
   window.events = [];
+  const timeouts = new URLSearchParams(window.location.search).get('timeouts');
   window.preview = connectPreview(document.getElementById('frame'), {
+    ...(timeouts != null ? { timeouts: JSON.parse(timeouts) } : {}),
     onReady: (event) => window.events.push(event),
     onInteraction: (event, reply) => {
       window.events.push(event);
@@ -528,15 +530,53 @@ const main = async () => {
     await page.screenshot({ path: path.join(OUT, 'interactions-failed.png'), fullPage: true });
   });
 
-  await step('fails interactions nobody answers, like Discord', async () => {
-    const id = await createInteractive({ interactions: true });
+  const unansweredUrl = (id, query = '') =>
+    `${scratchOrigin}/?src=${encodeURIComponent(`${BASE}/p/${id}?interactions=1${query}`)}`;
+  let unansweredId;
+  await step('fails interactions nobody answers after 3 seconds by default, like Discord', async () => {
+    unansweredId = await createInteractive({ interactions: true });
     // Framed by the plain scratch page, which listens to nothing.
-    await page.goto(`${scratchOrigin}/?src=${encodeURIComponent(`${BASE}/p/${id}?interactions=1`)}`, {
-      waitUntil: 'networkidle',
-    });
+    await page.goto(unansweredUrl(unansweredId), { waitUntil: 'networkidle' });
+    const frame = page.frameLocator('#frame');
+    const started = Date.now();
+    await frame.getByRole('button', { name: 'Greet' }).click();
+    await page.waitForTimeout(2000);
+    assert.equal(await frame.getByText('This interaction failed').count(), 0);
+    await frame.getByText('This interaction failed').waitFor({ timeout: 6000 });
+    const elapsed = Date.now() - started;
+    assert.ok(elapsed >= 2900 && elapsed < 5000, `failed after ${elapsed} ms`);
+  });
+
+  await step('takes a shorter response timeout from the URL', async () => {
+    await page.goto(unansweredUrl(unansweredId, '&responseTimeout=500'), { waitUntil: 'networkidle' });
+    const frame = page.frameLocator('#frame');
+    const started = Date.now();
+    await frame.getByRole('button', { name: 'Greet' }).click();
+    await frame.getByText('This interaction failed').waitFor({ timeout: 3000 });
+    const elapsed = Date.now() - started;
+    assert.ok(elapsed < 2000, `failed after ${elapsed} ms`);
+  });
+
+  await step('never fails with responseTimeout=none', async () => {
+    await page.goto(unansweredUrl(unansweredId, '&responseTimeout=none'), { waitUntil: 'networkidle' });
     const frame = page.frameLocator('#frame');
     await frame.getByRole('button', { name: 'Greet' }).click();
-    await frame.getByText('This interaction failed').waitFor({ timeout: 6000 });
+    await page.waitForTimeout(4500);
+    assert.equal(await frame.getByText('This interaction failed').count(), 0);
+    // Still waiting for an answer: the button shows its loading dots.
+    assert.equal(await frame.locator('button', { hasText: 'Greet' }).locator('[aria-hidden="true"]').count(), 1);
+  });
+
+  await step("applies connectPreview's timeouts (a short deferred timeout)", async () => {
+    const timeouts = encodeURIComponent(JSON.stringify({ deferred: 800 }));
+    await page.goto(`${interactionsUrl(interactionsId)}&timeouts=${timeouts}`, { waitUntil: 'networkidle' });
+    await page.waitForFunction(() => window.events.some((event) => event.type === 'discord-mana:ready'));
+    const frame = page.frameLocator('#frame');
+    const started = Date.now();
+    await frame.getByRole('button', { name: 'Slow' }).click();
+    await frame.getByText('This interaction failed').waitFor({ timeout: 3000 });
+    const elapsed = Date.now() - started;
+    assert.ok(elapsed < 2500, `failed after ${elapsed} ms`);
   });
 
   await step('drops invalid commands with a warning', async () => {
