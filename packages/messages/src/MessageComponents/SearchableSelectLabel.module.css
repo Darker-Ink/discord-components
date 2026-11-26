@@ -1,0 +1,35 @@
+.discriminator,
+.username {
+  color: var(--text-muted);
+}
+.tag {
+  align-items: center;
+}
+.tag .bot {
+  margin-top: 0;
+}
+.label {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  min-width: 100%;
+  overflow: hidden;
+  width: 0;
+}
+.labelText {
+  display: flex;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.roleCountContainer {
+  align-items: center;
+  display: flex;
+}
+.roleCountIcon,
+.roleCountText {
+  color: var(--text-muted);
+}
+.roleCountText {
+  margin: 0 4px;
+}

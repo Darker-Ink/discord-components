@@ -66,6 +66,8 @@ export interface MessageResolvers {
   searchUsers?: (query: string) => APIResolvedUser[];
   /** Options for role and mentionable selects. */
   searchRoles?: (query: string) => APIResolvedRole[];
+  /** Members with a role, shown next to role options. */
+  getRoleMemberCount?: (roleId: string) => number | null | undefined;
   /** Options for channel selects, already filtered to `channelTypes` when given. */
   searchChannels?: (query: string, channelTypes?: number[]) => APIResolvedChannel[];
   /**

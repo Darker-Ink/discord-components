@@ -51,6 +51,14 @@ async (ref, data) => {
     users.set(apiUser.id, user);
   };
   const getUser = UserStore.getUser.bind(UserStore);
+  // User selects search the guild's members; fixtures list them in `users`.
+  const mentions = req('997625').Ay;
+  mentions.queryMentionResults = ({ query }) => ({
+    users: [...users.values()]
+      .filter((user) => user.id !== data.message?.author?.id && user.username.includes(query ?? ''))
+      .map((user) => ({ user })),
+    roles: [],
+  });
   UserStore.getUser = (id) => users.get(id) ?? getUser(id);
   const apiMessage = {
     id: '1300000000000000000',
@@ -71,6 +79,7 @@ async (ref, data) => {
     ...data.message,
   };
   addUser(apiMessage.author);
+  for (const user of data.users ?? []) addUser(user);
   addUser(apiMessage.referenced_message?.author);
   addUser(apiMessage.interaction_metadata?.user);
   const message = createMessage(apiMessage);

@@ -5,12 +5,15 @@ import {
   Message,
   MessageListItem,
   type APIMessage,
+  type APIUser,
   type MessageResolvers,
 } from '@discord-components/messages';
 import type { StoryGroup } from '../../types';
 
 interface MessageFixtureData {
   message: Partial<APIMessage> & Pick<APIMessage, 'author'>;
+  /** Users the client would have in its user store (resolved for selects' default values). */
+  users?: APIUser[];
   /** Image URLs for emojis, by custom emoji id or unicode emoji (both sides use them). */
   emoji_urls?: Record<string, string>;
   /** Shortcodes of unicode emojis (the client's emoji database), for reaction labels. */
@@ -74,6 +77,9 @@ const MessageFixture = ({ fixture }: { fixture: string }) => {
         const key = id ?? name;
         return key != null ? (data?.emoji_urls?.[key] ?? null) : null;
       },
+      resolveUser: (id) => data?.users?.find((user) => user.id === id),
+      searchUsers: (query) =>
+        (data?.users ?? []).filter((user) => user.id !== data?.message.author.id && user.username.includes(query)),
       getEmojiName: ({ name }) => (name != null ? (data?.emoji_names?.[name] ?? name) : null),
     }),
     [data],
