@@ -4,6 +4,7 @@ import '@discord-mana/markdown/languages/all';
 import { setRiveAssetUrlResolver } from '@discord-mana/components';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { startMediaProxy } from './mediaProxy';
 import { Playground } from './Playground';
 import { collections } from './stories';
 
@@ -12,8 +13,10 @@ import { collections } from './stories';
 const RIVE_CDN = /^https:\/\/cdn\.discordapp\.com\/assets\/content\/([0-9a-f]+\.riv)$/;
 setRiveAssetUrlResolver((url) => url.replace(RIVE_CDN, '/rive/$1'));
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <Playground collections={collections} />
-  </StrictMode>,
+void startMediaProxy().then(() =>
+  createRoot(document.getElementById('root')!).render(
+    <StrictMode>
+      <Playground collections={collections} />
+    </StrictMode>,
+  ),
 );

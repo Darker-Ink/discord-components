@@ -1,0 +1,13 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // Static assets only: no Worker script runs.
+  "name": "discord-mana-playground",
+  "compatibility_date": "2026-11-20",
+  "assets": {
+    "directory": "./dist",
+    // The playground is one page; its state lives in the query string.
+    "not_found_handling": "single-page-application",
+  },
+  // A Custom Domain: `wrangler deploy` creates its DNS record and certificate (the zone must be on Cloudflare).
+  "routes": [{ "pattern": "play.discord-mana.dev", "custom_domain": true }],
+}
