@@ -55,13 +55,15 @@ const ESCAPE_ACTIONS = [
   ComponentActions.POPOUT_CLOSE_AFTER_MODALS,
 ] as const;
 
-if (typeof document !== 'undefined') {
-  document.addEventListener('keydown', (event) => {
-    if (event.key !== 'Escape' || event.defaultPrevented) return;
+// Like the client's key binding library, which listens on the window (bubble phase) and doesn't care
+// whether the event's default was prevented.
+if (typeof window !== 'undefined') {
+  window.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
     const action = ESCAPE_ACTIONS.find((name) => windowDispatch.hasSubscribers(name));
     if (action == null) return;
     windowDispatch.dispatch(action, event);
-    // Like a keybind handler returning false in the client's key binding library.
+    // Like a keybind handler returning false.
     event.preventDefault();
     event.stopPropagation();
   });

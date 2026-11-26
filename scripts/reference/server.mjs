@@ -289,7 +289,8 @@ window.ref = (() => {
   window.addEventListener('mousedown', () => setKeyboardMode(false), true);
   // The client's global Escape keybind (92960): the media viewer first, then popouts, the modal
   // stack and popouts that were open below modals. Popouts use the default window dispatcher here.
-  document.addEventListener('keydown', (e) => {
+  // Bound on the window, like the client's key binding library.
+  window.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape' || !root) return;
     const global = req('188567')._;
     const popouts = req('267102').Uw;
