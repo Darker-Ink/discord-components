@@ -60,6 +60,9 @@ const APP_ROOT_MODULES = [
   '573435',
 ];
 
+// Experiments that gate features (not variants) in Discord's playground; we always show these features.
+const ALWAYS_ON_GATES = ['2025-10-mana-date-inputs'];
+
 // Playground configs and the webpack module that exposes them.
 const playgroundModules = { mana: '352611', void: '352611', payments: '582695', nitro: '582695', identity: '582695' };
 
@@ -232,7 +235,7 @@ window.ref = (() => {
     const layers = req('750506');
     const verification = req('80556');
     const contents = req('638274').P;
-    const manaValue = { ...mana.VO._currentValue, theme, saturation: 1, experiments: { enabledExperiments: experiments }, defaultLayerContext: layers.uY, dynamicGraphicComponents: req('116833').Q };
+    const manaValue = { ...mana.VO._currentValue, theme, saturation: 1, defaultLayerContext: layers.uY, dynamicGraphicComponents: req('116833').Q };
     return h(a11y.Provider, { value: a11yValue },
       h(mana.GE, { value: manaValue },
         h(req('86182').w, { theme },
@@ -249,13 +252,6 @@ window.ref = (() => {
   const rerender = () => root.render(appRoot(lastElement));
   const render = (element) => new Promise((resolve) => { lastElement = element; rerender(); setTimeout(resolve, 50); });
   const setTheme = (theme) => { document.documentElement.className = document.documentElement.className.replace(/theme-\\w+/, 'theme-' + theme); };
-  // Client experiments that switch on through a root class plus ManaContext, like the playground's ?experiments=.
-  let experiments = [];
-  const setExperiments = (names) => {
-    experiments.forEach((name) => document.documentElement.classList.remove(name));
-    experiments = names;
-    experiments.forEach((name) => document.documentElement.classList.add(name));
-  };
   // Translations load lazily per chunk; wait for the English strings of every loader that's been required.
   const loadTranslations = async () => {
     const loaders = new Set();
@@ -303,21 +299,18 @@ window.ref = (() => {
     e.preventDefault();
     e.stopPropagation();
   });
-  // Stories gated on an Apex experiment (useConfig) read the experiment store, not ManaContext. Force a
-  // session override for each named experiment the loaded modules registered: its first variation whose
-  // config is enabled, or else its first non-default variation.
-  const overrideApexExperiments = (names) => {
+  // Some playground stories only render behind an Apex experiment (useConfig). We show those features
+  // always, so the reference does too: each gate gets a session override to its first enabled variation.
+  const enableGatedFeatures = () => {
     const store = req('340344').A;
     const registered = store.getRegisteredExperiments();
-    for (const name of names) {
+    for (const name of ${JSON.stringify(ALWAYS_ON_GATES)}) {
       const variations = registered[name]?.variations;
-      if (variations == null) continue;
-      const ids = Object.keys(variations);
-      const id = ids.find((key) => variations[key]?.enabled === true) ?? ids.find((key) => key !== '0') ?? ids[0];
+      const id = variations && Object.keys(variations).find((key) => variations[key]?.enabled === true);
       if (id != null) store.createSessionOverride(name, Number(id));
     }
   };
-  return { boot, render, setTheme, setExperiments, overrideApexExperiments, loadTranslations, req, get React() { return React; } };
+  return { boot, render, setTheme, enableGatedFeatures, loadTranslations, req, get React() { return React; } };
 })();
 </script>`;
 
@@ -325,11 +318,10 @@ const storyScript = (collection, storyId) => `
 <script type="module">
 const params = Object.fromEntries(new URLSearchParams(location.search));
 if (params.theme) ref.setTheme(params.theme);
-if (params.experiments) ref.setExperiments(params.experiments.split(','));
 const configModule = ${JSON.stringify(playgroundModules[collection])};
 await ref.boot([configModule]);
 const exports = ref.req(configModule);
-if (params.experiments) ref.overrideApexExperiments(params.experiments.split(','));
+ref.enableGatedFeatures();
 const config = Object.values(exports).find((c) => c?.collections?.some((col) => col.id === ${JSON.stringify(collection)}));
 const col = config.collections.find((c) => c.id === ${JSON.stringify(collection)});
 const story = col.groups.flatMap((g) => g.stories).find((s) => s.id === ${JSON.stringify(storyId)});
