@@ -1,14 +1,6 @@
-import { Fragment } from 'react';
+import { Fragment, type KeyboardEvent } from 'react';
 import chroma from 'chroma-js';
-import {
-  Checkbox,
-  Select,
-  Stack,
-  Text,
-  TextInput,
-  VoidSlider,
-  type ListboxOption,
-} from '@discord-components/components';
+import { Checkbox, Select, Slider, Stack, Text, TextInput, type ListboxOption } from '@discord-components/components';
 import styles from './Playground.module.css';
 import type { Controls, SelectOption } from './types';
 
@@ -39,6 +31,47 @@ const formatOption = (option: ListboxOption) => {
 };
 
 const formatSliderValue = (value: number) => String(Math.round(1000 * value) / 1000);
+
+const ARROW_KEY_DIRECTIONS: Record<string, number> = { ArrowLeft: -1, ArrowDown: -1, ArrowRight: 1, ArrowUp: 1 };
+
+interface SliderControlProps {
+  label: string;
+  value: number;
+  minValue: number;
+  maxValue: number;
+  markers?: number[];
+  onChange: (value: number) => void;
+}
+
+// Without markers a drag can land on (almost) any value, while the arrow keys move by 5% of the range. The
+// slider has a single step for both, so it gets a fine one and the arrow keys are handled here.
+const SliderControl = ({ label, value, minValue, maxValue, markers, onChange }: SliderControlProps) => {
+  const range = maxValue - minValue;
+  const handleKeyDownCapture = (event: KeyboardEvent<HTMLDivElement>) => {
+    const direction = ARROW_KEY_DIRECTIONS[event.key];
+    if (markers != null || direction == null) return;
+    event.preventDefault();
+    event.stopPropagation();
+    onChange(Math.min(maxValue, Math.max(minValue, value + direction * range * 0.05)));
+  };
+  return (
+    <div onKeyDownCapture={handleKeyDownCapture}>
+      <Slider
+        label={label}
+        value={value}
+        minValue={minValue}
+        maxValue={maxValue}
+        step={markers != null ? 1 : range / 1000}
+        marks={markers}
+        snapToMarks={markers != null}
+        onChange={onChange}
+        formatValue={formatSliderValue}
+      />
+    </div>
+  );
+};
+
+SliderControl.displayName = 'SliderControl';
 
 interface ControlsPanelProps {
   controls: Controls;
@@ -97,20 +130,13 @@ export const ControlsPanel = ({ controls, props, onPropsChange }: ControlsPanelP
                 />
               )}
               {control.type === 'slider' && (
-                <VoidSlider
-                  initialValue={value != null ? Number(value) : 0}
-                  value={value != null ? Number(value) : undefined}
+                <SliderControl
+                  label={control.label}
+                  value={value != null ? Number(value) : 0}
                   minValue={control.minValue}
                   maxValue={control.maxValue}
-                  keyboardStep={control.markers != null ? 1 : (control.maxValue - control.minValue) * 0.05}
                   markers={control.markers}
-                  asValueChanges={(next) => setProp(key, next)}
-                  handleSize={10}
-                  disabled={false}
-                  stickToMarkers={control.markers != null}
-                  fillStyles={{}}
-                  label={control.label}
-                  onValueRender={formatSliderValue}
+                  onChange={(next) => setProp(key, next)}
                 />
               )}
               {control.type === 'color' && (
