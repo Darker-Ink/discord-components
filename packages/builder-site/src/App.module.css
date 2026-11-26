@@ -349,3 +349,6 @@
     display: none;
   }
 }
+.missingFiles {
+  margin: 8px 16px;
+}

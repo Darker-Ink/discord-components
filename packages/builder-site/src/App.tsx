@@ -38,6 +38,7 @@ import {
   DEFAULT_AUTHOR,
   getWebhookAvatarURL,
   JsonPanel,
+  MissingFilesNotice,
   useBuilderIssues,
   useMessageBuilder,
   ValidationPanel,
@@ -304,6 +305,8 @@ export const App = () => {
     () => ({
       target: 'webhook' as const,
       applicationOwnedWebhook: webhook != null ? webhook.application_id != null : undefined,
+      // attachment:// references are checked against the message's attachments.
+      files: [],
     }),
     [webhook],
   );
@@ -400,6 +403,7 @@ export const App = () => {
             <BuilderChannel name={CHANNEL} className={styles.channel}>
               <div className={styles.channelBody}>
                 {!phone ? <ChannelStart name={CHANNEL} /> : null}
+                <MissingFilesNotice className={styles.missingFiles} />
                 <BuilderCanvas author={author} className={styles.canvas} />
               </div>
             </BuilderChannel>

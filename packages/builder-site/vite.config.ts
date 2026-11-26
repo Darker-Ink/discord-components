@@ -15,7 +15,38 @@ const lazyExpressiveButton = (): Plugin => ({
   },
 });
 
+// The app's own code changes far more often than what it's built on: split the rest into chunks that load in
+// parallel and stay cached between deploys.
+const CHUNKS: [name: string, test: RegExp][] = [
+  ['react', /node_modules[\\/](react|react-dom|scheduler)[\\/]/],
+  [
+    'aria',
+    /node_modules[\\/](@react-aria|react-aria|react-aria-components|@react-stately|react-stately|@internationalized|@react-types)[\\/]/,
+  ],
+  ['emoji', /packages[\\/]markdown[\\/]src[\\/]emoji[\\/]/],
+  ['vendor', /node_modules[\\/]/],
+  ['mana', /packages[\\/](components|tokens|icons)[\\/]/],
+  ['messages', /packages[\\/](messages|markdown|slate)[\\/]/],
+];
+
+const LAZY =
+  /lottie|@rive-app|ExpressiveButtonRive|ColorPickerSaturationHue|react-color|reactcss|tinycolor2|lodash|[\\/]Rive[\\/]/;
+
 export default defineConfig({
   plugins: [lazyExpressiveButton(), react()],
   server: { port: 5175 },
+  build: {
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [
+            {
+              // What is already loaded lazily (animations, the colour picker) stays out of these.
+              name: (id: string) => (LAZY.test(id) ? null : (CHUNKS.find(([, test]) => test.test(id))?.[0] ?? null)),
+            },
+          ],
+        },
+      },
+    },
+  },
 });
