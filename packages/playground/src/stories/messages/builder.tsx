@@ -147,28 +147,34 @@ const MessageBuilderStory = ({
 
 MessageBuilderStory.displayName = 'MessageBuilderStory';
 
-/** The pieces laid out by hand, around one builder. */
+/** The pieces laid out by hand, around one builder: they wrap to the width they get. */
 const ComposedStory = ({ sample }: { sample: string }) => {
   const builder = useMessageBuilder(SAMPLES[sample]);
   return (
-    <Frame>
+    <MediaViewerProvider>
       <BuilderProvider builder={builder} resolvers={RESOLVERS}>
-        <div style={{ display: 'grid', gridTemplateColumns: '200px 1fr 340px', gap: 16, width: '100%', minWidth: 0 }}>
-          <ComponentPalette />
-          <BuilderChannel
-            actions={
-              <>
-                <BuilderModeSwitch />
-                <BuilderHistoryButtons />
-              </>
-            }
-          >
-            <BuilderCanvas author={AUTHOR} />
-          </BuilderChannel>
-          <BuilderPanels />
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, width: '100%', minWidth: 0 }}>
+          <div style={{ flex: '0 1 200px', minWidth: 0 }}>
+            <ComponentPalette />
+          </div>
+          <div style={{ flex: '1 1 520px', minWidth: 0, height: 600, display: 'grid' }}>
+            <BuilderChannel
+              actions={
+                <>
+                  <BuilderModeSwitch />
+                  <BuilderHistoryButtons />
+                </>
+              }
+            >
+              <BuilderCanvas author={AUTHOR} />
+            </BuilderChannel>
+          </div>
+          <div style={{ flex: '0 1 340px', minWidth: 280 }}>
+            <BuilderPanels />
+          </div>
         </div>
       </BuilderProvider>
-    </Frame>
+    </MediaViewerProvider>
   );
 };
 
