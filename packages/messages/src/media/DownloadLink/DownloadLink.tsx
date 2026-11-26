@@ -29,10 +29,12 @@ export const DownloadLink = ({
   ...rest
 }: DownloadLinkProps) => {
   const { i18n } = useMediaContext();
+  // The client always handles the click (it reports downloads to analytics), which makes the anchor a focusable link.
+  const handleClick = (event: MouseEvent<HTMLAnchorElement>) => onClick?.(event);
   return fileName != null ? (
     <Anchor
       href={href}
-      onClick={onClick}
+      onClick={handleClick}
       target={target}
       rel={rel}
       className={className}
@@ -44,7 +46,7 @@ export const DownloadLink = ({
   ) : (
     <Anchor
       href={href}
-      onClick={onClick}
+      onClick={handleClick}
       target={target}
       rel={rel}
       className={className}

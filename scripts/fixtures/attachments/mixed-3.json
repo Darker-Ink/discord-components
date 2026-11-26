@@ -1,0 +1,38 @@
+{
+  "story": "attachment-fixtures",
+  "data": {
+    "attachments": [
+      {
+        "id": "1000000000000000061",
+        "filename": "photo-1.jpg",
+        "size": 21000,
+        "url": "{{assets}}/attachments/photo-1.jpg",
+        "proxy_url": "{{assets}}/attachments/photo-1.jpg",
+        "width": 1600,
+        "height": 900,
+        "content_type": "image/jpeg"
+      },
+      {
+        "id": "1000000000000000062",
+        "filename": "video-1.webm",
+        "size": 19000,
+        "url": "{{assets}}/attachments/video-1.webm",
+        "proxy_url": "{{assets}}/attachments/video-1-poster.jpg",
+        "width": 1280,
+        "height": 720,
+        "content_type": "video/webm"
+      },
+      {
+        "id": "1000000000000000063",
+        "filename": "animated.gif",
+        "size": 348457,
+        "url": "{{assets}}/attachments/animated.gif",
+        "proxy_url": "{{assets}}/attachments/animated.gif",
+        "width": 320,
+        "height": 240,
+        "content_type": "image/gif",
+        "flags": 32
+      }
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "story": "media-gallery-fixtures",
+  "data": {
+    "items": [
+      {
+        "media": {
+          "url": "{{assets}}/attachments/photo-1.jpg",
+          "proxy_url": "{{assets}}/attachments/photo-1.jpg",
+          "width": 1600,
+          "height": 900,
+          "content_type": "image/jpeg",
+          "loading_state": 2
+        }
+      },
+      {
+        "media": {
+          "url": "{{assets}}/attachments/photo-2.jpg",
+          "proxy_url": "{{assets}}/attachments/photo-2.jpg",
+          "width": 900,
+          "height": 1200,
+          "content_type": "image/jpeg",
+          "loading_state": 2
+        }
+      }
+    ]
+  }
+}

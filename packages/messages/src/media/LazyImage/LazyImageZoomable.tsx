@@ -1,5 +1,6 @@
 import { useCallback, type MouseEvent, type ReactNode } from 'react';
 import { useMediaContext } from '../MediaContext';
+import { useWindowFocused } from '../useWindowFocused';
 import { preloadZoomedImage } from '../preload';
 import type { MediaSourceMetadata, MediaViewerItem } from '../mediaViewerTypes';
 import { LazyImage, type LazyImageProps, type LazyImageZoomInfo } from './LazyImage';
@@ -30,7 +31,9 @@ export const LazyImageZoomable = ({
   children,
   ...props
 }: LazyImageZoomableProps) => {
-  const { openMediaViewer, isWindowFocused } = useMediaContext();
+  const { openMediaViewer, isWindowFocused: focusOverride } = useMediaContext();
+  const windowFocused = useWindowFocused();
+  const isWindowFocused = focusOverride ?? windowFocused;
   const { src, width, height, alt, original, srcIsAnimated, sourceMetadata } = props;
 
   const handleMouseEnter = useCallback(

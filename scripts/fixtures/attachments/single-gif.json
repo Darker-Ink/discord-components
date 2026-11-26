@@ -1,0 +1,18 @@
+{
+  "story": "attachment-fixtures",
+  "data": {
+    "attachments": [
+      {
+        "id": "1000000000000000059",
+        "filename": "animated.gif",
+        "size": 348457,
+        "url": "{{assets}}/attachments/animated.gif",
+        "proxy_url": "{{assets}}/attachments/animated.gif",
+        "width": 320,
+        "height": 240,
+        "content_type": "image/gif",
+        "flags": 32
+      }
+    ]
+  }
+}

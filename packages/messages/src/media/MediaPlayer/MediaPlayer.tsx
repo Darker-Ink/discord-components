@@ -297,7 +297,7 @@ const AudioMetadata = ({
           fileName={fileName}
         />
       )}
-      <div className={styles.metadataSize}>{fileSize}</div>
+      <div className={clsx(styles.metadataSize, styles['body-xs/medium'])}>{fileSize}</div>
     </div>
     {!hideDownloadButton && (
       <DownloadLink
@@ -341,7 +341,8 @@ const PlayPausePop = ({ ref }: { ref?: Ref<PlayPausePopHandle> }) => {
       className={styles.playPausePop}
       style={{
         opacity: opacity.to([0, 1], [0, 0.8]),
-        transform: scale.to([0, 1], [1, 2]).to((value) => `scale(${value})`),
+        // Like the client's Animated, the identity transform isn't written out.
+        transform: scale.to([0, 1], [1, 2]).to((value) => (value === 1 ? '' : `scale(${value})`)),
       }}
     >
       <Icon className={styles.playPausePopIcon} />

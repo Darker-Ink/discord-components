@@ -1,0 +1,77 @@
+{
+  "story": "attachment-fixtures",
+  "data": {
+    "attachments": [
+      {
+        "id": "1000000000000000021",
+        "filename": "photo-1.jpg",
+        "size": 21000,
+        "url": "{{assets}}/attachments/photo-1.jpg",
+        "proxy_url": "{{assets}}/attachments/photo-1.jpg",
+        "width": 1600,
+        "height": 900,
+        "content_type": "image/jpeg"
+      },
+      {
+        "id": "1000000000000000022",
+        "filename": "photo-2.jpg",
+        "size": 22000,
+        "url": "{{assets}}/attachments/photo-2.jpg",
+        "proxy_url": "{{assets}}/attachments/photo-2.jpg",
+        "width": 900,
+        "height": 1200,
+        "content_type": "image/jpeg"
+      },
+      {
+        "id": "1000000000000000023",
+        "filename": "photo-3.jpg",
+        "size": 23000,
+        "url": "{{assets}}/attachments/photo-3.jpg",
+        "proxy_url": "{{assets}}/attachments/photo-3.jpg",
+        "width": 1000,
+        "height": 1000,
+        "content_type": "image/jpeg"
+      },
+      {
+        "id": "1000000000000000024",
+        "filename": "photo-4.jpg",
+        "size": 24000,
+        "url": "{{assets}}/attachments/photo-4.jpg",
+        "proxy_url": "{{assets}}/attachments/photo-4.jpg",
+        "width": 1920,
+        "height": 1080,
+        "content_type": "image/jpeg"
+      },
+      {
+        "id": "1000000000000000025",
+        "filename": "photo-5.jpg",
+        "size": 25000,
+        "url": "{{assets}}/attachments/photo-5.jpg",
+        "proxy_url": "{{assets}}/attachments/photo-5.jpg",
+        "width": 800,
+        "height": 1400,
+        "content_type": "image/jpeg"
+      },
+      {
+        "id": "1000000000000000026",
+        "filename": "photo-6.jpg",
+        "size": 26000,
+        "url": "{{assets}}/attachments/photo-6.jpg",
+        "proxy_url": "{{assets}}/attachments/photo-6.jpg",
+        "width": 1200,
+        "height": 800,
+        "content_type": "image/jpeg"
+      },
+      {
+        "id": "1000000000000000027",
+        "filename": "photo-7.jpg",
+        "size": 27000,
+        "url": "{{assets}}/attachments/photo-7.jpg",
+        "proxy_url": "{{assets}}/attachments/photo-7.jpg",
+        "width": 1024,
+        "height": 1024,
+        "content_type": "image/jpeg"
+      }
+    ]
+  }
+}

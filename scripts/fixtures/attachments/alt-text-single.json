@@ -1,0 +1,21 @@
+{
+  "story": "attachment-fixtures",
+  "data": {
+    "attachments": [
+      {
+        "id": "1000000000000000075",
+        "filename": "photo-3.jpg",
+        "size": 23000,
+        "url": "{{assets}}/attachments/photo-3.jpg",
+        "proxy_url": "{{assets}}/attachments/photo-3.jpg",
+        "width": 1000,
+        "height": 1000,
+        "content_type": "image/jpeg",
+        "description": "A square gradient"
+      }
+    ],
+    "props": {
+      "viewImageDescriptions": true
+    }
+  }
+}

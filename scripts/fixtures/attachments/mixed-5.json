@@ -1,0 +1,58 @@
+{
+  "story": "attachment-fixtures",
+  "data": {
+    "attachments": [
+      {
+        "id": "1000000000000000064",
+        "filename": "video-2.webm",
+        "size": 19000,
+        "url": "{{assets}}/attachments/video-2.webm",
+        "proxy_url": "{{assets}}/attachments/video-2-poster.jpg",
+        "width": 720,
+        "height": 1280,
+        "content_type": "video/webm"
+      },
+      {
+        "id": "1000000000000000065",
+        "filename": "photo-2.jpg",
+        "size": 22000,
+        "url": "{{assets}}/attachments/photo-2.jpg",
+        "proxy_url": "{{assets}}/attachments/photo-2.jpg",
+        "width": 900,
+        "height": 1200,
+        "content_type": "image/jpeg"
+      },
+      {
+        "id": "1000000000000000066",
+        "filename": "photo-3.jpg",
+        "size": 23000,
+        "url": "{{assets}}/attachments/photo-3.jpg",
+        "proxy_url": "{{assets}}/attachments/photo-3.jpg",
+        "width": 1000,
+        "height": 1000,
+        "content_type": "image/jpeg"
+      },
+      {
+        "id": "1000000000000000067",
+        "filename": "animated.gif",
+        "size": 348457,
+        "url": "{{assets}}/attachments/animated.gif",
+        "proxy_url": "{{assets}}/attachments/animated.gif",
+        "width": 320,
+        "height": 240,
+        "content_type": "image/gif",
+        "flags": 32
+      },
+      {
+        "id": "1000000000000000068",
+        "filename": "video-1.webm",
+        "size": 19000,
+        "url": "{{assets}}/attachments/video-1.webm",
+        "proxy_url": "{{assets}}/attachments/video-1-poster.jpg",
+        "width": 1280,
+        "height": 720,
+        "content_type": "video/webm"
+      }
+    ]
+  }
+}

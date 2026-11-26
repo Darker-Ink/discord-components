@@ -1,0 +1,30 @@
+{
+  "story": "attachment-fixtures",
+  "data": {
+    "attachments": [
+      {
+        "id": "1000000000000000084",
+        "filename": "photo-1.jpg",
+        "size": 21000,
+        "url": "{{assets}}/attachments/photo-1.jpg",
+        "proxy_url": "{{assets}}/attachments/photo-1.jpg",
+        "width": 1600,
+        "height": 900,
+        "content_type": "image/jpeg"
+      },
+      {
+        "id": "1000000000000000085",
+        "filename": "video-1.webm",
+        "size": 19000,
+        "url": "{{assets}}/attachments/video-1.webm",
+        "proxy_url": "{{assets}}/attachments/video-1-poster.jpg",
+        "width": 1280,
+        "height": 720,
+        "content_type": "video/webm"
+      }
+    ],
+    "props": {
+      "canDeleteAttachments": true
+    }
+  }
+}

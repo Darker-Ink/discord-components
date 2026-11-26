@@ -6,6 +6,7 @@ export const DEFAULT_MEDIA_I18N = {
   IMAGE: 'Image',
   VIDEO: 'Video',
   IMAGE_FAILED_TO_LOAD: 'Image failed to load.',
+  IMAGE_NOT_FOUND: 'Image not found',
   IMAGE_DESCRIPTION_ALT_TEXT: 'Image Description (Alt Text)',
   ALT: 'ALT',
   SPOILER: 'Spoiler',
@@ -39,8 +40,8 @@ export interface MediaContextValue {
   inlineAttachmentMedia: boolean;
   /** "Show images and videos posted as links in chat". */
   inlineEmbedMedia: boolean;
-  /** Whether the window has focus; animated media only plays while it does. */
-  isWindowFocused: boolean;
+  /** Whether the window has focus; animated media only plays while it does. Tracks the real window when unset. */
+  isWindowFocused?: boolean;
   /**
    * Opens the media viewer for the clicked media. Defaults to the package's MediaViewer when a
    * `MediaViewerProvider` is mounted; set it to route clicks elsewhere.
@@ -54,7 +55,7 @@ export const DEFAULT_MEDIA_CONTEXT: MediaContextValue = {
   gifAutoPlay: true,
   inlineAttachmentMedia: true,
   inlineEmbedMedia: true,
-  isWindowFocused: true,
+  isWindowFocused: undefined,
   openMediaViewer: undefined,
 };
 

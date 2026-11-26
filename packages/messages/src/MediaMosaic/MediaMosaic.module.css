@@ -1,0 +1,104 @@
+.oneByOneGrid {
+  display: inline-block;
+  max-height: 350px;
+  width: -moz-fit-content;
+  width: fit-content;
+}
+.oneByOneGridSingle {
+  border-radius: 8px;
+  max-width: 100%;
+  overflow: hidden;
+}
+.oneByOneGridMosaic {
+  display: flex;
+  max-height: 280px;
+  width: 100%;
+}
+.oneByTwoGrid {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  max-height: 280px;
+}
+.oneByTwoLayoutThreeGrid {
+  max-height: 350px;
+}
+.oneByTwoGridItem {
+  flex: 1;
+  min-width: 0;
+}
+.oneByTwoGrid .itemContentContainer,
+.oneByTwoGrid .lazyImg {
+  height: 100%;
+}
+.oneByTwoSoloItem {
+  flex: 2;
+  min-width: 0;
+}
+.oneByTwoDuoItem {
+  flex: 1;
+  min-width: 0;
+}
+.twoByOneGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 100%;
+}
+.twoByOneGridItem {
+  flex: 1;
+  min-height: 0;
+}
+.threeByThreeGrid {
+  display: grid;
+  flex-direction: row;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-gap: 4px;
+}
+.threeByThreeGrid .lazyImg,
+.threeByThreeGrid .lazyImgContainer {
+  aspect-ratio: 1/1;
+}
+.twoByTwoGrid {
+  display: grid;
+  flex-direction: row;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  grid-gap: 4px;
+  max-height: 350px;
+}
+.oneByOneGrid + .threeByThreeGrid,
+.oneByTwoGrid + .threeByThreeGrid {
+  margin-top: 4px;
+}
+.visualMediaItemContainer {
+  border-radius: 8px;
+  height: 100%;
+  max-width: 550px;
+  overflow: hidden;
+  width: 100%;
+}
+.visualMediaItemContainer.isInAppComponentsV2 {
+  max-width: 600px;
+}
+.visualMediaItemContainer.isClipEmbed {
+  max-width: 660px;
+}
+.nonVisualMediaItemContainer {
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+}
+.nonVisualMediaItem {
+  max-width: 100%;
+  width: -moz-fit-content;
+  width: fit-content;
+}
+.nonVisualMediaItem + .nonVisualMediaItem,
+.nonVisualMediaItemContainer {
+  margin-top: 8px;
+}
+.itemContentContainer {
+  height: 100%;
+  width: 100%;
+}

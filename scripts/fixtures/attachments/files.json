@@ -1,0 +1,38 @@
+{
+  "story": "attachment-fixtures",
+  "data": {
+    "attachments": [
+      {
+        "id": "1000000000000000076",
+        "filename": "report.pdf",
+        "size": 482133,
+        "url": "{{assets}}/attachments/report.pdf",
+        "proxy_url": "{{assets}}/attachments/report.pdf",
+        "content_type": "application/pdf"
+      },
+      {
+        "id": "1000000000000000077",
+        "filename": "archive.zip",
+        "size": 10485760,
+        "url": "{{assets}}/attachments/archive.zip",
+        "proxy_url": "{{assets}}/attachments/archive.zip",
+        "content_type": "application/zip"
+      },
+      {
+        "id": "1000000000000000078",
+        "filename": "data.bin",
+        "size": 512,
+        "url": "{{assets}}/attachments/data.bin",
+        "proxy_url": "{{assets}}/attachments/data.bin",
+        "content_type": "application/octet-stream"
+      },
+      {
+        "id": "1000000000000000079",
+        "filename": "design.sketch",
+        "size": 2048,
+        "url": "{{assets}}/attachments/design.sketch",
+        "proxy_url": "{{assets}}/attachments/design.sketch"
+      }
+    ]
+  }
+}

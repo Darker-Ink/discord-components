@@ -1,0 +1,97 @@
+.fileWrapper {
+  max-width: 100%;
+  position: relative;
+  width: 432px;
+}
+.file {
+  align-items: center;
+  background-color: var(--background-surface-high);
+  border: 1px solid transparent;
+  border-color: var(--border-subtle);
+  border-radius: 8px;
+  box-shadow: var(--shadow-low);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  letter-spacing: 0;
+  padding: 16px;
+  width: 100%;
+}
+.fileInner {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.icon {
+  flex-shrink: 0;
+  height: 40px;
+  margin-inline-end: 8px;
+  width: 30px;
+}
+.filenameWrapper {
+  align-items: flex-end;
+  display: flex;
+}
+.filename {
+  font-size: 16px;
+  font-weight: var(--font-weight-normal);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (-webkit-max-device-pixel-ratio: 1) {
+  :global(.theme-light) .filename {
+    font-weight: var(--font-weight-medium);
+  }
+}
+.metadata {
+  color: var(--text-muted);
+  margin-inline-end: 8px;
+}
+.rate {
+  flex-shrink: 0;
+  margin-inline-start: 8px;
+  min-width: 60px;
+  text-align: end;
+}
+.progressContainer {
+  align-items: center;
+  display: flex;
+  height: 16px;
+}
+.cancelButton,
+.size {
+  margin-inline-start: 4px;
+}
+.cancelButton {
+  color: var(--interactive-text-default);
+  cursor: pointer;
+}
+.cancelButton:hover {
+  color: var(--interactive-text-hover);
+}
+.filenameLinkWrapper {
+  color: var(--text-link);
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.fileNameLink:hover {
+  text-decoration: underline;
+}
+.filename {
+  color: var(--interactive-text-active);
+}
+.size {
+  color: var(--text-muted);
+}
+.content {
+  margin-bottom: 2px;
+  opacity: 0.5;
+}
+:global(.custom-theme-background) .file {
+  background-color: var(--background-mod-subtle);
+  border-color: var(--border-subtle);
+}

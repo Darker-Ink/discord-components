@@ -69,6 +69,10 @@ const normalizeHtml = (html) =>
     .replace(/(?<=["\s])([\w/-]+?)_[\w-]{6}(?=["\s])/g, '$1')
     .replace(/ style="padding: 24px;"/, '')
     .replace(/\buid_\w+/g, 'uid')
+    // React's useId counter depends on how many hooks ran before; only the wiring matters.
+    .replace(/\b_r_[0-9a-z]+_/g, '_r_')
+    // Bundled SVG assets: Discord serves them from /assets, Vite inlines them (same files, copied from the build).
+    .replace(/src="(?:\/assets\/[0-9a-f]+\.svg|data:image\/svg\+xml[^"]*)"/g, 'src="{svg}"')
     .replace(/></g, '>\n<');
 
 const STYLE_PROPS = [

@@ -1,0 +1,45 @@
+.hoverButtonGroup:hover,
+:global(.keyboard-mode) .hoverButtonGroup:focus-within,
+:hover + .hoverButtonGroup {
+  opacity: 1;
+}
+.hoverButton {
+  color: var(--interactive-text-default);
+  cursor: pointer;
+  display: flex;
+  padding: 6px;
+}
+.hoverButton.selected,
+.hoverButton:hover,
+:global(.keyboard-mode) .hoverButton:focus {
+  background-color: var(--interactive-background-hover);
+  color: var(--interactive-text-hover);
+}
+.hoverButton:active {
+  background-color: var(--interactive-background-active);
+  color: var(--interactive-text-active);
+}
+.hoverButtonGroup {
+  background-color: var(--background-base-low);
+  border-radius: 5px;
+  display: flex;
+  inset-inline-end: 4px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  top: 4px;
+  z-index: 2;
+}
+.nonMediaMosaicItem {
+  inset-inline-end: -8px;
+  outline: 1px solid var(--background-base-lower);
+  top: -8px;
+}
+.sizer {
+  height: 0;
+  inset-inline-start: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}

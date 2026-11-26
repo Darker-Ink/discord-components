@@ -1,0 +1,17 @@
+{
+  "story": "attachment-fixtures",
+  "data": {
+    "attachments": [
+      {
+        "id": "1000000000000000057",
+        "filename": "video-1.webm",
+        "size": 19000,
+        "url": "{{assets}}/attachments/video-1.webm",
+        "proxy_url": "{{assets}}/attachments/video-1-poster.jpg",
+        "width": 1280,
+        "height": 720,
+        "content_type": "video/webm"
+      }
+    ]
+  }
+}

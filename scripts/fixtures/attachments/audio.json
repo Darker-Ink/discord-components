@@ -1,0 +1,15 @@
+{
+  "story": "attachment-fixtures",
+  "data": {
+    "attachments": [
+      {
+        "id": "1000000000000000083",
+        "filename": "song.mp3",
+        "size": 3145728,
+        "url": "{{assets}}/attachments/video-1.webm",
+        "proxy_url": "{{assets}}/attachments/song.mp3",
+        "content_type": "audio/mpeg"
+      }
+    ]
+  }
+}

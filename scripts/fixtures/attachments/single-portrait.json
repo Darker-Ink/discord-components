@@ -1,0 +1,17 @@
+{
+  "story": "attachment-fixtures",
+  "data": {
+    "attachments": [
+      {
+        "id": "1000000000000000055",
+        "filename": "photo-5.jpg",
+        "size": 25000,
+        "url": "{{assets}}/attachments/photo-5.jpg",
+        "proxy_url": "{{assets}}/attachments/photo-5.jpg",
+        "width": 800,
+        "height": 1400,
+        "content_type": "image/jpeg"
+      }
+    ]
+  }
+}

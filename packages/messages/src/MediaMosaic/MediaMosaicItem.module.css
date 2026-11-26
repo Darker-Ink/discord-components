@@ -1,0 +1,94 @@
+.inline {
+  opacity: 1;
+}
+:global(.full-motion) .inline {
+  transition: all 0.1s ease;
+}
+.inline.hiddenMosaicItem {
+  visibility: hidden;
+}
+:global(.full-motion) .obscured {
+  transition: all 0.1s ease;
+}
+.obscured.hiddenMosaicItem {
+  pointer-events: none;
+}
+.obscured.hiddenMosaicItem.hiddenSpoiler {
+  filter: blur(var(--custom-message-attachment-spoiler-blur-radius));
+}
+.obscured.hiddenMosaicItem.hiddenExplicit {
+  filter: blur(var(--__obscured-background-blur-radius)) brightness(var(--__obscured-background-brightness));
+}
+.obscureVideoSpacing {
+  bottom: 36px;
+  transition: bottom 0.1s ease-in-out;
+}
+.mosaicItemContent {
+  flex: auto;
+}
+.removeMosaicItemButton {
+  align-self: flex-start;
+  cursor: pointer;
+  flex: 0 0 auto;
+  opacity: 0;
+  padding: 2px;
+}
+.spoilerRemoveMosaicItemButton {
+  inset-inline-end: -20px;
+  position: absolute;
+  top: -2px;
+}
+.mosaicItem {
+  align-items: start;
+  display: flex;
+  flex-flow: row nowrap;
+  height: 100%;
+  max-width: 100%;
+}
+.mosaicItemNoJustify {
+  justify-self: auto !important;
+}
+.mosaicItemFullWidth {
+  align-items: center;
+  width: 100%;
+}
+.mosaicItemMediaMosaic {
+  border-radius: 2px;
+  max-height: inherit;
+  position: relative;
+}
+.hideOverflow {
+  overflow: hidden;
+}
+.removeMosaicItemButton:focus-within,
+.removeMosaicItemButton:hover {
+  color: var(--interactive-text-hover);
+}
+.nonMediaMosaicItem {
+  inset-inline-end: -8px;
+  outline: 1px solid var(--background-base-lower);
+  top: -8px;
+}
+.removeMosaicItemHoverButton:hover,
+:global(.keyboard-mode) .removeMosaicItemHoverButton:focus {
+  background-color: var(--control-critical-primary-background-default) !important;
+  color: var(--control-critical-primary-text-default) !important;
+}
+.removeMosaicItemHoverButton:active {
+  background-color: var(--control-critical-primary-background-active);
+  color: var(--white);
+}
+.downloadHoverButtonIcon {
+  height: 20px;
+  width: 20px;
+}
+:global(.enable-forced-colors) .removeMosaicItemButton {
+  background-color: ButtonFace;
+  border: 1px solid ButtonFace;
+  color: ButtonText;
+  opacity: 1;
+}
+:global(.enable-forced-colors) .removeMosaicItemButton:focus,
+:global(.enable-forced-colors) .removeMosaicItemButton:hover {
+  border-color: ButtonText;
+}

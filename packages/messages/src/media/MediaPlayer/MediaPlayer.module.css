@@ -288,3 +288,10 @@
 :global(.enable-forced-colors) .videoControls {
   background-color: ButtonFace;
 }
+/* Text's body-xs/medium variant, which the client composes into .metadataSize. */
+.body-xs\/medium {
+  font-family: var(--font-primary);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.3333333333333333;
+}
