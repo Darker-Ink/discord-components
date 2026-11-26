@@ -1,0 +1,1 @@
+{ "sample": true, "data": {}, "steps": [{ "click": true }, { "type": "see #gen" }, { "wait": 400 }] }

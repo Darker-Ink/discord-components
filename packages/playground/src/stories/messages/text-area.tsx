@@ -110,7 +110,7 @@ const ChatInputStory = ({
   const [text, setText] = useState(value);
   const [sent, setSent] = useState<string[]>([]);
   return (
-    <div style={{ width: 640, display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <div style={{ width: 640, display: 'flex', flexDirection: 'column', gap: 16, paddingTop: 280 }}>
       <ChannelTextArea
         key={value}
         type={type}

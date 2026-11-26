@@ -1,0 +1,5 @@
+{
+  "sample": true,
+  "data": {},
+  "steps": [{ "click": true }, { "type": "hi @wu" }, { "wait": 400 }, { "press": "Tab" }, { "type": "there" }]
+}
