@@ -38,11 +38,10 @@
   text-decoration: none;
 }
 .logoMark {
-  color: var(--brand-500);
   display: block;
   flex: none;
-  height: 26px;
-  width: 26px;
+  height: 24px;
+  width: 24px;
 }
 .wordmark {
   font-size: 17px;
