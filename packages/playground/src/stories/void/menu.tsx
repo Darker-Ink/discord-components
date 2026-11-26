@@ -237,7 +237,7 @@ const MenuStory = ({
         )}
         position="bottom"
         align="center"
-        shouldShow={open}
+        shouldShow
         targetElementRef={targetRef}
         onRequestClose={() => setOpen(false)}
       >
