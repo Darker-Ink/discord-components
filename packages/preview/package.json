@@ -10,7 +10,7 @@
     "deploy": "vite build && wrangler deploy",
     "test": "vitest run",
     "test:e2e": "node scripts/e2e.mjs",
-    "typecheck": "tsc -p tsconfig.app.json && tsc -p tsconfig.worker.json && tsc -p tsconfig.node.json",
+    "typecheck": "tsc -p tsconfig.app.json && tsc -p tsconfig.worker.json && tsc -p tsconfig.node.json && tsc -p tsconfig.sdk.json",
     "types": "wrangler types --include-runtime=false src/worker/env.d.ts",
     "db:migrate:local": "wrangler d1 migrations apply DB --local",
     "db:migrate:remote": "wrangler d1 migrations apply DB --remote"
