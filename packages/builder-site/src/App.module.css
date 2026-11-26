@@ -1,6 +1,7 @@
 /*
- * The builder is a Discord window: a dark rail of things to add, the channel with the message in it, and a side
- * panel of tools, all on the client's own tokens so every theme is Discord's.
+ * The builder is a Discord window: a rail of things to add, the channel with the message in it, and a side
+ * panel of tools, all on the client's own tokens so every theme is Discord's. Tablets get an icon rail; phones
+ * get the channel full screen, a tab bar and bottom sheets.
  */
 
 .app {
@@ -18,6 +19,15 @@
   min-height: 0;
   user-select: text;
 }
+.app[data-layout='tablet'] {
+  grid-template-columns: 64px minmax(0, 1fr) 320px;
+}
+.app[data-layout='phone'] {
+  grid-template-areas: 'header' 'channel' 'tabs';
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: 100dvh;
+}
 
 /* Header */
 .header {
@@ -29,6 +39,11 @@
   min-width: 0;
   padding: 0 16px 0 20px;
 }
+.app[data-layout='phone'] .header {
+  gap: 8px;
+  padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) 8px
+    max(12px, env(safe-area-inset-left));
+}
 .logo {
   align-items: center;
   color: var(--text-strong);
@@ -37,8 +52,16 @@
   gap: 10px;
   width: 212px;
 }
+.app[data-layout='tablet'] .logo {
+  width: auto;
+}
 .logo:hover {
   text-decoration: none;
+}
+.logoMarkOnly {
+  color: var(--text-strong);
+  display: flex;
+  flex: none;
 }
 .logoMark {
   display: block;
@@ -62,6 +85,21 @@
   display: flex;
   gap: 8px;
   min-width: 0;
+}
+.app[data-layout='phone'] .headerTools {
+  flex: 1;
+  gap: 4px;
+}
+.app[data-layout='phone'] .modeSwitch {
+  flex: 1;
+  min-width: 0;
+}
+.app[data-layout='phone'] .modeSwitch > * {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  padding: 0 6px;
+  text-overflow: ellipsis;
 }
 .headerActions {
   align-items: center;
@@ -94,29 +132,39 @@
 /* Palette rail */
 .palette {
   box-sizing: border-box;
-  min-width: 0;
+  display: flex;
+  flex-direction: column;
   grid-area: palette;
   min-height: 0;
-  overflow-y: auto;
-  padding: 8px 12px 24px;
+  min-width: 0;
+}
+.paletteScroller {
+  padding: 8px 4px 24px 12px;
+}
+.app[data-layout='tablet'] .paletteScroller {
+  padding: 8px 4px 24px 10px;
 }
 
 /* The channel: the client's chat panel, with its rounded corner against the rail. */
 .channel {
   background: var(--background-base-lower);
-  min-width: 0;
   border: 1px solid var(--border-subtle);
   border-bottom: 0;
   border-right: 0;
   border-top-left-radius: 8px;
   grid-area: channel;
+  min-width: 0;
   overflow: hidden;
   position: relative;
 }
+.app[data-layout='phone'] .channel {
+  border-left: 0;
+  border-radius: 0;
+}
+/* Top-aligned (unlike the chat): what grows while editing grows downwards, so nothing above it moves. */
 .channelBody {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
   min-height: 100%;
 }
 .welcome {
@@ -128,39 +176,14 @@
 .canvas {
   padding-bottom: 8px;
 }
-.hints {
-  align-items: center;
-  border-top: 1px solid var(--border-subtle);
-  color: var(--text-muted);
-  display: flex;
-  flex: none;
-  flex-wrap: wrap;
-  font-size: 12px;
-  gap: 6px 18px;
-  line-height: 16px;
-  padding: 10px 16px;
-}
-.hints > span {
-  align-items: center;
-  display: inline-flex;
-  gap: 6px;
-}
-.kbd {
-  background: var(--background-mod-subtle);
-  border: 1px solid var(--border-subtle);
-  border-radius: 4px;
-  color: var(--text-default);
-  font-family: var(--font-primary);
-  font-size: 11px;
-  font-weight: var(--font-weight-semibold);
-  line-height: 14px;
-  padding: 1px 5px;
+/* Room under the message for the bar of a selected node's tools. */
+.app[data-layout='phone'] .canvas {
+  padding-bottom: 72px;
 }
 
 /* Tools */
 .side {
   background: var(--background-base-lower);
-  min-width: 0;
   border-left: 1px solid var(--border-subtle);
   border-top: 1px solid var(--border-subtle);
   box-sizing: border-box;
@@ -168,7 +191,133 @@
   flex-direction: column;
   grid-area: side;
   min-height: 0;
-  overflow-y: auto;
+  min-width: 0;
+}
+.sideScroller {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Phones: the tab bar */
+.tabBar {
+  background: var(--background-base-lowest);
+  border-top: 1px solid var(--border-subtle);
+  display: grid;
+  grid-area: tabs;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 4px max(4px, env(safe-area-inset-right)) max(4px, env(safe-area-inset-bottom))
+    max(4px, env(safe-area-inset-left));
+}
+.tab {
+  align-items: center;
+  appearance: none;
+  background: none;
+  border: 0;
+  border-radius: 10px;
+  color: var(--interactive-text-default);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-primary);
+  gap: 2px;
+  justify-content: center;
+  min-height: 52px;
+  padding: 4px 0;
+}
+.tab[aria-pressed='true'] {
+  color: var(--text-strong);
+}
+.tab:active {
+  background: var(--interactive-background-active);
+}
+.tabIcon {
+  display: flex;
+  position: relative;
+}
+.tabBadge {
+  background: var(--status-warning);
+  border-radius: 8px;
+  box-shadow: 0 0 0 2px var(--background-base-lowest);
+  color: var(--black);
+  font-size: 11px;
+  font-weight: var(--font-weight-bold);
+  left: 14px;
+  line-height: 16px;
+  min-width: 16px;
+  padding: 0 4px;
+  position: absolute;
+  text-align: center;
+  top: -6px;
+}
+.tabBadge[data-severity='error'] {
+  background: var(--status-danger);
+  color: var(--white);
+}
+.tabLabel {
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 16px;
+}
+
+/* Phones: bottom sheets */
+.sheetLayer {
+  inset: 0;
+  position: fixed;
+  z-index: 200;
+}
+.sheetBackdrop {
+  background: rgb(0 0 0 / 0.5);
+  inset: 0;
+  position: absolute;
+}
+.sheet {
+  background: var(--background-base-lower);
+  border-radius: 16px 16px 0 0;
+  bottom: 0;
+  box-shadow: var(--shadow-high);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  left: 0;
+  max-height: 88dvh;
+  outline: none;
+  position: absolute;
+  right: 0;
+}
+:global(.full-motion) .sheet {
+  animation: sheet-in 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes sheet-in {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+}
+.sheetHeader {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 18px 12px 8px 16px;
+  position: relative;
+}
+.sheetGrabber {
+  background: var(--border-strong);
+  border-radius: 2px;
+  height: 4px;
+  left: 50%;
+  position: absolute;
+  top: 6px;
+  transform: translateX(-50%);
+  width: 36px;
+}
+.sheetBody {
+  min-height: 0;
+  overscroll-behavior: contain;
+  padding: 4px max(16px, env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom))
+    max(16px, env(safe-area-inset-left));
+}
+.sheetJson {
+  height: 62dvh;
 }
 
 /* Open as preview */
@@ -187,77 +336,7 @@
 }
 .previewActions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   justify-content: flex-end;
-}
-
-/* Narrower windows: a thinner rail and tools. */
-@media (max-width: 1180px) {
-  .app {
-    grid-template-columns: 196px minmax(0, 1fr) minmax(300px, 340px);
-  }
-  .logo {
-    width: auto;
-  }
-}
-
-/* Phones and small tablets: the palette becomes a row of chips, the tools go under the message. */
-@media (max-width: 860px) {
-  body {
-    overflow: auto;
-  }
-  .app {
-    grid-template-areas:
-      'header'
-      'palette'
-      'channel'
-      'side';
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto auto minmax(60vh, auto) auto;
-    height: auto;
-    min-height: 100%;
-  }
-  .header {
-    flex-wrap: wrap;
-    gap: 10px 12px;
-    padding: 10px 16px;
-  }
-  .headerActions {
-    margin-inline-start: auto;
-  }
-  .palette {
-    min-width: 0;
-    overflow: hidden;
-    padding: 4px 16px 12px;
-  }
-  .channel {
-    border-left: 0;
-    border-radius: 0;
-  }
-  .hints {
-    display: none;
-  }
-  .side {
-    border-left: 0;
-    overflow: visible;
-  }
-}
-@media (max-width: 560px) {
-  .wordmark {
-    display: none;
-  }
-  .headerTools {
-    order: 3;
-    width: 100%;
-  }
-  .modeSwitch {
-    flex: 1;
-  }
-  .modeSwitch > * {
-    flex: 1;
-  }
-  .themeSwitcher {
-    gap: 8px;
-    margin-inline-start: 0;
-  }
 }

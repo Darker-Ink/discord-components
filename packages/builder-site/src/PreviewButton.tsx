@@ -67,11 +67,7 @@ export const PreviewButton = ({ author, theme }: { author: BuilderAuthor; theme:
       renderPopout={() => (
         <div className={styles.previewPopout} role="dialog" aria-label="Open as preview">
           <Text variant="heading-sm/semibold" color="text-strong">
-            Open as a hosted preview
-          </Text>
-          <Text variant="body-sm/normal" color="text-muted">
-            Makes a shareable page of this message on preview.discord-mana.dev. It needs an API key from{' '}
-            <Anchor href="https://preview.discord-mana.dev">preview.discord-mana.dev</Anchor>; the key isn’t saved.
+            Open as preview
           </Text>
           <TextInput
             label="API key"
@@ -81,6 +77,7 @@ export const PreviewButton = ({ author, theme }: { author: BuilderAuthor; theme:
             placeholder="dm_…"
             onChange={setKey}
             errorMessage={status.kind === 'error' ? status.message : undefined}
+            description={<Anchor href="https://preview.discord-mana.dev">Get a key</Anchor>}
             autoComplete="off"
           />
           <div className={styles.previewActions}>
