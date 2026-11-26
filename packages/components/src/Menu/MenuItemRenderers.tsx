@@ -320,7 +320,7 @@ export const MenuCustomItemRow = ({
     [action, onClose, dontCloseOnActionIfHoldingShiftKey, dontCloseOnAction],
   );
   const className = keepItemStyles
-    ? clsx(styles.item, MENU_COLOR_CLASSES[color], { [styles.focused]: isFocused })
+    ? clsx(itemClassName, MENU_COLOR_CLASSES[color], { [styles.focused]: isFocused })
     : customItemClassName;
   return (
     <Clickable
@@ -588,7 +588,7 @@ export const MenuTextInputItemRow = ({
   return (
     <div
       ref={ref}
-      className={clsx(styles.item, styles.textInputItem, styles.hideInteraction, MENU_COLOR_CLASSES[color], {
+      className={clsx(itemClassName, styles.textInputItem, styles.hideInteraction, MENU_COLOR_CLASSES[color], {
         [styles.disabled]: disabled,
       })}
       aria-disabled={disabled}
@@ -665,7 +665,7 @@ export const MenuControlItemRow = ({
   return (
     <div
       onClick={onClick}
-      className={clsx(styles.item, MENU_COLOR_CLASSES[color], {
+      className={clsx(itemClassName, MENU_COLOR_CLASSES[color], {
         [styles.disabled]: disabled,
         [styles.focused]: showDefaultFocus && isFocused,
         [styles.hideInteraction]: !showDefaultFocus,
@@ -715,7 +715,7 @@ export const MenuCompositeControlItemRow = ({
   return (
     <div
       ref={ref}
-      className={clsx(styles.item, MENU_COLOR_CLASSES[color], {
+      className={clsx(itemClassName, MENU_COLOR_CLASSES[color], {
         [styles.disabled]: disabled,
         [styles.focused]: showDefaultFocus && isFocused,
         [styles.hideInteraction]: !showDefaultFocus,
