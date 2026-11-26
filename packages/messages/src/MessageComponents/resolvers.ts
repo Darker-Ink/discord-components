@@ -26,7 +26,8 @@ export interface APIResolvedRole {
   id: string;
   name: string;
   color: number;
-  /** Gradient colours (`colors.primary_color`…) are not drawn here; the plain `color` is used. */
+  /** Gradient role colours; markdown role mentions draw them when the server has enhanced role colours. */
+  colors?: { primary_color: number; secondary_color?: number | null; tertiary_color?: number | null } | null;
   position?: number;
   icon?: string | null;
   unicode_emoji?: string | null;
@@ -37,6 +38,32 @@ export interface APIResolvedChannel {
   name?: string | null;
   type: number;
   parent_id?: string | null;
+  /** The channel's server; markdown channel mentions show the server for channels of other servers. */
+  guild_id?: string | null;
+  nsfw?: boolean;
+  /** Channel flags (media channels, spoiler channels). */
+  flags?: number;
+  /** Not part of the API: false when the viewer can't see the channel (mentions then show "No Access"). */
+  can_view?: boolean;
+  /** Not part of the API: false when the viewer can't connect to a voice or stage channel (a locked icon). */
+  can_connect?: boolean;
+}
+
+/** A server, as markdown and forwarded messages show it. */
+export interface APIResolvedGuild {
+  id: string;
+  name: string;
+  icon?: string | null;
+  /** Server features; `ENHANCED_ROLE_COLORS` makes role mentions draw gradient colours. */
+  features?: string[];
+}
+
+/** An application command, for `</name:id>` mentions; a resolvable command renders as a clickable mention. */
+export interface APIResolvedCommand {
+  id: string;
+  name: string;
+  description?: string;
+  application_id?: string;
 }
 
 /** The `resolved` object of a message (auto-populated select menus) or an interaction. */
@@ -61,8 +88,10 @@ export interface MessageResolvers {
   resolveMember?: (userId: string) => APIResolvedMember | null | undefined;
   resolveRole?: (id: string) => APIResolvedRole | null | undefined;
   resolveChannel?: (id: string) => APIResolvedChannel | null | undefined;
-  /** A server, for the origin of forwarded messages from other servers. */
-  resolveGuild?: (id: string) => { id: string; name: string; icon?: string | null } | null | undefined;
+  /** A server, for the origin of forwarded messages from other servers and channel mentions. */
+  resolveGuild?: (id: string) => APIResolvedGuild | null | undefined;
+  /** An application command by id, for slash command mentions (`</name:id>`). */
+  resolveCommand?: (id: string, name: string) => APIResolvedCommand | null | undefined;
   /** Options for user and mentionable selects (the client searches the guild's members). */
   searchUsers?: (query: string) => APIResolvedUser[];
   /** Options for role and mentionable selects. */

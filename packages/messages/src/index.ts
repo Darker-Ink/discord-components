@@ -1,6 +1,8 @@
 export {};
 export * from './Embed';
 export { MaskedLink, sanitizeUrl, type MaskedLinkProps } from './MaskedLink';
+export { default as markupStyles } from './markup/markup.module.css';
+export { default as obscuredContentStyles } from './media/ObscuredContent/ObscuredContent.module.css';
 export { formatCalendarTimestamp, formatDate } from './formatTimestamp';
 export * from './media';
 export * from './MediaMosaic';

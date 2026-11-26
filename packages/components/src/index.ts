@@ -100,3 +100,4 @@ export * from './GuildIcon';
 export * from './StackedGuildIcons';
 export * from './StackedAvatars';
 export * from './TimeInput';
+export { default as scrollbarStyles } from './Scroller/Scrollbar.module.css';

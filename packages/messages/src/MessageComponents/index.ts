@@ -33,6 +33,8 @@ export {
   MessageActionsContext,
   openLinkInNewTab,
   useMessageActions,
+  type MarkdownInteraction,
+  type MarkdownPopoutTarget,
   type MessageActions,
 } from './MessageActions';
 export {
@@ -42,7 +44,9 @@ export {
   getDefaultEmojiURL,
   useMessageResolvers,
   type APIResolvedChannel,
+  type APIResolvedCommand,
   type APIResolvedData,
+  type APIResolvedGuild,
   type APIResolvedMember,
   type APIResolvedRole,
   type APIResolvedUser,

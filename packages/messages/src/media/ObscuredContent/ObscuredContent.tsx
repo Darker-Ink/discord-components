@@ -4,7 +4,6 @@ import {
   isValidElement,
   useCallback,
   useContext,
-  useId,
   useLayoutEffect,
   useRef,
   useState,
@@ -61,9 +60,13 @@ export interface ObscuredContentProps {
   isVerifiedTeen?: boolean;
 }
 
-// Tab stops inside hidden text are taken out of the tab order until it is revealed.
+let nextFocusBlockId = 0;
+
+// Tab stops inside hidden text are taken out of the tab order until it is revealed. Like the client, each
+// instance takes the next number of a page-wide counter for its attribute.
 const useBlockFocus = (ref: RefObject<HTMLElement | null>, blocked: boolean) => {
-  const attribute = `data-focus-blocked-${useId().replace(/:/g, '')}`;
+  const [id] = useState(() => nextFocusBlockId++);
+  const attribute = `data-focus-blocked-${id}`;
   useLayoutEffect(() => {
     const node = ref.current;
     if (!blocked || node == null) return;
