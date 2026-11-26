@@ -158,11 +158,13 @@ window.addEventListener('message', (event) => {
 Previews created with `options.interactions: true` and embedded with `?interactions=1` send component clicks,
 select changes and modal submissions to the embedding page (`postMessage` events `discord-mana:interaction` and
 `discord-mana:modal-submit`, with `data` in the API's interaction data shapes), and take commands back:
-`append-message`, `update-message`, `delete-message`, `open-modal`, `set-loading`, `ack`, `interaction-failed`
+`append-message`, `update-message`, `delete-message`, `open-modal`, `set-loading`, `ack`, `interaction-failed`, `configure`
 and `ping`, all prefixed `discord-mana:`. Commands are validated with the API's message and modal schemas (the
 validation code only loads on pages that use interactions); invalid ones are dropped with a console warning.
 Nothing is stored and nothing leaves the browser. Like Discord, an interaction nobody answers within 3 seconds
-fails; `set-loading` extends that to 15 minutes. `options.allowedOrigins` (up to 10 origins) limits which parent
+fails; `set-loading` extends that to 15 minutes. Both are configurable, in ms: `connectPreview`'s
+`timeouts: { response, deferred }` (sent as a `configure` command) or the `responseTimeout` / `deferredTimeout`
+URL params; `0`, `Infinity` or `none` never fail, other values are clamped to 100 ms to 24 hours. `options.allowedOrigins` (up to 10 origins) limits which parent
 pages receive events and may send commands.
 
 `public/sdk/connect-preview.js` (with `connect-preview.d.ts`) is a dependency-free helper, served with CORS at

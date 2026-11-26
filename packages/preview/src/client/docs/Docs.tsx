@@ -723,6 +723,32 @@ const Content = () => (
         <InlineCode>fail</InlineCode>, for answering later or changing messages at any time, and sizes the iframe from
         its resize messages.
       </p>
+      <H3 id="interaction-timeouts">Timeouts</H3>
+      <p className={styles.p}>
+        By default the preview keeps Discord&apos;s limits. Change them with <InlineCode>connectPreview</InlineCode>
+        &apos;s <InlineCode>timeouts</InlineCode> option or with URL params, in milliseconds. <InlineCode>0</InlineCode>
+        , <InlineCode>Infinity</InlineCode> or <InlineCode>none</InlineCode> never fail an interaction; other values are
+        kept between 100 ms and 24 hours.
+      </p>
+      <Fields
+        head={['Timeout', 'Default', 'Set with']}
+        rows={[
+          ['response', '3000 (3 seconds)', 'timeouts.response, or the responseTimeout URL param'],
+          ['deferred', '900000 (15 minutes)', 'timeouts.deferred, or the deferredTimeout URL param'],
+        ]}
+      />
+      <CodeBlock
+        samples={[
+          {
+            label: 'JavaScript',
+            code: "connectPreview(iframe, { timeouts: { response: 10_000, deferred: 'none' }, onInteraction });",
+          },
+          {
+            label: 'URL',
+            code: `${ORIGIN}/p/Tq58RezRWP8nnWke?interactions=1&responseTimeout=10000&deferredTimeout=none`,
+          },
+        ]}
+      />
       <H3 id="interaction-messages">Events and commands</H3>
       <p className={styles.p}>
         Without the module, listen for the events and post commands to the iframe yourself. Every message is an object
@@ -757,6 +783,11 @@ const Content = () => (
           ['discord-mana:ack', 'interactionId', 'Settles the interaction without changes.'],
           ['discord-mana:interaction-failed', 'interactionId, message?', 'Shows the failure.'],
           ['discord-mana:ping', '', 'Asks for a discord-mana:ready.'],
+          [
+            'discord-mana:configure',
+            'timeouts: { response?, deferred? }',
+            'Changes the timeouts for interactions from then on.',
+          ],
         ]}
       />
       <CodeBlock samples={[{ label: 'JavaScript', code: RAW_EVENTS }]} />

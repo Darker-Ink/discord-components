@@ -14,6 +14,12 @@ import {
 
 const interactionId = z.string().min(1).max(64);
 
+// Milliseconds, or 0 / Infinity / "none" for never (Infinity survives postMessage's structured clone).
+const timeout = z.custom<number | 'none'>(
+  (value) => value === 'none' || (typeof value === 'number' && !Number.isNaN(value) && value >= 0),
+  'Expected milliseconds (0 or "none" for no timeout)',
+);
+
 const application = z.strictObject({
   id: snowflake,
   name: z.string().min(1).max(80),
@@ -55,6 +61,10 @@ const commandSchema = z.discriminatedUnion('type', [
     message: z.string().max(200).optional(),
   }),
   z.strictObject({ type: z.literal('discord-mana:ping') }),
+  z.strictObject({
+    type: z.literal('discord-mana:configure'),
+    timeouts: z.strictObject({ response: timeout.optional(), deferred: timeout.optional() }).optional(),
+  }),
 ]);
 
 export type Command =
@@ -69,7 +79,8 @@ export type Command =
     }
   | { type: 'discord-mana:set-loading' | 'discord-mana:ack'; interactionId: string }
   | { type: 'discord-mana:interaction-failed'; interactionId: string; message?: string }
-  | { type: 'discord-mana:ping' };
+  | { type: 'discord-mana:ping' }
+  | { type: 'discord-mana:configure'; timeouts?: { response?: number | 'none'; deferred?: number | 'none' } };
 
 export type CommandResult = { command: Command } | { error: unknown };
 

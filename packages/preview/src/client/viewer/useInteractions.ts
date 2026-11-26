@@ -6,12 +6,8 @@ import {
   type MessageComponentInteraction,
 } from '@discord-mana/messages';
 import type { InteractionEvent, ModalSubmitEvent, ReadyEvent } from '../../shared/api';
+import { parseTimeout } from '../viewParams';
 import type { Command } from './commands';
-
-// Like Discord: an interaction nobody answers within 3 seconds fails; a deferred one ("thinking…") may take up to
-// 15 minutes.
-const RESPONSE_TIMEOUT_MS = 3_000;
-const DEFERRED_TIMEOUT_MS = 15 * 60_000;
 
 interface Pending {
   resolve: () => void;
@@ -29,6 +25,9 @@ let sequence = 0n;
 const nextInteractionId = () =>
   String(((BigInt(Date.now()) - DISCORD_EPOCH) << 22n) + (sequence++ % 4096n) + (1n << 12n));
 
+/** Starts a timer, or none for a timeout of `Infinity`. */
+const startTimer = (callback: () => void, ms: number) => (Number.isFinite(ms) ? window.setTimeout(callback, ms) : 0);
+
 export interface UseInteractionsOptions {
   /** Both opt-ins are present (`options.interactions` and `interactions=1`) and the page is framed. */
   enabled: boolean;
@@ -36,6 +35,11 @@ export interface UseInteractionsOptions {
   allowedOrigins: string[] | null;
   setMessages: Dispatch<SetStateAction<APIMessage[]>>;
   getMessages: () => APIMessage[];
+  /**
+   * How long an interaction may go unanswered, and how long once deferred (ms; `Infinity` for never). Discord's
+   * 3 seconds and 15 minutes by default; the URL params and the page's `configure` command change them.
+   */
+  timeouts: { response: number; deferred: number };
 }
 
 /**
@@ -49,8 +53,10 @@ export const useInteractions = ({
   allowedOrigins,
   setMessages,
   getMessages,
+  timeouts: initialTimeouts,
 }: UseInteractionsOptions) => {
   const pending = useRef(new Map<string, Pending>());
+  const timeouts = useRef(initialTimeouts);
 
   const post = useCallback(
     (event: InteractionEvent | ModalSubmitEvent | ReadyEvent) => {
@@ -68,7 +74,7 @@ export const useInteractions = ({
         entries.delete(interactionId);
         reject(interactionFailed());
       };
-      entries.set(interactionId, { resolve, reject, message, timer: window.setTimeout(fail, RESPONSE_TIMEOUT_MS) });
+      entries.set(interactionId, { resolve, reject, message, timer: startTimer(fail, timeouts.current.response) });
     });
   }, []);
 
@@ -87,7 +93,7 @@ export const useInteractions = ({
       const entry = pending.current.get(interactionId);
       if (entry == null) return;
       window.clearTimeout(entry.timer);
-      entry.timer = window.setTimeout(() => settle(interactionId, interactionFailed()), DEFERRED_TIMEOUT_MS);
+      entry.timer = startTimer(() => settle(interactionId, interactionFailed()), timeouts.current.deferred);
     },
     [settle],
   );
@@ -128,6 +134,16 @@ export const useInteractions = ({
         case 'discord-mana:ping':
           post({ type: 'discord-mana:ready', previewId });
           return;
+        case 'discord-mana:configure': {
+          // Applies to interactions from now on; ones already waiting keep their timers.
+          const response = parseTimeout(command.timeouts?.response);
+          const deferred = parseTimeout(command.timeouts?.deferred);
+          timeouts.current = {
+            response: response ?? timeouts.current.response,
+            deferred: deferred ?? timeouts.current.deferred,
+          };
+          return;
+        }
         case 'discord-mana:append-message':
           setMessages((messages) => [...messages, command.message]);
           settle(command.interactionId);
