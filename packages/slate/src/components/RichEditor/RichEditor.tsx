@@ -101,6 +101,7 @@ export interface RichEditorProps {
   'aria-expanded'?: boolean;
   'aria-activedescendant'?: string;
   'aria-controls'?: string;
+  'aria-label'?: string;
   'aria-labelledby'?: string;
   'aria-describedby'?: string;
   'aria-invalid'?: boolean;
@@ -538,6 +539,7 @@ export class RichEditor extends Component<RichEditorProps, RichEditorState> {
       autoFocus,
       placeholder,
       decorate,
+      'aria-label': ariaLabel = placeholder,
       'aria-multiline': ariaMultiline = true,
       onChange: _onChange,
       onFocus: _onFocus,
@@ -569,7 +571,7 @@ export class RichEditor extends Component<RichEditorProps, RichEditorState> {
       autoComplete: 'off',
       autoCorrect: 'off',
       'data-can-focus': canFocus !== false,
-      'aria-label': placeholder,
+      'aria-label': ariaLabel,
       'aria-multiline': ariaMultiline,
     };
     if (appearance === 'inline')
