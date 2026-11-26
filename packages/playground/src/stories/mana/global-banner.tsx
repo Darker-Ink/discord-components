@@ -20,14 +20,6 @@ import {
   type GlobalBannerConfig,
 } from './shared/globalBannerExamples';
 
-const WipNotice = () => (
-  <Text variant="body-sm/semibold" color="text-feedback-warning">
-    Work in progress: GlobalBanner isn&apos;t ready for product code yet.
-  </Text>
-);
-
-WipNotice.displayName = 'WipNotice';
-
 const SectionLabel = ({ children }: { children: ReactNode }) => (
   <Text variant="body-sm/semibold" color="text-subtle">
     {children}
@@ -41,11 +33,8 @@ const GlobalBannerStory = ({ actionLoading, ...config }: GlobalBannerConfig & { 
   const [replay, setReplay] = useState(0);
   const banner = useRef<GlobalBannerHandle>(null);
   const canHide = !dismissed && isDismissible(config);
-  // Discord adds a staff-only panel here for previewing the banner across the app; it needs a signed-in
-  // staff user, so like Discord's playground without one, it isn't shown.
   return (
     <Stack gap={16}>
-      <WipNotice />
       <Stack direction="horizontal" gap={8}>
         <Button
           text={dismissed ? 'Show banner' : 'Replay enter'}
@@ -163,9 +152,8 @@ const noop = () => {};
 
 const GlobalBannerVariantsStory = () => (
   <Stack gap={24}>
-    <WipNotice />
     <Stack gap={12}>
-      <SectionLabel>Every type with a title, as in the Figma R2 frames, and an inline link</SectionLabel>
+      <SectionLabel>Every type with a title and an inline link</SectionLabel>
       <GlobalBanner
         variant="status"
         type="critical"

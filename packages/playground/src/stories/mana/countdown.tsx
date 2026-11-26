@@ -34,14 +34,6 @@ const VARIANTS: { label: string; value: CountdownVariant }[] = [
   { label: 'Overlay primary', value: 'overlay-primary' },
 ];
 
-const WipNotice = () => (
-  <Text variant="body-sm/semibold" color="text-feedback-warning">
-    Work in progress: Countdown isn&apos;t ready for product code yet.
-  </Text>
-);
-
-WipNotice.displayName = 'WipNotice';
-
 const Label = ({ children, onBackdrop = false }: { children: ReactNode; onBackdrop?: boolean }) => (
   <Text
     variant="body-xs/normal"
@@ -87,7 +79,6 @@ LiveCountdown.displayName = 'LiveCountdown';
 
 const CountdownStory = (props: CountdownStoryProps) => (
   <Stack gap={16}>
-    <WipNotice />
     <LiveCountdown key={props.endTime} {...props} />
   </Stack>
 );
@@ -98,7 +89,6 @@ const CountdownVariantsStory = () => {
   const endsAt = useEndsAt(2763e5);
   return (
     <Stack gap={24}>
-      <WipNotice />
       <div className={styles.backdrop}>
         <Stack gap={16}>
           {APPEARANCES.flatMap((appearance) =>

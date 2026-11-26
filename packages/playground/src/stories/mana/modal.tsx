@@ -594,7 +594,7 @@ const modal: StoryGroup = {
       },
     },
     {
-      name: 'ConfirmModal [Alpha]',
+      name: 'ConfirmModal',
       id: 'confirm-modal',
       component: ConfirmModalStory,
       controls: {
@@ -669,7 +669,7 @@ const modal: StoryGroup = {
       component: LayerModalStory,
     },
     {
-      name: 'MultiStepModal [Alpha]',
+      name: 'MultiStepModal',
       id: 'multi-step-modal',
       component: MultiStepModalStory,
       controls: {
