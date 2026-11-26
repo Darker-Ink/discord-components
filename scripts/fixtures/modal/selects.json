@@ -1,0 +1,87 @@
+{
+  "story": "interaction-modal-fixtures",
+  "capture": "viewport",
+  "dom": "[class*=layerContainer]",
+  "data": {
+    "application": {
+      "id": "1000000000000000002",
+      "name": "Helper",
+      "icon": "a1b2",
+      "icon_url": "{{assets}}/icon.png"
+    },
+    "modal": {
+      "title": "Feedback",
+      "custom_id": "selects",
+      "components": [
+        {
+          "type": 10,
+          "content": "Tell us what you think. Fields marked with * are required."
+        },
+        {
+          "type": 18,
+          "label": "Kind",
+          "description": "Pick the closest match",
+          "component": {
+            "type": 3,
+            "custom_id": "kind",
+            "options": [
+              {
+                "label": "Bug",
+                "value": "bug",
+                "description": "Something is broken"
+              },
+              {
+                "label": "Idea",
+                "value": "idea"
+              },
+              {
+                "label": "Question",
+                "value": "question",
+                "default": true
+              }
+            ],
+            "required": true
+          }
+        },
+        {
+          "type": 18,
+          "label": "Areas",
+          "component": {
+            "type": 3,
+            "custom_id": "areas",
+            "placeholder": "Pick up to two",
+            "options": [
+              {
+                "label": "Bug",
+                "value": "bug",
+                "description": "Something is broken"
+              },
+              {
+                "label": "Idea",
+                "value": "idea"
+              },
+              {
+                "label": "Question",
+                "value": "question",
+                "default": true
+              }
+            ],
+            "min_values": 0,
+            "max_values": 2,
+            "required": false
+          }
+        },
+        {
+          "type": 18,
+          "label": "Who else saw it?",
+          "component": {
+            "type": 5,
+            "custom_id": "people",
+            "max_values": 3,
+            "required": false
+          }
+        }
+      ]
+    }
+  }
+}

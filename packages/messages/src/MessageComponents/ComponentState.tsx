@@ -100,6 +100,10 @@ interface ComponentStateContextValue {
   addUploads: (files: File[]) => string[];
   removeUpload: (id: string) => void;
   autoFocusId?: string;
+  /** Largest file a FileUpload accepts, in bytes. */
+  maxUploadSize?: number;
+  /** Shown when too many files are picked (the client opens an upload error alert). */
+  onUploadError?: (title: string, help: string) => void;
 }
 
 export const ComponentStateContext = createContext<ComponentStateContextValue | null>(null);
@@ -178,6 +182,8 @@ export interface ComponentStateProviderProps<M = unknown> {
   uploads?: Record<string, File>;
   onUploadsChange?: (update: (uploads: Record<string, File>) => Record<string, File>) => void;
   autoFocusId?: string;
+  maxUploadSize?: number;
+  onUploadError?: (title: string, help: string) => void;
   children: ReactNode;
 }
 
@@ -198,6 +204,8 @@ export const ComponentStateProvider = <M,>({
   uploads: controlledUploads,
   onUploadsChange,
   autoFocusId,
+  maxUploadSize,
+  onUploadError,
   children,
 }: ComponentStateProviderProps<M>) => {
   const i18n = useMessageI18n();
@@ -296,6 +304,8 @@ export const ComponentStateProvider = <M,>({
       addUploads,
       removeUpload,
       autoFocusId,
+      maxUploadSize,
+      onUploadError,
     }),
     [
       components,
@@ -315,6 +325,8 @@ export const ComponentStateProvider = <M,>({
       addUploads,
       removeUpload,
       autoFocusId,
+      maxUploadSize,
+      onUploadError,
     ],
   );
   void i18n;

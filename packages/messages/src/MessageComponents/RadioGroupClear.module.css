@@ -1,0 +1,16 @@
+.clearButtonContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+  max-height: 100px;
+  opacity: 1;
+  overflow: hidden;
+}
+:global(.full-motion) .clearButtonContainer {
+  transition: all 0.2s ease-in-out;
+}
+.clearButtonContainerHidden {
+  margin-top: 0;
+  max-height: 0;
+  opacity: 0;
+}

@@ -80,6 +80,8 @@ const normalizeHtml = (html) =>
     .replace(/\b_r_[0-9a-z]+_/g, '_r_')
     // Popout ids count up per page; only the wiring matters.
     .replace(/\bpopout_\d+/g, 'popout_')
+    // React Aria's radio group names carry a random per-page prefix.
+    .replace(/\breact-aria\d+-/g, 'react-aria-')
     // Bundled SVG assets: Discord serves them from /assets, Vite inlines them (same files, copied from the build).
     .replace(/src="(?:\/assets\/[0-9a-f]+\.svg|data:image\/svg\+xml[^"]*)"/g, 'src="{svg}"')
     .replace(/></g, '>\n<');

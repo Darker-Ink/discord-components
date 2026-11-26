@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from 'react';
 import clsx from 'clsx';
+import { Avatar, AvatarSizes, StatusTypes } from '@discord-components/components';
 import { BotTag, BotTagTypes } from '../Message/BotTag';
 import {
   AnnouncementsIcon,
@@ -289,12 +290,11 @@ const MentionableSelect = (component: Exclude<SearchableSelectComponent, Channel
           const user = resolver.user(option.value);
           if (user == null) return null;
           return (
-            <img
-              className={labelStyles.avatar}
-              src={resolver.avatarURL(user, size) ?? undefined}
-              alt=""
+            <Avatar
+              size={size === PILL_ICON_SIZE ? AvatarSizes.SIZE_16 : AvatarSizes.SIZE_24}
+              src={resolver.avatarURL(user, size)}
+              status={size === PILL_ICON_SIZE ? null : (resolvers.getUserStatus?.(user.id) ?? StatusTypes.OFFLINE)}
               aria-hidden
-              style={{ width: size, height: size, borderRadius: '50%' }}
             />
           );
         }

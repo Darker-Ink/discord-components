@@ -1,0 +1,32 @@
+{
+  "story": "interaction-modal-fixtures",
+  "capture": "viewport",
+  "dom": "[class*=layerContainer]",
+  "data": {
+    "application": {
+      "id": "1000000000000000002",
+      "name": "Helper",
+      "icon": "a1b2",
+      "icon_url": "{{assets}}/icon.png"
+    },
+    "modal": {
+      "title": "Attach logs",
+      "custom_id": "file-upload",
+      "components": [
+        {
+          "type": 18,
+          "label": "Log files",
+          "description": "Up to three text files",
+          "component": {
+            "type": 19,
+            "custom_id": "logs",
+            "min_values": 1,
+            "max_values": 3,
+            "required": true,
+            "file_types": ["txt", "log"]
+          }
+        }
+      ]
+    }
+  }
+}

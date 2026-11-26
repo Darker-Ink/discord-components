@@ -1,0 +1,76 @@
+{
+  "story": "interaction-modal-fixtures",
+  "capture": "viewport",
+  "dom": "[class*=layerContainer]",
+  "data": {
+    "application": {
+      "id": "1000000000000000002",
+      "name": "Helper",
+      "icon": "a1b2",
+      "icon_url": "{{assets}}/icon.png"
+    },
+    "modal": {
+      "title": "Preferences",
+      "custom_id": "choices",
+      "components": [
+        {
+          "type": 18,
+          "label": "Theme",
+          "component": {
+            "type": 21,
+            "custom_id": "theme",
+            "options": [
+              {
+                "label": "Dark",
+                "value": "dark",
+                "description": "Easy on the eyes"
+              },
+              {
+                "label": "Light",
+                "value": "light"
+              }
+            ],
+            "required": false
+          }
+        },
+        {
+          "type": 18,
+          "label": "Notifications",
+          "description": "Choose any",
+          "component": {
+            "type": 22,
+            "custom_id": "notify",
+            "options": [
+              {
+                "label": "Mentions",
+                "value": "mentions",
+                "default": true
+              },
+              {
+                "label": "Replies",
+                "value": "replies"
+              },
+              {
+                "label": "Everything",
+                "value": "all"
+              }
+            ],
+            "min_values": 0,
+            "max_values": 3,
+            "required": false
+          }
+        },
+        {
+          "type": 18,
+          "label": "Subscribe to updates",
+          "description": "About once a month",
+          "component": {
+            "type": 23,
+            "custom_id": "subscribe",
+            "default": true
+          }
+        }
+      ]
+    }
+  }
+}

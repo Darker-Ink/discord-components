@@ -1,4 +1,5 @@
 import { createContext, useContext } from 'react';
+import type { StatusType } from '@discord-components/components';
 
 // Users, roles and channels the client reads from its stores. Apps pass resolvers (and the message's
 // `resolved` data is used as a fallback) so selects, mentions and headers can show names, avatars and colours.
@@ -66,6 +67,8 @@ export interface MessageResolvers {
   searchUsers?: (query: string) => APIResolvedUser[];
   /** Options for role and mentionable selects. */
   searchRoles?: (query: string) => APIResolvedRole[];
+  /** A user's presence for the status dot on user options ("online", "idle", "dnd", "offline"…). */
+  getUserStatus?: (userId: string) => StatusType | null | undefined;
   /** Members with a role, shown next to role options. */
   getRoleMemberCount?: (roleId: string) => number | null | undefined;
   /** Options for channel selects, already filtered to `channelTypes` when given. */

@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { createContext, createElement, Fragment, useContext, type ReactNode } from 'react';
 
 // Strings messages, message components and interaction modals render, in the client's en-US wording.
 // Apps can provide translations through MessageI18nContext.
@@ -77,6 +77,11 @@ export const DEFAULT_MESSAGE_I18N = {
   FILE_UPLOAD_UNKNOWN_FILE: 'Unknown file',
   FILE_UPLOAD_REMOVE: 'Remove',
   FILE_UPLOAD_TOO_MANY: 'Too many uploads!',
+  FILE_TYPE_IMAGE: 'image',
+  FILE_TYPE_VIDEO: 'video',
+  FILE_TYPE_AUDIO: 'audio',
+  INVALID_FILE_TYPE: 'Invalid file type',
+  FILE_MUST_BE: (types: string) => `File must be ${types}.`,
   FILE_UPLOAD_HINT: (minValues: number, maxValues: number, types: string | null, maxSize: string) => {
     const typed = types != null ? `${types} ` : '';
     if (types != null) {
@@ -93,6 +98,17 @@ export const DEFAULT_MESSAGE_I18N = {
         : `Upload ${minValues}–${maxValues} files under ${maxSize}.`;
     return maxValues === 1 ? `Upload a file under ${maxSize}.` : `Upload up to ${maxValues} files under ${maxSize}.`;
   },
+  CANCEL: 'Cancel',
+  SUBMIT: 'Submit',
+  SOMETHING_WENT_WRONG: 'Something went wrong. Try again.',
+  MODAL_SUBMISSION_WARNING: (applicationName: string): ReactNode =>
+    createElement(
+      Fragment,
+      null,
+      'This form will be submitted to ',
+      createElement('strong', null, applicationName),
+      '. Do not share passwords or other sensitive information.',
+    ),
   CALENDAR_TODAY_AT: (time: string) => `Today at ${time}`,
   CALENDAR_YESTERDAY_AT: (time: string) => `Yesterday at ${time}`,
   CALENDAR_TOMORROW_AT: (time: string) => `Tomorrow at ${time}`,
