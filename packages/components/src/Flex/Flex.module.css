@@ -1,0 +1,38 @@
+.flex,
+.horizontal {
+  display: flex;
+}
+.horizontal {
+  flex-direction: row;
+}
+.horizontalReverse {
+  display: flex;
+  flex-direction: row-reverse;
+}
+.horizontal > .flex,
+.horizontal > .flexChild {
+  margin-inline: 10px;
+}
+.horizontal > .flex:first-child,
+.horizontal > .flexChild:first-child {
+  margin-inline-start: 0;
+}
+.horizontal > .flex:last-child,
+.horizontal > .flexChild:last-child {
+  margin-inline-end: 0;
+}
+.horizontalReverse > .flex,
+.horizontalReverse > .flexChild {
+  margin-inline: 10px;
+}
+.horizontalReverse > .flex:first-child,
+.horizontalReverse > .flexChild:first-child {
+  margin-inline-end: 0;
+}
+.horizontalReverse > .flex:last-child,
+.horizontalReverse > .flexChild:last-child {
+  margin-inline-start: 0;
+}
+.horizontal > .flexMarginReset {
+  margin: 0;
+}
