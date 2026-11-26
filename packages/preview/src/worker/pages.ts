@@ -1,4 +1,5 @@
-import { DEMO_PREVIEW_ID } from '../shared/api';
+import { DEMO_PREVIEW_ID, THEMES, type PreviewOptions, type PreviewTheme } from '../shared/api';
+import { SKELETON_HTML } from '../shared/skeleton';
 import { checkAccess, findPreview } from './previews';
 
 declare const __RELAXED_CSP__: boolean;
@@ -31,6 +32,9 @@ const withHeaders = (response: Response, status: number, headers: Record<string,
   return out;
 };
 
+// Pages the SPA serves; any other path gets its not-found page with a 404.
+const SPA_ROUTES = new Set(['/', '/index.html', '/docs', '/docs/']);
+
 const PREVIEW_PATH_RE = /^\/p\/([^/]+)\/?$/;
 
 /** Serves the SPA (and static files) with the security headers of the page asked for. */
@@ -47,7 +51,7 @@ export const servePage = async (request: Request, env: Env) => {
   const common = { 'x-content-type-options': 'nosniff', 'cache-control': 'no-store' };
   const preview = PREVIEW_PATH_RE.exec(url.pathname);
   if (preview == null) {
-    const status = url.pathname === '/' || url.pathname === '/index.html' ? asset.status : 404;
+    const status = SPA_ROUTES.has(url.pathname) ? asset.status : 404;
     return withHeaders(asset, status, {
       ...common,
       'content-security-policy': __RELAXED_CSP__ ? DEV_HOME_CSP : HOME_CSP,
@@ -60,11 +64,30 @@ export const servePage = async (request: Request, env: Env) => {
   // monitors and `curl` see the truth. The shell holds no preview data.
   const id = decodeURIComponent(preview[1]);
   let status = 200;
+  let theme: PreviewTheme | null = null;
   if (id !== DEMO_PREVIEW_ID) {
     const row = await findPreview(env, id);
     status = row == null ? 404 : (await checkAccess(env, row, url)) === 'ok' ? 200 : 403;
+    if (status === 200 && row != null) theme = (JSON.parse(row.options) as PreviewOptions).theme;
   }
-  const response = withHeaders(asset, status, {
+  const param = url.searchParams.get('theme')?.toLowerCase();
+  const bootTheme = THEMES.find((name) => name === param) ?? theme ?? 'dark';
+  // Paint the theme's background and a loading skeleton straight away, before the app's JS has loaded.
+  const page = new HTMLRewriter()
+    .on('html', {
+      element: (element) => {
+        element.setAttribute('data-page', 'viewer');
+        element.setAttribute('data-boot-theme', bootTheme);
+        if (url.searchParams.get('bg') === 'transparent') element.setAttribute('data-boot-bg', 'transparent');
+      },
+    })
+    .on('#root', {
+      element: (element) => {
+        if (status === 200) element.setInnerContent(SKELETON_HTML, { html: true });
+      },
+    })
+    .transform(asset);
+  const response = withHeaders(page, status, {
     ...common,
     'content-security-policy': __RELAXED_CSP__ ? DEV_PREVIEW_CSP : PREVIEW_CSP,
     // Signed URLs carry their signature in the query; never send it on to media hosts.
@@ -72,5 +95,6 @@ export const servePage = async (request: Request, env: Env) => {
     'x-robots-tag': 'noindex',
   });
   response.headers.delete('x-frame-options');
+  response.headers.delete('content-length');
   return response;
 };

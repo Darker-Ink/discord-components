@@ -4,7 +4,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App, PREVIEW_PATH_RE } from './App';
 
-document.documentElement.dataset.page = PREVIEW_PATH_RE.test(window.location.pathname) ? 'viewer' : 'home';
+document.documentElement.dataset.page = PREVIEW_PATH_RE.test(window.location.pathname) ? 'viewer' : 'site';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
