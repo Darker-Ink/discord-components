@@ -8,3 +8,5 @@ packages/playground/src/**/assets/*.json
 packages/preview/src/worker/env.d.ts
 # Vendored slate-react (kept in its upstream formatting so it diffs against upstream)
 packages/slate/src/slate-react/
+# End-to-end screenshots and downloads
+**/test-results/

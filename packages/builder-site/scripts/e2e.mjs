@@ -471,7 +471,7 @@ const reachable = async (url) => {
   return false;
 };
 const playgroundUp = await reachable(PLAYGROUND);
-if (playgroundUp && fs.existsSync(path.join(OUT, 'built-cv2.json'))) {
+if (playgroundUp && exported != null && fs.existsSync(path.join(OUT, 'built-cv2.json'))) {
   await step('the built message renders exactly like <Message> (all themes)', async () => {
     const output = execFileSync(
       'node',
