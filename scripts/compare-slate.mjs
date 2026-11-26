@@ -56,6 +56,8 @@ const normalizeHtml = (html) =>
     .replace(/ style="padding: 24px;"/, '')
     .replace(/\b_r_[0-9a-z]+_/g, '_r_')
     .replace(/\buid_\w+/g, 'uid')
+    // Gradient ids are random UUIDs.
+    .replace(/#[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/g, '#uuid')
     // Lottie draws its SVG at runtime; the pixels compare it.
     .replace(/(<div class="[^"]*lottieIcon[^"]*"[^>]*>)<svg[\s\S]*?<\/svg>/g, '$1<svg>{lottie}</svg>')
     .replace(/></g, '>\n<');

@@ -1,5 +1,13 @@
 {
   "sample": true,
   "data": {},
-  "steps": [{ "click": true }, { "type": "make this bold" }, { "press": "Shift+Home" }, { "press": "Control+b" }]
+  "steps": [
+    { "click": true },
+    { "type": "make this bold" },
+    { "wait": 300 },
+    { "press": "Shift+Home" },
+    { "wait": 300 },
+    { "press": "Control+b" },
+    { "wait": 300 }
+  ]
 }
