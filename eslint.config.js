@@ -5,7 +5,7 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['**/dist/**', '.cache/**', 'scripts/**'] },
+  { ignores: ['**/dist/**', '.cache/**', 'scripts/**', 'packages/slate/src/slate-react/**'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {

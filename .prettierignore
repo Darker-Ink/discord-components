@@ -3,3 +3,5 @@ dist/
 .cache/
 # Data copied verbatim from Discord (animation files, fixtures)
 packages/playground/src/**/assets/*.json
+# Vendored slate-react (kept in its upstream formatting so it diffs against upstream)
+packages/slate/src/slate-react/
