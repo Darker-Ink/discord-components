@@ -1,0 +1,12 @@
+.wrapper {
+  align-items: center;
+  display: flex;
+  margin-top: 4px;
+}
+.icon {
+  display: block;
+  margin-inline-end: 8px;
+}
+.errorIcon {
+  color: var(--icon-feedback-critical);
+}

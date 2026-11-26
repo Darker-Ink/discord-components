@@ -1,0 +1,23 @@
+.markdownContainer {
+  overflow-wrap: anywhere;
+}
+.markdownContainer.markdownContainer.markdownContainer.markdownContainer > p:first-child {
+  margin-top: 0;
+}
+.markdownContainer.markdownContainer.markdownContainer.markdownContainer > p:last-child {
+  margin-bottom: 0;
+}
+.markdownContainer.markdownContainer.markdownContainer.markdownContainer h1:first-child,
+.markdownContainer.markdownContainer.markdownContainer.markdownContainer h2:first-child,
+.markdownContainer.markdownContainer.markdownContainer.markdownContainer h3:first-child {
+  margin-top: 0;
+}
+.markdownContainer.markdownContainer.markdownContainer.markdownContainer h1:not(:has(+ *)),
+.markdownContainer.markdownContainer.markdownContainer.markdownContainer h2:not(:has(+ *)),
+.markdownContainer.markdownContainer.markdownContainer.markdownContainer h3:not(:has(+ *)) {
+  margin-bottom: 0;
+}
+.markdownContainer.markdownContainer.markdownContainer.markdownContainer blockquote,
+.markdownContainer.markdownContainer.markdownContainer.markdownContainer pre {
+  max-width: unset;
+}

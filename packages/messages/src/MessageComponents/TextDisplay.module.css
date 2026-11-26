@@ -1,0 +1,26 @@
+.root.root.sizeReduced {
+  font-size: 0.875rem;
+  line-height: calc(var(--chat-markup-line-height) * 0.875);
+}
+.root.root.sizeReduced small {
+  font-size: 0.75rem;
+  line-height: calc(var(--chat-markup-line-height) * 0.75);
+}
+.root.root.colorMuted {
+  color: var(--text-subtle);
+}
+.root.root.colorMuted small {
+  color: var(--text-muted);
+}
+.root.root.weightReduced {
+  font-weight: var(--font-weight-normal);
+}
+.root.root.weightReduced h1,
+.root.root.weightReduced h2,
+.root.root.weightReduced h3,
+.root.root.weightReduced h4,
+.root.root.weightReduced h5,
+.root.root.weightReduced h6,
+.root.root.weightReduced strong {
+  font-weight: var(--font-weight-medium);
+}

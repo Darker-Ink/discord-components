@@ -1,0 +1,9 @@
+.fileDisplayContainer {
+  max-width: 100%;
+  width: -moz-min-content;
+  width: min-content;
+}
+.fileHidden {
+  opacity: 0;
+  pointer-events: none;
+}

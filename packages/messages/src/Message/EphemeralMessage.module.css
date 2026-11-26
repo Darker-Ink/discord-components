@@ -1,0 +1,23 @@
+.ephemeralMessage {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: var(--font-weight-normal);
+  margin-top: 4px;
+}
+.userAppsBetaContent {
+  display: inline-flex;
+  flex-direction: column;
+  line-height: 1.33;
+}
+.userAppsBetaContent p {
+  margin: 0;
+}
+.icon {
+  margin-inline-end: 4px;
+  vertical-align: text-bottom;
+}
+@media (-webkit-max-device-pixel-ratio: 1) {
+  :global(.theme-light) .ephemeralMessage {
+    font-weight: var(--font-weight-medium);
+  }
+}

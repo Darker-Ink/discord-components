@@ -1,0 +1,86 @@
+{
+  "story": "message-fixtures",
+  "now": "2026-11-26T12:30:00.000Z",
+  "data": {
+    "message": {
+      "content": "Here are the photos and the link https://example.com",
+      "author": {
+        "id": "1000000000000000001",
+        "username": "wumpus",
+        "global_name": "Wumpus",
+        "avatar": "a1b2",
+        "discriminator": "0",
+        "avatar_url": "{{assets}}/avatar.png"
+      },
+      "attachments": [
+        {
+          "id": "1000000000000000001",
+          "filename": "photo-1.jpg",
+          "size": 21000,
+          "url": "{{assets}}/attachments/photo-1.jpg",
+          "proxy_url": "{{assets}}/attachments/photo-1.jpg",
+          "width": 1600,
+          "height": 900,
+          "content_type": "image/jpeg"
+        },
+        {
+          "id": "1000000000000000002",
+          "filename": "photo-2.jpg",
+          "size": 22000,
+          "url": "{{assets}}/attachments/photo-2.jpg",
+          "proxy_url": "{{assets}}/attachments/photo-2.jpg",
+          "width": 900,
+          "height": 1200,
+          "content_type": "image/jpeg"
+        }
+      ],
+      "embeds": [
+        {
+          "type": "rich",
+          "url": "https://discord.com",
+          "title": "Rich embed title",
+          "description": "A rich embed with every text part filled in.\nDescriptions keep their line breaks.",
+          "color": 5793266,
+          "provider": {
+            "name": "Example Provider",
+            "url": "https://example.com"
+          },
+          "author": {
+            "name": "Embed Author",
+            "url": "https://example.com/author",
+            "icon_url": "{{assets}}/avatar.png",
+            "proxy_icon_url": "{{assets}}/avatar.png"
+          },
+          "fields": [
+            {
+              "name": "Inline one",
+              "value": "First value",
+              "inline": true
+            },
+            {
+              "name": "Inline two",
+              "value": "Second value",
+              "inline": true
+            },
+            {
+              "name": "Inline three",
+              "value": "Third value",
+              "inline": true
+            },
+            {
+              "name": "Full width",
+              "value": "A field that is not inline takes the whole row.",
+              "inline": false
+            }
+          ],
+          "footer": {
+            "text": "Footer text",
+            "icon_url": "{{assets}}/icon.png",
+            "proxy_icon_url": "{{assets}}/icon.png"
+          },
+          "timestamp": "2025-03-14T15:09:26.000Z"
+        }
+      ]
+    }
+  }
+}

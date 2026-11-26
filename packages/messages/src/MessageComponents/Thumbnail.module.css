@@ -1,0 +1,17 @@
+.imgContainer {
+  --__thumbnail-size: 85px;
+  border-radius: var(--radius-sm);
+  height: var(--__thumbnail-size);
+  max-height: var(--__thumbnail-size);
+  max-width: var(--__thumbnail-size);
+  overflow: auto;
+  width: var(--__thumbnail-size);
+}
+.img {
+  -o-object-fit: cover;
+  object-fit: cover;
+}
+.hiddenSpoiler {
+  filter: blur(var(--custom-message-attachment-spoiler-blur-radius));
+  pointer-events: none;
+}

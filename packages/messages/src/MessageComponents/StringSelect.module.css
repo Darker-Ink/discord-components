@@ -1,0 +1,96 @@
+.container {
+  align-items: center;
+  display: flex;
+  width: 100%;
+}
+.select {
+  max-width: 100%;
+  width: 400px;
+}
+.inModal {
+  max-width: 100%;
+  width: 100%;
+}
+.selectOption.selectOption {
+  padding: 8px;
+}
+.disabled {
+  opacity: 0.6;
+}
+.emoji,
+.smallEmoji {
+  margin-inline-end: 8px;
+}
+.smallEmoji {
+  height: 16px;
+  width: 16px;
+}
+.offset {
+  margin-inline-start: 27px;
+}
+.optionTag {
+  align-items: center;
+  background: var(--background-base-low);
+  border-radius: 3px;
+  box-sizing: border-box;
+  color: var(--interactive-text-active);
+  display: flex;
+  flex-shrink: 0;
+  max-width: 230px;
+  padding: 6px 8px;
+}
+.labelContainer {
+  font-size: 14px;
+  line-height: 18px;
+  overflow: hidden;
+}
+.label {
+  color: var(--text-strong);
+  margin-bottom: 4px;
+}
+.description {
+  color: var(--interactive-text-default);
+}
+.label,
+.singleValueLabel,
+.tag {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tag {
+  align-items: center;
+  display: flex;
+  height: 20px;
+}
+.option {
+  font-size: 16px;
+}
+.option,
+.value {
+  align-items: center;
+  display: flex;
+  overflow: hidden;
+}
+.value {
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.singleValue {
+  font-size: 16px;
+  gap: 0;
+}
+.singleValueLabel {
+  flex: 1;
+}
+.error {
+  align-items: center;
+  display: flex;
+  margin-top: 8px;
+}
+.errorIcon {
+  color: var(--icon-feedback-critical);
+  display: block;
+  margin-inline-end: 8px;
+}

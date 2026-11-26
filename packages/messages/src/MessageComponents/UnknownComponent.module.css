@@ -1,0 +1,5 @@
+.container {
+  border: 1px solid var(--status-warning);
+  border-radius: var(--radius-md);
+  padding: var(--space-16);
+}

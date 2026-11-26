@@ -1,0 +1,38 @@
+.content {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin: auto;
+  min-width: 32px;
+}
+.loading {
+  inset-inline: 0;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.textEmoji {
+  flex-shrink: 0;
+  margin-inline-end: 4px;
+}
+.premium {
+  transition: width 0.3s;
+}
+.shopIcon {
+  align-items: center;
+  display: flex;
+  margin-inline-end: 4px;
+}
+.launchIcon {
+  flex-shrink: 0;
+  margin-inline-start: 8px;
+}
+.hidden {
+  visibility: hidden;
+}
+.label {
+  flex-shrink: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

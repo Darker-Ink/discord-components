@@ -1,0 +1,13 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  row-gap: 6px;
+  width: 100%;
+}
+.container.isComponentsV2 {
+  align-items: stretch;
+  max-width: min(600px, 100%);
+  row-gap: var(--space-8);
+  width: -moz-fit-content;
+  width: fit-content;
+}

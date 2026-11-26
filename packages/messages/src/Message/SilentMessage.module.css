@@ -1,0 +1,14 @@
+.badge {
+  color: var(--interactive-text-default);
+  cursor: pointer;
+  display: inline-block;
+  height: 1rem;
+  -o-object-fit: contain;
+  object-fit: contain;
+  overflow: hidden;
+  position: relative;
+  text-indent: 0;
+  top: 0.1875rem;
+  vertical-align: top;
+  width: 1rem;
+}

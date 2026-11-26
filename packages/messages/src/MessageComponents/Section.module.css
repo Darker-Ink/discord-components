@@ -1,0 +1,27 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.children {
+  display: flex;
+  gap: var(--space-12);
+  justify-content: space-between;
+}
+.textChildren {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  row-gap: var(--space-4);
+}
+.textChildren.verticallyCenterAlign {
+  justify-content: center;
+}
+.accessory {
+  align-items: flex-start;
+  display: flex;
+  min-width: 0;
+}
+.accessory.restrictWidth {
+  max-width: calc(50% - var(--space-12));
+}

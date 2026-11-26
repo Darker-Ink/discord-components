@@ -1,0 +1,81 @@
+{
+  "story": "message-fixtures",
+  "now": "2026-11-26T12:30:00.000Z",
+  "data": {
+    "message": {
+      "content": "Pick an action",
+      "edited_timestamp": "2026-11-26T12:05:00.000Z",
+      "author": {
+        "id": "1000000000000000002",
+        "username": "helper",
+        "global_name": null,
+        "avatar": "a1b2",
+        "discriminator": "0",
+        "bot": true,
+        "avatar_url": "{{assets}}/icon.png"
+      },
+      "components": [
+        {
+          "type": 1,
+          "components": [
+            {
+              "type": 2,
+              "style": 1,
+              "label": "Primary",
+              "custom_id": "primary"
+            },
+            {
+              "type": 2,
+              "style": 2,
+              "label": "Secondary",
+              "custom_id": "secondary"
+            },
+            {
+              "type": 2,
+              "style": 3,
+              "label": "Success",
+              "custom_id": "success"
+            },
+            {
+              "type": 2,
+              "style": 4,
+              "label": "Danger",
+              "custom_id": "danger"
+            },
+            {
+              "type": 2,
+              "style": 5,
+              "label": "Link",
+              "url": "https://discord.com"
+            }
+          ]
+        },
+        {
+          "type": 1,
+          "components": [
+            {
+              "type": 2,
+              "style": 1,
+              "label": "Disabled",
+              "custom_id": "disabled",
+              "disabled": true
+            },
+            {
+              "type": 2,
+              "style": 2,
+              "custom_id": "emoji-only",
+              "emoji": {
+                "id": "1000000000000000099",
+                "name": "blob",
+                "animated": false
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "emoji_urls": {
+      "1000000000000000099": "{{assets}}/small.png"
+    }
+  }
+}

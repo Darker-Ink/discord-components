@@ -1,0 +1,13 @@
+/* Global, like the client's emoji stylesheet: every `img.emoji` (content, buttons, selects, reactions). */
+.emoji {
+  height: var(--custom-emoji-size-emoji);
+  -o-object-fit: contain;
+  object-fit: contain;
+  vertical-align: bottom;
+  width: var(--custom-emoji-size-emoji);
+}
+.emoji.jumboable {
+  height: var(--custom-emoji-size-jumbo-emoji);
+  min-height: var(--custom-emoji-size-jumbo-emoji);
+  width: var(--custom-emoji-size-jumbo-emoji);
+}

@@ -1,0 +1,6 @@
+.divider {
+  border-bottom: 1px solid var(--background-mod-strong);
+}
+.spacingLarge {
+  margin: var(--space-8) 0;
+}

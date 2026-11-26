@@ -15,6 +15,7 @@
 // Optional fixture fields for content outside the story root (e.g. modals in the app layer):
 //   "capture": "viewport"   screenshot the whole viewport instead of the story's box
 //   "dom": "<selector>"     compare the DOM of this element (document-wide) instead of the story root
+//   "now": "<ISO date>"     freezes the clock there on both sides (message timestamps, interaction timeouts)
 //   "actions": [{ "click": sel } | { "hover": sel } | { "key": "ArrowRight" } | { "wheel": [dx, dy] } | { "wait": ms }]
 //                           run after the page settled, on both sides (selectors are document-wide)
 //
@@ -77,6 +78,8 @@ const normalizeHtml = (html) =>
     .replace(/\buid_\w+/g, 'uid')
     // React's useId counter depends on how many hooks ran before; only the wiring matters.
     .replace(/\b_r_[0-9a-z]+_/g, '_r_')
+    // Popout ids count up per page; only the wiring matters.
+    .replace(/\bpopout_\d+/g, 'popout_')
     // Bundled SVG assets: Discord serves them from /assets, Vite inlines them (same files, copied from the build).
     .replace(/src="(?:\/assets\/[0-9a-f]+\.svg|data:image\/svg\+xml[^"]*)"/g, 'src="{svg}"')
     .replace(/></g, '>\n<');
@@ -205,6 +208,7 @@ const newPage = async () => {
 
 const captureRef = async (fixture, theme) => {
   const { page, errors } = await newPage();
+  if (fixture.now != null) await page.clock.setFixedTime(new Date(fixture.now));
   await page.goto(`${REF}/`);
   await page.evaluate(
     async ([source, data, storyId, theme]) => {
@@ -244,6 +248,7 @@ const captureRef = async (fixture, theme) => {
 
 const captureOurs = async (fixture, name, theme) => {
   const { page, errors } = await newPage();
+  if (fixture.now != null) await page.clock.setFixedTime(new Date(fixture.now));
   await page.goto(`${OURS}/?embed&collection=messages&story=${fixture.story}&fixture=${group}/${name}&theme=${theme}`);
   const result = await capture(page, errors, fixture);
   await page.close();

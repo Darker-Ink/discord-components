@@ -126,9 +126,30 @@ const BrokenImageIcon = ({ className, ref }: { className?: string; ref?: Ref<SVG
 
 BrokenImageIcon.displayName = 'BrokenImageIcon';
 
-/** Gallery media that is still loading, failed, or was not found. */
-export const MediaGalleryPlaceholder = (props: MediaMosaicRenderProps<MediaGalleryItem>) => {
-  const media = props.item.originalItem.media;
+export interface UnfurledMediaPlaceholderProps {
+  media: UnfurledMediaItem;
+  className?: string;
+  placeholderWidth: number;
+  placeholderHeight: number;
+  maxWidth?: number;
+  maxHeight?: number;
+  hiddenSpoilers?: boolean;
+  mediaLayoutType?: MediaMosaicRenderProps<MediaGalleryItem>['mediaLayoutType'];
+  useFullWidth?: boolean;
+}
+
+/** Unfurled media that is still loading, failed, or was not found (galleries and thumbnails). */
+export const UnfurledMediaPlaceholder = ({
+  media,
+  className,
+  placeholderWidth,
+  placeholderHeight,
+  maxWidth,
+  maxHeight,
+  hiddenSpoilers,
+  mediaLayoutType,
+  useFullWidth,
+}: UnfurledMediaPlaceholderProps) => {
   const { i18n } = useMediaContext();
   const iconRef = useRef<SVGSVGElement>(null);
   if (media.loadingState === UnfurledMediaItemLoadingState.LOADED_NOT_FOUND)
@@ -140,10 +161,10 @@ export const MediaGalleryPlaceholder = (props: MediaMosaicRenderProps<MediaGalle
         targetElementRef={iconRef as Ref<HTMLElement>}
       >
         <div
-          className={clsx(props.className, styles.notFoundPlaceholder, {
-            [styles.hiddenSpoilers]: props.hiddenSpoilers,
+          className={clsx(className, styles.notFoundPlaceholder, {
+            [styles.hiddenSpoilers]: hiddenSpoilers,
           })}
-          style={{ width: 350, height: 350 }}
+          style={{ width: placeholderWidth, height: placeholderHeight }}
           role="img"
         >
           <BrokenImageIcon ref={iconRef} className={styles.brokenImageIcon} />
@@ -152,21 +173,38 @@ export const MediaGalleryPlaceholder = (props: MediaMosaicRenderProps<MediaGalle
     );
   return (
     <Image
-      className={clsx(props.className, { [styles.hiddenSpoilers]: props.hiddenSpoilers })}
+      className={clsx(className, { [styles.hiddenSpoilers]: hiddenSpoilers })}
       readyState={
         media.loadingState === UnfurledMediaItemLoadingState.LOADING ? ImageReadyState.LOADING : ImageReadyState.ERROR
       }
       src=""
-      width={350}
-      height={350}
-      maxWidth={props.maxWidth}
-      maxHeight={props.maxHeight}
-      mediaLayoutType={props.mediaLayoutType}
-      useFullWidth={props.useFullWidth}
+      width={placeholderWidth}
+      height={placeholderHeight}
+      maxWidth={maxWidth}
+      maxHeight={maxHeight}
+      mediaLayoutType={mediaLayoutType}
+      useFullWidth={useFullWidth}
       zoomable={false}
     />
   );
 };
+
+UnfurledMediaPlaceholder.displayName = 'UnfurledMediaPlaceholder';
+
+/** Gallery media that is still loading, failed, or was not found. */
+export const MediaGalleryPlaceholder = (props: MediaMosaicRenderProps<MediaGalleryItem>) => (
+  <UnfurledMediaPlaceholder
+    media={props.item.originalItem.media}
+    className={props.className}
+    placeholderWidth={350}
+    placeholderHeight={350}
+    maxWidth={props.maxWidth}
+    maxHeight={props.maxHeight}
+    hiddenSpoilers={props.hiddenSpoilers}
+    mediaLayoutType={props.mediaLayoutType}
+    useFullWidth={props.useFullWidth}
+  />
+);
 
 MediaGalleryPlaceholder.displayName = 'MediaGalleryPlaceholder';
 

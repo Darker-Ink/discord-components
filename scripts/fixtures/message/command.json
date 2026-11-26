@@ -1,0 +1,47 @@
+{
+  "story": "message-fixtures",
+  "now": "2026-11-26T12:30:00.000Z",
+  "data": {
+    "message": {
+      "type": 20,
+      "content": "Pong! 42ms",
+      "application_id": "1000000000000000002",
+      "author": {
+        "id": "1000000000000000002",
+        "username": "helper",
+        "global_name": null,
+        "avatar": "a1b2",
+        "discriminator": "0",
+        "bot": true,
+        "avatar_url": "{{assets}}/icon.png"
+      },
+      "interaction_metadata": {
+        "id": "1300000000000000001",
+        "type": 2,
+        "name": "ping",
+        "command_type": 1,
+        "user": {
+          "id": "1000000000000000001",
+          "username": "wumpus",
+          "global_name": "Wumpus",
+          "avatar": "a1b2",
+          "discriminator": "0",
+          "avatar_url": "{{assets}}/avatar.png"
+        }
+      },
+      "interaction": {
+        "id": "1300000000000000001",
+        "type": 2,
+        "name": "ping",
+        "user": {
+          "id": "1000000000000000001",
+          "username": "wumpus",
+          "global_name": "Wumpus",
+          "avatar": "a1b2",
+          "discriminator": "0",
+          "avatar_url": "{{assets}}/avatar.png"
+        }
+      }
+    }
+  }
+}

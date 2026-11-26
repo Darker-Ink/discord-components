@@ -1,0 +1,318 @@
+.ephemeral {
+  background: var(--brand-05a);
+  position: relative;
+}
+.nitroMessage.nitroMessage {
+  background: linear-gradient(
+    to right,
+    hsl(var(--premium-tier-2-purple-for-gradients-hsl) / 0.08),
+    hsl(var(--premium-tier-2-pink-for-gradients-hsl) / 0.08)
+  );
+}
+.nitroMessage.nitroMessage a {
+  color: var(--text-link);
+}
+.automodMessage {
+  background: var(--message-automod-background-default);
+}
+.mentioned {
+  background: var(--message-mentioned-background-default);
+  position: relative;
+}
+.guildOfficialMessage {
+  --custom-message-content-color: var(--custom-guild-official-message-text);
+}
+.messageListItem:has(.guildOfficialMessage) {
+  isolation: isolate;
+}
+.messageListItem:has(.guildOfficialMessage):after {
+  background: hsl(var(--custom-guild-official-message-hsl));
+  content: '';
+  inset: 0;
+  -webkit-mask-image: url('/assets/13460a65f1622591.png');
+  mask-image: url('/assets/13460a65f1622591.png');
+  -webkit-mask-repeat: repeat-y;
+  mask-repeat: repeat-y;
+  -webkit-mask-size: 100% 32px;
+  mask-size: 100% 32px;
+  opacity: var(--custom-guild-official-message-dither-opacity, 1);
+  pointer-events: none;
+  position: absolute;
+  z-index: -1;
+}
+.messageListItem:has(.guildOfficialMessage.highlighted):after,
+.messageListItem:has(.guildOfficialMessage.mentioned):after,
+.messageListItem:has(.guildOfficialMessage.replying):after,
+.messageListItem:has(.guildOfficialMessage.selected):after,
+:global(.mouse-mode):global(.full-motion) .messageListItem:has(.guildOfficialMessage:hover):after {
+  content: none;
+}
+.message.guildOfficialMessage .guildOfficialMessageContent,
+.message.guildOfficialMessage .guildOfficialMessageContent :is(h1, h2, h3, h4, h5, h6, small) {
+  color: var(--custom-message-content-color, var(--text-default));
+}
+.highlighted,
+.replying {
+  background: var(--message-highlight-background-default);
+  position: relative;
+}
+.automodMessage:before,
+.ephemeral:before,
+.highlighted:before,
+.mentioned:before,
+.nitroMessage:before,
+.replying:before {
+  bottom: 0;
+  content: '';
+  display: block;
+  inset-inline-start: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  width: 2px;
+}
+.ephemeral:before {
+  background: var(--brand-500);
+}
+.nitroMessage:before {
+  background: var(--custom-premium-colors-premium-gradient-tier-2-tri-color-vertical);
+}
+.automodMessage:before {
+  background: var(--text-feedback-critical);
+}
+.mentioned:before {
+  background: var(--icon-feedback-warning);
+}
+.highlighted:before {
+  background: var(--text-brand);
+}
+.replying:before {
+  background: var(--brand-500);
+}
+.messageListItem {
+  outline: none;
+  position: relative;
+}
+.message {
+  border-end-end-radius: var(--radius-xs);
+  border-start-end-radius: var(--radius-xs);
+  padding-inline-end: var(--space-xl) !important;
+}
+:global(.theme-dark) .message.selected,
+:global(.theme-dark):global(.mouse-mode):global(.full-motion) .message:hover {
+  background: var(--message-background-hover);
+}
+:global(.theme-light) .message.selected,
+:global(.theme-light):global(.mouse-mode):global(.full-motion) .message:hover {
+  background: var(--message-background-hover);
+}
+.message.mentioned.selected,
+:global(.mouse-mode):global(.full-motion) .message.mentioned:hover {
+  background: var(--message-mentioned-background-hover);
+}
+.message.highlighted.selected,
+:global(.mouse-mode):global(.full-motion) .message.highlighted:hover {
+  background: var(--message-highlight-background-hover);
+}
+.message.ephemeral.selected,
+:global(.mouse-mode):global(.full-motion) .message.ephemeral:hover {
+  background: var(--brand-10a);
+}
+.message.nitroMessage.selected,
+:global(.mouse-mode):global(.full-motion) .message.nitroMessage:hover {
+  background: linear-gradient(
+    to right,
+    hsl(var(--premium-tier-2-purple-for-gradients-hsl) / 0.2),
+    hsl(var(--premium-tier-2-pink-for-gradients-hsl) / 0.2)
+  );
+}
+.message.automodMessage.selected,
+:global(.mouse-mode):global(.full-motion) .message.automodMessage:hover {
+  background: var(--message-automod-background-hover);
+}
+.message.guildOfficialMessage:not(.mentioned):not(.replying):not(.highlighted).selected,
+:global(.mouse-mode):global(.full-motion)
+  .message.guildOfficialMessage:not(.mentioned):not(.replying):not(.highlighted):hover {
+  background: hsl(var(--custom-guild-official-message-hsl) / var(--custom-guild-official-message-alpha));
+}
+.message.replying.selected,
+:global(.mouse-mode):global(.full-motion) .message.replying:hover {
+  background: var(--brand-10a);
+}
+.quotedChatMessage {
+  position: relative;
+}
+.highlightContainer {
+  align-items: center;
+  display: flex;
+  margin-bottom: 4px;
+}
+.highlightIcon {
+  margin-inline-end: 4px;
+}
+.jump {
+  background-color: var(--background-base-lowest);
+  border-radius: 3px;
+  box-sizing: border-box;
+  color: var(--text-default);
+  cursor: pointer;
+  display: none;
+  height: 24px;
+  inset-inline-end: 16px;
+  margin-inline-start: 6px;
+  padding: 4px;
+  position: absolute;
+  text-align: center;
+  top: 0;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  z-index: 1;
+}
+.quotedChatMessage:hover .jump {
+  display: block;
+}
+.jump:hover {
+  color: var(--interactive-text-hover);
+}
+.jump:active {
+  color: var(--interactive-text-active);
+  transform: translate3d(0, 1px, 0);
+}
+.buttons {
+  opacity: 0;
+  pointer-events: none;
+}
+.message.selected .buttons,
+:global(.mouse-mode) .message:hover .buttons {
+  opacity: 1;
+}
+.message.selected .buttonsInner,
+:global(.mouse-mode) .message:hover .buttonsInner {
+  pointer-events: auto;
+}
+.hideIfMessageNotFocused {
+  opacity: 0;
+}
+.message.selected .hideIfMessageNotFocused,
+:global(.mouse-mode) .message:hover .hideIfMessageNotFocused {
+  opacity: 1;
+}
+.cozyMessage.groupStart {
+  min-height: 2.75rem;
+}
+.systemMessage.groupStart {
+  min-height: 1.375rem;
+}
+.backgroundFlash {
+  flex: 0 0 auto;
+}
+.channelTextArea {
+  margin-top: 8px;
+}
+.divider {
+  margin-inline: 1rem 0.875rem;
+}
+.disableInteraction:after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  inset-inline: 0;
+  bottom: 0;
+}
+.groupStart {
+  margin-top: var(--custom-group-spacing-start);
+}
+:global(.group-spacing-0) .groupStart {
+  --custom-group-spacing-start: 0.0625rem;
+}
+:global(.group-spacing-0) .divider {
+  margin-bottom: -1px;
+  margin-top: 0;
+}
+:global(.group-spacing-0) .divider.hasContent {
+  margin-bottom: 1.5rem;
+  margin-top: 1.5rem;
+}
+:global(.group-spacing-4) .groupStart {
+  --custom-group-spacing-start: 0.3125rem;
+}
+:global(.group-spacing-4) .divider {
+  margin-bottom: 0;
+  margin-top: -1px;
+}
+:global(.group-spacing-4) .divider.beforeGroup {
+  margin-bottom: -1px;
+  margin-top: 0;
+  top: 0.125rem;
+}
+:global(.group-spacing-4) .divider.hasContent {
+  margin-bottom: 1.25rem;
+  margin-top: 1.5rem;
+}
+:global(.group-spacing-8) .groupStart {
+  --custom-group-spacing-start: 0.5625rem;
+}
+:global(.group-spacing-8) .divider {
+  margin-bottom: 2px;
+  margin-top: 2px;
+}
+:global(.group-spacing-8) .divider.beforeGroup {
+  margin-bottom: -1px;
+  margin-top: 0;
+  top: 0.25rem;
+}
+:global(.group-spacing-8) .divider.hasContent {
+  margin-bottom: 1rem;
+  margin-top: 1.5rem;
+}
+:global(.group-spacing-16) .groupStart {
+  --custom-group-spacing-start: 1.0625rem;
+}
+:global(.group-spacing-16) .divider {
+  margin-bottom: 4px;
+  margin-top: 4px;
+}
+:global(.group-spacing-16) .divider.beforeGroup {
+  margin-bottom: -1px;
+  margin-top: 0;
+  top: 0.5rem;
+}
+:global(.group-spacing-16) .divider.hasContent {
+  margin-bottom: 0.5rem;
+  margin-top: 1.5rem;
+}
+:global(.group-spacing-24) .groupStart {
+  --custom-group-spacing-start: 1.5625rem;
+}
+:global(.group-spacing-24) .divider {
+  margin-bottom: 4px;
+  margin-top: 4px;
+}
+:global(.group-spacing-24) .divider.beforeGroup {
+  margin-bottom: -1px;
+  margin-top: 0;
+  top: 0.75rem;
+}
+:global(.group-spacing-24) .divider.hasContent {
+  margin-bottom: 0;
+  margin-top: 1.5rem;
+}
+.backgroundFlash .groupStart {
+  margin-top: 0 !important;
+}
+.interactionSending {
+  opacity: 0.5;
+}
+:global(.enable-forced-colors) .automodMessage:before,
+:global(.enable-forced-colors) .ephemeral:before,
+:global(.enable-forced-colors) .highlighted:before,
+:global(.enable-forced-colors) .mentioned:before,
+:global(.enable-forced-colors) .replying:before {
+  forced-color-adjust: none;
+  width: 4px;
+}
+.mentioned :global(.mention):global(.interactive):hover {
+  text-decoration: underline;
+}

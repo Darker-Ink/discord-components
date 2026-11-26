@@ -1,0 +1,59 @@
+.container {
+  display: grid;
+  grid-auto-flow: row;
+  height: -moz-fit-content;
+  height: fit-content;
+  grid-row-gap: 0.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+  min-height: 0;
+  min-width: 0;
+  padding-bottom: 0.125rem;
+  padding-top: 0.125rem;
+  position: relative;
+  text-indent: 0;
+}
+.container:empty {
+  display: none;
+}
+.gifFavoriteButton {
+  box-sizing: border-box;
+  display: block;
+  margin-block: 0;
+  margin-inline: auto 0;
+  opacity: 0;
+  transform: translateY(-16px);
+}
+:global(.full-motion) .gifFavoriteButton {
+  transition:
+    transform 0.2s ease,
+    opacity 0.1s ease;
+}
+:global(.imageWrapper):focus-within .gifFavoriteButton,
+:global(.imageWrapper):hover .gifFavoriteButton {
+  opacity: 1;
+  transform: translateY(0);
+}
+.giftCodeContainer {
+  width: 100%;
+}
+.referralContainer {
+  justify-content: space-between;
+  width: 100%;
+}
+.pollContainer {
+  margin: 4px 0;
+}
+.confirmText {
+  margin-bottom: 12px;
+}
+.threadRoleMentionFailure {
+  color: var(--text-feedback-critical);
+  font-size: 12px;
+  line-height: 16px;
+}
+.ctaButtonContainer {
+  display: flex;
+  gap: var(--space-8);
+  margin-bottom: 6px;
+  margin-top: 6px;
+}

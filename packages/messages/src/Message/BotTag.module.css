@@ -1,0 +1,71 @@
+.botTag {
+  align-items: center;
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 0.625rem;
+  text-indent: 0;
+  text-transform: uppercase;
+  vertical-align: top;
+}
+.px.botTag {
+  border-radius: 4px;
+  height: 16px;
+  padding: 0 4px;
+}
+.rem.botTag {
+  border-radius: 4px;
+  height: 0.9375rem;
+  margin-top: 0.2em;
+  padding: 0 0.275rem;
+}
+.rem.botTag.botTagOP {
+  margin-top: 0.25em;
+}
+.botTagRegular {
+  background: var(--background-brand);
+  color: var(--white);
+}
+.botTagInvert {
+  background: var(--white);
+  color: var(--brand-500);
+}
+.botTagAI {
+  background: var(--text-feedback-positive);
+  color: var(--white);
+}
+.botTagNotStaffWarning {
+  background: var(--notice-background-warning);
+  color: var(--notice-text-warning);
+}
+.botTagVerified {
+  display: inline-block;
+}
+.px .botTagVerified {
+  height: 16px;
+  margin-inline-start: -2px;
+  width: 16px;
+}
+.rem .botTagVerified {
+  height: 1rem;
+  margin-inline-start: -0.2rem;
+  margin-top: -0.02rem;
+  width: 1rem;
+}
+.botText {
+  font-weight: var(--font-weight-semibold);
+  position: relative;
+  vertical-align: top;
+}
+.px .botText {
+  font-size: 12px;
+  line-height: 16px;
+}
+.rem .botText {
+  font-size: 0.8rem;
+  line-height: 0.9375rem;
+}
+.botTagOP {
+  background-color: var(--brand-260);
+  border-radius: 8px;
+  color: var(--brand-560);
+}
