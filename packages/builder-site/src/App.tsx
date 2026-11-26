@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import {
   AppRoot,
   Button,
-  KeyCombo,
   Menu,
   MenuItem,
   MenuSeparator,
@@ -149,28 +148,26 @@ const ChannelStart = ({ name }: { name: string }) => (
 
 ChannelStart.displayName = 'ChannelStart';
 
-const Hints = () => {
-  const mod = isMac ? '⌘' : 'Ctrl+';
-  return (
-    <div className={styles.hints} aria-hidden>
-      <span>
-        <KeyCombo shortcut="Enter" /> edit
+const HINTS = [
+  ['Click', 'select'],
+  ['Enter', 'edit'],
+  ['Space', 'move'],
+  [isMac ? '⌘D' : 'Ctrl D', 'duplicate'],
+  ['Del', 'delete'],
+  [isMac ? '⌘Z' : 'Ctrl Z', 'undo'],
+  ['Right-click', 'more'],
+] as const;
+
+/** Where the client has its chat input: the editor's keys, quietly. */
+const Hints = () => (
+  <div className={styles.hints} aria-hidden>
+    {HINTS.map(([key, action]) => (
+      <span key={action}>
+        <kbd className={styles.kbd}>{key}</kbd> {action}
       </span>
-      <span>
-        <KeyCombo shortcut="Space" /> move
-      </span>
-      <span>
-        <KeyCombo shortcut={`${mod}D`} /> duplicate
-      </span>
-      <span>
-        <KeyCombo shortcut="Del" /> delete
-      </span>
-      <span>
-        <KeyCombo shortcut={`${mod}Z`} /> undo
-      </span>
-    </div>
-  );
-};
+    ))}
+  </div>
+);
 
 Hints.displayName = 'Hints';
 
@@ -189,7 +186,7 @@ export const App = () => {
   );
   const builder = useMessageBuilder({ defaultValue: initial, validation });
   const { store } = builder;
-  const [panel, setPanel] = useState<BuilderPanelId>('issues');
+  const [panel, setPanel] = useState<BuilderPanelId>('json');
   const narrow = useMediaQuery('(max-width: 860px)');
 
   // A shared link opens its message (once; the draft it replaces is one undo away).
@@ -234,7 +231,7 @@ export const App = () => {
             <header className={styles.header}>
               <Logo />
               <div className={styles.headerTools}>
-                <BuilderModeSwitch />
+                <BuilderModeSwitch className={styles.modeSwitch} />
                 <BuilderHistoryButtons />
               </div>
               <div className={styles.headerActions}>

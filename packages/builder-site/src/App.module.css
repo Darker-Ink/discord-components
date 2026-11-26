@@ -145,6 +145,17 @@
   display: inline-flex;
   gap: 6px;
 }
+.kbd {
+  background: var(--background-mod-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  color: var(--text-default);
+  font-family: var(--font-primary);
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 14px;
+  padding: 1px 5px;
+}
 
 /* Tools */
 .side {
@@ -234,6 +245,16 @@
 @media (max-width: 560px) {
   .wordmark {
     display: none;
+  }
+  .headerTools {
+    order: 3;
+    width: 100%;
+  }
+  .modeSwitch {
+    flex: 1;
+  }
+  .modeSwitch > * {
+    flex: 1;
   }
   .themeSwitcher {
     gap: 8px;
