@@ -1,11 +1,4 @@
-import {
-  BadgeShapes,
-  Heading,
-  IconBadge,
-  NumberBadge,
-  Stack,
-  type IconBadgeProps,
-} from '@discord-mana/components';
+import { BadgeShapes, Heading, IconBadge, NumberBadge, Stack, type IconBadgeProps } from '@discord-mana/components';
 import { BellIcon, CheckmarkLargeIcon, LockIcon, NitroWheelIcon, StarIcon } from '@discord-mana/icons';
 import type { Controls, StoryGroup } from '../../types';
 

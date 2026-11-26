@@ -4,8 +4,8 @@ React versions of Discord's UI components. The styles, props and markup come str
 
 ## What's included
 
-| Package                          | What it has                                                                                                                               |
-| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Package                    | What it has                                                                                                                               |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | `@discord-mana/tokens`     | Colors, spacing, fonts and the four themes                                                                                                |
 | `@discord-mana/icons`      | Every icon in the Discord client, under the same names Discord uses                                                                       |
 | `@discord-mana/components` | The Mana design system (buttons, inputs, selects, modals, tooltips, menus, date pickers, toasts and more), plus the older Void components |

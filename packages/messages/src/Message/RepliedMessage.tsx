@@ -1,14 +1,7 @@
 import { useState, type MouseEventHandler, type ReactNode } from 'react';
 import clsx from 'clsx';
 import { Clickable } from '@discord-mana/components';
-import {
-  AppsIcon,
-  ChatIcon,
-  ImageIcon,
-  MicrophoneIcon,
-  SlashBoxIcon,
-  StickerSmallIcon,
-} from '@discord-mana/icons';
+import { AppsIcon, ChatIcon, ImageIcon, MicrophoneIcon, SlashBoxIcon, StickerSmallIcon } from '@discord-mana/icons';
 import { createResolver, useMessageResolvers } from '../MessageComponents/resolvers';
 import { useRenderMarkdown } from './markdown';
 import { BotTag } from './BotTag';

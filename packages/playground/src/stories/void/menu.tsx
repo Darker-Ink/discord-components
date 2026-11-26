@@ -12,14 +12,7 @@ import {
   type MenuItemColor,
   type MenuVariant,
 } from '@discord-mana/components';
-import {
-  CopyIcon,
-  LinkExternalSmallIcon,
-  PencilIcon,
-  PinIcon,
-  SettingsIcon,
-  TrashIcon,
-} from '@discord-mana/icons';
+import { CopyIcon, LinkExternalSmallIcon, PencilIcon, PinIcon, SettingsIcon, TrashIcon } from '@discord-mana/icons';
 import type { StoryGroup } from '../../types';
 import styles from './menu.module.css';
 
