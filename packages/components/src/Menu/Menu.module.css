@@ -1,0 +1,427 @@
+.menu {
+  --custom-menu-viewport-padding: 16px;
+  --custom-menu-separator-margin: 8px;
+  --custom-menu-flexible-min-width: 188px;
+  background: var(--background-surface-high);
+  background-color: var(--background-surface-higher);
+  border: var(--menu-border-width) solid var(--border-subtle);
+  border-radius: 8px;
+  box-shadow: var(--shadow-high);
+  box-sizing: border-box;
+  cursor: default;
+  display: flex;
+  height: auto;
+  max-height: var(--reference-position-layer-max-height, calc(100vh - var(--custom-menu-viewport-padding) * 2));
+  z-index: 1;
+}
+.scroller {
+  padding-block: var(--menu-scroller-block-padding);
+  padding-inline: 8px;
+}
+:global(.has-webkit-scrollbar) .scrollerWithScrollbar {
+  padding-inline-end: 0;
+}
+.fixed {
+  width: 220px;
+}
+.flexible {
+  max-width: 320px;
+  min-width: var(--custom-menu-flexible-min-width);
+}
+.item {
+  border-radius: 2px;
+  box-sizing: border-box;
+  cursor: pointer;
+  margin: 0;
+}
+.item:hover {
+  background-color: var(--background-mod-subtle);
+}
+.item.nonInteractive {
+  cursor: default;
+}
+.item.nonInteractive:hover {
+  background-color: transparent;
+}
+.customItem {
+  border-color: var(--interactive-text-default);
+  color: var(--interactive-text-default);
+}
+.labelContainer {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  min-height: 32px;
+  padding: 8px;
+}
+.label {
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.switchItem {
+  align-items: center;
+  display: flex;
+  gap: var(--space-16);
+  justify-content: space-between;
+  min-height: var(--space-32);
+  padding: var(--space-8);
+}
+.switchItem .labelContainer {
+  min-height: 0;
+  padding: 0;
+}
+.switchItem .label {
+  white-space: normal;
+}
+.textInputItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-8);
+}
+.textInputItem .labelContainer {
+  min-height: 0;
+  padding: 0;
+}
+.textInputItem .label {
+  white-space: normal;
+}
+.textInputItem .textInputWrapper {
+  min-width: 0;
+  width: 100%;
+}
+.subtext {
+  margin-top: 2px;
+  white-space: normal;
+}
+.subtextLineClamp {
+  white-space: pre;
+}
+.iconContainer {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  height: 20px;
+  margin-inline-start: 8px;
+  width: 20px;
+}
+.iconContainerLeft {
+  margin-inline: 0 8px;
+}
+.iconContainerLarge {
+  height: 32px;
+  width: 32px;
+}
+.badgeContainer {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  height: 18px;
+  margin-inline-start: 8px;
+}
+.switchContainer {
+  flex-shrink: 0;
+}
+.icon {
+  height: 100%;
+  width: 100%;
+}
+.emojiIcon {
+  -o-object-fit: contain;
+  object-fit: contain;
+}
+.avatarAccessory,
+.imageAccessory {
+  flex: 0 0 auto;
+  height: 18px;
+  margin-inline-end: 8px;
+  -o-object-fit: contain;
+  object-fit: contain;
+  width: 18px;
+}
+.roleDotAccessory {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  height: 20px;
+  justify-content: center;
+  margin-inline-end: 8px;
+  width: 20px;
+}
+.guildTagAccessory {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  margin-inline-end: 8px;
+}
+.avatarAccessory {
+  border-radius: var(--radius-round);
+  -o-object-fit: cover;
+  object-fit: cover;
+}
+.shortcutContainer {
+  flex: 0 0 auto;
+  margin-inline-start: 8px;
+  max-height: 18px;
+}
+.caret {
+  color: var(--text-muted);
+  height: 20px;
+  width: 20px;
+}
+.disabled {
+  cursor: pointer;
+  opacity: 0.5;
+  pointer-events: none;
+}
+.separator {
+  border-bottom-color: var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  box-sizing: border-box;
+  margin: var(--custom-menu-separator-margin, 8px);
+}
+.submenuPaddingContainer {
+  padding: 0 8px;
+}
+.submenu {
+  max-height: var(--custom-floating-layer-max-height, var(--reference-position-layer-max-height));
+  max-width: 320px;
+  min-width: 188px;
+}
+.colorDefault {
+  border-color: var(--interactive-text-default);
+  color: var(--interactive-text-default);
+}
+.colorDefault .subtext {
+  color: var(--text-muted);
+}
+.colorDefault .checkbox,
+.colorDefault .radioSelection {
+  color: var(--control-brand-foreground-new);
+}
+.colorDefault .check {
+  color: var(--white);
+}
+.colorDefault.focused {
+  background-color: var(--interactive-background-hover);
+  border-radius: 4px;
+  color: var(--text-strong);
+}
+:global(.keyboard-mode) .colorDefault.focused {
+  outline: 2px solid var(--border-focus);
+  outline-offset: -2px;
+}
+.colorDefault.focused .caret,
+.colorDefault.focused .checkbox,
+.colorDefault.focused .radioSelection,
+.colorDefault.focused .subtext {
+  color: var(--white);
+}
+.colorDefault.focused .check {
+  color: var(--text-brand);
+  fill: var(--text-brand);
+}
+.colorDefault.focused:not(.checkboxContainer) path {
+  fill: var(--interactive-text-active);
+}
+.colorDefault.focused .subtext {
+  color: var(--text-subtle);
+}
+.colorDefault:active:not(.hideInteraction) {
+  background-color: var(--background-mod-subtle);
+}
+.colorDefault .label {
+  color: var(--text-strong);
+}
+.colorDanger {
+  color: var(--text-feedback-critical);
+}
+.colorDanger .checkbox,
+.colorDanger .radioSelection {
+  color: var(--icon-feedback-critical);
+}
+.colorDanger.focused {
+  background-color: var(--background-feedback-mod-critical);
+}
+.colorDanger.focused,
+.colorDanger.focused .check,
+.colorDanger.focused .label {
+  color: var(--text-feedback-critical);
+}
+.colorDanger.focused:not(.checkboxContainer) path {
+  fill: var(--text-feedback-critical);
+}
+.colorDanger:active:not(.hideInteraction) {
+  background-color: var(--background-feedback-mod-critical);
+  color: var(--text-feedback-critical);
+}
+.colorDanger .label {
+  color: var(--text-feedback-critical);
+}
+.colorPremium .icon {
+  color: var(--guild-boosting-pink);
+}
+.colorPremium.focused .icon,
+.colorPremium:active:not(.hideInteraction) .icon {
+  color: var(--white);
+}
+.colorPremiumGradient.focused,
+.colorPremiumGradient:active:not(.hideInteraction) {
+  background: linear-gradient(
+    270deg,
+    var(--premium-tier-2-pink-for-gradients) 0,
+    var(--premium-tier-2-pink-for-gradients-2) 33.63%,
+    var(--premium-tier-2-purple-for-gradients) 100%
+  );
+  color: var(--white);
+}
+.colorPremiumGradient .check,
+.colorPremiumGradient .radioSelection {
+  color: var(--white);
+}
+.colorPremiumGradient .checkbox,
+.colorPremiumGradient.focused .check {
+  color: var(--premium-tier-2-pink-for-gradients);
+}
+.colorSuccess,
+.colorSuccess .checkbox,
+.colorSuccess .radioSelection {
+  color: var(--green-230);
+}
+.colorSuccess.focused {
+  background-color: var(--green-230);
+  color: var(--white);
+}
+.colorSuccess.focused .check {
+  color: var(--green-230);
+}
+.colorSuccess:active:not(.hideInteraction) {
+  background-color: var(--green-360);
+  color: var(--white);
+}
+.groupLabel {
+  color: var(--text-muted);
+  font-family: var(--font-primary);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+}
+.loader {
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+:global(.custom-theme-background) .menu {
+  border: 1px solid var(--border-strong);
+}
+[data-popout-animating='true'] .item[aria-haspopup='true'] {
+  pointer-events: none;
+}
+svg.radioIcon {
+  height: 20px;
+  width: 20px;
+}
+:where(:global(.density-compact)) .labelContainer {
+  padding: 4px 8px;
+}
+:global(.refresh-fast-follow-distinct-borders) .menu {
+  border-color: var(--app-frame-border);
+}
+:global(.refresh-fast-follow-distinct-borders) .separator {
+  border-bottom-color: var(--app-frame-border);
+}
+:global(.enable-forced-colors) .menu {
+  background-color: ButtonFace;
+  border: 2px solid CanvasText;
+}
+:global(.enable-forced-colors) .colorDefault {
+  background-color: ButtonFace;
+  border: 1px solid ButtonFace;
+  color: ButtonText;
+  forced-color-adjust: none;
+}
+:global(.enable-forced-colors) .colorDefault .caret,
+:global(.enable-forced-colors) .colorDefault .label,
+:global(.enable-forced-colors) .colorDefault .subtext {
+  color: inherit;
+}
+:global(.enable-forced-colors) .colorDefault .checkbox,
+:global(.enable-forced-colors) .colorDefault .radioSelection {
+  color: Highlight;
+}
+:global(.enable-forced-colors) .colorDefault .check {
+  color: HighlightText;
+}
+:global(.enable-forced-colors) .colorDefault.focused,
+:global(.enable-forced-colors) .colorDefault:hover {
+  border-color: ButtonText;
+}
+:global(.enable-forced-colors) .colorDefault[aria-checked='true'] {
+  background-color: Highlight;
+  color: HighlightText;
+}
+:global(.enable-forced-colors) .colorDefault[aria-checked='true'].focused,
+:global(.enable-forced-colors) .colorDefault[aria-checked='true']:hover {
+  border-color: HighlightText;
+}
+:global(.enable-forced-colors) .colorDefault[aria-checked='true'] .radioSelection {
+  color: HighlightText;
+}
+:global(.enable-forced-colors) .colorDefault:active:not(.hideInteraction) {
+  background-color: Highlight;
+  color: HighlightText;
+}
+:global(.enable-forced-colors) .groupLabel,
+:global(.enable-forced-colors) .groupLabel:hover,
+:global(.enable-forced-colors) .hideInteraction,
+:global(.enable-forced-colors) .hideInteraction:hover {
+  background-color: ButtonFace;
+  border-color: ButtonFace;
+  color: ButtonText;
+}
+:global(.enable-forced-colors) .disabled,
+:global(.enable-forced-colors) .disabled[aria-checked='true'] {
+  background-color: Canvas;
+  color: GrayText;
+  cursor: not-allowed;
+  opacity: 1;
+}
+:global(.enable-forced-colors) .disabled .checkbox,
+:global(.enable-forced-colors) .disabled .radioSelection,
+:global(.enable-forced-colors) .disabled[aria-checked='true'] .checkbox,
+:global(.enable-forced-colors) .disabled[aria-checked='true'] .radioSelection {
+  color: GrayText;
+}
+.iconContainerLeft {
+  composes: iconContainer;
+}
+.emojiIcon {
+  composes: icon;
+}
+.statusAccessory {
+  composes: roleDotAccessory;
+}
+.submenu {
+  composes: menu;
+}
+.colorBrand {
+  composes: colorDefault;
+}
+.colorDanger {
+  composes: colorDefault;
+}
+.colorPremium {
+  composes: colorDefault;
+}
+.colorPremiumGradient {
+  composes: colorDefault;
+}
+.colorSuccess {
+  composes: colorDefault;
+}
+.groupLabel {
+  composes: labelContainer;
+}

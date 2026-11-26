@@ -82,3 +82,4 @@ export * from './AdvancedScroller';
 export * from './RangeCalendar';
 export * from './DatePicker';
 export * from './DateRangePicker';
+export * from './Menu';

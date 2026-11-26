@@ -5,6 +5,8 @@
   --brand-gradient-blurple-hsl: 234.935 calc(var(--saturation-factor, 1) * 85.556%) 64.706%;
   --brand-gradient-blurple-dark: hsl(var(--brand-gradient-blurple-dark-hsl)/1);
   --brand-gradient-blurple-dark-hsl: 241.739 calc(var(--saturation-factor, 1) * 60%) 22.549%;
+  --guild-boosting-pink: hsl(var(--guild-boosting-pink-hsl)/1);
+  --guild-boosting-pink-hsl: 302.143 calc(var(--saturation-factor, 1) * 100%) 72.549%;
   --illo-blue-10-hsl: 235.2 calc(var(--saturation-factor, 1) * 100%) 95.098%;
   --illo-blue-20-hsl: 234.737 calc(var(--saturation-factor, 1) * 90.476%) 87.647%;
   --illo-blue-30: hsl(var(--illo-blue-30-hsl)/1);
@@ -51,6 +53,8 @@
   --illo-yellow-50-hsl: 42.551 calc(var(--saturation-factor, 1) * 89.091%) 56.863%;
   --premium-tier-2-pink-for-gradients: hsl(var(--premium-tier-2-pink-for-gradients-hsl)/1);
   --premium-tier-2-pink-for-gradients-hsl: 325.385 calc(var(--saturation-factor, 1) * 31.707%) 51.765%;
+  --premium-tier-2-pink-for-gradients-2: hsl(var(--premium-tier-2-pink-for-gradients-2-hsl)/1);
+  --premium-tier-2-pink-for-gradients-2-hsl: 295.42 calc(var(--saturation-factor, 1) * 51.373%) 50%;
   --premium-tier-2-purple-for-gradients: hsl(var(--premium-tier-2-purple-for-gradients-hsl)/1);
   --premium-tier-2-purple-for-gradients-hsl: 269.291 calc(var(--saturation-factor, 1) * 52.697%) 52.745%;
   --premium-tier-2-purple-for-gradients-2: hsl(var(--premium-tier-2-purple-for-gradients-2-hsl)/1);
