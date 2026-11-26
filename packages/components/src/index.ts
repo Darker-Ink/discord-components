@@ -62,3 +62,4 @@ export * from './Toolbar';
 export * from './ModalStack';
 export * from './ModalRoot';
 export * from './InlineNotice';
+export * from './LegacyButton';

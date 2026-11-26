@@ -1,0 +1,9 @@
+html:global(.decorate-links) .lowSaturationUnderline {
+  text-decoration: underline !important;
+}
+.desaturate {
+  filter: saturate(var(--saturation-factor, 1));
+}
+:global(.desaturate-user-colors) .desaturateUserColors {
+  filter: saturate(var(--saturation-factor, 1)) contrast(var(--contrast, 1)) brightness(var(--brightness, 1));
+}

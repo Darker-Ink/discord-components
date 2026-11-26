@@ -1,0 +1,694 @@
+.button {
+  align-items: center;
+  background: none;
+  border: 1px solid var(--opacity-white-8);
+  border-radius: 8px;
+  box-sizing: border-box;
+  display: flex;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  justify-content: center;
+  line-height: 16px;
+  padding: 2px 16px;
+  position: relative;
+  transition-duration: 0.2s;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+.button:disabled,
+.button[aria-disabled='true'] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.button .contents {
+  --button--underline-color: transparent;
+  background-image: linear-gradient(
+    to top,
+    transparent,
+    transparent var(--custom-button-link-underline-offset),
+    var(--button--underline-color) var(--custom-button-link-underline-offset),
+    var(--button--underline-color) var(--custom-button-link-underline-stop),
+    transparent var(--custom-button-link-underline-stop)
+  );
+}
+:global(.highlight-void-buttons) .button {
+  box-shadow: 0 0 4px 4px var(--yellow-new-30);
+}
+.lookFilled.colorBrand {
+  background-color: var(--control-primary-background-default);
+  border: 1px solid var(--control-primary-border-default);
+  color: var(--control-primary-text-default);
+}
+.lookFilled.colorBrand:hover {
+  background-color: var(--control-primary-background-hover);
+}
+.lookFilled.colorBrand:active {
+  background-color: var(--control-primary-background-active);
+}
+.lookFilled.colorBrand .spinnerItem {
+  background-color: var(--control-primary-text-default);
+}
+.lookFilled.colorBrand:disabled,
+.lookFilled.colorBrand[aria-disabled='true'] {
+  background-color: var(--control-primary-background-default);
+}
+.lookFilled.colorBrandInverted {
+  background-color: var(--control-overlay-primary-background-default);
+  color: var(--control-primary-text-default);
+}
+.lookFilled.colorBrandInverted:hover {
+  background-color: var(--control-overlay-primary-background-hover);
+}
+.lookFilled.colorBrandInverted:active {
+  background-color: var(--control-overlay-primary-background-active);
+}
+.lookFilled.colorBrandInverted .spinnerItem {
+  background-color: var(--control-primary-text-default);
+}
+.lookFilled.colorBrandInverted:disabled,
+.lookFilled.colorBrandInverted[aria-disabled='true'] {
+  background-color: var(--control-overlay-primary-background-default);
+}
+.lookOutlined.colorBrand {
+  border-color: var(--control-secondary-border-default);
+  color: var(--control-secondary-text-default);
+}
+.lookOutlined.colorBrand:hover {
+  background-color: var(--button-outline-brand-background-hover);
+  border-color: var(--control-secondary-border-hover);
+  color: var(--control-secondary-text-hover);
+}
+.lookOutlined.colorBrand:active {
+  background-color: var(--control-secondary-background-active);
+  border-color: var(--button-outline-brand-border-active);
+  color: var(--control-secondary-text-active);
+}
+.lookOutlined.colorBrand:disabled,
+.lookOutlined.colorBrand[aria-disabled='true'] {
+  background-color: transparent;
+}
+.lookOutlined.colorBrand .spinnerItem {
+  background-color: var(--brand-500);
+}
+.lookLink.colorBrand {
+  color: var(--brand-500);
+}
+.lookLink.colorBrand:hover .contents {
+  --button--underline-color: var(--brand-500);
+}
+.lookLink.colorBrand:disabled .contents,
+.lookLink.colorBrand[aria-disabled='true'] .contents {
+  background-image: none;
+}
+.lookLink.colorBrand .spinnerItem {
+  background-color: var(--brand-500);
+}
+.lookOutlined.colorPrimary {
+  border-color: var(--control-secondary-border-default);
+  color: var(--button-outline-primary-text);
+}
+.lookOutlined.colorPrimary:hover {
+  background-color: var(--control-secondary-background-hover);
+  border-color: var(--control-secondary-border-hover);
+  color: var(--control-secondary-text-hover);
+}
+.lookOutlined.colorPrimary:active {
+  background-color: var(--control-secondary-background-active);
+  border-color: var(--control-secondary-border-active);
+  color: var(--control-secondary-text-active);
+}
+.lookOutlined.colorPrimary:disabled,
+.lookOutlined.colorPrimary[aria-disabled='true'] {
+  background-color: transparent;
+  color: var(--button-outline-primary-text);
+}
+.lookOutlined.colorPrimary .spinnerItem {
+  background-color: var(--white);
+}
+.lookFilled.colorLink {
+  background-color: var(--text-link);
+  color: var(--white);
+}
+.lookFilled.colorLink:hover {
+  background-color: var(--blue-500);
+}
+.lookFilled.colorLink:active {
+  background-color: var(--blue-530);
+}
+.lookFilled.colorLink .spinnerItem {
+  background-color: var(--white);
+}
+.lookFilled.colorLink:disabled,
+.lookFilled.colorLink[aria-disabled='true'] {
+  background-color: var(--text-link);
+}
+.lookOutlined.colorLink {
+  border-color: var(--text-link);
+  color: var(--text-link);
+}
+.lookOutlined.colorLink:active {
+  background-color: hsl(var(--text-link-hsl) / 0.1);
+}
+.lookOutlined.colorLink:disabled,
+.lookOutlined.colorLink[aria-disabled='true'] {
+  background-color: transparent;
+}
+.lookOutlined.colorLink .spinnerItem {
+  background-color: var(--text-link);
+}
+.lookLink.colorLink {
+  color: var(--text-link);
+}
+.lookLink.colorLink:hover .contents {
+  --button--underline-color: var(--text-link);
+}
+.lookLink.colorLink:disabled .contents,
+.lookLink.colorLink[aria-disabled='true'] .contents {
+  background-image: none;
+}
+.lookLink.colorLink .spinnerItem {
+  background-color: var(--text-link);
+}
+.lookFilled.colorWhite {
+  background-color: var(--control-overlay-primary-background-default);
+  border-color: var(--opacity-8);
+  color: var(--control-primary-text-default);
+}
+.lookFilled.colorWhite:hover {
+  background-color: var(--control-overlay-primary-background-hover);
+}
+.lookFilled.colorWhite:active {
+  background-color: var(--control-overlay-primary-background-active);
+}
+.lookFilled.colorWhite .spinnerItem {
+  background-color: var(--control-primary-text-default);
+}
+.lookFilled.colorWhite:disabled,
+.lookFilled.colorWhite[aria-disabled='true'] {
+  background-color: var(--control-overlay-primary-background-default);
+}
+.lookOutlined.colorWhite {
+  border-color: var(--white);
+  color: var(--white);
+}
+.lookOutlined.colorWhite:active {
+  background-color: hsl(var(--white-hsl) / 0.1);
+}
+.lookOutlined.colorWhite:disabled,
+.lookOutlined.colorWhite[aria-disabled='true'] {
+  background-color: transparent;
+}
+.lookOutlined.colorWhite .spinnerItem {
+  background-color: var(--white);
+}
+.lookLink.colorWhite {
+  color: var(--white);
+}
+.lookLink.colorWhite:hover .contents {
+  --button--underline-color: var(--white);
+}
+.lookLink.colorWhite:disabled .contents,
+.lookLink.colorWhite[aria-disabled='true'] .contents {
+  background-image: none;
+}
+.lookLink.colorWhite .spinnerItem {
+  background-color: var(--white);
+}
+.lookFilled.colorRed {
+  background-color: var(--control-critical-primary-background-default);
+  border: 1px solid var(--control-critical-primary-border-default);
+  color: var(--white);
+}
+.lookFilled.colorRed:hover {
+  background-color: var(--control-critical-primary-background-hover);
+}
+.lookFilled.colorRed:active {
+  background-color: var(--control-critical-primary-background-active);
+}
+.lookFilled.colorRed .spinnerItem {
+  background-color: var(--white);
+}
+.lookFilled.colorRed:disabled,
+.lookFilled.colorRed[aria-disabled='true'] {
+  background-color: var(--control-critical-primary-background-default);
+}
+.lookOutlined.colorRed {
+  background-color: var(--control-critical-secondary-background-default);
+  border-color: var(--control-critical-secondary-border-default);
+  color: var(--control-critical-primary-text-default);
+}
+.lookOutlined.colorRed:hover {
+  background-color: var(--control-critical-secondary-background-hover);
+  border-color: var(--control-critical-secondary-border-hover);
+  color: var(--control-critical-primary-text-hover);
+}
+.lookOutlined.colorRed:active {
+  background-color: var(--control-critical-secondary-background-active);
+  border-color: var(--control-critical-secondary-border-active);
+  color: var(--control-critical-primary-text-active);
+}
+.lookOutlined.colorRed:disabled,
+.lookOutlined.colorRed[aria-disabled='true'] {
+  background-color: transparent;
+}
+.lookOutlined.colorRed .spinnerItem {
+  background-color: var(--red-400);
+}
+.lookLink.colorRed {
+  color: var(--text-feedback-critical);
+}
+.lookLink.colorRed:hover .contents {
+  --button--underline-color: var(--text-feedback-critical);
+}
+.lookLink.colorRed:disabled .contents,
+.lookLink.colorRed[aria-disabled='true'] .contents {
+  background-image: none;
+}
+.lookLink.colorRed .spinnerItem {
+  background-color: var(--text-feedback-critical);
+}
+.lookFilled.colorGreen {
+  background-color: var(--control-connected-background-default);
+  border: 1px solid var(--control-connected-border-default);
+  color: var(--white);
+}
+.lookFilled.colorGreen:hover {
+  background-color: var(--control-connected-background-hover);
+}
+.lookFilled.colorGreen:active {
+  background-color: var(--control-connected-background-active);
+}
+.lookFilled.colorGreen .spinnerItem {
+  background-color: var(--white);
+}
+.lookFilled.colorGreen:disabled,
+.lookFilled.colorGreen[aria-disabled='true'] {
+  background-color: var(--control-connected-background-default);
+}
+.lookOutlined.colorGreen {
+  border-color: var(--control-connected-border-default);
+  color: var(--control-primary-text-default);
+}
+.lookOutlined.colorGreen:hover {
+  background-color: var(--control-connected-background-hover);
+  border-color: var(--control-connected-border-hover);
+  color: var(--control-primary-text-hover);
+}
+.lookOutlined.colorGreen:active {
+  background-color: var(--control-connected-background-active);
+  border-color: var(--control-connected-border-active);
+  color: var(--control-primary-text-active);
+}
+.lookOutlined.colorGreen:disabled,
+.lookOutlined.colorGreen[aria-disabled='true'] {
+  background-color: transparent;
+}
+.lookOutlined.colorGreen .spinnerItem {
+  background-color: var(--green-230);
+}
+.lookLink.colorGreen {
+  color: var(--green-360);
+}
+.lookLink.colorGreen:hover .contents {
+  --button--underline-color: var(--green-360);
+}
+.lookLink.colorGreen:disabled .contents,
+.lookLink.colorGreen[aria-disabled='true'] .contents {
+  background-image: none;
+}
+.lookLink.colorGreen .spinnerItem {
+  background-color: var(--green-360);
+}
+.lookFilled.colorPrimary {
+  background-color: var(--control-secondary-background-default);
+  border-color: var(--border-muted);
+  color: var(--control-secondary-text-default);
+}
+.lookFilled.colorPrimary:hover {
+  background-color: var(--control-secondary-background-hover);
+}
+.lookFilled.colorPrimary:active {
+  background-color: var(--control-secondary-background-active);
+}
+.lookFilled.colorPrimary .spinnerItem {
+  background-color: var(--control-secondary-text-default);
+}
+.lookFilled.colorPrimary:disabled,
+.lookFilled.colorPrimary[aria-disabled='true'] {
+  background-color: var(--control-secondary-background-default);
+}
+.lookFilled.colorTransparent {
+  background-color: var(--control-secondary-background-default);
+  border-color: var(--border-muted);
+  color: var(--control-secondary-text-default);
+}
+.lookFilled.colorTransparent:hover {
+  background-color: var(--control-secondary-background-hover);
+}
+.lookFilled.colorTransparent:active {
+  background-color: var(--control-secondary-background-active);
+}
+.lookFilled.colorTransparent .spinnerItem {
+  background-color: var(--control-secondary-text-default);
+}
+.lookFilled.colorTransparent:disabled,
+.lookFilled.colorTransparent[aria-disabled='true'] {
+  background-color: var(--control-secondary-background-default);
+}
+:global(.theme-dark) .lookLink.colorPrimary:hover .contents {
+  --button--underline-color: var(--white);
+}
+:global(.theme-dark) .lookLink.colorPrimary .spinnerItem {
+  background-color: var(--white);
+}
+:global(.theme-dark) .lookOutlined.colorTransparent {
+  border-color: var(--primary-200);
+}
+:global(.theme-dark) .lookOutlined.colorTransparent:active {
+  background-color: hsl(var(--primary-200-hsl) / 0.1);
+}
+:global(.theme-dark) .lookOutlined.colorTransparent .spinnerItem {
+  background-color: var(--primary-200);
+}
+:global(.theme-dark) .lookLink.colorTransparent:hover .contents {
+  --button--underline-color: var(--primary-200);
+}
+:global(.theme-dark) .lookLink.colorTransparent .spinnerItem {
+  background-color: var(--primary-200);
+}
+:global(.theme-light) .lookLink.colorPrimary:hover .contents {
+  --button--underline-color: var(--primary-400);
+}
+:global(.theme-light) .lookLink.colorPrimary .spinnerItem {
+  background-color: var(--primary-400);
+}
+:global(.theme-light) .lookOutlined.colorTransparent {
+  border-color: var(--primary-400);
+}
+:global(.theme-light) .lookOutlined.colorTransparent:active {
+  background-color: hsl(var(--primary-400-hsl) / 0.1);
+}
+:global(.theme-light) .lookOutlined.colorTransparent .spinnerItem {
+  background-color: var(--primary-400);
+}
+:global(.theme-light) .lookLink.colorTransparent:hover .contents {
+  --button--underline-color: var(--primary-400);
+}
+:global(.theme-light) .lookLink.colorTransparent .spinnerItem {
+  background-color: var(--primary-400);
+}
+.lookFilled {
+  transition:
+    background-color var(--custom-button-transition-duration) ease,
+    color var(--custom-button-transition-duration) ease;
+}
+.lookOutlined {
+  border-style: solid;
+  border-width: 1px;
+  transition:
+    color var(--custom-button-transition-duration) ease,
+    background-color var(--custom-button-transition-duration) ease,
+    border-color var(--custom-button-transition-duration) ease;
+}
+.lookBlank {
+  background: transparent;
+  border: 0;
+  color: currentColor;
+  margin: 0;
+  padding: 0;
+}
+.sizeTiny {
+  height: var(--custom-button-button-tn-height);
+  min-height: var(--custom-button-button-tn-height);
+  min-width: var(--custom-button-button-tn-width);
+  width: var(--custom-button-button-tn-width);
+}
+.sizeSmall {
+  height: 32px;
+  line-height: 18px;
+  min-height: 32px;
+  min-width: 60px;
+  padding: calc(var(--space-4) - 1px) calc(var(--space-12) - 1px);
+  width: 60px;
+}
+.sizeMedium {
+  font-size: 16px;
+  height: 40px;
+  line-height: 18px;
+  min-height: 40px;
+  min-width: 100px;
+  padding: calc(var(--space-8) - 1px) calc(var(--space-16) - 1px);
+  width: 100px;
+}
+.sizeLarge {
+  height: var(--custom-button-button-lg-height);
+  min-height: var(--custom-button-button-lg-height);
+  min-width: var(--custom-button-button-lg-width);
+  width: var(--custom-button-button-lg-width);
+}
+.sizeMin {
+  display: inline;
+  height: auto;
+  padding: 0 4px;
+  width: auto;
+}
+.sizeMax {
+  font-size: 16px;
+  height: 100%;
+  min-height: 100%;
+  min-width: 100%;
+  width: 100%;
+}
+.sizeIcon {
+  height: auto;
+  padding: 4px;
+}
+.grow,
+.sizeIcon {
+  width: auto;
+}
+.fullWidth {
+  width: 100%;
+}
+.submitting {
+  pointer-events: none;
+}
+.lookFilled .contents,
+.lookLink .contents,
+.lookOutlined .contents {
+  margin: 0 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (-ms-high-contrast: active), (-ms-high-contrast: none) {
+  .lookFilled .contents,
+  .lookLink .contents,
+  .lookOutlined .contents {
+    margin: 0;
+  }
+}
+.submitting .contents {
+  visibility: hidden;
+}
+.spinner {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  inset-inline-start: 0;
+  justify-content: center;
+  margin: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+.disabledButtonWrapper {
+  display: inline-block;
+  padding: 0;
+  position: relative;
+}
+.disabledButtonWrapper .button.grow {
+  width: 100%;
+}
+.disabledButtonOverlay {
+  cursor: not-allowed;
+  inset: 0;
+  position: absolute;
+  z-index: 9;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button,
+:global(.enable-forced-colors):global(.theme-light) .button {
+  background-color: ButtonFace;
+  transition: none;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button .contents,
+:global(.enable-forced-colors):global(.theme-light) .button .contents {
+  color: ButtonText;
+  forced-color-adjust: none;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button .contents svg,
+:global(.enable-forced-colors):global(.theme-light) .button .contents svg {
+  color: currentColor;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button:hover,
+:global(.enable-forced-colors):global(.theme-light) .button:hover {
+  background-color: ButtonFace;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button:hover .contents,
+:global(.enable-forced-colors):global(.theme-light) .button:hover .contents {
+  color: ButtonText;
+  text-decoration: underline;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button:disabled,
+:global(.enable-forced-colors):global(.theme-dark) .button[aria-disabled='true'],
+:global(.enable-forced-colors):global(.theme-light) .button:disabled,
+:global(.enable-forced-colors):global(.theme-light) .button[aria-disabled='true'] {
+  background-color: Canvas;
+  border-color: GrayText !important;
+  opacity: 1;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button:disabled .contents,
+:global(.enable-forced-colors):global(.theme-dark) .button[aria-disabled='true'] .contents,
+:global(.enable-forced-colors):global(.theme-light) .button:disabled .contents,
+:global(.enable-forced-colors):global(.theme-light) .button[aria-disabled='true'] .contents {
+  color: GrayText;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button.lookLink .contents,
+:global(.enable-forced-colors):global(.theme-light) .button.lookLink .contents {
+  text-decoration: underline;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button.lookLink:not(:disabled),
+:global(.enable-forced-colors):global(.theme-dark) .button.lookLink:not([aria-disabled='true']),
+:global(.enable-forced-colors):global(.theme-light) .button.lookLink:not(:disabled),
+:global(.enable-forced-colors):global(.theme-light) .button.lookLink:not([aria-disabled='true']) {
+  background-color: Canvas;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button.lookLink:not(:disabled) .contents,
+:global(.enable-forced-colors):global(.theme-dark) .button.lookLink:not([aria-disabled='true']) .contents,
+:global(.enable-forced-colors):global(.theme-light) .button.lookLink:not(:disabled) .contents,
+:global(.enable-forced-colors):global(.theme-light) .button.lookLink:not([aria-disabled='true']) .contents {
+  color: LinkText;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button.lookLink:not(:disabled):hover,
+:global(.enable-forced-colors):global(.theme-dark) .button.lookLink:not([aria-disabled='true']):hover,
+:global(.enable-forced-colors):global(.theme-light) .button.lookLink:not(:disabled):hover,
+:global(.enable-forced-colors):global(.theme-light) .button.lookLink:not([aria-disabled='true']):hover {
+  background-color: Canvas;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button.lookLink:not(:disabled):hover .contents,
+:global(.enable-forced-colors):global(.theme-dark) .button.lookLink:not([aria-disabled='true']):hover .contents,
+:global(.enable-forced-colors):global(.theme-light) .button.lookLink:not(:disabled):hover .contents,
+:global(.enable-forced-colors):global(.theme-light) .button.lookLink:not([aria-disabled='true']):hover .contents {
+  color: LinkText;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button.lookFilled,
+:global(.enable-forced-colors):global(.theme-dark) .button.lookOutlined,
+:global(.enable-forced-colors):global(.theme-light) .button.lookFilled,
+:global(.enable-forced-colors):global(.theme-light) .button.lookOutlined {
+  border-style: solid;
+  border-width: 1px;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button.lookFilled:not(:disabled),
+:global(.enable-forced-colors):global(.theme-dark) .button.lookFilled:not([aria-disabled='true']),
+:global(.enable-forced-colors):global(.theme-dark) .button.lookOutlined:not(:disabled),
+:global(.enable-forced-colors):global(.theme-dark) .button.lookOutlined:not([aria-disabled='true']),
+:global(.enable-forced-colors):global(.theme-light) .button.lookFilled:not(:disabled),
+:global(.enable-forced-colors):global(.theme-light) .button.lookFilled:not([aria-disabled='true']),
+:global(.enable-forced-colors):global(.theme-light) .button.lookOutlined:not(:disabled),
+:global(.enable-forced-colors):global(.theme-light) .button.lookOutlined:not([aria-disabled='true']) {
+  border-color: CanvasText !important;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button.lookFilled:not(:disabled):hover,
+:global(.enable-forced-colors):global(.theme-dark) .button.lookFilled:not([aria-disabled='true']):hover,
+:global(.enable-forced-colors):global(.theme-dark) .button.lookOutlined:not(:disabled):hover,
+:global(.enable-forced-colors):global(.theme-dark) .button.lookOutlined:not([aria-disabled='true']):hover,
+:global(.enable-forced-colors):global(.theme-light) .button.lookFilled:not(:disabled):hover,
+:global(.enable-forced-colors):global(.theme-light) .button.lookFilled:not([aria-disabled='true']):hover,
+:global(.enable-forced-colors):global(.theme-light) .button.lookOutlined:not(:disabled):hover,
+:global(.enable-forced-colors):global(.theme-light) .button.lookOutlined:not([aria-disabled='true']):hover {
+  border-color: ButtonText !important;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button:active,
+:global(.enable-forced-colors):global(.theme-dark) .button[aria-expanded='true'],
+:global(.enable-forced-colors):global(.theme-dark) .button[aria-selected='true'],
+:global(.enable-forced-colors):global(.theme-light) .button:active,
+:global(.enable-forced-colors):global(.theme-light) .button[aria-expanded='true'],
+:global(.enable-forced-colors):global(.theme-light) .button[aria-selected='true'] {
+  background-color: HighlightText;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button:active .contents,
+:global(.enable-forced-colors):global(.theme-dark) .button[aria-expanded='true'] .contents,
+:global(.enable-forced-colors):global(.theme-dark) .button[aria-selected='true'] .contents,
+:global(.enable-forced-colors):global(.theme-light) .button:active .contents,
+:global(.enable-forced-colors):global(.theme-light) .button[aria-expanded='true'] .contents,
+:global(.enable-forced-colors):global(.theme-light) .button[aria-selected='true'] .contents {
+  color: Highlight;
+  text-decoration: underline;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button:active:hover,
+:global(.enable-forced-colors):global(.theme-dark) .button[aria-expanded='true']:hover,
+:global(.enable-forced-colors):global(.theme-dark) .button[aria-selected='true']:hover,
+:global(.enable-forced-colors):global(.theme-light) .button:active:hover,
+:global(.enable-forced-colors):global(.theme-light) .button[aria-expanded='true']:hover,
+:global(.enable-forced-colors):global(.theme-light) .button[aria-selected='true']:hover {
+  background-color: HighlightText;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button:active:hover .contents,
+:global(.enable-forced-colors):global(.theme-dark) .button[aria-expanded='true']:hover .contents,
+:global(.enable-forced-colors):global(.theme-dark) .button[aria-selected='true']:hover .contents,
+:global(.enable-forced-colors):global(.theme-light) .button:active:hover .contents,
+:global(.enable-forced-colors):global(.theme-light) .button[aria-expanded='true']:hover .contents,
+:global(.enable-forced-colors):global(.theme-light) .button[aria-selected='true']:hover .contents {
+  color: Highlight;
+}
+:global(.enable-forced-colors):global(.theme-dark) .button.lookFilled:active,
+:global(.enable-forced-colors):global(.theme-dark) .button.lookFilled[aria-expanded='true'],
+:global(.enable-forced-colors):global(.theme-dark) .button.lookFilled[aria-selected='true'],
+:global(.enable-forced-colors):global(.theme-dark) .button.lookOutlined:active,
+:global(.enable-forced-colors):global(.theme-dark) .button.lookOutlined[aria-expanded='true'],
+:global(.enable-forced-colors):global(.theme-dark) .button.lookOutlined[aria-selected='true'],
+:global(.enable-forced-colors):global(.theme-light) .button.lookFilled:active,
+:global(.enable-forced-colors):global(.theme-light) .button.lookFilled[aria-expanded='true'],
+:global(.enable-forced-colors):global(.theme-light) .button.lookFilled[aria-selected='true'],
+:global(.enable-forced-colors):global(.theme-light) .button.lookOutlined:active,
+:global(.enable-forced-colors):global(.theme-light) .button.lookOutlined[aria-expanded='true'],
+:global(.enable-forced-colors):global(.theme-light) .button.lookOutlined[aria-selected='true'] {
+  border-color: Highlight !important;
+}
+.lookLink.colorPrimary {
+  color: var(--text-default);
+}
+:global(.images-light) .lookLink.colorPrimary:disabled .contents,
+:global(.images-light) .lookLink.colorPrimary[aria-disabled='true'] .contents {
+  background-image: none;
+}
+:global(.images-dark) .lookLink.colorPrimary:disabled .contents,
+:global(.images-dark) .lookLink.colorPrimary[aria-disabled='true'] .contents {
+  background-image: none;
+}
+.lookOutlined.colorTransparent {
+  color: var(--text-default);
+}
+.lookOutlined.colorTransparent:disabled,
+.lookOutlined.colorTransparent[aria-disabled='true'] {
+  background-color: transparent;
+}
+.lookLink.colorTransparent {
+  color: var(--text-default);
+}
+.lookLink.sizeMin .contents {
+  display: inline;
+}
+:root:global(.theme-dark) .lookLink.colorLink,
+:root:global(.theme-dark) .lookLink.colorPrimary {
+  color: var(--brand-360);
+}
+:root:global(.theme-dark) .lookLink.colorLink:hover .contents,
+:root:global(.theme-dark) .lookLink.colorPrimary:hover .contents {
+  --button--underline-color: var(--brand-360);
+}
+.lookBlank,
+.lookLink {
+  border: none;
+}
