@@ -9,6 +9,7 @@ import styles from './Site.module.css';
 const LINKS = [
   { label: 'Playground', href: 'https://play.discord-mana.dev', host: 'play.discord-mana.dev' },
   { label: 'Preview API', href: 'https://preview.discord-mana.dev', host: 'preview.discord-mana.dev' },
+  { label: 'Builder', href: 'https://builder.discord-mana.dev', host: 'builder.discord-mana.dev' },
   {
     label: 'GitHub',
     href: 'https://github.com/Darker-Ink/discord-components',
@@ -24,6 +25,7 @@ const PACKAGES = [
   ['@discord-mana/messages', 'Messages, embeds, attachments, buttons and Components v2.'],
   ['@discord-mana/markdown', 'Discord’s markdown parser, with mentions, emoji and code blocks.'],
   ['@discord-mana/slate', 'The chat input, with live markdown, mentions and emoji.'],
+  ['@discord-mana/builders', 'A message editor for embeds and Components v2, checked against Discord’s limits.'],
 ] as const;
 
 const Home = ({ theme, setTheme }: { theme: SiteTheme; setTheme: (theme: SiteTheme) => void }) => (
