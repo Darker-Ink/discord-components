@@ -299,8 +299,8 @@ export const Button = ({
   ...props
 }: ButtonProps) => {
   const group = useButtonGroupContext();
-  const resolvedSize = group?.size ?? size;
-  const resolvedFullWidth = group?.fullWidth ?? fullWidth;
+  const resolvedSize = group.size ?? size;
+  const resolvedFullWidth = group.fullWidth ?? fullWidth;
   const hasText = text != null;
   const ownRef = useRef<HTMLButtonElement>(null);
   const ref = buttonRef ?? ownRef;
