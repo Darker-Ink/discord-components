@@ -12,3 +12,4 @@ export {
   type RiveGraphic,
   type VideoGraphic,
 } from './Graphic';
+export { LottieAnimation, type LottieAnimationProps, type LottieRenderer } from './LottieAnimation';

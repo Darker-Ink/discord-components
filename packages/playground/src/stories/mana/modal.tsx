@@ -363,8 +363,7 @@ const ExpressiveModalStory = ({ graphic: graphicIndex, subtitleIcon, ...props }:
       case 1:
         return {
           type: 'lottie',
-          // Discord's story loads its Lottie animation from a lazy chunk; Lottie isn't rendered here.
-          lottie: () => Promise.resolve({}),
+          lottie: () => import('./assets/expressive-modal-lottie.json').then((module) => module.default),
           aspectRatio: '6/4',
         };
       case 2:

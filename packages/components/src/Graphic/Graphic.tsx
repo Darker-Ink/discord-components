@@ -11,6 +11,7 @@ import {
 import clsx from 'clsx';
 import { AccessibilityPreferencesContext } from '../AccessibilityPreferences';
 import { useManaContext } from '../ManaContext';
+import { LottieAnimation, type LottieAnimationProps } from './LottieAnimation';
 import styles from './Graphic.module.css';
 
 export type GraphicAspectRatio = '21/9' | '16/9' | '6/4' | '2/1' | '1/1';
@@ -24,7 +25,7 @@ export interface LottieGraphic {
   type: 'lottie';
   // Loads the animation data (e.g. a dynamic import of the JSON).
   lottie: () => Promise<unknown>;
-  props?: Record<string, unknown>;
+  props?: Partial<LottieAnimationProps>;
 }
 
 export interface RiveGraphic {
@@ -112,8 +113,18 @@ const GraphicImage = ({ src }: { src: string }) => <img className={styles.image}
 
 GraphicImage.displayName = 'GraphicImage';
 
-// Discord renders Lottie animations with its in-app player, which isn't part of this library.
-const GraphicLottie = (_props: Omit<LottieGraphic, 'type'>) => null;
+const GraphicLottie = ({ lottie, props }: Omit<LottieGraphic, 'type'>) => {
+  const { reducedMotion } = useContext(AccessibilityPreferencesContext);
+  return (
+    <LottieAnimation
+      className={styles.lottie}
+      importData={lottie}
+      autoplay
+      shouldAnimate={!reducedMotion.enabled}
+      {...props}
+    />
+  );
+};
 
 GraphicLottie.displayName = 'GraphicLottie';
 
