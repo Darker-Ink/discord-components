@@ -64,3 +64,4 @@ export * from './ModalRoot';
 export * from './InlineNotice';
 export * from './LegacyButton';
 export * from './Flex';
+export * from './CopyInput';
