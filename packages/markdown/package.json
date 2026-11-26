@@ -1,16 +1,40 @@
 {
   "name": "@discord-mana/markdown",
   "version": "0.0.0",
+  "description": "Discord's markdown for React: the message and embed parser, mentions, emoji, timestamps and highlighted code blocks.",
+  "keywords": [
+    "discord",
+    "mana",
+    "react",
+    "markdown",
+    "parser",
+    "syntax-highlighting"
+  ],
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Darker-Ink/discord-components.git",
+    "directory": "packages/markdown"
+  },
   "type": "module",
   "sideEffects": [
     "**/*.css",
     "./src/languages/*.ts",
+    "./dist/index.js",
+    "./dist/internal.js",
     "./dist/languages/*.js"
   ],
   "exports": {
     ".": "./src/index.ts",
     "./internal": "./src/internal.ts",
     "./languages/*": "./src/languages/*.ts"
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "vite build"
   },
   "dependencies": {
     "@discord-mana/components": "workspace:*",
@@ -527,6 +551,27 @@
     },
     "@arborium/zsh": {
       "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "./internal": {
+        "types": "./dist/internal.d.ts",
+        "default": "./dist/internal.js"
+      },
+      "./languages/*": {
+        "types": "./dist/languages/*.d.ts",
+        "default": "./dist/languages/*.js"
+      },
+      "./style.css": "./dist/style.css",
+      "./package.json": "./package.json"
     }
   }
 }

@@ -8,7 +8,9 @@
       "@discord-mana/tokens",
       "@discord-mana/icons",
       "@discord-mana/components",
-      "@discord-mana/messages"
+      "@discord-mana/messages",
+      "@discord-mana/markdown",
+      "@discord-mana/slate"
     ]
   ],
   "linked": [],

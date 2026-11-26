@@ -12,6 +12,8 @@ const stylesheets = [
   '@discord-mana/tokens/base.css',
   '@discord-mana/components/style.css',
   '@discord-mana/messages/style.css',
+  '@discord-mana/markdown/style.css',
+  '@discord-mana/slate/style.css',
 ];
 
 export default defineLibraryConfig(import.meta.dirname, {

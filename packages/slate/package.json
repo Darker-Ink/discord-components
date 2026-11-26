@@ -1,12 +1,35 @@
 {
   "name": "@discord-mana/slate",
   "version": "0.0.0",
+  "description": "Discord's chat input for React: the Slate rich text editor with live markdown, mentions and emoji.",
+  "keywords": [
+    "discord",
+    "mana",
+    "react",
+    "slate",
+    "editor",
+    "chat-input"
+  ],
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Darker-Ink/discord-components.git",
+    "directory": "packages/slate"
+  },
   "type": "module",
   "sideEffects": [
-    "**/*.css"
+    "**/*.css",
+    "./dist/index.js"
   ],
   "exports": {
     ".": "./src/index.ts"
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "vite build"
   },
   "dependencies": {
     "@discord-mana/components": "workspace:*",
@@ -37,5 +60,18 @@
   "peerDependencies": {
     "react": "^19",
     "react-dom": "^19"
+  },
+  "publishConfig": {
+    "access": "public",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "./style.css": "./dist/style.css",
+      "./package.json": "./package.json"
+    }
   }
 }
