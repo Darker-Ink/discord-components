@@ -28,6 +28,7 @@ import {
 import riveWasmUrl from '@rive-app/canvas/rive.wasm?url';
 import { AccessibilityPreferencesContext } from '../AccessibilityPreferences';
 import { useManaContext } from '../ManaContext';
+import { getRiveCanvas } from './getRiveCanvas';
 import { RiveDataBindingContext, type RiveDataBindingContextValue } from './RiveDataBinding';
 
 // Discord ships the runtime's wasm with its own assets instead of letting Rive fetch it from a CDN.
@@ -45,7 +46,18 @@ export type RiveReducedMotion = 'halt' | 'short-loop' | 'play';
 export interface RivePlaybackState {
   isPlaying: boolean;
   isPaused: boolean;
+  isAutoSleeping: boolean;
+  isRenderScheduled: boolean;
   fps: number;
+}
+
+export type RivePropertyType =
+  'number' | 'string' | 'boolean' | 'color' | 'enum' | 'trigger' | 'image' | 'artboard' | 'list' | 'viewModel';
+
+export interface RivePropertyState {
+  type: string;
+  value: unknown;
+  values: string[] | undefined;
 }
 
 export interface RiveAnimationHandle {
@@ -53,6 +65,8 @@ export interface RiveAnimationHandle {
   pause: () => void;
   stop: () => void;
   getPlaybackState: () => RivePlaybackState | null;
+  /** Every property of the bound view model instance, nested view models as `parent/child`. */
+  getProperties: () => Record<string, RivePropertyState>;
   getArtboards: () => string[];
 }
 
@@ -68,10 +82,17 @@ export interface RiveAnimationProps {
   /** Element whose pointer events drive the animation's listeners, instead of the canvas. */
   eventTargetRef?: RefObject<HTMLElement | null>;
   withReducedMotion?: RiveReducedMotion;
+  /** The view model properties of each artboard, by name and type. */
+  artboardProperties?: Record<string, Record<string, RivePropertyType>>;
   defaultViewModelInstance?: string;
   artboardViewModelInstances?: Record<string, string[]>;
+  /** The state machines of each artboard. */
+  artboardStateMachines?: Record<string, string[]>;
   renderDataBinding?: () => ReactNode;
   touchScrollEnabled?: boolean;
+  // Options of Discord's build of the Rive runtime; the published runtime doesn't support them.
+  listenOnDocumentBody?: boolean;
+  eventCapture?: boolean;
   assetLoader?: AssetLoadCallback;
   onLoad?: (event: RiveEvent) => void;
   ref?: Ref<RiveAnimationHandle>;
@@ -127,9 +148,11 @@ type RiveInternals = {
   setupRiveListeners: Rive['setupRiveListeners'];
 };
 
-const getCanvasElement = (rive: Rive) => {
-  const { canvas } = rive as unknown as RiveInternals;
-  return canvas != null && 'ownerDocument' in canvas ? canvas : null;
+// A view model instance read generically, by property type.
+type BoundInstance = Record<string, ((path: string) => { value: unknown } | null) | undefined> & {
+  properties: { name: string; type: unknown }[];
+  enum: (path: string) => { values: string[] } | null;
+  viewModel: (path: string) => { properties: { name: string; type: unknown }[] } | null;
 };
 
 // Discord's build of the runtime takes an `eventTarget` and registers the state machines' pointer
@@ -160,6 +183,7 @@ export const RiveAnimation = ({
   artboard,
   withReducedMotion = 'halt',
   ref,
+  artboardProperties,
   artboardViewModelInstances,
   defaultViewModelInstance,
   renderDataBinding,
@@ -212,7 +236,37 @@ export const RiveAnimation = ({
       },
       stop: () => rive?.stop(),
       getPlaybackState: () =>
-        rive == null ? null : { isPlaying: rive.isPlaying, isPaused: rive.isPaused, fps: rive.fps },
+        rive == null
+          ? null
+          : {
+              isPlaying: rive.isPlaying,
+              isPaused: rive.isPaused,
+              isAutoSleeping: false,
+              isRenderScheduled: (rive as unknown as RiveInternals).frameRequestId != null,
+              fps: rive.fps,
+            },
+      getProperties: () => {
+        const instance = rive?.viewModelInstance as unknown as BoundInstance | null | undefined;
+        if (instance == null) return {};
+        const read = (path: string, propertyType: string): RivePropertyState => {
+          const type = propertyType === 'enumType' ? 'enum' : propertyType;
+          return {
+            type,
+            value: instance[type]?.(path)?.value,
+            values: type === 'enum' ? (instance.enum(path)?.values ?? undefined) : undefined,
+          };
+        };
+        return instance.properties.reduce<Record<string, RivePropertyState>>((properties, property) => {
+          if (property.type === 'viewModel') {
+            instance.viewModel(property.name)?.properties.forEach((nested) => {
+              const path = `${property.name}/${nested.name}`;
+              properties[path] = read(path, String(nested.type));
+            });
+          }
+          properties[property.name] = read(property.name, String(property.type));
+          return properties;
+        }, {});
+      },
       getArtboards: () => {
         if (rive == null) return [];
         const file = (rive as unknown as RiveInternals).riveFile?.getInstance();
@@ -234,6 +288,14 @@ export const RiveAnimation = ({
       : { useDefault: true, rive: boundRive },
   );
 
+  const currentRive = useRef<Rive | null>(null);
+  useEffect(() => {
+    currentRive.current = rive;
+    return () => {
+      currentRive.current = null;
+    };
+  }, [rive]);
+
   // Redraws a paused animation after a bound property changed.
   const redrawScheduled = useRef(false);
   const playIfNeeded = useCallback(() => {
@@ -241,6 +303,7 @@ export const RiveAnimation = ({
     redrawScheduled.current = true;
     queueMicrotask(() => {
       redrawScheduled.current = false;
+      if (currentRive.current !== rive) return;
       resetIdle();
       if (!rive.isPlaying) {
         (rive as unknown as RiveInternals).artboard?.advance(0);
@@ -248,6 +311,20 @@ export const RiveAnimation = ({
       }
     });
   }, [rive, resetIdle]);
+
+  // Discord's runtime redraws a color change in the frame it happened in, without waking the
+  // animation; the published runtime can only draw a new frame.
+  const colorRedrawScheduled = useRef(false);
+  const showColorChange = useCallback(() => {
+    if (rive == null || colorRedrawScheduled.current) return;
+    colorRedrawScheduled.current = true;
+    queueMicrotask(() => {
+      colorRedrawScheduled.current = false;
+      if (currentRive.current !== rive || rive.isPlaying) return;
+      (rive as unknown as RiveInternals).artboard?.advance(0);
+      rive.drawFrame();
+    });
+  }, [rive]);
 
   useEffect(() => {
     if (rive == null || withReducedMotion !== 'short-loop' || !reducedMotion.enabled) return;
@@ -269,7 +346,7 @@ export const RiveAnimation = ({
     if (rive == null) return;
     if (fit === 'layout') rive.resizeDrawingSurfaceToCanvas();
     const timer = setTimeout(() => {
-      if (getCanvasElement(rive) == null) return;
+      if (getRiveCanvas(rive) == null) return;
       rive.resizeDrawingSurfaceToCanvas();
       if (!rive.isPlaying) {
         rive.startRendering();
@@ -282,7 +359,7 @@ export const RiveAnimation = ({
   // A paused animation doesn't redraw by itself, so follow size changes by hand.
   useEffect(() => {
     if (rive == null || !reducedMotion.enabled) return;
-    const canvas = getCanvasElement(rive);
+    const canvas = getRiveCanvas(rive);
     if (canvas == null) return;
     const observer = new (canvas.ownerDocument.defaultView ?? window).ResizeObserver(() => {
       rive.resizeDrawingSurfaceToCanvas();
@@ -329,7 +406,7 @@ export const RiveAnimation = ({
 
   useEffect(() => {
     resetIdle();
-  }, [resetIdle, artboard, fit, alignment]);
+  }, [resetIdle, artboard, fit, alignment, artboardProperties]);
 
   // Pause while the window is in the background or the user is idle, and resume afterwards.
   const isActive = isFocused && !isUserIdle;
@@ -361,8 +438,14 @@ export const RiveAnimation = ({
   }, [rive, isActive]);
 
   const dataBinding = useMemo<RiveDataBindingContextValue>(
-    () => ({ instance: viewModelInstance, rive, reducedMotionEnabled: reducedMotion.enabled, playIfNeeded }),
-    [viewModelInstance, rive, reducedMotion.enabled, playIfNeeded],
+    () => ({
+      instance: viewModelInstance,
+      rive,
+      reducedMotionEnabled: reducedMotion.enabled,
+      playIfNeeded,
+      showColorChange,
+    }),
+    [viewModelInstance, rive, reducedMotion.enabled, playIfNeeded, showColorChange],
   );
 
   return (

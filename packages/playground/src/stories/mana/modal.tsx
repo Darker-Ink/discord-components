@@ -8,9 +8,8 @@ import {
   Modal,
   ModalBody,
   MultiStepModal,
-  RiveAnimation,
+  PerfTestRive,
   SearchableSelect,
-  RiveAssetStatus,
   SearchBar,
   Stack,
   Text,
@@ -18,7 +17,6 @@ import {
   openConfirmModal,
   openModal,
   openModalLazy,
-  useRiveAsset,
   type GraphicProps,
   type ModalNoticeProps,
   type ModalRenderProps,
@@ -29,30 +27,6 @@ import { DynamicGraphicComponent } from '../../dynamicGraphics';
 import type { StoryGroup } from '../../types';
 
 const GRAPHIC_IMAGE = '/mana/expressive-modal-graphic.svg';
-
-const BOX_WUMPUS_RIVE =
-  'https://cdn.discordapp.com/assets/content/a9d4129fe10ee310d96f95d04fbf382b9c26914a30780ebb307e908a826248f2.riv';
-
-// The Rive animation the ExpressiveModal story shows.
-const BoxWumpusRive = ({
-  artboard = 'box-wumpus',
-  stateMachine,
-  ...props
-}: {
-  artboard?: string;
-  stateMachine?: string;
-  className?: string;
-  withReducedMotion?: 'short-loop';
-  autoplay?: boolean;
-  fit?: 'contain';
-  alignment?: 'center';
-}) => {
-  const { status, buffer } = useRiveAsset(BOX_WUMPUS_RIVE);
-  if (status === RiveAssetStatus.Loading) return null;
-  return <RiveAnimation buffer={buffer} artboard={artboard} stateMachine={stateMachine} {...props} />;
-};
-
-BoxWumpusRive.displayName = 'BoxWumpusRive';
 
 type NoticeType = NonNullable<ModalNoticeProps['type']>;
 
@@ -365,7 +339,7 @@ const ExpressiveModalStory = ({ graphic: graphicIndex, subtitleIcon, ...props }:
           aspectRatio: '6/4',
         };
       case 2:
-        return { type: 'rive', rive: BoxWumpusRive };
+        return { type: 'rive', rive: PerfTestRive };
       case 3:
         return {
           type: 'video',
