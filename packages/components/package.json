@@ -12,6 +12,7 @@
     "@discord-components/icons": "workspace:*",
     "@discord-components/tokens": "workspace:*",
     "@floating-ui/react": "^0.27.20",
+    "@internationalized/date": "3.12.4",
     "@react-spring/web": "^10.1.2",
     "@rive-app/canvas": "2.40.0",
     "@rive-app/react-canvas": "4.32.0",

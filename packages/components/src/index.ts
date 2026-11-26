@@ -76,3 +76,4 @@ export * from './Select';
 export * from './Combobox';
 export * from './SearchableSelect';
 export * from './Countdown';
+export * from './Calendar';
