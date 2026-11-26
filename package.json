@@ -12,9 +12,11 @@
     "format:check": "prettier --check .",
     "assets:fetch": "node scripts/fetch-assets.mjs",
     "assets:split": "node scripts/split-modules.mjs",
-    "assets:css": "node scripts/extract-css.mjs"
+    "assets:css": "node scripts/extract-css.mjs",
+    "changeset": "changeset"
   },
   "devDependencies": {
+    "@changesets/cli": "^3.0.3",
     "@eslint/js": "^9.39.5",
     "@types/node": "^26.6.10",
     "acorn": "^8.19.0",
