@@ -23,6 +23,8 @@
   grid-template-columns: 64px minmax(0, 1fr) 320px;
 }
 .app[data-layout='phone'] {
+  /* The selected node's tools sit just above the tab bar. */
+  --builder-dock-offset: calc(61px + env(safe-area-inset-bottom));
   grid-template-areas: 'header' 'channel' 'tabs';
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto minmax(0, 1fr) auto;
@@ -178,7 +180,7 @@
 }
 /* Room under the message for the bar of a selected node's tools. */
 .app[data-layout='phone'] .canvas {
-  padding-bottom: 72px;
+  padding-bottom: 64px;
 }
 
 /* Tools */
@@ -339,4 +341,11 @@
   flex-wrap: wrap;
   gap: 8px;
   justify-content: flex-end;
+}
+
+/* The narrowest phones: the mode switch gets the logo's room, so both its labels fit. */
+@media (max-width: 380px) {
+  .app[data-layout='phone'] .logoMarkOnly {
+    display: none;
+  }
 }
