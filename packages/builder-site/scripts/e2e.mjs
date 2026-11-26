@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* global process, console, document, window, navigator, localStorage, getComputedStyle */
+/* global process, console, document, window, navigator, localStorage, fetch, URL */
 // End-to-end checks of the builder site in a real browser, against a running server:
 //   pnpm --filter @discord-mana/builder-site dev
 //   CHROMIUM_PATH=/opt/pw-browsers/chromium node scripts/e2e.mjs http://localhost:5175
