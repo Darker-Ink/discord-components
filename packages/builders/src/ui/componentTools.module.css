@@ -1,0 +1,266 @@
+.row {
+  display: flex;
+  gap: 8px;
+}
+.row > * {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Button styles, shown as the buttons themselves. */
+.styleGrid {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 1fr 1fr;
+}
+.styleOption {
+  width: 100%;
+}
+.styleSelected {
+  box-shadow:
+    0 0 0 2px var(--background-surface-high),
+    0 0 0 4px var(--control-brand-foreground-new);
+}
+.styleLabel {
+  align-items: center;
+  display: inline-flex;
+  gap: 4px;
+}
+.styleDot {
+  border-radius: 4px;
+  display: block;
+  height: 14px;
+  width: 20px;
+}
+.styleDot[data-style='1'],
+.styleDot[data-style='6'] {
+  background: var(--control-primary-background-default);
+}
+.styleDot[data-style='2'],
+.styleDot[data-style='5'] {
+  background: var(--control-secondary-background-default);
+}
+.styleDot[data-style='3'] {
+  background: var(--control-connected-background-default);
+}
+.styleDot[data-style='4'] {
+  background: var(--control-critical-primary-background-default);
+}
+
+.emojiGrid {
+  display: grid;
+  gap: 2px;
+  grid-template-columns: repeat(8, 1fr);
+}
+.emojiButton {
+  align-items: center;
+  appearance: none;
+  background: none;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  height: 32px;
+  justify-content: center;
+  padding: 0;
+}
+.emojiButton:hover,
+.emojiButton[aria-pressed='true'] {
+  background: var(--interactive-background-hover);
+}
+
+.swatch {
+  background: var(--border-normal);
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  box-sizing: border-box;
+  display: block;
+  height: 16px;
+  width: 16px;
+}
+.toolbarLabel {
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 16px;
+  padding: 0 2px;
+}
+.toolbarText {
+  align-items: center;
+  appearance: none;
+  background: none;
+  border: 0;
+  border-radius: 6px;
+  color: var(--interactive-text-default);
+  cursor: pointer;
+  display: flex;
+  font-family: var(--font-primary);
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  gap: 4px;
+  height: 28px;
+  padding: 0 6px 0 4px;
+}
+.toolbarText:hover {
+  background: var(--interactive-background-hover);
+  color: var(--interactive-text-hover);
+}
+
+/* Select options */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.option {
+  align-items: flex-start;
+  background: var(--background-base-lower);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  display: flex;
+  gap: 6px;
+  padding: 8px 6px;
+  position: relative;
+}
+.optionFields {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.optionDefault {
+  align-self: flex-end;
+  padding-bottom: 6px;
+}
+.grip,
+.removeOption {
+  align-items: center;
+  appearance: none;
+  background: none;
+  border: 0;
+  border-radius: 4px;
+  color: var(--icon-muted);
+  cursor: grab;
+  display: flex;
+  height: 24px;
+  justify-content: center;
+  padding: 0;
+  width: 20px;
+}
+.removeOption {
+  cursor: pointer;
+}
+.grip:hover,
+.removeOption:hover {
+  background: var(--interactive-background-hover);
+  color: var(--interactive-text-hover);
+}
+.removeOption:hover {
+  color: var(--status-danger);
+}
+.dragging {
+  opacity: 0.6;
+  z-index: 1;
+}
+
+/* Gallery items strip */
+.strip {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.tile {
+  position: relative;
+}
+.tileButton,
+.addTile {
+  align-items: center;
+  appearance: none;
+  background: var(--background-mod-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  box-sizing: border-box;
+  color: var(--icon-muted);
+  cursor: pointer;
+  display: flex;
+  height: 48px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+  width: 48px;
+}
+.tileButton:hover,
+.tileButton[aria-expanded='true'],
+.addTile:hover {
+  border-color: var(--control-brand-foreground-new);
+  color: var(--interactive-text-hover);
+}
+.addTile {
+  border-style: dashed;
+}
+.tileImage {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+.tileIcon {
+  display: flex;
+}
+.tileBadge {
+  background: var(--background-base-lowest);
+  border-radius: 4px;
+  bottom: 2px;
+  color: var(--text-default);
+  display: flex;
+  padding: 2px;
+  position: absolute;
+  right: 2px;
+}
+
+/* A section with no accessory yet */
+.accessoryGhost {
+  align-items: stretch;
+  border: 1px dashed var(--border-strong);
+  border-radius: 8px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  justify-content: center;
+  min-height: 85px;
+  padding: 4px;
+  width: 96px;
+}
+.accessoryChoice {
+  align-items: center;
+  appearance: none;
+  background: none;
+  border: 0;
+  border-radius: 4px;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  font-family: var(--font-primary);
+  font-size: 12px;
+  font-weight: var(--font-weight-medium);
+  gap: 4px;
+  padding: 6px;
+}
+.accessoryChoice:hover {
+  background: var(--interactive-background-hover);
+  color: var(--text-default);
+}

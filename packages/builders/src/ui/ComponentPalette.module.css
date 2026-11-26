@@ -1,0 +1,91 @@
+/* A slim list of what can be added, styled like the client's channel list rows. */
+.palette {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  user-select: none;
+}
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.title {
+  color: var(--channels-default, var(--text-muted));
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.02em;
+  line-height: 16px;
+  margin: 0 0 4px;
+  padding: 0 8px;
+}
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.item {
+  align-items: center;
+  appearance: none;
+  background: none;
+  border: 0;
+  border-radius: 6px;
+  box-sizing: border-box;
+  color: var(--interactive-text-default);
+  cursor: grab;
+  display: flex;
+  font-family: var(--font-primary);
+  font-size: 15px;
+  font-weight: var(--font-weight-medium);
+  gap: 8px;
+  height: 34px;
+  line-height: 20px;
+  padding: 0 8px;
+  text-align: start;
+  touch-action: none;
+  width: 100%;
+}
+.item:hover {
+  background: var(--interactive-background-hover);
+  color: var(--interactive-text-hover);
+}
+.item:active {
+  background: var(--interactive-background-active);
+  cursor: grabbing;
+}
+.item:focus-visible {
+  outline: 2px solid var(--focus-primary, #00b0f4);
+  outline-offset: -2px;
+}
+.item[aria-disabled='true'] {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+.item[aria-disabled='true']:hover {
+  background: none;
+  color: var(--interactive-text-default);
+}
+.dragging {
+  opacity: 0.5;
+}
+.icon {
+  color: var(--icon-muted);
+  display: flex;
+  flex: none;
+}
+.item:hover .icon {
+  color: var(--interactive-text-hover);
+}
+.label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.compact .item {
+  justify-content: center;
+  padding: 0;
+  width: 40px;
+}

@@ -1,0 +1,67 @@
+/*
+ * The editing chrome around a rendered node. Nothing here changes layout: hover, selection, focus and issues are
+ * outlines, so an unselected message renders exactly like the client's.
+ */
+
+.frame {
+  position: relative;
+}
+
+[data-builder-node] {
+  border-radius: 4px;
+  outline: 0 solid transparent;
+  outline-offset: 3px;
+}
+[data-builder-node]:focus {
+  outline-style: solid;
+}
+[data-builder-node]:focus:not(:focus-visible) {
+  outline-color: transparent;
+}
+
+/* Only the innermost node under the pointer lights up. */
+[data-builder-canvas]:not([data-dragging]) [data-builder-node]:hover:not(:has([data-builder-node]:hover)) {
+  outline: 1px solid var(--border-strong);
+}
+
+[data-builder-node][data-issue='warning'] {
+  outline: 1px dashed var(--status-warning);
+}
+[data-builder-node][data-issue='error'] {
+  outline: 1px solid var(--status-danger);
+}
+
+[data-builder-node][data-selected] {
+  outline: 2px solid var(--control-brand-foreground-new);
+}
+[data-builder-node][data-selected][data-issue='error'] {
+  outline-color: var(--status-danger);
+}
+[data-builder-node]:focus-visible {
+  outline: 2px solid var(--focus-primary, #00b0f4);
+}
+
+[data-builder-node][data-dragging] {
+  opacity: 0.4;
+}
+
+:global(.full-motion) [data-builder-node] {
+  transition:
+    outline-color 0.1s ease,
+    opacity 0.15s ease;
+}
+
+/* Inline nodes (buttons in a row) keep their own box. */
+.inline {
+  display: inline-flex;
+  max-width: 100%;
+  min-width: 0;
+}
+
+[data-builder-kind='container'],
+[data-builder-kind='mediaGallery'] {
+  border-radius: 8px;
+}
+[data-builder-kind='button'] {
+  border-radius: 8px;
+}

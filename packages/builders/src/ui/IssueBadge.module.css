@@ -1,0 +1,20 @@
+.badge {
+  align-items: center;
+  background: var(--background-base-lowest);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--background-base-lowest);
+  color: var(--status-danger);
+  cursor: help;
+  display: flex;
+  height: 16px;
+  justify-content: center;
+  pointer-events: auto;
+  position: absolute;
+  right: -6px;
+  top: -6px;
+  width: 16px;
+  z-index: 2;
+}
+.badge[data-severity='warning'] {
+  color: var(--status-warning);
+}

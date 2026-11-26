@@ -1,0 +1,16 @@
+/* An editable copy of a button's label, laid exactly over it. Invisible until it is being edited. */
+.label {
+  cursor: text;
+  min-width: 2px;
+  outline: none;
+  overflow: visible;
+  position: absolute;
+  white-space: pre;
+  z-index: 1;
+}
+.label:not([data-editing]) {
+  color: transparent !important;
+}
+.label[data-editing] {
+  caret-color: currentColor;
+}

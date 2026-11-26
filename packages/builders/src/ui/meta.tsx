@@ -1,0 +1,227 @@
+import type { ComponentType } from 'react';
+import {
+  AtIcon,
+  AttachmentIcon,
+  ChevronSmallDownIcon,
+  EmbedIcon,
+  GridHorizontalIcon,
+  HashmarkIcon,
+  ImageIcon,
+  ImagesIcon,
+  ImageTextIcon,
+  LinkIcon,
+  ListBulletsIcon,
+  MinusIcon,
+  ShieldUserIcon,
+  ShopIcon,
+  TextIcon,
+  UserIcon,
+  WidgetsIcon,
+  WindowTopOutlineIcon,
+  type IconProps,
+} from '@discord-mana/icons';
+import type { BuilderMode, NodeKind } from '../core';
+
+export type KindIcon = ComponentType<IconProps<'color'>>;
+
+/** What people call each kind of node in the editor (menus, announcements, the issues list). */
+export const KIND_LABELS: Record<NodeKind, string> = {
+  embed: 'Embed',
+  embedField: 'Field',
+  selectOption: 'Option',
+  mediaGalleryItem: 'Gallery item',
+  actionRow: 'Action row',
+  button: 'Button',
+  stringSelect: 'Select menu',
+  userSelect: 'User select',
+  roleSelect: 'Role select',
+  mentionableSelect: 'Mentionable select',
+  channelSelect: 'Channel select',
+  section: 'Section',
+  textDisplay: 'Text',
+  thumbnail: 'Thumbnail',
+  mediaGallery: 'Media gallery',
+  file: 'File',
+  separator: 'Separator',
+  container: 'Container',
+  unknown: 'Unknown component',
+};
+
+export const KIND_ICONS: Record<NodeKind, KindIcon> = {
+  embed: EmbedIcon,
+  embedField: ListBulletsIcon,
+  selectOption: ListBulletsIcon,
+  mediaGalleryItem: ImageIcon,
+  actionRow: GridHorizontalIcon,
+  button: WidgetsIcon,
+  stringSelect: ChevronSmallDownIcon,
+  userSelect: UserIcon,
+  roleSelect: ShieldUserIcon,
+  mentionableSelect: AtIcon,
+  channelSelect: HashmarkIcon,
+  section: ImageTextIcon,
+  textDisplay: TextIcon,
+  thumbnail: ImageIcon,
+  mediaGallery: ImagesIcon,
+  file: AttachmentIcon,
+  separator: MinusIcon,
+  container: WindowTopOutlineIcon,
+  unknown: WidgetsIcon,
+};
+
+/** One entry of the palette: a template the core can create, with how it is shown. */
+export interface PaletteItem {
+  template: string;
+  kind: NodeKind;
+  label: string;
+  description: string;
+  icon: KindIcon;
+  modes: readonly BuilderMode[];
+}
+
+export const PALETTE_ITEMS: readonly PaletteItem[] = [
+  {
+    template: 'embed',
+    kind: 'embed',
+    label: 'Embed',
+    description: 'A card with a title, text, fields and images',
+    icon: EmbedIcon,
+    modes: ['classic'],
+  },
+  {
+    template: 'field',
+    kind: 'embedField',
+    label: 'Field',
+    description: 'A name and value inside an embed',
+    icon: ListBulletsIcon,
+    modes: ['classic'],
+  },
+  {
+    template: 'container',
+    kind: 'container',
+    label: 'Container',
+    description: 'A box around components, with an accent colour',
+    icon: WindowTopOutlineIcon,
+    modes: ['cv2'],
+  },
+  {
+    template: 'text-display',
+    kind: 'textDisplay',
+    label: 'Text',
+    description: 'Markdown text',
+    icon: TextIcon,
+    modes: ['cv2'],
+  },
+  {
+    template: 'section',
+    kind: 'section',
+    label: 'Section',
+    description: 'Text with a thumbnail or button beside it',
+    icon: ImageTextIcon,
+    modes: ['cv2'],
+  },
+  {
+    template: 'media-gallery',
+    kind: 'mediaGallery',
+    label: 'Media gallery',
+    description: 'Up to 10 images or videos in a grid',
+    icon: ImagesIcon,
+    modes: ['cv2'],
+  },
+  {
+    template: 'thumbnail',
+    kind: 'thumbnail',
+    label: 'Thumbnail',
+    description: 'A small image beside a section’s text',
+    icon: ImageIcon,
+    modes: ['cv2'],
+  },
+  {
+    template: 'file',
+    kind: 'file',
+    label: 'File',
+    description: 'An uploaded file, by attachment:// name',
+    icon: AttachmentIcon,
+    modes: ['cv2'],
+  },
+  {
+    template: 'separator',
+    kind: 'separator',
+    label: 'Separator',
+    description: 'Space, with or without a line',
+    icon: MinusIcon,
+    modes: ['cv2'],
+  },
+  {
+    template: 'action-row',
+    kind: 'actionRow',
+    label: 'Action row',
+    description: 'A row of up to 5 buttons, or one select menu',
+    icon: GridHorizontalIcon,
+    modes: ['classic', 'cv2'],
+  },
+  {
+    template: 'button',
+    kind: 'button',
+    label: 'Button',
+    description: 'Sends an interaction to your app',
+    icon: WidgetsIcon,
+    modes: ['classic', 'cv2'],
+  },
+  {
+    template: 'link-button',
+    kind: 'button',
+    label: 'Link button',
+    description: 'Opens a URL',
+    icon: LinkIcon,
+    modes: ['classic', 'cv2'],
+  },
+  {
+    template: 'premium-button',
+    kind: 'button',
+    label: 'Premium button',
+    description: 'Buys one of your app’s SKUs',
+    icon: ShopIcon,
+    modes: ['classic', 'cv2'],
+  },
+  {
+    template: 'string-select',
+    kind: 'stringSelect',
+    label: 'Select menu',
+    description: 'A dropdown of your own options',
+    icon: ChevronSmallDownIcon,
+    modes: ['classic', 'cv2'],
+  },
+  {
+    template: 'user-select',
+    kind: 'userSelect',
+    label: 'User select',
+    description: 'Pick members of the server',
+    icon: UserIcon,
+    modes: ['classic', 'cv2'],
+  },
+  {
+    template: 'role-select',
+    kind: 'roleSelect',
+    label: 'Role select',
+    description: 'Pick roles',
+    icon: ShieldUserIcon,
+    modes: ['classic', 'cv2'],
+  },
+  {
+    template: 'mentionable-select',
+    kind: 'mentionableSelect',
+    label: 'Mentionable select',
+    description: 'Pick members or roles',
+    icon: AtIcon,
+    modes: ['classic', 'cv2'],
+  },
+  {
+    template: 'channel-select',
+    kind: 'channelSelect',
+    label: 'Channel select',
+    description: 'Pick channels',
+    icon: HashmarkIcon,
+    modes: ['classic', 'cv2'],
+  },
+];

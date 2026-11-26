@@ -1,0 +1,164 @@
+import { createContext, useContext, useEffect, useId, useMemo, useState, type ReactNode } from 'react';
+import {
+  MessageResolversContext,
+  useMessageResolvers,
+  type MessageResolvers,
+  type RenderEmbedMarkdown,
+  type RenderMessageMarkdown,
+} from '@discord-mana/messages';
+import { EditorResolversContext, type EditorResolvers } from '@discord-mana/slate';
+import {
+  findNode,
+  MessageBuilderProvider,
+  useBuilderStore,
+  type BuilderStore,
+  type MessageBuilderApi,
+  type MessageBuilderOptions,
+} from '../core';
+import { BuilderDndProvider } from './dnd/BuilderDnd';
+import { isMod } from './NodeFrame';
+import { BuilderRenderContext, DEFAULT_RENDER_OPTIONS, type BuilderRenderOptions } from './renderContext';
+import { BuilderUIContext, createBuilderUIStore } from './uiStore';
+
+const ScopeContext = createContext<string>('');
+
+ScopeContext.displayName = 'BuilderScopeContext';
+
+/**
+ * Marks an element as part of a builder, so its shortcuts (undo, redo) work while focus is inside it. Spread on
+ * the root of each piece you lay out yourself.
+ */
+export const useBuilderScope = () => ({ 'data-builder-scope': useContext(ScopeContext) });
+
+export interface BuilderProviderProps extends MessageBuilderOptions {
+  /** A builder from `useMessageBuilder` (or a store). Without one, a builder is made from the options. */
+  builder?: MessageBuilderApi | BuilderStore;
+  /** Users, roles, channels, emoji and avatar URLs for markdown and mentions. */
+  resolvers?: MessageResolvers;
+  /** The same for the text editors' pills (mentions while typing); defaults to `resolvers` where they overlap. */
+  editorResolvers?: EditorResolvers;
+  renderMessageMarkdown?: RenderMessageMarkdown;
+  renderEmbedMarkdown?: RenderEmbedMarkdown;
+  /** Shows the message without any editing. */
+  readOnly?: boolean;
+  /** The channel and server the message is shown in (mentions resolve against them). */
+  channelId?: string;
+  guildId?: string | null;
+  /** Undo/redo also when nothing in the builder has focus (the page's only editor). Default true. */
+  globalShortcuts?: boolean;
+  children: ReactNode;
+}
+
+const Inner = ({
+  resolvers,
+  editorResolvers,
+  renderMessageMarkdown,
+  renderEmbedMarkdown,
+  readOnly = false,
+  channelId = DEFAULT_RENDER_OPTIONS.channelId,
+  guildId = DEFAULT_RENDER_OPTIONS.guildId,
+  globalShortcuts = true,
+  children,
+}: Omit<BuilderProviderProps, keyof MessageBuilderOptions | 'builder'>) => {
+  const store = useBuilderStore();
+  const [ui] = useState(createBuilderUIStore);
+  const scope = useId();
+  const parentResolvers = useMessageResolvers();
+  const mergedResolvers = useMemo(
+    () => (resolvers != null ? { ...parentResolvers, ...resolvers } : parentResolvers),
+    [parentResolvers, resolvers],
+  );
+  const render = useMemo<BuilderRenderOptions>(
+    () => ({
+      renderMessageMarkdown: renderMessageMarkdown ?? DEFAULT_RENDER_OPTIONS.renderMessageMarkdown,
+      renderEmbedMarkdown: renderEmbedMarkdown ?? DEFAULT_RENDER_OPTIONS.renderEmbedMarkdown,
+      readOnly,
+      channelId,
+      guildId,
+    }),
+    [channelId, guildId, readOnly, renderEmbedMarkdown, renderMessageMarkdown],
+  );
+  const editorContext = useMemo(
+    () => ({ guildId, channelId, resolvers: editorResolvers ?? {} }),
+    [channelId, editorResolvers, guildId],
+  );
+
+  // Undo and redo while focus is in the builder (text fields handle their own keys and stop them).
+  useEffect(() => {
+    if (readOnly) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (!isMod(event) || event.altKey || event.defaultPrevented) return;
+      const key = event.key.toLowerCase();
+      if (key !== 'z' && key !== 'y') return;
+      const target = event.target as Element | null;
+      // Native inputs (popout fields, the JSON editor) keep their own undo.
+      if (target?.closest('input, textarea, [contenteditable="true"], [contenteditable="plaintext-only"]') != null)
+        return;
+      const inScope = target?.closest(`[data-builder-scope="${CSS.escape(scope)}"]`) != null;
+      const onPage = target == null || target === document.body || target === document.documentElement;
+      if (!inScope && !(globalShortcuts && onPage)) return;
+      event.preventDefault();
+      if (key === 'y' || event.shiftKey) store.actions.redo();
+      else store.actions.undo();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [globalShortcuts, readOnly, scope, store]);
+
+  // A node that no longer exists (undone, deleted elsewhere) can't stay selected.
+  useEffect(
+    () =>
+      store.subscribe(() => {
+        const { selectedId } = ui.getState();
+        if (selectedId == null) return;
+        if (findNode(store.getState().doc, selectedId) == null) ui.set({ selectedId: null });
+      }),
+    [store, ui],
+  );
+
+  return (
+    <ScopeContext.Provider value={scope}>
+      <BuilderUIContext.Provider value={ui}>
+        <BuilderRenderContext.Provider value={render}>
+          <MessageResolversContext.Provider value={mergedResolvers}>
+            <EditorResolversContext.Provider value={editorContext}>
+              <BuilderDndProvider>{children}</BuilderDndProvider>
+            </EditorResolversContext.Provider>
+          </MessageResolversContext.Provider>
+        </BuilderRenderContext.Provider>
+      </BuilderUIContext.Provider>
+    </ScopeContext.Provider>
+  );
+};
+
+Inner.displayName = 'BuilderProviderInner';
+
+/**
+ * Everything the builder's pieces share: the document (the core's `MessageBuilderProvider`), selection and
+ * drag state, drag and drop, markdown rendering and resolvers. Put the pieces (`BuilderCanvas`,
+ * `ComponentPalette`, `ValidationPanel`, `JsonPanel`, `WebhookPanel`) anywhere inside it.
+ */
+export const BuilderProvider = ({
+  builder,
+  value,
+  defaultValue,
+  onChange,
+  limit,
+  coalesceMs,
+  validation,
+  ...props
+}: BuilderProviderProps) => (
+  <MessageBuilderProvider
+    builder={builder}
+    value={value}
+    defaultValue={defaultValue}
+    onChange={onChange}
+    limit={limit}
+    coalesceMs={coalesceMs}
+    validation={validation}
+  >
+    <Inner {...props} />
+  </MessageBuilderProvider>
+);
+
+BuilderProvider.displayName = 'BuilderProvider';

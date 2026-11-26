@@ -1,0 +1,104 @@
+/* Placeholders for an embed's empty parts, shown while it is selected. They sit where the part would render. */
+
+.ghost {
+  align-items: center;
+  appearance: none;
+  background: none;
+  border: 1px dashed var(--border-strong);
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  font-family: var(--font-primary);
+  font-size: 13px;
+  font-weight: var(--font-weight-medium);
+  gap: 6px;
+  justify-content: center;
+  line-height: 16px;
+  padding: 4px 8px;
+}
+.ghost:hover {
+  background: var(--background-mod-subtle);
+  border-color: var(--control-brand-foreground-new);
+  color: var(--text-default);
+}
+.ghostWide {
+  grid-column: 1 / 1;
+  justify-content: flex-start;
+  justify-self: start;
+}
+.ghostImage {
+  grid-column: 1 / 1;
+  height: 72px;
+  width: 100%;
+}
+.ghostThumbnail {
+  flex-direction: column;
+  font-size: 11px;
+  gap: 2px;
+  height: 80px;
+  padding: 4px;
+  width: 80px;
+}
+/* An author with no name yet: the row is a placeholder. */
+.ghostRow {
+  opacity: 0.9;
+}
+.ghostText {
+  color: var(--text-muted);
+}
+
+/* Text in the footer that opens an editor (the timestamp). */
+.inlineButton {
+  align-items: center;
+  appearance: none;
+  background: none;
+  border: 0;
+  border-radius: 3px;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+}
+.inlineButton:hover {
+  background: var(--background-mod-subtle);
+  color: var(--text-default);
+}
+
+/* The colour bar is the embed's left border; this covers it (and a little more) to open the colour picker. */
+.colorBar {
+  appearance: none;
+  background: none;
+  border: 0;
+  bottom: -1px;
+  cursor: pointer;
+  left: -6px;
+  padding: 0;
+  position: absolute;
+  top: -1px;
+  width: 10px;
+  z-index: 1;
+}
+.colorBar:hover,
+.colorBar[aria-expanded='true'] {
+  background: linear-gradient(90deg, transparent 2px, var(--white) 2px, var(--white) 4px, transparent 4px);
+  opacity: 0.6;
+}
+
+.swatch {
+  background: var(--border-normal);
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  box-sizing: border-box;
+  display: block;
+  height: 16px;
+  width: 16px;
+}
+
+.field {
+  position: relative;
+}

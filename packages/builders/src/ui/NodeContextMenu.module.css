@@ -1,0 +1,6 @@
+.anchor {
+  height: 1px;
+  pointer-events: none;
+  position: fixed;
+  width: 1px;
+}

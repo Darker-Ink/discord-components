@@ -1,0 +1,41 @@
+/* Small editors next to a node, on the client's popout surface. */
+.panel {
+  background: var(--background-surface-high);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  box-shadow: var(--shadow-high);
+  box-sizing: border-box;
+  color: var(--text-default);
+  display: flex;
+  flex-direction: column;
+  max-height: min(560px, calc(100vh - 32px));
+  max-width: calc(100vw - 16px);
+  overflow: hidden;
+}
+.title {
+  padding: 14px 16px 0;
+}
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+  overflow: auto;
+  padding: 12px 16px 16px;
+}
+.footer {
+  align-items: center;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding: 10px 16px;
+}
+.row {
+  display: flex;
+  gap: 8px;
+}
+.row > * {
+  flex: 1;
+  min-width: 0;
+}

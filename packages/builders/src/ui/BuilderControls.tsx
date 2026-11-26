@@ -1,0 +1,85 @@
+import { useCallback } from 'react';
+import clsx from 'clsx';
+import { IconButton, Tooltip } from '@discord-mana/components';
+import { RedoIcon, UndoIcon } from '@discord-mana/icons';
+import { useBuilderSelector, type BuilderMode } from '../core';
+import { isMac } from './NodeFrame';
+import { useBuilderContext } from './useBuilderContext';
+import styles from './BuilderControls.module.css';
+
+const MODES: { mode: BuilderMode; label: string; description: string }[] = [
+  { mode: 'classic', label: 'Embeds', description: 'Content, embeds and action rows' },
+  { mode: 'cv2', label: 'Components v2', description: 'Containers, sections, text, galleries' },
+];
+
+export interface BuilderModeSwitchProps {
+  className?: string;
+  /** Called after the mode changed (the message is converted; undo brings the old one back). */
+  onChange?: (mode: BuilderMode) => void;
+}
+
+/**
+ * Switches between a classic message (embeds) and Components v2. The message is converted rather than lost:
+ * embeds become containers and back, and undo restores exactly what was there.
+ */
+export const BuilderModeSwitch = ({ className, onChange }: BuilderModeSwitchProps) => {
+  const { actions } = useBuilderContext();
+  const mode = useBuilderSelector((state) => state.doc.mode);
+  return (
+    <div className={clsx(styles.switch, className)} role="radiogroup" aria-label="Message type">
+      {MODES.map((entry) => (
+        <Tooltip key={entry.mode} text={entry.description} position="bottom">
+          <button
+            type="button"
+            role="radio"
+            aria-checked={mode === entry.mode}
+            className={styles.option}
+            onClick={() => {
+              if (mode === entry.mode) return;
+              actions.setMode(entry.mode, { convert: true });
+              onChange?.(entry.mode);
+            }}
+          >
+            {entry.label}
+          </button>
+        </Tooltip>
+      ))}
+    </div>
+  );
+};
+
+BuilderModeSwitch.displayName = 'BuilderModeSwitch';
+
+/** Undo and redo for the whole message (also Ctrl/⌘+Z and Ctrl/⌘+Shift+Z anywhere in the builder). */
+export const BuilderHistoryButtons = ({ className }: { className?: string }) => {
+  const { actions } = useBuilderContext();
+  const canUndo = useBuilderSelector(useCallback((state) => state.past.length > 0, []));
+  const canRedo = useBuilderSelector(useCallback((state) => state.future.length > 0, []));
+  const mod = isMac() ? '⌘' : 'Ctrl+';
+  return (
+    <div className={clsx(styles.history, className)}>
+      <Tooltip text="Undo" keyboardShortcut={`${mod}Z`} position="bottom">
+        <IconButton
+          variant="icon-only"
+          size="sm"
+          icon={{ type: 'icon', asset: UndoIcon }}
+          aria-label="Undo"
+          disabled={!canUndo}
+          onClick={actions.undo}
+        />
+      </Tooltip>
+      <Tooltip text="Redo" keyboardShortcut={`${mod}Shift+Z`} position="bottom">
+        <IconButton
+          variant="icon-only"
+          size="sm"
+          icon={{ type: 'icon', asset: RedoIcon }}
+          aria-label="Redo"
+          disabled={!canRedo}
+          onClick={actions.redo}
+        />
+      </Tooltip>
+    </div>
+  );
+};
+
+BuilderHistoryButtons.displayName = 'BuilderHistoryButtons';

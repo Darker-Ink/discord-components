@@ -1,0 +1,56 @@
+/* The wrapper adds no box: the editor is the client's own text element. */
+.field {
+  display: contents;
+}
+.field[data-invalid] > *,
+.plain[data-invalid] {
+  -webkit-text-decoration: underline wavy var(--status-danger);
+  text-decoration: underline wavy var(--status-danger);
+  text-decoration-skip-ink: none;
+  text-underline-offset: 3px;
+}
+
+.plain {
+  cursor: text;
+  outline: none;
+}
+.plain:empty::before {
+  color: var(--channel-text-area-placeholder);
+  content: attr(data-placeholder);
+  pointer-events: none;
+}
+/* An editable span keeps a caret-sized box when empty. */
+.plain:empty {
+  display: inline-block;
+  min-width: 1px;
+}
+
+/* The counter and problem pill, under the end of a text. */
+.status {
+  background: var(--background-surface-highest);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  box-shadow: var(--shadow-low);
+  color: var(--text-muted);
+  font-family: var(--font-primary);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--font-weight-semibold);
+  line-height: 16px;
+  max-width: 280px;
+  overflow: hidden;
+  padding: 1px 6px;
+  pointer-events: auto;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  z-index: 90;
+}
+.status[data-severity='warning'] {
+  border-color: var(--status-warning);
+  color: var(--text-feedback-warning);
+}
+.status[data-severity='error'] {
+  background: var(--background-feedback-critical);
+  border-color: var(--status-danger);
+  color: var(--text-feedback-critical);
+}

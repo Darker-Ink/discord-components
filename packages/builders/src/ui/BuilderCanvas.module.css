@@ -1,0 +1,33 @@
+/* The canvas holds one message, laid out like the chat's message list. */
+.canvas {
+  color: var(--text-default);
+  min-width: 0;
+  position: relative;
+}
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Inside a read-only canvas everything works like a normal message. */
+.canvas:not([data-readonly]) :global(a) {
+  cursor: inherit;
+}
+
+.empty {
+  border: 1px dashed var(--border-strong);
+  border-radius: 8px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 520px;
+  padding: 20px 16px;
+}
+
+.rootIssues {
+  position: absolute;
+  right: 16px;
+  top: 8px;
+}

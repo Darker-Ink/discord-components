@@ -1,0 +1,114 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  position: relative;
+}
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* A highlighted copy of the text sits under a transparent textarea with exactly the same metrics. */
+.editor {
+  background: var(--background-base-lowest);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  flex: 1;
+  min-height: 240px;
+  overflow: hidden;
+  position: relative;
+}
+.editor:focus-within {
+  border-color: var(--control-brand-foreground-new);
+}
+.editor[data-invalid] {
+  border-color: var(--status-danger);
+}
+.code,
+.input {
+  box-sizing: border-box;
+  font-family: var(--font-code);
+  font-size: 13px;
+  font-variant-ligatures: none;
+  inset: 0;
+  line-height: 20px;
+  margin: 0;
+  overflow: auto;
+  padding: 10px 12px;
+  position: absolute;
+  tab-size: 2;
+  white-space: pre;
+}
+.code {
+  color: var(--text-default);
+  pointer-events: none;
+  scrollbar-width: none;
+}
+.code::-webkit-scrollbar {
+  display: none;
+}
+.input {
+  background: transparent;
+  border: 0;
+  caret-color: var(--text-strong);
+  color: transparent;
+  height: 100%;
+  outline: none;
+  resize: none;
+  width: 100%;
+}
+.input::selection {
+  background: color-mix(in srgb, var(--control-brand-foreground-new) 35%, transparent);
+  color: transparent;
+}
+.line {
+  display: inline;
+}
+.errorLine {
+  background: color-mix(in srgb, var(--status-danger) 18%, transparent);
+  border-radius: 2px;
+  box-shadow: -12px 0 0 color-mix(in srgb, var(--status-danger) 18%, transparent);
+}
+
+/* The client's code block colours (its JSON highlighting). */
+.key {
+  color: var(--text-code-property);
+}
+.string {
+  color: var(--text-code-string);
+}
+.number,
+.literal {
+  color: var(--text-code-number);
+}
+.punctuation {
+  color: var(--text-code-operator);
+}
+
+.error {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.hint {
+  margin: 0;
+}
+
+.dropOverlay {
+  align-items: center;
+  background: color-mix(in srgb, var(--background-base-lowest) 85%, transparent);
+  border: 2px dashed var(--control-brand-foreground-new);
+  border-radius: 8px;
+  color: var(--text-strong);
+  display: flex;
+  flex-direction: column;
+  font-weight: var(--font-weight-semibold);
+  gap: 8px;
+  inset: 0;
+  justify-content: center;
+  pointer-events: none;
+  position: absolute;
+}

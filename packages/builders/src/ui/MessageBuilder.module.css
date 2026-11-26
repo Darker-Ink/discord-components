@@ -1,0 +1,114 @@
+/* Palette | channel | tools, like the client's server list | chat | member list. */
+.builder {
+  background: var(--background-base-lowest);
+  box-sizing: border-box;
+  color: var(--text-default);
+  display: grid;
+  font-family: var(--font-primary);
+  grid-template-areas: 'palette main side';
+  grid-template-columns: 220px minmax(0, 1fr) minmax(300px, 380px);
+  height: 100%;
+  min-height: 0;
+}
+.noPalette {
+  grid-template-areas: 'main side';
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+}
+.noPanels {
+  grid-template-areas: 'palette main';
+  grid-template-columns: 220px minmax(0, 1fr);
+}
+.noPalette.noPanels {
+  grid-template-areas: 'main';
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.palette {
+  border-right: 1px solid var(--border-subtle);
+  box-sizing: border-box;
+  grid-area: palette;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 16px 8px;
+}
+.main {
+  grid-area: main;
+}
+.side {
+  background: var(--background-base-lower);
+  border-left: 1px solid var(--border-subtle);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  grid-area: side;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.channel {
+  background: var(--background-base-lower);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+.channelHeader {
+  flex: none;
+}
+.channelActions {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  margin-inline-start: auto;
+}
+.topic {
+  color: var(--text-muted);
+  font-size: 14px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.channelScroller {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 16px 0 48px;
+}
+
+.panels {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  padding: 8px 16px 0;
+}
+.panels > * {
+  min-height: 0;
+}
+.panelBody {
+  padding: 16px 0 24px;
+}
+
+@media (max-width: 1100px) {
+  .builder {
+    grid-template-columns: 180px minmax(0, 1fr) minmax(280px, 320px);
+  }
+}
+@media (max-width: 860px) {
+  .builder,
+  .noPalette,
+  .noPanels {
+    grid-template-areas: 'main' 'side';
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+  .palette {
+    display: none;
+  }
+  .side {
+    border-left: 0;
+    border-top: 1px solid var(--border-subtle);
+    max-height: 50vh;
+  }
+}

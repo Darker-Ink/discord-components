@@ -1,0 +1,46 @@
+/* A segmented control on the client's tokens: one raised segment on a recessed track. */
+.switch {
+  background: var(--background-mod-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  box-sizing: border-box;
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+}
+.option {
+  appearance: none;
+  background: none;
+  border: 0;
+  border-radius: 6px;
+  color: var(--interactive-text-default);
+  cursor: pointer;
+  font-family: var(--font-primary);
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  height: 28px;
+  line-height: 18px;
+  padding: 0 12px;
+  white-space: nowrap;
+}
+.option:hover {
+  color: var(--interactive-text-hover);
+}
+.option[aria-checked='true'] {
+  background: var(--background-surface-highest);
+  box-shadow: var(--shadow-low);
+  color: var(--text-strong);
+}
+.option:focus-visible {
+  outline: 2px solid var(--focus-primary, #00b0f4);
+  outline-offset: 0;
+}
+:global(.full-motion) .option {
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+.history {
+  display: flex;
+  gap: 2px;
+}
