@@ -46,6 +46,7 @@ const AUTHOR = {
   global_name: 'Wumpus',
   avatar_url: `${BASE}/example/avatar.png`,
 };
+const INTERACTIVE_MESSAGE_ID = '1400000000000000001';
 const BOT = { id: '1000000000000000002', username: 'Helper', bot: true, avatar_url: `${BASE}/example/icon.png` };
 
 const MESSAGES = [
@@ -68,12 +69,55 @@ const MESSAGES = [
   },
 ];
 
+// A parent page that handles a preview's interactions with the SDK the site serves.
+const interactionsPage = (src) => `<!doctype html><html><body style="margin:0;background:#eef1f7;padding:24px">
+<h1 style="font:600 16px sans-serif;margin:0 0 12px">Parent page (another origin)</h1>
+<iframe id="frame" src="${src.replaceAll('"', '&quot;')}" style="width:760px;border:0;height:50px;display:block"></iframe>
+<script type="module">
+  import { connectPreview } from '${BASE}/sdk/connect-preview.js';
+  const bot = ${JSON.stringify({ id: '1000000000000000002', username: 'Helper', bot: true, avatar_url: `${BASE}/example/icon.png` })};
+  window.events = [];
+  window.preview = connectPreview(document.getElementById('frame'), {
+    onReady: (event) => window.events.push(event),
+    onInteraction: (event, reply) => {
+      window.events.push(event);
+      switch (event.data.custom_id) {
+        case 'greet':
+          return reply.reply({ author: bot, content: 'Hello from the parent page!' });
+        case 'edit':
+          return reply.update({ content: 'Edited by the parent page.' });
+        case 'feedback':
+          return reply.openModal({
+            custom_id: 'feedback_modal',
+            title: 'Send feedback',
+            components: [{ type: 1, components: [{ type: 4, custom_id: 'name', label: 'Your name', style: 1, required: true }] }],
+          });
+        case 'slow':
+          window.slowInteraction = event.interactionId;
+          return reply.defer();
+        case 'color':
+          return reply.reply({ author: bot, content: 'You picked ' + event.data.values.join(', ') + '.' });
+      }
+    },
+    onModalSubmit: (event, reply) => {
+      window.events.push(event);
+      const name = event.data.components[0].components[0].value;
+      reply.reply({ author: bot, content: 'Thanks for the feedback, ' + name + '!' });
+    },
+  });
+</script></body></html>`;
+
 // A page on another origin that frames previews and records what they post.
 const startScratchServer = () =>
   new Promise((resolve) => {
     const server = http.createServer((request, response) => {
-      const src = new URL(request.url, 'http://x').searchParams.get('src') ?? '';
+      const requestUrl = new URL(request.url, 'http://x');
+      const src = requestUrl.searchParams.get('src') ?? '';
       response.setHeader('content-type', 'text/html');
+      if (requestUrl.pathname === '/interactions') {
+        response.end(interactionsPage(src));
+        return;
+      }
       response.end(`<!doctype html><html><body style="margin:0;background:#f0e6ff;padding:24px">
 <h1 style="font:600 16px sans-serif">Scratch page</h1>
 <iframe id="frame" src="${src.replaceAll('"', '&quot;')}" style="width:720px;border:0;height:50px"></iframe>
@@ -138,7 +182,7 @@ const main = async () => {
   await step('has a sidebar, anchors, tabbed code and copy buttons', async () => {
     await page.goto(`${BASE}/docs`, { waitUntil: 'networkidle' });
     const links = page.getByRole('navigation', { name: 'Documentation' }).getByRole('link');
-    assert.equal(await links.count(), 8);
+    assert.equal(await links.count(), 9);
     await links.filter({ hasText: 'Embedding' }).click();
     await page.waitForFunction(() => window.location.hash === '#embedding');
     await page.waitForTimeout(400);
@@ -358,6 +402,187 @@ const main = async () => {
     const last = await page.evaluate(() => window.resizes[window.resizes.length - 1]);
     assert.equal(await page.evaluate(() => document.getElementById('frame').offsetHeight), last.height);
     await page.screenshot({ path: path.join(OUT, 'iframe-5000-end.png') });
+  });
+
+  console.log('Interactions');
+  const INTERACTIVE_MESSAGE = {
+    id: INTERACTIVE_MESSAGE_ID,
+    author: BOT,
+    content: 'Try the buttons below.',
+    timestamp: '2026-11-26T10:00:00.000Z',
+    components: [
+      {
+        type: 1,
+        components: [
+          { type: 2, style: 1, label: 'Greet', custom_id: 'greet' },
+          { type: 2, style: 2, label: 'Feedback', custom_id: 'feedback' },
+          { type: 2, style: 2, label: 'Edit', custom_id: 'edit' },
+          { type: 2, style: 4, label: 'Slow', custom_id: 'slow' },
+        ],
+      },
+      {
+        type: 1,
+        components: [
+          {
+            type: 3,
+            custom_id: 'color',
+            placeholder: 'Pick a colour',
+            options: [
+              { label: 'Blurple', value: 'blurple' },
+              { label: 'Green', value: 'green' },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+  const createInteractive = async (options) => {
+    const created = await api('POST', '/api/previews', {
+      key,
+      body: { data: [INTERACTIVE_MESSAGE], options: { title: 'interactions', ...options } },
+    });
+    assert.equal(created.status, 201, JSON.stringify(created.body));
+    return created.body.id;
+  };
+  const interactionsUrl = (id, query = 'interactions=1') =>
+    `${scratchOrigin}/interactions?src=${encodeURIComponent(`${BASE}/p/${id}?theme=light&${query}`)}`;
+  const frameWarnings = [];
+  page.on('console', (message) => {
+    if (message.type() === 'warning' && message.text().includes('[mana preview]')) frameWarnings.push(message.text());
+  });
+
+  let interactionsId;
+  await step('stays display-only without both opt-ins', async () => {
+    interactionsId = await createInteractive({ interactions: true });
+    await page.goto(interactionsUrl(interactionsId, 'interactions=0'), { waitUntil: 'networkidle' });
+    const frame = page.frameLocator('#frame');
+    await frame.getByText('Try the buttons below.').waitFor();
+    assert.ok(await frame.getByRole('button', { name: 'Greet' }).isDisabled());
+    const plainId = await createInteractive({});
+    await page.goto(interactionsUrl(plainId), { waitUntil: 'networkidle' });
+    await page.frameLocator('#frame').getByText('Try the buttons below.').waitFor();
+    assert.ok(await page.frameLocator('#frame').getByRole('button', { name: 'Greet' }).isDisabled());
+    await page.waitForTimeout(300);
+    assert.deepEqual(await page.evaluate(() => window.events), []);
+  });
+
+  await step('sends a click to the parent and shows the message it appends', async () => {
+    await page.goto(interactionsUrl(interactionsId), { waitUntil: 'networkidle' });
+    await page.waitForFunction(() => window.events.some((event) => event.type === 'discord-mana:ready'));
+    const frame = page.frameLocator('#frame');
+    await frame.getByRole('button', { name: 'Greet' }).click();
+    await frame.getByText('Hello from the parent page!').waitFor();
+    const event = await page.evaluate(() => window.events.find((e) => e.type === 'discord-mana:interaction'));
+    assert.equal(event.previewId, interactionsId);
+    assert.equal(event.messageId, INTERACTIVE_MESSAGE_ID);
+    assert.match(event.interactionId, /^\d+$/);
+    assert.deepEqual(event.data, { component_type: 2, custom_id: 'greet' });
+    await frame.getByRole('button', { name: 'Edit' }).click();
+    await frame.getByText('Edited by the parent page.').waitFor();
+    assert.equal(await frame.getByText('Try the buttons below.').count(), 0);
+    await page.screenshot({ path: path.join(OUT, 'interactions-append.png'), fullPage: true });
+  });
+
+  await step('sends select values', async () => {
+    const frame = page.frameLocator('#frame');
+    await frame.getByText('Pick a colour').click();
+    await frame.getByRole('option', { name: 'Green' }).click();
+    await frame.getByText('You picked green.').waitFor();
+    const event = await page.evaluate(() => window.events.findLast((e) => e.type === 'discord-mana:interaction'));
+    assert.deepEqual(event.data, { component_type: 3, custom_id: 'color', values: ['green'] });
+  });
+
+  await step('opens a modal from the parent and sends its submission', async () => {
+    const frame = page.frameLocator('#frame');
+    await frame.getByRole('button', { name: 'Feedback' }).click();
+    const dialog = frame.getByRole('dialog', { name: 'Send feedback' });
+    await dialog.waitFor();
+    await page.waitForFunction(() => document.getElementById('frame').offsetHeight >= 640);
+    await dialog.getByRole('textbox').fill('Ada');
+    await page.waitForTimeout(500);
+    await page.screenshot({ path: path.join(OUT, 'interactions-modal.png'), fullPage: true });
+    await dialog.getByRole('button', { name: 'Submit' }).click();
+    await frame.getByText('Thanks for the feedback, Ada!').waitFor();
+    await dialog.waitFor({ state: 'detached' });
+    const submit = await page.evaluate(() => window.events.find((e) => e.type === 'discord-mana:modal-submit'));
+    assert.equal(submit.previewId, interactionsId);
+    assert.equal(submit.messageId, INTERACTIVE_MESSAGE_ID);
+    assert.deepEqual(submit.data, {
+      custom_id: 'feedback_modal',
+      components: [{ type: 1, components: [{ type: 4, custom_id: 'name', value: 'Ada' }] }],
+    });
+    await page.screenshot({ path: path.join(OUT, 'interactions-modal-submitted.png'), fullPage: true });
+  });
+
+  await step('shows loading while deferred, then the failure the parent reports', async () => {
+    const frame = page.frameLocator('#frame');
+    await frame.getByRole('button', { name: 'Slow' }).click();
+    await page.waitForFunction(() => window.slowInteraction != null);
+    const slow = frame.locator('button', { hasText: 'Slow' });
+    // Past Discord's 3 second window: deferred interactions keep loading.
+    await page.waitForTimeout(3500);
+    assert.equal(await slow.locator('[aria-hidden="true"]').count(), 1);
+    await page.screenshot({ path: path.join(OUT, 'interactions-loading.png'), fullPage: true });
+    await page.evaluate(() => window.preview.fail(window.slowInteraction, 'The parent page gave up.'));
+    await frame.getByText('The parent page gave up.').waitFor();
+    await page.screenshot({ path: path.join(OUT, 'interactions-failed.png'), fullPage: true });
+  });
+
+  await step('fails interactions nobody answers, like Discord', async () => {
+    const id = await createInteractive({ interactions: true });
+    // Framed by the plain scratch page, which listens to nothing.
+    await page.goto(`${scratchOrigin}/?src=${encodeURIComponent(`${BASE}/p/${id}?interactions=1`)}`, {
+      waitUntil: 'networkidle',
+    });
+    const frame = page.frameLocator('#frame');
+    await frame.getByRole('button', { name: 'Greet' }).click();
+    await frame.getByText('This interaction failed').waitFor({ timeout: 6000 });
+  });
+
+  await step('drops invalid commands with a warning', async () => {
+    await page.goto(interactionsUrl(interactionsId), { waitUntil: 'networkidle' });
+    await page.waitForFunction(() => window.events.some((event) => event.type === 'discord-mana:ready'));
+    frameWarnings.length = 0;
+    await page.evaluate(() => {
+      window.preview.appendMessage({ content: 'no author' });
+      window.preview.appendMessage({
+        author: { id: '1', username: 'x' },
+        content: 'bad link',
+        embeds: [{ title: 'x', url: 'javascript:alert(1)' }],
+      });
+      window.preview.appendMessage({ author: { id: '1', username: 'x' }, content: 'This one is fine.' });
+    });
+    const frame = page.frameLocator('#frame');
+    await frame.getByText('This one is fine.').waitFor();
+    assert.equal(await frame.getByText('no author').count(), 0);
+    assert.equal(await frame.getByText('bad link').count(), 0);
+    assert.equal(frameWarnings.filter((text) => text.includes('append-message')).length, 2);
+  });
+
+  await step('ignores parents outside allowedOrigins', async () => {
+    const id = await createInteractive({ interactions: true, allowedOrigins: ['https://allowed.example.com'] });
+    frameWarnings.length = 0;
+    await page.goto(interactionsUrl(id), { waitUntil: 'networkidle' });
+    const frame = page.frameLocator('#frame');
+    await frame.getByText('Try the buttons below.').waitFor();
+    await page.waitForTimeout(500);
+    // Events only go to the allowed origin, so this parent never hears from the preview...
+    assert.deepEqual(await page.evaluate(() => window.events), []);
+    // ...and its commands are refused.
+    await page.evaluate(() => {
+      document
+        .getElementById('frame')
+        .contentWindow.postMessage(
+          { type: 'discord-mana:append-message', message: { author: { id: '1', username: 'x' }, content: 'Injected' } },
+          '*',
+        );
+    });
+    await page.waitForTimeout(500);
+    assert.equal(await frame.getByText('Injected').count(), 0);
+    assert.ok(
+      frameWarnings.some((text) => text.includes('not an allowed origin')),
+      frameWarnings.join('\n'),
+    );
   });
 
   await step('the home page refuses to be framed', async () => {
