@@ -276,20 +276,21 @@ const openOurs = async (page, { collection, story, theme, layout }) => {
   const params = new URLSearchParams({ collection });
   if (story) params.set('story', story);
   params.set('theme', theme);
+  // Our extra collections have no counterpart in Discord's config. Discord shows the High Dynamic Range
+  // accessibility item only in an experiment (off in the reference); ours always shows it, so hide its group
+  // and the separator after it. Injected on every load, so it survives dev-server reloads.
+  const hdr = '[role="group"]:has(> div > #playground-settings-menu-accessibility--hdr-dynamic-range)';
+  const css = [
+    `${hdr}, ${hdr} + [role="separator"] { display: none !important; }`,
+    keepExtra ? '' : `${cls('group')} > :nth-child(n+3) { display: none !important; }`,
+  ].join('\n');
+  await page.addInitScript((css) => {
+    document.addEventListener('DOMContentLoaded', () => {
+      document.head.appendChild(Object.assign(document.createElement('style'), { textContent: css }));
+    });
+  }, css);
   await page.goto(`${OURS}/?${params}`);
   await page.locator('[data-testid="component-playground"]').waitFor();
-  if (!keepExtra) {
-    // Our extra collections have no counterpart in Discord's config.
-    await page.addStyleTag({
-      content: `${cls('group')} > :nth-child(n+3) { display: none !important; }`,
-    });
-  }
-  // Discord shows the High Dynamic Range accessibility item only in an experiment (off in the reference);
-  // ours always shows it. Hide it with the separator before its group.
-  const hdr = '[role="group"]:has(> div > #playground-settings-menu-accessibility--hdr-dynamic-range)';
-  await page.addStyleTag({
-    content: `${hdr}, [role="separator"]:has(+ ${hdr}) { display: none !important; }`,
-  });
   if (layout && layout !== 'right') await setLayout(page, layout);
 };
 
