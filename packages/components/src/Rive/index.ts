@@ -13,4 +13,12 @@ export {
   useRiveNumberProperty,
   type RiveDataBindingContextValue,
 } from './RiveDataBinding';
-export { RiveAssetStatus, useRiveAsset, type RiveAssetState } from './useRiveAsset';
+export {
+  RiveAssetStatus,
+  setRiveAssetOverride,
+  setRiveAssetUrlResolver,
+  useHasRiveAssetOverride,
+  useRiveAsset,
+  useRiveAssetOverride,
+  type RiveAssetState,
+} from './useRiveAsset';
