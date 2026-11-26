@@ -121,3 +121,4 @@ export {
   type WebhookRequest,
   type WebhookResult,
 } from './webhook';
+export { assignComponentIds, collectComponentIds } from './ids';

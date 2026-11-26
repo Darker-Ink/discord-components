@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  assignComponentIds,
   characterLength,
   countEmbedCharacters,
   fromJSON,
@@ -597,5 +598,33 @@ describe('documents', () => {
     const start = performance.now();
     for (let i = 0; i < 100; i++) validateMessage(JSON.parse(JSON.stringify({ ...doc, uid: undefined })));
     expect((performance.now() - start) / 100).toBeLessThan(5);
+  });
+});
+
+describe('assignComponentIds', () => {
+  it('numbers components in order, skipping ids in use', () => {
+    const components = [
+      { type: 10, content: 'a' },
+      {
+        type: 9,
+        id: 2,
+        components: [{ type: 10, content: 'b' }],
+        accessory: { type: 2, style: 1, custom_id: 'x', label: 'x' },
+      },
+      { type: 17, id: 0, components: [{ type: 14 }] },
+    ];
+    const result = assignComponentIds(components);
+    expect(result).toEqual([
+      { type: 10, content: 'a', id: 1 },
+      {
+        type: 9,
+        id: 2,
+        components: [{ type: 10, content: 'b', id: 3 }],
+        accessory: { type: 2, style: 1, custom_id: 'x', label: 'x', id: 4 },
+      },
+      { type: 17, id: 5, components: [{ type: 14, id: 6 }] },
+    ]);
+    expect(components[0]).not.toHaveProperty('id');
+    expect(errors(validateMessage({ flags: CV2, components: result }, { applicationOwnedWebhook: true }))).toEqual([]);
   });
 });
