@@ -70,3 +70,4 @@ export * from './Toast';
 export * from './ListNavigator';
 export * from './ListScroller';
 export * from './MarqueeText';
+export * from './ClickableContainer';
