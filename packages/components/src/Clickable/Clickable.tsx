@@ -19,6 +19,7 @@ export interface ClickableProps extends Omit<HTMLAttributes<HTMLElement>, 'onCli
   ignoreKeyPress?: boolean;
   focusProps?: FocusRingProps;
   innerRef?: Ref<HTMLElement>;
+  ref?: Ref<HTMLElement>;
   rel?: string;
   target?: string;
 }
@@ -35,6 +36,7 @@ export const Clickable = ({
   tag: Tag = 'div',
   focusProps,
   innerRef,
+  ref,
   onClick,
   ignoreKeyPress,
   className,
@@ -55,8 +57,9 @@ export const Clickable = ({
     (element: HTMLElement | null) => {
       elementRef.current = element;
       assignRef(innerRef, element);
+      assignRef(ref, element);
     },
-    [innerRef],
+    [innerRef, ref],
   );
 
   const handleKeyPress = (event: KeyboardEvent<HTMLElement>) => {
