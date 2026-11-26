@@ -1,0 +1,37 @@
+.wrapper {
+  width: auto;
+}
+.saturation {
+  cursor: crosshair;
+  height: 150px;
+  position: relative;
+  width: auto;
+}
+.saturation > div {
+  border-radius: 3px;
+}
+.saturation > div > div {
+  border-radius: 3px;
+}
+.saturation > div > div > div {
+  cursor: crosshair !important;
+}
+.hue {
+  cursor: crosshair;
+  height: 8px;
+  margin: 8px 0;
+  position: relative;
+}
+.hue > div > div {
+  border-radius: 3px;
+}
+.hue > div > div > div > div {
+  border-radius: 3px !important;
+  cursor: ew-resize;
+  height: 16px !important;
+  margin-top: -3px !important;
+  width: 8px !important;
+}
+:global(.enable-forced-colors) .wrapper {
+  forced-color-adjust: none;
+}

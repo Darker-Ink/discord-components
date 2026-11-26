@@ -10,3 +10,11 @@ export {
   type DefaultColorButtonProps,
 } from './ColorPicker';
 export * from './colorUtils';
+export {
+  CustomColorPicker,
+  PopoutDialog,
+  PopoutDialogContext,
+  type CustomColorPickerProps,
+  type PopoutDialogContextValue,
+  type PopoutDialogProps,
+} from './CustomColorPicker';
