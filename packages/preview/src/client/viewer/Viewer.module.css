@@ -1,0 +1,89 @@
+.frame {
+  color: var(--text-default);
+  display: flow-root;
+  user-select: text;
+}
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--background-base-lower);
+}
+.transparent .header {
+  background: transparent;
+}
+.headerMeta {
+  white-space: nowrap;
+}
+.body {
+  box-sizing: border-box;
+}
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+/* The chat list's divider placement (MessageListItem's `.divider.hasContent` for each group spacing). */
+.dateDivider {
+  margin-inline: 1rem 0.875rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.list > .dateDivider:first-child {
+  margin-top: 0.5rem;
+}
+:global(.group-spacing-0) .dateDivider {
+  margin-bottom: 1.5rem;
+}
+:global(.group-spacing-4) .dateDivider {
+  margin-bottom: 1.25rem;
+}
+:global(.group-spacing-8) .dateDivider {
+  margin-bottom: 1rem;
+}
+:global(.group-spacing-24) .dateDivider {
+  margin-bottom: 0;
+}
+/* Over an unknown background the label can't mask the line, so draw the line on either side of it. */
+.transparent .dateDivider {
+  border-top: none;
+}
+.transparent .dateDivider::before,
+.transparent .dateDivider::after {
+  border-top: thin solid var(--border-subtle);
+  content: '';
+  flex: 1;
+}
+.transparent .dateDivider > span {
+  background: transparent;
+}
+.brokenMessage {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-style: italic;
+  padding: 0.25rem 1rem 0.25rem 4.5rem;
+}
+.state {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+  min-height: 240px;
+  padding: 32px 16px;
+  text-align: center;
+}
+.stateIcon {
+  align-items: center;
+  background: var(--background-mod-normal);
+  border-radius: 50%;
+  color: var(--icon-muted);
+  display: flex;
+  height: 64px;
+  justify-content: center;
+  margin-bottom: 8px;
+  width: 64px;
+}
+.stateText {
+  max-width: 420px;
+}
