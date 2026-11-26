@@ -27,7 +27,7 @@ import {
   type MessageComponent,
 } from '@discord-mana/messages';
 import {
-  allowedTemplates,
+  useAllowedTemplates,
   findNode,
   nodeToJSON,
   slotChildren,
@@ -273,8 +273,7 @@ export const AddChildButton = ({
 }) => {
   const { actions } = useBuilderContext();
   const ui = useBuilderUIStore();
-  const templates = useBuilderSelector((state) => allowedTemplates(state.doc, { parentId, slot }).join(','));
-  const items = templates === '' ? [] : (templates.split(',') as TemplateType[]);
+  const items = useAllowedTemplates({ parentId, slot });
   if (items.length === 0) return null;
   const add = (template: TemplateType) => {
     const uid = actions.insert(parentId, slot, -1, template);
@@ -351,7 +350,7 @@ export const EditableComponent = ({ uid }: { uid: string }) => {
           {row.components.length > 0 ? (
             <ActionRow {...row} renderComponents={renderChildren} />
           ) : (
-            <EmptyList parentId={uid} slot="components" hint="Empty row: drop buttons or a select menu here" />
+            <EmptyList parentId={uid} slot="components" hint="Empty action row" />
           )}
         </NodeFrame>
       );
@@ -460,15 +459,7 @@ export const EditableComponent = ({ uid }: { uid: string }) => {
           {gallery.items.length > 0 ? (
             <ComponentMediaGallery {...gallery} />
           ) : (
-            <EmptyList
-              parentId={uid}
-              slot="items"
-              hint={
-                record_.items.length > 0
-                  ? 'Select the gallery and click an item to set its URL'
-                  : 'Empty gallery: add images or videos'
-              }
-            />
+            <EmptyList parentId={uid} slot="items" hint={record_.items.length > 0 ? 'No image URL' : 'Empty gallery'} />
           )}
         </NodeFrame>
       );
@@ -509,12 +500,7 @@ export const EditableComponent = ({ uid }: { uid: string }) => {
           {container.components.length > 0 ? (
             <Container {...container} renderComponents={renderChildren} />
           ) : (
-            <EmptyList
-              parentId={uid}
-              slot="components"
-              hint="Empty container: drop text, sections, galleries or rows here"
-              className={styles.emptyContainer}
-            />
+            <EmptyList parentId={uid} slot="components" hint="Empty container" className={styles.emptyContainer} />
           )}
         </NodeFrame>
       );

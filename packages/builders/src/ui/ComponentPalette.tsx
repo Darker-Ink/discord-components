@@ -1,9 +1,13 @@
 import { useCallback, useMemo } from 'react';
 import clsx from 'clsx';
 import { useDraggable } from '@dnd-kit/core';
-import { AccessibilityAnnouncer, Tooltip } from '@discord-mana/components';
+import { AccessibilityAnnouncer, ScrollerNone, Tooltip } from '@discord-mana/components';
 import {
   findNode,
+  isTemplateAllowed,
+  useBuilderRestrictions,
+  type BuilderRestrictions,
+  type BuilderStore,
   NODE_SLOTS,
   useBuilderSelector,
   type BuilderDocument,
@@ -49,8 +53,9 @@ export const findInsertTarget = (
   doc: BuilderDocument,
   template: TemplateType,
   selectedId: string | null,
+  restrictions?: BuilderRestrictions,
 ): NodeTarget | null => {
-  const fits = (target: NodeTarget) => canPlace(doc, template, target);
+  const fits = (target: NodeTarget) => canPlace(doc, template, target, restrictions);
   const location = selectedId != null ? findNode(doc, selectedId) : null;
   if (location != null) {
     for (const slot of NODE_SLOTS[location.kind] ?? []) {
@@ -79,7 +84,17 @@ export const findInsertTarget = (
   return first ?? null;
 };
 
-const PaletteButton = ({ item, available, compact }: { item: PaletteItem; available: boolean; compact: boolean }) => {
+const PaletteButton = ({
+  item,
+  available,
+  compact,
+  onAdd,
+}: {
+  item: PaletteItem;
+  available: boolean;
+  compact: boolean;
+  onAdd?: (uid: string) => void;
+}) => {
   const { store, actions } = useBuilderContext();
   const ui = useBuilderUIStore();
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
@@ -89,18 +104,20 @@ const PaletteButton = ({ item, available, compact }: { item: PaletteItem; availa
   });
   const add = useCallback(() => {
     const doc = store.getState().doc;
-    const target = findInsertTarget(doc, item.template as TemplateType, ui.getState().selectedId);
+    const restrictions = store.getRestrictions();
+    const target = findInsertTarget(doc, item.template as TemplateType, ui.getState().selectedId, restrictions);
     if (target == null) {
       AccessibilityAnnouncer.announce(`${item.label} can't be added here.`, 'polite');
       return;
     }
-    const uid = placeTemplate(actions, doc, item.template as TemplateType, target);
+    const uid = placeTemplate(actions, doc, item.template as TemplateType, target, restrictions);
     if (uid != null) {
       ui.set({ selectedId: uid, pendingFocus: { uid } });
+      onAdd?.(uid);
       AccessibilityAnnouncer.announce(`Added ${item.label}.`, 'polite');
       requestAnimationFrame(() => ui.frames.get(uid)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }));
     }
-  }, [actions, item, store, ui]);
+  }, [actions, item, onAdd, store, ui]);
   const Icon = item.icon;
   const button = (
     <button
@@ -110,7 +127,7 @@ const PaletteButton = ({ item, available, compact }: { item: PaletteItem; availa
       {...attributes}
       {...listeners}
       aria-disabled={!available}
-      aria-label={`${item.label}: ${item.description}`}
+      aria-label={item.label}
       role="button"
       tabIndex={0}
       onClick={available ? add : undefined}
@@ -123,10 +140,7 @@ const PaletteButton = ({ item, available, compact }: { item: PaletteItem; availa
   );
   return (
     <li>
-      <Tooltip
-        text={available ? item.description : `${item.description}. Nowhere to put one right now.`}
-        position="right"
-      >
+      <Tooltip text={item.description} position="right">
         {button}
       </Tooltip>
     </li>
@@ -139,8 +153,13 @@ export interface ComponentPaletteProps {
   className?: string;
   /** Icons only (a narrow rail). */
   compact?: boolean;
-  /** A row that scrolls sideways (small screens), instead of grouped columns. */
-  orientation?: 'vertical' | 'horizontal';
+  /**
+   * `vertical`: grouped columns (a sidebar). `horizontal`: one row that scrolls sideways. `grid`: grouped tiles
+   * sized for touch (a bottom sheet on a phone).
+   */
+  orientation?: 'vertical' | 'horizontal' | 'grid';
+  /** Called after an item was added by clicking it (e.g. to close the sheet it is in). */
+  onAdd?: (uid: string) => void;
   /** Which items to offer (defaults to everything the current mode can use). */
   items?: readonly PaletteItem[];
 }
@@ -154,14 +173,18 @@ export const ComponentPalette = ({
   compact = false,
   orientation = 'vertical',
   items = PALETTE_ITEMS,
+  onAdd,
 }: ComponentPaletteProps) => {
   const mode = useBuilderSelector((state) => state.doc.mode);
   const available = useBuilderSelector(
     useCallback(
-      (state: { doc: BuilderDocument }) => {
+      (state: { doc: BuilderDocument }, store: BuilderStore) => {
+        const restrictions = store.getRestrictions();
         const slots = listSlots(state.doc, { endsOnly: true });
         return items
-          .filter((item) => slots.some((slot) => canPlace(state.doc, item.template as TemplateType, slot)))
+          .filter((item) =>
+            slots.some((slot) => canPlace(state.doc, item.template as TemplateType, slot, restrictions)),
+          )
           .map((item) => item.template)
           .join(',');
       },
@@ -169,38 +192,57 @@ export const ComponentPalette = ({
     ),
   );
   const availableSet = useMemo(() => new Set(available.split(',')), [available]);
+  // What this builder never allows isn't offered at all.
+  const restrictions = useBuilderRestrictions();
   const scope = useBuilderScope();
+  const groups = GROUPS.map((group) => {
+    const entries = group.templates
+      .map((template) => items.find((item) => item.template === template))
+      .filter(
+        (item): item is PaletteItem =>
+          item != null &&
+          item.modes.includes(mode as BuilderMode) &&
+          isTemplateAllowed(item.template as TemplateType, restrictions),
+      );
+    if (entries.length === 0) return null;
+    return (
+      <section key={group.title} className={styles.group} aria-label={group.title}>
+        {!compact && orientation !== 'horizontal' ? <h3 className={styles.title}>{group.title}</h3> : null}
+        <ul className={styles.list}>
+          {entries.map((item) => (
+            <PaletteButton
+              key={item.template}
+              item={item}
+              available={availableSet.has(item.template)}
+              compact={compact}
+              onAdd={onAdd}
+            />
+          ))}
+        </ul>
+      </section>
+    );
+  });
   return (
     <nav
       className={clsx(
         styles.palette,
-        { [styles.compact]: compact, [styles.horizontal]: orientation === 'horizontal' },
+        {
+          [styles.compact]: compact,
+          [styles.horizontal]: orientation === 'horizontal',
+          [styles.grid]: orientation === 'grid',
+        },
         className,
       )}
       aria-label="Components"
       {...scope}
     >
-      {GROUPS.map((group) => {
-        const entries = group.templates
-          .map((template) => items.find((item) => item.template === template))
-          .filter((item): item is PaletteItem => item != null && item.modes.includes(mode as BuilderMode));
-        if (entries.length === 0) return null;
-        return (
-          <section key={group.title} className={styles.group} aria-label={group.title}>
-            {!compact && orientation === 'vertical' ? <h3 className={styles.title}>{group.title}</h3> : null}
-            <ul className={styles.list}>
-              {entries.map((item) => (
-                <PaletteButton
-                  key={item.template}
-                  item={item}
-                  available={availableSet.has(item.template)}
-                  compact={compact}
-                />
-              ))}
-            </ul>
-          </section>
-        );
-      })}
+      {orientation === 'horizontal' ? (
+        <ScrollerNone orientation="horizontal" className={styles.row}>
+          {groups}
+        </ScrollerNone>
+      ) : (
+        groups
+      )}
     </nav>
   );
 };

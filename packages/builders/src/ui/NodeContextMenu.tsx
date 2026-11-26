@@ -9,15 +9,7 @@ import {
   TrashIcon,
   ArrowAngleLeftUpIcon,
 } from '@discord-mana/icons';
-import {
-  allowedTemplates,
-  findNode,
-  NODE_SLOTS,
-  nodeToJSON,
-  slotChildren,
-  type BuilderDocument,
-  type TemplateType,
-} from '../core';
+import { findNode, NODE_SLOTS, nodeToJSON, slotChildren, type BuilderDocument, type TemplateType } from '../core';
 import { focusNode, isMac } from './NodeFrame';
 import { KIND_ICONS, KIND_LABELS, PALETTE_ITEMS } from './meta';
 import { useBuilderContext } from './useBuilderContext';
@@ -47,7 +39,7 @@ export const NodeContextMenu = () => {
   const { location, siblings } = info;
   const slots = (NODE_SLOTS[location.kind] ?? []).filter((slot) => slot !== 'options' && slot !== 'items');
   const addable = slots.flatMap((slot) =>
-    allowedTemplates(doc, { parentId: menu.uid, slot }).map((template) => ({ slot, template })),
+    store.allowedTemplates({ parentId: menu.uid, slot }).map((template) => ({ slot, template })),
   );
   const move = (offset: number) => {
     if (actions.move(menu.uid, { parentId: location.parentId, slot: location.slot, index: location.index + offset }))

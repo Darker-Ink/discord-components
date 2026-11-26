@@ -46,6 +46,8 @@ import {
 } from '@discord-mana/icons';
 import { Emoji, type APIMessageComponentEmoji } from '@discord-mana/messages';
 import {
+  isComponentAllowed,
+  useBuilderRestrictions,
   useBuilderNode,
   useNodeIssues,
   type ButtonNode,
@@ -112,7 +114,6 @@ const EmojiEditor = ({ uid, field = 'emoji' }: { uid: string; field?: string }) 
     <>
       <TextInput
         label="Emoji"
-        description="An emoji, or a custom one as <:name:id>"
         value={text}
         placeholder="😀 or <:name:123456789012345678>"
         onChange={set}
@@ -171,26 +172,29 @@ export const restyleButton = (node: ButtonNode, style: number): Record<string, u
 const ButtonStylePopout = ({ uid }: { uid: string }) => {
   const { actions } = useBuilderContext();
   const node = useBuilderNode<ButtonNode>(uid);
+  const restrictions = useBuilderRestrictions();
   if (node == null) return null;
   return (
     <PopoutPanel title="Style" width={268}>
       <div className={styles.styleGrid} role="radiogroup" aria-label="Button style">
-        {BUTTON_STYLES.map(({ style, label, color }) => (
-          <LegacyButton
-            key={style}
-            role="radio"
-            aria-checked={node.style === style}
-            color={color}
-            size={ButtonSizes.SMALL}
-            className={clsx(styles.styleOption, { [styles.styleSelected]: node.style === style })}
-            onClick={() => actions.update(uid, restyleButton(node, style))}
-          >
-            <span className={styles.styleLabel}>
-              {label}
-              {style === 5 ? <WindowLaunchIcon size="xs" color="currentColor" /> : null}
-            </span>
-          </LegacyButton>
-        ))}
+        {BUTTON_STYLES.filter(({ style }) => isComponentAllowed(restrictions, { type: 2, style })).map(
+          ({ style, label, color }) => (
+            <LegacyButton
+              key={style}
+              role="radio"
+              aria-checked={node.style === style}
+              color={color}
+              size={ButtonSizes.SMALL}
+              className={clsx(styles.styleOption, { [styles.styleSelected]: node.style === style })}
+              onClick={() => actions.update(uid, restyleButton(node, style))}
+            >
+              <span className={styles.styleLabel}>
+                {label}
+                {style === 5 ? <WindowLaunchIcon size="xs" color="currentColor" /> : null}
+              </span>
+            </LegacyButton>
+          ),
+        )}
       </div>
     </PopoutPanel>
   );
@@ -206,13 +210,7 @@ const ButtonActionPopout = ({ uid }: { uid: string }) => {
       ) : node.style === 6 ? (
         <NodeTextInput uid={uid} field="sku_id" label="SKU ID" placeholder="123456789012345678" autoFocus />
       ) : (
-        <NodeTextInput
-          uid={uid}
-          field="custom_id"
-          label="Custom ID"
-          description="Sent to your app when the button is clicked"
-          autoFocus
-        />
+        <NodeTextInput uid={uid} field="custom_id" label="Custom ID" autoFocus />
       )}
       <NodeSwitch uid={uid} field="disabled" label="Disabled" />
     </PopoutPanel>
@@ -568,20 +566,25 @@ GalleryItemsEditor.displayName = 'GalleryItemsEditor';
 export const SectionAccessoryGhost = ({ uid }: { uid: string }) => {
   const { actions } = useBuilderContext();
   const ui = useBuilderUIStore();
+  const restrictions = useBuilderRestrictions();
   const add = (type: 'thumbnail' | 'button') => {
     const accessory = actions.insert(uid, 'accessory', 0, type);
     if (accessory != null) ui.set({ selectedId: accessory });
   };
   return (
     <div className={styles.accessoryGhost} data-builder-ui data-builder-nodrag>
-      <button type="button" className={styles.accessoryChoice} onClick={() => add('thumbnail')}>
-        <ImageIcon size="xs" color="currentColor" />
-        Thumbnail
-      </button>
-      <button type="button" className={styles.accessoryChoice} onClick={() => add('button')}>
-        <WidgetsIcon size="xs" color="currentColor" />
-        Button
-      </button>
+      {isComponentAllowed(restrictions, 'thumbnail') ? (
+        <button type="button" className={styles.accessoryChoice} onClick={() => add('thumbnail')}>
+          <ImageIcon size="xs" color="currentColor" />
+          Thumbnail
+        </button>
+      ) : null}
+      {isComponentAllowed(restrictions, 'secondaryButton') ? (
+        <button type="button" className={styles.accessoryChoice} onClick={() => add('button')}>
+          <WidgetsIcon size="xs" color="currentColor" />
+          Button
+        </button>
+      ) : null}
     </div>
   );
 };
@@ -593,6 +596,7 @@ export const SectionTools = ({ uid }: { uid: string }) => {
   const { actions } = useBuilderContext();
   const ui = useBuilderUIStore();
   const node = useBuilderNode<SectionNode>(uid);
+  const restrictions = useBuilderRestrictions();
   const current = node?.accessory?.type === 11 ? 'thumbnail' : node?.accessory?.type === 2 ? 'button' : null;
   const set = (type: 'thumbnail' | 'button' | 'link-button') => {
     const accessory = actions.batch(() => {
@@ -612,21 +616,27 @@ export const SectionTools = ({ uid }: { uid: string }) => {
           onClose={closePopout}
           onSelect={() => undefined}
         >
-          <MenuItem
-            id="thumbnail"
-            label="Thumbnail"
-            icon={ImageIcon}
-            action={() => set('thumbnail')}
-            disabled={current === 'thumbnail'}
-          />
-          <MenuItem
-            id="button"
-            label="Button"
-            icon={WidgetsIcon}
-            action={() => set('button')}
-            disabled={current === 'button'}
-          />
-          <MenuItem id="link-button" label="Link button" icon={LinkIcon} action={() => set('link-button')} />
+          {isComponentAllowed(restrictions, 'thumbnail') ? (
+            <MenuItem
+              id="thumbnail"
+              label="Thumbnail"
+              icon={ImageIcon}
+              action={() => set('thumbnail')}
+              disabled={current === 'thumbnail'}
+            />
+          ) : null}
+          {isComponentAllowed(restrictions, 'secondaryButton') ? (
+            <MenuItem
+              id="button"
+              label="Button"
+              icon={WidgetsIcon}
+              action={() => set('button')}
+              disabled={current === 'button'}
+            />
+          ) : null}
+          {isComponentAllowed(restrictions, 'linkButton') ? (
+            <MenuItem id="link-button" label="Link button" icon={LinkIcon} action={() => set('link-button')} />
+          ) : null}
           {node?.accessory != null ? (
             <MenuItem
               id="remove"

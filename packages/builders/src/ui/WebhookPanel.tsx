@@ -3,6 +3,8 @@ import clsx from 'clsx';
 import { Button, InlineNotice, Switch, Text, TextInput } from '@discord-mana/components';
 import { SendMessageIcon } from '@discord-mana/icons';
 import {
+  isMessageFieldAllowed,
+  useBuilderRestrictions,
   nodeAtPath,
   parseWebhookUrl,
   ROOT_UID,
@@ -87,6 +89,7 @@ export const WebhookPanel = ({
 }: WebhookPanelProps) => {
   const { store } = useBuilderContext();
   const issues = useBuilderIssues();
+  const restrictions = useBuilderRestrictions();
   const reveal = useRevealIssue();
   // Kept in the editor's state, so switching tabs doesn't lose what was typed or the last result.
   const ui = useBuilderUIStore();
@@ -126,10 +129,7 @@ export const WebhookPanel = ({
   }, [remember, storageKey, url]);
 
   const parsed = url.trim() === '' ? null : parseWebhookUrl(url);
-  const urlError =
-    url.trim() !== '' && parsed == null
-      ? 'This isn’t a webhook URL. Copy it from Server Settings → Integrations → Webhooks.'
-      : undefined;
+  const urlError = url.trim() !== '' && parsed == null ? 'Not a webhook URL' : undefined;
   const errors = issues.filter((issue) => issue.severity === 'error');
   const [fetched, setFetched] = useState<{ url: string; info: WebhookInfo | null } | null>(null);
   const webhookUrl = parsed?.url ?? null;
@@ -208,9 +208,7 @@ export const WebhookPanel = ({
                 {info.name ?? 'Unnamed webhook'}
               </Text>
               <Text variant="body-xs/normal" color="text-muted">
-                {info.application_id != null
-                  ? 'An app’s webhook: buttons and selects work'
-                  : 'A channel webhook: link buttons only'}
+                {info.application_id != null ? 'App webhook' : 'Channel webhook'}
               </Text>
             </div>
           </div>
@@ -219,7 +217,7 @@ export const WebhookPanel = ({
           <div className={styles.remember}>
             <Switch
               label="Remember in this browser"
-              description="A webhook URL is a password for your channel: anyone who has it can post there. Only turn this on for a browser you trust."
+              description="Anyone with the URL can post as this webhook."
               checked={remember}
               onChange={setRemember}
             />
@@ -231,24 +229,25 @@ export const WebhookPanel = ({
             value={threadId}
             placeholder={parsed?.threadId ?? 'Optional'}
             onChange={setThreadId}
-            description="Post in a thread of the channel"
           />
-          <NodeTextInput
-            uid={ROOT_UID}
-            field="thread_name"
-            label="New thread"
-            placeholder="Optional"
-            description="Forum channels: create a post"
-          />
+          {isMessageFieldAllowed(restrictions, 'thread_name') ? (
+            <NodeTextInput uid={ROOT_UID} field="thread_name" label="Thread name" placeholder="Optional" />
+          ) : null}
         </div>
-        <div className={styles.row}>
-          <NodeTextInput uid={ROOT_UID} field="username" label="Username" placeholder="Webhook’s own" />
-          <NodeTextInput uid={ROOT_UID} field="avatar_url" label="Avatar URL" placeholder="Webhook’s own" />
-        </div>
+        {isMessageFieldAllowed(restrictions, 'username') || isMessageFieldAllowed(restrictions, 'avatar_url') ? (
+          <div className={styles.row}>
+            {isMessageFieldAllowed(restrictions, 'username') ? (
+              <NodeTextInput uid={ROOT_UID} field="username" label="Username" placeholder="Default" />
+            ) : null}
+            {isMessageFieldAllowed(restrictions, 'avatar_url') ? (
+              <NodeTextInput uid={ROOT_UID} field="avatar_url" label="Avatar URL" placeholder="Default" />
+            ) : null}
+          </div>
+        ) : null}
         {errors.length > 0 ? (
           <InlineNotice
             type="warning"
-            message={`Discord will likely refuse this message: ${errors.length} ${errors.length === 1 ? 'problem' : 'problems'} to fix first (see Issues).`}
+            message={`${errors.length} ${errors.length === 1 ? 'error' : 'errors'} in this message`}
           />
         ) : null}
         <div className={styles.actions}>
@@ -260,9 +259,6 @@ export const WebhookPanel = ({
             loading={state.status === 'sending' ? true : undefined}
             disabled={parsed == null || state.status === 'sending'}
           />
-          <Text variant="body-xs/normal" color="text-muted">
-            Sent from your browser straight to Discord. Nothing is stored on a server.
-          </Text>
         </div>
       </form>
       {state.status === 'done' ? (
@@ -273,8 +269,8 @@ export const WebhookPanel = ({
               title="Sent"
               message={
                 state.result.message != null
-                  ? `Message ${state.result.message.id} was posted in channel ${state.result.message.channel_id}.`
-                  : 'Discord accepted the message.'
+                  ? `Message ${state.result.message.id} in channel ${state.result.message.channel_id}`
+                  : 'Accepted by Discord'
               }
             />
           ) : (

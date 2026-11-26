@@ -13,7 +13,7 @@ import clsx from 'clsx';
 import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react-dom';
 import { Tooltip } from '@discord-mana/components';
 import { InlineEditor, type InlineEditorHandle, type InlineEditorRuleSet } from '@discord-mana/slate';
-import { getLimit, useNodeIssues, type NodeKind, type ValidationIssue } from '../core';
+import { getLimit, useBuilderRestrictions, useNodeIssues, type NodeKind, type ValidationIssue } from '../core';
 import { patchField, readText, useEditableNode } from './fields';
 import { isMod } from './NodeFrame';
 import { useBuilderContext } from './useBuilderContext';
@@ -147,7 +147,7 @@ export const BuilderTextField = ({
   const node = useEditableNode(uid);
   const value = readText(node, field);
   const issues = useFieldIssues(uid, field);
-  const limit = getLimit(kind, field);
+  const limit = getLimit(kind, field, useBuilderRestrictions());
   const editorRef = useRef<InlineEditorHandle>(null);
   const wrapperRef = useRef<HTMLSpanElement>(null);
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
@@ -252,7 +252,7 @@ export const BuilderPlainTextField = ({
   const node = useEditableNode(uid);
   const value = readText(node, field);
   const issues = useFieldIssues(uid, field);
-  const limit = getLimit(kind, field);
+  const limit = getLimit(kind, field, useBuilderRestrictions());
   const elementRef = useRef<HTMLElement>(null);
   const [focused, setFocused] = useState(false);
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);

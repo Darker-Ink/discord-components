@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import clsx from 'clsx';
-import { Text } from '@discord-mana/components';
+import { Button, Text } from '@discord-mana/components';
 import { CircleCheckIcon, CircleErrorIcon, WarningIcon } from '@discord-mana/icons';
 import {
   findNode,
@@ -109,8 +109,17 @@ export const ValidationPanel = ({ className, onReveal }: ValidationPanelProps) =
   const doc = store.getState().doc;
   const errors = issues.filter((issue) => issue.severity === 'error');
   const warnings = issues.filter((issue) => issue.severity === 'warning');
+  const restricted = issues.filter((issue) => issue.restricted === true).length;
   return (
     <div className={clsx(styles.panel, className)}>
+      {restricted > 0 ? (
+        <div className={styles.restricted}>
+          <Text variant="body-sm/medium" color="text-default">
+            {restricted === 1 ? '1 part isn’t allowed here' : `${restricted} parts aren’t allowed here`}
+          </Text>
+          <Button size="sm" variant="secondary" text="Remove" onClick={() => store.sanitize()} />
+        </div>
+      ) : null}
       <div className={styles.meters}>
         {mode === 'classic' ? (
           <>
@@ -127,14 +136,9 @@ export const ValidationPanel = ({ className, onReveal }: ValidationPanelProps) =
       {issues.length === 0 ? (
         <div className={styles.clear} role="status">
           <CircleCheckIcon size="md" color="currentColor" />
-          <div>
-            <Text variant="body-md/semibold" color="text-strong">
-              Ready to send
-            </Text>
-            <Text variant="body-sm/normal" color="text-muted">
-              Nothing here breaks Discord’s rules for messages.
-            </Text>
-          </div>
+          <Text variant="body-md/semibold" color="text-strong">
+            No issues
+          </Text>
         </div>
       ) : (
         <ul className={styles.list} aria-label={`${errors.length} errors, ${warnings.length} warnings`}>

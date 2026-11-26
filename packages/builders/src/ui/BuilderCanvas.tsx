@@ -2,7 +2,15 @@ import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent, t
 import clsx from 'clsx';
 import { Popout, Text } from '@discord-mana/components';
 import { Message, MessageListItem, type APIMessage } from '@discord-mana/messages';
-import { ROOT_UID, toJSON, useBuilderSelector, useNodeIssues, type BuilderDocument } from '../core';
+import {
+  isMessageFieldAllowed,
+  ROOT_UID,
+  toJSON,
+  useBuilderRestrictions,
+  useBuilderSelector,
+  useNodeIssues,
+  type BuilderDocument,
+} from '../core';
 import { BuilderTextField } from './BuilderTextField';
 import { EditableComponents } from './EditableComponents';
 import { EditableEmbed } from './EditableEmbed';
@@ -81,25 +89,19 @@ const usePendingFocus = () => {
   }, [pending, ui]);
 };
 
-const IdentityPopout = ({ author }: { author: BuilderAuthor }) => (
-  <PopoutPanel title="Webhook profile">
-    <NodeTextInput
-      uid={ROOT_UID}
-      field="username"
-      label="Username"
-      placeholder={author.username}
-      description="Replaces the webhook’s name for this message"
-      autoFocus
-    />
-    <NodeTextInput
-      uid={ROOT_UID}
-      field="avatar_url"
-      label="Avatar URL"
-      placeholder="https://…"
-      description="Replaces the webhook’s avatar for this message"
-    />
-  </PopoutPanel>
-);
+const IdentityPopout = ({ author }: { author: BuilderAuthor }) => {
+  const restrictions = useBuilderRestrictions();
+  return (
+    <PopoutPanel title="Webhook profile">
+      {isMessageFieldAllowed(restrictions, 'username') ? (
+        <NodeTextInput uid={ROOT_UID} field="username" label="Username" placeholder={author.username} autoFocus />
+      ) : null}
+      {isMessageFieldAllowed(restrictions, 'avatar_url') ? (
+        <NodeTextInput uid={ROOT_UID} field="avatar_url" label="Avatar URL" placeholder="https://…" />
+      ) : null}
+    </PopoutPanel>
+  );
+};
 
 export interface BuilderCanvasProps {
   /** The webhook's own name and avatar, shown when the message doesn't override them. */
@@ -128,6 +130,9 @@ export const BuilderCanvas = ({ author = DEFAULT_AUTHOR, timestamp, className, e
   const identityRef = useRef<Element | null>(null);
   const [identityOpen, setIdentityOpen] = useState(false);
   const rootIssues = useNodeIssues(ROOT_UID);
+  const restrictions = useBuilderRestrictions();
+  const canEditIdentity =
+    isMessageFieldAllowed(restrictions, 'username') || isMessageFieldAllowed(restrictions, 'avatar_url');
   usePendingFocus();
   // The message's own lists: drops on an empty message land in its placeholder, else anywhere on the canvas.
   const canvasRef = useRef<HTMLDivElement | null>(null);
@@ -192,13 +197,13 @@ export const BuilderCanvas = ({ author = DEFAULT_AUTHOR, timestamp, className, e
   );
 
   const content =
-    doc.mode === 'classic' ? (
+    doc.mode === 'classic' && (doc.content !== '' || isMessageFieldAllowed(restrictions, 'content')) ? (
       <BuilderTextField
         uid={ROOT_UID}
         kind="message"
         field="content"
         multiline
-        placeholder={readOnly ? undefined : isEmpty ? 'Type a message, or drag in an embed…' : 'Add a message'}
+        placeholder={readOnly ? undefined : 'Add a message'}
         renderPreview={(value) =>
           renderMessage(value, { kind: 'content', messageId: message.id, channelId: message.channel_id })
         }
@@ -227,7 +232,7 @@ export const BuilderCanvas = ({ author = DEFAULT_AUTHOR, timestamp, className, e
             message={message}
             accessories={accessories}
             onClickAvatar={
-              readOnly
+              readOnly || !canEditIdentity
                 ? undefined
                 : (event) => {
                     identityRef.current = event.currentTarget;
@@ -235,7 +240,7 @@ export const BuilderCanvas = ({ author = DEFAULT_AUTHOR, timestamp, className, e
                   }
             }
             onClickUsername={
-              readOnly
+              readOnly || !canEditIdentity
                 ? undefined
                 : (event) => {
                     identityRef.current = event.currentTarget;
@@ -270,12 +275,9 @@ export const BuilderCanvas = ({ author = DEFAULT_AUTHOR, timestamp, className, e
 BuilderCanvas.displayName = 'BuilderCanvas';
 
 const DefaultEmptyState = ({ mode }: { mode: 'classic' | 'cv2' }) => (
-  <>
-    <Text variant="heading-md/semibold" color="text-strong">
-      {mode === 'cv2' ? 'Start with a container or some text' : 'Start with an embed'}
-    </Text>
-    <Text variant="body-sm/normal" color="text-muted">
-      Drag a component in from the left, or click one to add it.
-    </Text>
-  </>
+  <Text variant="body-md/medium" color="text-muted">
+    {mode === 'cv2' ? 'No components' : 'Empty message'}
+  </Text>
 );
+
+DefaultEmptyState.displayName = 'DefaultEmptyState';

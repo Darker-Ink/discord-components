@@ -103,3 +103,25 @@
 .field {
   position: relative;
 }
+
+/* The row of parts an embed doesn't have yet. It never widens the embed (its width comes from the content). */
+.addRow {
+  contain: inline-size;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  grid-column: 1 / -1;
+}
+.addRow .ghost {
+  border-radius: 12px;
+  font-size: 12px;
+  gap: 2px;
+  height: 24px;
+  padding: 0 8px 0 4px;
+}
+@media (pointer: coarse) {
+  .addRow .ghost {
+    height: 32px;
+    padding: 0 10px 0 6px;
+  }
+}

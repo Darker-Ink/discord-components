@@ -2,14 +2,14 @@ import { useCallback } from 'react';
 import clsx from 'clsx';
 import { IconButton, Tooltip } from '@discord-mana/components';
 import { RedoIcon, UndoIcon } from '@discord-mana/icons';
-import { useBuilderSelector, type BuilderMode } from '../core';
+import { allowedModes, useBuilderRestrictions, useBuilderSelector, type BuilderMode } from '../core';
 import { isMac } from './NodeFrame';
 import { useBuilderContext } from './useBuilderContext';
 import styles from './BuilderControls.module.css';
 
-const MODES: { mode: BuilderMode; label: string; description: string }[] = [
-  { mode: 'classic', label: 'Embeds', description: 'Content, embeds and action rows' },
-  { mode: 'cv2', label: 'Components v2', description: 'Containers, sections, text, galleries' },
+const MODES: { mode: BuilderMode; label: string }[] = [
+  { mode: 'classic', label: 'Embeds' },
+  { mode: 'cv2', label: 'Components v2' },
 ];
 
 export interface BuilderModeSwitchProps {
@@ -25,24 +25,26 @@ export interface BuilderModeSwitchProps {
 export const BuilderModeSwitch = ({ className, onChange }: BuilderModeSwitchProps) => {
   const { actions } = useBuilderContext();
   const mode = useBuilderSelector((state) => state.doc.mode);
+  // A builder that allows one mode has nothing to switch.
+  const modes = allowedModes(useBuilderRestrictions());
+  if (modes.length < 2) return null;
   return (
     <div className={clsx(styles.switch, className)} role="radiogroup" aria-label="Message type">
       {MODES.map((entry) => (
-        <Tooltip key={entry.mode} text={entry.description} position="bottom">
-          <button
-            type="button"
-            role="radio"
-            aria-checked={mode === entry.mode}
-            className={styles.option}
-            onClick={() => {
-              if (mode === entry.mode) return;
-              actions.setMode(entry.mode, { convert: true });
-              onChange?.(entry.mode);
-            }}
-          >
-            {entry.label}
-          </button>
-        </Tooltip>
+        <button
+          key={entry.mode}
+          type="button"
+          role="radio"
+          aria-checked={mode === entry.mode}
+          className={styles.option}
+          onClick={() => {
+            if (mode === entry.mode) return;
+            actions.setMode(entry.mode, { convert: true });
+            onChange?.(entry.mode);
+          }}
+        >
+          {entry.label}
+        </button>
       ))}
     </div>
   );

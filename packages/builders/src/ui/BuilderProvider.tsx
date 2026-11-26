@@ -41,6 +41,8 @@ export interface BuilderProviderProps extends MessageBuilderOptions {
   renderEmbedMarkdown?: RenderEmbedMarkdown;
   /** Shows the message without any editing. */
   readOnly?: boolean;
+  /** `docked` puts a selected node's tools in a bar along the bottom of the screen (for phones). */
+  toolbarPlacement?: 'floating' | 'docked';
   /** The channel and server the message is shown in (mentions resolve against them). */
   channelId?: string;
   guildId?: string | null;
@@ -55,6 +57,7 @@ const Inner = ({
   renderMessageMarkdown,
   renderEmbedMarkdown,
   readOnly = false,
+  toolbarPlacement = 'floating',
   channelId = DEFAULT_RENDER_OPTIONS.channelId,
   guildId = DEFAULT_RENDER_OPTIONS.guildId,
   globalShortcuts = true,
@@ -73,10 +76,11 @@ const Inner = ({
       renderMessageMarkdown: renderMessageMarkdown ?? DEFAULT_RENDER_OPTIONS.renderMessageMarkdown,
       renderEmbedMarkdown: renderEmbedMarkdown ?? DEFAULT_RENDER_OPTIONS.renderEmbedMarkdown,
       readOnly,
+      toolbar: toolbarPlacement,
       channelId,
       guildId,
     }),
-    [channelId, guildId, readOnly, renderEmbedMarkdown, renderMessageMarkdown],
+    [channelId, guildId, readOnly, renderEmbedMarkdown, renderMessageMarkdown, toolbarPlacement],
   );
   const editorContext = useMemo(
     () => ({ guildId, channelId, resolvers: editorResolvers ?? {} }),
@@ -109,8 +113,8 @@ const Inner = ({
     const keyboard = () => {
       ui.modality = 'keyboard';
     };
-    const pointer = () => {
-      ui.modality = 'pointer';
+    const pointer = (event: PointerEvent) => {
+      ui.modality = event.pointerType === 'touch' ? 'touch' : 'pointer';
     };
     document.addEventListener('keydown', keyboard, true);
     document.addEventListener('pointerdown', pointer, true);
@@ -119,6 +123,30 @@ const Inner = ({
       document.removeEventListener('pointerdown', pointer, true);
     };
   }, [ui]);
+
+  // On phones the keyboard shrinks the visible area: keep the text being edited in the middle of what's left.
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    if (viewport == null || !window.matchMedia('(pointer: coarse)').matches) return;
+    const reveal = () => {
+      const element = document.activeElement;
+      if (!(element instanceof HTMLElement) || !element.isContentEditable) return;
+      if (element.closest(`[data-builder-scope="${CSS.escape(scope)}"]`) == null) return;
+      element.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    };
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const later = () => {
+      if (timer != null) clearTimeout(timer);
+      timer = setTimeout(reveal, 150);
+    };
+    viewport.addEventListener('resize', later);
+    document.addEventListener('focusin', later);
+    return () => {
+      if (timer != null) clearTimeout(timer);
+      viewport.removeEventListener('resize', later);
+      document.removeEventListener('focusin', later);
+    };
+  }, [scope]);
 
   // A node that no longer exists (undone, deleted elsewhere) can't stay selected.
   useEffect(
@@ -161,6 +189,7 @@ export const BuilderProvider = ({
   limit,
   coalesceMs,
   validation,
+  restrictions,
   ...props
 }: BuilderProviderProps) => (
   <MessageBuilderProvider
@@ -171,6 +200,7 @@ export const BuilderProvider = ({
     limit={limit}
     coalesceMs={coalesceMs}
     validation={validation}
+    restrictions={restrictions}
   >
     <Inner {...props} />
   </MessageBuilderProvider>

@@ -1,4 +1,4 @@
-import { Fragment, useContext, useMemo, type ReactNode } from 'react';
+import { Fragment, useContext, useMemo, useState, type ReactNode } from 'react';
 import clsx from 'clsx';
 import {
   Button,
@@ -35,7 +35,15 @@ import {
   type EmbedSourceMetadata,
   type MessageEmbed,
 } from '@discord-mana/messages';
-import { getAncestors, nodeToJSON, useBuilderNode, type EmbedNode } from '../core';
+import {
+  getAncestors,
+  isEmbedPartAllowed,
+  useBuilderRestrictions,
+  type EmbedPart,
+  nodeToJSON,
+  useBuilderNode,
+  type EmbedNode,
+} from '../core';
 import { BuilderPlainTextField, BuilderTextField } from './BuilderTextField';
 import { FrameChrome, useNodeFrame } from './NodeFrame';
 import { NodeToolbarButton, NodeToolbarPopoutButton } from './NodeToolbar';
@@ -45,6 +53,9 @@ import { useBuilderRender } from './renderContext';
 import { useBuilderContext } from './useBuilderContext';
 import { useBuilderUI, useBuilderUIStore } from './uiStore';
 import ui from './EditableEmbed.module.css';
+
+const NOTHING_REVEALED: ReadonlySet<string> = new Set();
+const BLANK_REVEALED: ReadonlySet<string> = new Set(['title', 'description']);
 
 const SUGGESTED_COLORS = [
   '#5865f2',
@@ -131,14 +142,29 @@ const MediaPopout = ({ uid, field, title }: { uid: string; field: 'image' | 'thu
   );
 };
 
-const LinksPopout = ({ uid }: { uid: string }) => (
-  <PopoutPanel title="Links and icons">
-    <NodeTextInput uid={uid} field="url" label="Title link" placeholder="https://…" autoFocus />
-    <NodeTextInput uid={uid} field="author.url" label="Author link" placeholder="https://…" />
-    <NodeTextInput uid={uid} field="author.icon_url" label="Author icon" placeholder="https://…" />
-    <NodeTextInput uid={uid} field="footer.icon_url" label="Footer icon" placeholder="https://…" />
-  </PopoutPanel>
-);
+const LinksPopout = ({ uid }: { uid: string }) => {
+  const allows = useEmbedParts();
+  return (
+    <PopoutPanel title="Links and icons">
+      {allows('url') ? <NodeTextInput uid={uid} field="url" label="Title link" placeholder="https://…" /> : null}
+      {allows('author') ? (
+        <>
+          <NodeTextInput uid={uid} field="author.url" label="Author link" placeholder="https://…" />
+          <NodeTextInput uid={uid} field="author.icon_url" label="Author icon" placeholder="https://…" />
+        </>
+      ) : null}
+      {allows('footer') ? (
+        <NodeTextInput uid={uid} field="footer.icon_url" label="Footer icon" placeholder="https://…" />
+      ) : null}
+    </PopoutPanel>
+  );
+};
+
+/** Whether this builder lets embeds have a part (title, image, footer…). */
+const useEmbedParts = () => {
+  const restrictions = useBuilderRestrictions();
+  return (part: EmbedPart) => isEmbedPartAllowed(restrictions, part);
+};
 
 const toLocalInput = (iso: string | undefined) => {
   if (iso == null) return '';
@@ -171,7 +197,7 @@ const TimestampPopout = ({ uid }: { uid: string }) => {
       <NodeTextInput
         uid={uid}
         field="timestamp"
-        label="Shown in the footer, in each reader’s time zone"
+        label="Date and time"
         type="datetime-local"
         format={(value) => toLocalInput(typeof value === 'string' ? value : undefined)}
         parse={(text) => (text === '' ? undefined : new Date(text).toISOString())}
@@ -203,34 +229,53 @@ const Ghost = ({
 /** The embed's toolbar: colour, images, links and the timestamp. */
 const EmbedTools = ({ uid }: { uid: string }) => {
   const node = useBuilderNode(uid) as EmbedNode | null;
+  const allows = useEmbedParts();
   const color = node?.color;
   return (
     <>
-      <NodeToolbarPopoutButton icon={EyeDropperIcon} label="Colour" renderPopout={() => <EmbedColorPopout uid={uid} />}>
-        <span
-          className={ui.swatch}
-          style={{ background: color != null ? `#${color.toString(16).padStart(6, '0')}` : undefined }}
+      {allows('color') ? (
+        <NodeToolbarPopoutButton
+          icon={EyeDropperIcon}
+          label="Colour"
+          renderPopout={() => <EmbedColorPopout uid={uid} />}
+        >
+          <span
+            className={ui.swatch}
+            style={{ background: color != null ? `#${color.toString(16).padStart(6, '0')}` : undefined }}
+          />
+        </NodeToolbarPopoutButton>
+      ) : null}
+      {allows('image') ? (
+        <NodeToolbarPopoutButton
+          icon={ImageIcon}
+          label="Image"
+          active={node?.image != null}
+          renderPopout={() => <MediaPopout uid={uid} field="image" title="Image" />}
         />
-      </NodeToolbarPopoutButton>
-      <NodeToolbarPopoutButton
-        icon={ImageIcon}
-        label="Image"
-        active={node?.image != null}
-        renderPopout={() => <MediaPopout uid={uid} field="image" title="Image" />}
-      />
-      <NodeToolbarPopoutButton
-        icon={ImagePlusIcon}
-        label="Thumbnail"
-        active={node?.thumbnail != null}
-        renderPopout={() => <MediaPopout uid={uid} field="thumbnail" title="Thumbnail" />}
-      />
-      <NodeToolbarPopoutButton icon={LinkIcon} label="Links and icons" renderPopout={() => <LinksPopout uid={uid} />} />
-      <NodeToolbarPopoutButton
-        icon={ClockIcon}
-        label="Timestamp"
-        active={node?.timestamp != null}
-        renderPopout={() => <TimestampPopout uid={uid} />}
-      />
+      ) : null}
+      {allows('thumbnail') ? (
+        <NodeToolbarPopoutButton
+          icon={ImagePlusIcon}
+          label="Thumbnail"
+          active={node?.thumbnail != null}
+          renderPopout={() => <MediaPopout uid={uid} field="thumbnail" title="Thumbnail" />}
+        />
+      ) : null}
+      {allows('url') || allows('author') || allows('footer') ? (
+        <NodeToolbarPopoutButton
+          icon={LinkIcon}
+          label="Links and icons"
+          renderPopout={() => <LinksPopout uid={uid} />}
+        />
+      ) : null}
+      {allows('timestamp') ? (
+        <NodeToolbarPopoutButton
+          icon={ClockIcon}
+          label="Timestamp"
+          active={node?.timestamp != null}
+          renderPopout={() => <TimestampPopout uid={uid} />}
+        />
+      ) : null}
     </>
   );
 };
@@ -262,6 +307,26 @@ export const EditableEmbed = ({ uid, embedIndex = 0, message, className }: Edita
   const renderImageAccessory = useContext(GifFavoriteButtonContext);
   const { ref: frameRef, frameProps, selected, nodeIssues } = useNodeFrame({ uid, kind: 'embed', disabled: readOnly });
   const active = useIsActive(uid) && !readOnly;
+  const allows = useEmbedParts();
+  // Empty parts the user asked to add (from the "add" row) show while the embed is selected; a blank embed
+  // opens with its title and description ready to type in.
+  const blank =
+    node != null &&
+    !node.title &&
+    !node.description &&
+    node.fields.length === 0 &&
+    node.author == null &&
+    node.footer == null &&
+    node.image == null &&
+    node.thumbnail == null &&
+    node.timestamp == null;
+  const startRevealed = active && blank ? BLANK_REVEALED : NOTHING_REVEALED;
+  const [revealed, setRevealed] = useState<ReadonlySet<string>>(startRevealed);
+  const [wasActive, setWasActive] = useState(active);
+  if (wasActive !== active) {
+    setWasActive(active);
+    setRevealed(startRevealed);
+  }
   const embed: MessageEmbed | null = useMemo(
     () => (node != null ? createEmbed(channelId, message?.id, prepareEmbed(nodeToJSON(node, 'embed'))) : null),
     // `sizes` changes when an image's size becomes known.
@@ -274,57 +339,62 @@ export const EditableEmbed = ({ uid, embedIndex = 0, message, className }: Edita
   );
   if (node == null || embed == null) return null;
 
+  // A part shows when it has content, when it was just added, or (title and description) on a blank embed.
+  const shows = (slot: 'author' | 'title' | 'description' | 'footer', hasContent: boolean) =>
+    hasContent || (active && revealed.has(slot));
+  const reveal = (slot: string, field: string) => {
+    setRevealed(new Set([...revealed, slot]));
+    uiStore.set({ pendingFocus: { uid, field } });
+  };
+
   const autoPlayGif = media.gifAutoPlay;
   const { maxMediaWidth, maxMediaHeight } = getMaxMediaSize(embed);
   const title = (text: string) => renderEmbedMarkdown(text, { embed, kind: 'title', channelId });
   const description = (text: string, isField: boolean) =>
     renderEmbedMarkdown(text, { embed, kind: isField ? 'field-value' : 'description', channelId });
 
-  const author =
-    embed.author != null || active ? (
-      <div className={clsx(styles.embedAuthor, styles.embedMargin, { [ui.ghostRow]: embed.author == null })}>
-        {embed.author?.iconProxyURL != null ? (
-          <img
-            alt=""
-            className={styles.embedAuthorIcon}
-            src={
-              autoPlayGif && !disableAnimations ? embed.author.iconProxyURL : toStaticImage(embed.author.iconProxyURL)
-            }
-          />
-        ) : null}
-        {embed.author?.url != null ? (
-          renderEmbedLink({
-            className: clsx(styles.embedAuthorNameLink, styles.embedLink, styles.embedAuthorName),
-            href: embed.author.url,
-            tabIndex: -1,
-            children: (
-              <BuilderPlainTextField
-                uid={uid}
-                kind="embed"
-                field="author.name"
-                placeholder="Author"
-                aria-label="Author name"
-                disabled={readOnly}
-              />
-            ),
-            target: '_blank',
-            rel: 'noreferrer noopener',
-            messageId: message?.id,
-            channelId: message?.channel_id,
-          })
-        ) : (
-          <BuilderPlainTextField
-            uid={uid}
-            kind="embed"
-            field="author.name"
-            placeholder="Author"
-            className={styles.embedAuthorName}
-            aria-label="Author name"
-            disabled={readOnly}
-          />
-        )}
-      </div>
-    ) : null;
+  const author = shows('author', embed.author != null) ? (
+    <div className={clsx(styles.embedAuthor, styles.embedMargin, { [ui.ghostRow]: embed.author == null })}>
+      {embed.author?.iconProxyURL != null ? (
+        <img
+          alt=""
+          className={styles.embedAuthorIcon}
+          src={autoPlayGif && !disableAnimations ? embed.author.iconProxyURL : toStaticImage(embed.author.iconProxyURL)}
+        />
+      ) : null}
+      {embed.author?.url != null ? (
+        renderEmbedLink({
+          className: clsx(styles.embedAuthorNameLink, styles.embedLink, styles.embedAuthorName),
+          href: embed.author.url,
+          tabIndex: -1,
+          children: (
+            <BuilderPlainTextField
+              uid={uid}
+              kind="embed"
+              field="author.name"
+              placeholder="Author"
+              aria-label="Author name"
+              disabled={readOnly}
+            />
+          ),
+          target: '_blank',
+          rel: 'noreferrer noopener',
+          messageId: message?.id,
+          channelId: message?.channel_id,
+        })
+      ) : (
+        <BuilderPlainTextField
+          uid={uid}
+          kind="embed"
+          field="author.name"
+          placeholder="Author"
+          className={styles.embedAuthorName}
+          aria-label="Author name"
+          disabled={readOnly}
+        />
+      )}
+    </div>
+  ) : null;
 
   const titleText = (
     <BuilderTextField
@@ -339,39 +409,37 @@ export const EditableEmbed = ({ uid, embedIndex = 0, message, className }: Edita
       disabled={readOnly}
     />
   );
-  const titleSection =
-    embed.rawTitle != null || active ? (
-      <div className={clsx(styles.embedTitle, styles.embedMargin)}>
-        {embed.url != null && embed.rawTitle != null
-          ? renderEmbedLink({
-              className: clsx(styles.embedTitleLink, styles.embedLink, styles.embedTitle),
-              href: embed.url,
-              tabIndex: -1,
-              children: titleText,
-              target: '_blank',
-              rel: 'noreferrer noopener',
-              messageId: message?.id,
-              channelId: message?.channel_id,
-            })
-          : titleText}
-      </div>
-    ) : null;
+  const titleSection = shows('title', embed.rawTitle != null) ? (
+    <div className={clsx(styles.embedTitle, styles.embedMargin)}>
+      {embed.url != null && embed.rawTitle != null
+        ? renderEmbedLink({
+            className: clsx(styles.embedTitleLink, styles.embedLink, styles.embedTitle),
+            href: embed.url,
+            tabIndex: -1,
+            children: titleText,
+            target: '_blank',
+            rel: 'noreferrer noopener',
+            messageId: message?.id,
+            channelId: message?.channel_id,
+          })
+        : titleText}
+    </div>
+  ) : null;
 
-  const descriptionSection =
-    embed.rawDescription != null || active ? (
-      <div className={clsx(styles.embedDescription, textVariants['body-sm/normal'], styles.embedMargin)}>
-        <BuilderTextField
-          uid={uid}
-          kind="embed"
-          field="description"
-          multiline
-          placeholder="Description"
-          renderPreview={(text) => description(text, false)}
-          aria-label="Embed description"
-          disabled={readOnly}
-        />
-      </div>
-    ) : null;
+  const descriptionSection = shows('description', embed.rawDescription != null) ? (
+    <div className={clsx(styles.embedDescription, textVariants['body-sm/normal'], styles.embedMargin)}>
+      <BuilderTextField
+        uid={uid}
+        kind="embed"
+        field="description"
+        multiline
+        placeholder="Description"
+        renderPreview={(text) => description(text, false)}
+        aria-label="Embed description"
+        disabled={readOnly}
+      />
+    </div>
+  ) : null;
 
   const fields = (() => {
     if (node.fields.length === 0) return null;
@@ -412,36 +480,74 @@ export const EditableEmbed = ({ uid, embedIndex = 0, message, className }: Edita
     );
   })();
 
-  const addField = active ? (
-    <Ghost
-      className={clsx(styles.embedMargin, ui.ghostWide)}
-      icon={<PlusSmallIcon size="xs" color="currentColor" />}
-      onClick={() => {
-        const field = actions.insert(uid, 'fields', -1, 'field');
-        if (field != null) uiStore.set({ selectedId: field, pendingFocus: { uid: field } });
-      }}
-    >
-      Add field
-    </Ghost>
-  ) : null;
-
-  const image = (() => {
-    if (embed.image == null) {
-      if (!active) return null;
-      return (
+  // What's missing, in one row at the bottom: adding a part never moves what's already there.
+  const addRow = active ? (
+    <div className={clsx(styles.embedMargin, ui.addRow)} data-builder-ui data-builder-nodrag>
+      {allows('author') && !shows('author', embed.author != null) ? (
+        <Ghost icon={<PlusSmallIcon size="xs" color="currentColor" />} onClick={() => reveal('author', 'author.name')}>
+          Author
+        </Ghost>
+      ) : null}
+      {allows('title') && !shows('title', embed.rawTitle != null) ? (
+        <Ghost icon={<PlusSmallIcon size="xs" color="currentColor" />} onClick={() => reveal('title', 'title')}>
+          Title
+        </Ghost>
+      ) : null}
+      {allows('description') && !shows('description', embed.rawDescription != null) ? (
+        <Ghost
+          icon={<PlusSmallIcon size="xs" color="currentColor" />}
+          onClick={() => reveal('description', 'description')}
+        >
+          Description
+        </Ghost>
+      ) : null}
+      {allows('fields') ? (
+        <Ghost
+          icon={<PlusSmallIcon size="xs" color="currentColor" />}
+          onClick={() => {
+            const field = actions.insert(uid, 'fields', -1, 'field');
+            if (field != null) uiStore.set({ selectedId: field, pendingFocus: { uid: field } });
+          }}
+        >
+          Field
+        </Ghost>
+      ) : null}
+      {allows('image') && embed.image == null ? (
         <SlotPopout renderPopout={() => <MediaPopout uid={uid} field="image" title="Image" />}>
           {(props) => (
-            <Ghost
-              {...props}
-              className={clsx(styles.embedMargin, ui.ghostImage)}
-              icon={<ImageIcon size="sm" color="currentColor" />}
-            >
-              {node.image?.url != null && node.image.url !== '' ? 'Loading image…' : 'Add image'}
+            <Ghost {...props} icon={<ImageIcon size="xs" color="currentColor" />}>
+              {node.image?.url != null && node.image.url !== '' ? 'Image…' : 'Image'}
             </Ghost>
           )}
         </SlotPopout>
-      );
-    }
+      ) : null}
+      {allows('thumbnail') && embed.thumbnail == null ? (
+        <SlotPopout renderPopout={() => <MediaPopout uid={uid} field="thumbnail" title="Thumbnail" />}>
+          {(props) => (
+            <Ghost {...props} icon={<ImagePlusIcon size="xs" color="currentColor" />}>
+              Thumbnail
+            </Ghost>
+          )}
+        </SlotPopout>
+      ) : null}
+      {allows('footer') && !shows('footer', embed.footer?.text != null) ? (
+        <Ghost icon={<PlusSmallIcon size="xs" color="currentColor" />} onClick={() => reveal('footer', 'footer.text')}>
+          Footer
+        </Ghost>
+      ) : null}
+      {allows('timestamp') && embed.timestamp == null ? (
+        <Ghost
+          icon={<ClockIcon size="xs" color="currentColor" />}
+          onClick={() => actions.update(uid, { timestamp: new Date().toISOString() })}
+        >
+          Timestamp
+        </Ghost>
+      ) : null}
+    </div>
+  ) : null;
+
+  const image = (() => {
+    if (embed.image == null) return null;
     const item = embed.image;
     const src = getAttachmentSrc(item);
     const animated = isAnimatedImage({ src, original: item.url, animated: false, srcIsAnimated: item.srcIsAnimated });
@@ -476,22 +582,7 @@ export const EditableEmbed = ({ uid, embedIndex = 0, message, className }: Edita
   })();
 
   const thumbnail = (() => {
-    if (embed.thumbnail == null) {
-      if (!active) return null;
-      return (
-        <SlotPopout renderPopout={() => <MediaPopout uid={uid} field="thumbnail" title="Thumbnail" />} align="right">
-          {(props) => (
-            <Ghost
-              {...props}
-              className={clsx(styles.embedThumbnail, ui.ghostThumbnail)}
-              icon={<ImagePlusIcon size="sm" color="currentColor" />}
-            >
-              Thumbnail
-            </Ghost>
-          )}
-        </SlotPopout>
-      );
-    }
+    if (embed.thumbnail == null) return null;
     const item = embed.thumbnail;
     const hasAlt = item.description != null && item.description !== '';
     return renderEmbedImage({
@@ -530,23 +621,9 @@ export const EditableEmbed = ({ uid, embedIndex = 0, message, className }: Edita
             )
           }
         </SlotPopout>
-      ) : active ? (
-        <SlotPopout renderPopout={() => <TimestampPopout uid={uid} />} position="top">
-          {(props) => (
-            <button
-              type="button"
-              data-builder-ui
-              data-builder-nodrag
-              className={clsx(ui.inlineButton, ui.ghostText)}
-              {...props}
-            >
-              <ClockIcon size="xxs" color="currentColor" /> Timestamp
-            </button>
-          )}
-        </SlotPopout>
       ) : null;
-    const hasText = embed.footer?.text != null;
-    if (!hasText && formatted == null && !active) return null;
+    const hasText = shows('footer', embed.footer?.text != null);
+    if (!hasText && formatted == null) return null;
     const iconUrl = embed.footer?.iconProxyURL;
     return (
       <div className={clsx(styles.embedFooter, styles.embedMargin)}>
@@ -558,7 +635,7 @@ export const EditableEmbed = ({ uid, embedIndex = 0, message, className }: Edita
           />
         ) : null}
         <span className={clsx(styles.embedFooterText, textVariants['body-xs/medium'])}>
-          {hasText || active ? (
+          {hasText ? (
             <BuilderPlainTextField
               uid={uid}
               kind="embed"
@@ -568,9 +645,7 @@ export const EditableEmbed = ({ uid, embedIndex = 0, message, className }: Edita
               disabled={readOnly}
             />
           ) : null}
-          {(hasText || active) && (formatted != null || active) ? (
-            <span className={styles.embedFooterSeparator}>•</span>
-          ) : null}
+          {hasText && formatted != null ? <span className={styles.embedFooterSeparator}>•</span> : null}
           {timestamp}
         </span>
       </div>
@@ -600,7 +675,7 @@ export const EditableEmbed = ({ uid, embedIndex = 0, message, className }: Edita
       })}
       style={{ borderLeftColor: color, maxWidth: getMaxWidth() }}
     >
-      {!readOnly ? (
+      {!readOnly && allows('color') ? (
         <SlotPopout renderPopout={() => <EmbedColorPopout uid={uid} />} position="right" align="top">
           {(props) => (
             <button
@@ -620,10 +695,10 @@ export const EditableEmbed = ({ uid, embedIndex = 0, message, className }: Edita
           {titleSection}
           {descriptionSection}
           {fields}
-          {addField}
           {image}
           {thumbnail}
           {footer}
+          {addRow}
         </div>
       </div>
       {!readOnly ? (
