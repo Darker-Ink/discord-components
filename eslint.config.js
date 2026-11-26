@@ -5,7 +5,7 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['**/dist/**', '.cache/**', 'scripts/**'] },
+  { ignores: ['**/dist/**', '**/.wrangler/**', '.cache/**', 'scripts/**'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
