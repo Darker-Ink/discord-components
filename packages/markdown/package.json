@@ -42,7 +42,7 @@
     "@discord-mana/messages": "workspace:*",
     "@discord-mana/tokens": "workspace:*",
     "clsx": "^2.1.1",
-    "moment": "2.30.1"
+    "moment": "2.31.0"
   },
   "devDependencies": {
     "@arborium/ada": "2.18.2",
