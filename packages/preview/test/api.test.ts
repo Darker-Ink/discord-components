@@ -24,8 +24,10 @@ const newKey = async () => {
   return ((await response.json()) as { key: string; id: string }).key;
 };
 
+const AUTHOR = { id: '1000000000000000001', username: 'wumpus' };
+
 const message = (overrides: Record<string, unknown> = {}) => ({
-  author: { id: '1000000000000000001', username: 'wumpus' },
+  author: AUTHOR,
   content: 'Hello',
   timestamp: '2026-11-26T09:00:00.000Z',
   ...overrides,
@@ -99,6 +101,7 @@ describe('API keys', () => {
     expect((await call('/api/keys/current', { key, method: 'DELETE' })).status).toBe(204);
     expect((await call('/api/keys/current', { key })).status).toBe(401);
     expect((await call(`/api/previews/${id}/content`)).status).toBe(404);
+    expect(await env.PAYLOADS.head(`previews/${id}.json.gz`)).toBeNull();
   });
 });
 
@@ -179,12 +182,17 @@ describe('creating previews', () => {
 
   it('enforces the message count, body size and per-key preview limits', async () => {
     const key = await newKey();
-    const tooMany = await post('/api/previews', { data: Array.from({ length: 6 }, () => message()) }, { key });
+    const tooMany = await post(
+      '/api/previews',
+      { data: Array.from({ length: 6001 }, () => ({ author: AUTHOR })) },
+      { key },
+    );
     expect(tooMany.status).toBe(400);
+    expect(JSON.stringify(await tooMany.json())).toContain('at most 6000 messages');
 
     const huge = await post(
       '/api/previews',
-      { data: [message({ content: 'x'.repeat(3000) })], pad: 'x'.repeat(70 * 1024) },
+      { data: [message({ content: 'x'.repeat(3000) })], pad: 'x'.repeat(4.2 * 1024 * 1024) },
       { key },
     );
     expect(huge.status).toBe(413);
@@ -194,6 +202,47 @@ describe('creating previews', () => {
     const over = await post('/api/previews', { data: [message()] }, { key });
     expect(over.status).toBe(403);
     expect(await errorCode(over)).toBe('quota_exceeded');
+  });
+
+  it('enforces the per-key storage quota', async () => {
+    const key = await newKey();
+    const bulky = (count: number) =>
+      Array.from({ length: count }, (_, i) => message({ content: `${i} ${'y'.repeat(1900)}` }));
+    // About 2 MB, then 1 MB more: over the 2.5 MiB quota.
+    expect((await post('/api/previews', { data: bulky(1000) }, { key })).status).toBe(201);
+    const over = await post('/api/previews', { data: bulky(500) }, { key });
+    expect(over.status).toBe(403);
+    expect(await errorCode(over)).toBe('quota_exceeded');
+  });
+
+  it('stores and serves a 5,000-message transcript', async () => {
+    const key = await newKey();
+    const start = Date.parse('2026-11-01T00:00:00Z');
+    const data = Array.from({ length: 5000 }, (_, i) =>
+      message({
+        author: i % 7 === 0 ? { id: '1000000000000000002', username: 'helper', bot: true } : AUTHOR,
+        content: `Message ${i}: the quick brown fox jumps over the lazy dog.`,
+        timestamp: new Date(start + i * 90_000).toISOString(),
+        ...(i % 50 === 0 ? { embeds: [{ title: `Embed ${i}`, description: 'Details', color: 0x5865f2 }] } : {}),
+      }),
+    );
+    const created = await post('/api/previews', { data }, { key });
+    expect(created.status).toBe(201);
+    const { id, messageCount, size } = (await created.json()) as { id: string; messageCount: number; size: number };
+    expect(messageCount).toBe(5000);
+    expect(size).toBeGreaterThan(500_000);
+
+    // Stored gzipped in R2, metadata only in D1.
+    const object = await env.PAYLOADS.head(`previews/${id}.json.gz`);
+    expect(object?.size).toBeLessThan(size / 4);
+
+    const content = await call(`/api/previews/${id}/content`);
+    expect(content.status).toBe(200);
+    expect(content.headers.get('content-type')).toContain('application/json');
+    const body = (await content.json()) as { id: string; messages: { content: string }[]; options: unknown };
+    expect(body.id).toBe(id);
+    expect(body.messages).toHaveLength(5000);
+    expect(body.messages[4999].content).toBe('Message 4999: the quick brown fox jumps over the lazy dog.');
   });
 
   it('caps expiresIn at the configured maximum', async () => {
@@ -235,7 +284,9 @@ describe('listing and deleting', () => {
     expect(await errorCode(foreign)).toBe('not_found');
     expect((await call(`/api/previews/${id}`, { key: other })).status).toBe(404);
     expect((await call(`/api/previews/${id}`, { key })).status).toBe(200);
+    expect(await env.PAYLOADS.head(`previews/${id}.json.gz`)).not.toBeNull();
     expect((await call(`/api/previews/${id}`, { key, method: 'DELETE' })).status).toBe(204);
+    expect(await env.PAYLOADS.head(`previews/${id}.json.gz`)).toBeNull();
     expect((await call(`/api/previews/${id}`, { key, method: 'DELETE' })).status).toBe(404);
     expect((await call(`/api/previews/${id}/content`)).status).toBe(404);
     expect((await call(`/p/${id}`)).status).toBe(404);
@@ -324,6 +375,22 @@ describe('headers', () => {
     expect(preview.headers.get('referrer-policy')).toBe('no-referrer');
 
     expect((await call('/nope')).status).toBe(404);
+    expect((await call('/docs')).status).toBe(200);
+  });
+
+  it('paints the theme and a loading skeleton before the app loads, but only for readable previews', async () => {
+    const page = await (await call('/p/demo?theme=light')).text();
+    expect(page).toContain('data-boot-theme="light"');
+    expect(page).toContain('class="boot"');
+
+    const key = await newKey();
+    const { id } = await createPreview(key, { secret: true, options: { theme: 'onyx' } });
+    const locked = await call(`/p/${id}`);
+    expect(locked.status).toBe(403);
+    const html = await locked.text();
+    // Neither the skeleton nor the secret preview's own theme leak without a signature.
+    expect(html).not.toContain('class="boot"');
+    expect(html).toContain('data-boot-theme="dark"');
   });
 
   it('answers CORS preflights and sends CORS headers on the API only', async () => {
@@ -342,7 +409,7 @@ describe('headers', () => {
     const demo = (await (await call('/api/previews/demo/content')).json()) as { messages: unknown[] };
     expect(demo.messages.length).toBeGreaterThan(3);
     const limits = (await (await call('/api/limits')).json()) as { maxMessagesPerPreview: number };
-    expect(limits.maxMessagesPerPreview).toBe(5);
+    expect(limits.maxMessagesPerPreview).toBe(6000);
   });
 });
 
@@ -358,6 +425,6 @@ describe('scheduled sweep', () => {
     await worker.scheduled(createScheduledController(), env);
     await waitOnExecutionContext(ctx);
     expect(await env.DB.prepare('SELECT 1 FROM previews WHERE id = ?').bind(id).first()).toBeNull();
-    expect(await env.DB.prepare('SELECT 1 FROM preview_payloads WHERE preview_id = ?').bind(id).first()).toBeNull();
+    expect(await env.PAYLOADS.head(`previews/${id}.json.gz`)).toBeNull();
   });
 });

@@ -2,10 +2,10 @@ import type { Limits } from '../shared/api';
 
 // Fallbacks for vars missing from the environment; wrangler.jsonc sets the same values.
 const DEFAULTS: Limits = {
-  maxBodyBytes: 1024 * 1024,
-  maxMessagesPerPreview: 200,
+  maxBodyBytes: 10 * 1024 * 1024,
+  maxMessagesPerPreview: 10_000,
   maxPreviewsPerKey: 1000,
-  maxStorageBytesPerKey: 100 * 1024 * 1024,
+  maxStorageBytesPerKey: 1024 * 1024 * 1024,
   defaultPreviewTtlSeconds: 30 * 24 * 60 * 60,
   maxPreviewTtlSeconds: 365 * 24 * 60 * 60,
   defaultSignedUrlTtlSeconds: 60 * 60,
@@ -27,8 +27,8 @@ const VARS: Record<keyof Limits, keyof Env> = {
   keyCreationWindowSeconds: 'KEY_CREATION_WINDOW_SECONDS',
 };
 
-// D1 rejects rows over 2 MB; the payload is gzipped, but the raw body must stay under it to be safe.
-const MAX_BODY_CEILING = 2_000_000;
+// Workers accept request bodies up to 100 MiB (more on Enterprise plans).
+const MAX_BODY_CEILING = 100 * 1024 * 1024;
 
 export const getLimits = (env: Env): Limits => {
   const limits = { ...DEFAULTS };

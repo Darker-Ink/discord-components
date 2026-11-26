@@ -20,10 +20,11 @@ export default defineConfig(async () => {
           bindings: {
             TEST_MIGRATIONS: migrations,
             SIGNING_SECRET: 'test-signing-secret',
-            // Small limits so the tests can hit them.
-            MAX_BODY_BYTES: 64 * 1024,
-            MAX_MESSAGES_PER_PREVIEW: 5,
+            // Limits the tests can hit, still big enough for a 5,000-message preview.
+            MAX_BODY_BYTES: 4 * 1024 * 1024,
+            MAX_MESSAGES_PER_PREVIEW: 6000,
             MAX_PREVIEWS_PER_KEY: 3,
+            MAX_STORAGE_BYTES_PER_KEY: 2.5 * 1024 * 1024,
             KEY_CREATION_LIMIT: 3,
             MAX_SIGNED_URL_TTL_SECONDS: 3600,
           },

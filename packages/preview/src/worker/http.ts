@@ -33,6 +33,13 @@ export const json = (body: unknown, status = 200, headers?: HeadersInit) => {
   return response;
 };
 
+/** A JSON body that is already serialised (e.g. streamed from storage). */
+export const rawJson = (body: ReadableStream, headers?: HeadersInit) => {
+  const response = new Response(body, { status: 200, headers: API_HEADERS });
+  if (headers != null) for (const [name, value] of new Headers(headers)) response.headers.set(name, value);
+  return response;
+};
+
 export const noContent = () => new Response(null, { status: 204, headers: CORS_HEADERS });
 
 export const preflight = () => new Response(null, { status: 204, headers: CORS_HEADERS });

@@ -1,6 +1,7 @@
 import type { CreatedKey, Limits } from '../shared/api';
 import { hmacSign, randomBase62, sha256Hex, timingSafeEqualHex } from './crypto';
 import { HttpError } from './http';
+import { deletePayloads } from './previews';
 
 // Keys look like `dm_<12-char id>_<32-char secret>`: the id finds the row, the secret is checked against its
 // stored SHA-256 hash in constant time. Neither part is ever logged or stored in the clear.
@@ -107,11 +108,16 @@ export const getKeyUsage = async (env: Env, keyId: string) => {
 };
 
 /** Deletes a key with every preview it created. */
-export const revokeKey = (env: Env, keyId: string) =>
-  env.DB.batch([
-    env.DB.prepare('DELETE FROM preview_payloads WHERE preview_id IN (SELECT id FROM previews WHERE key_id = ?)').bind(
-      keyId,
-    ),
+export const revokeKey = async (env: Env, keyId: string) => {
+  const { results } = await env.DB.prepare('SELECT id FROM previews WHERE key_id = ?')
+    .bind(keyId)
+    .all<{ id: string }>();
+  await deletePayloads(
+    env,
+    results.map((row) => row.id),
+  );
+  await env.DB.batch([
     env.DB.prepare('DELETE FROM previews WHERE key_id = ?').bind(keyId),
     env.DB.prepare('DELETE FROM api_keys WHERE id = ?').bind(keyId),
   ]);
+};

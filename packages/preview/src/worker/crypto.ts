@@ -73,13 +73,7 @@ export const hmacVerify = async (secret: string, message: string, signature: str
   return crypto.subtle.verify('HMAC', await hmacKey(secret), bytes, encoder.encode(message));
 };
 
-export const gzipJson = async (value: unknown) => {
-  const stream = new Blob([JSON.stringify(value)]).stream().pipeThrough(new CompressionStream('gzip'));
+export const gzipText = async (text: string) => {
+  const stream = new Blob([text]).stream().pipeThrough(new CompressionStream('gzip'));
   return new Response(stream).arrayBuffer();
-};
-
-export const gunzipJson = async <T>(data: ArrayBuffer | Uint8Array | number[]): Promise<T> => {
-  const bytes = data instanceof ArrayBuffer || data instanceof Uint8Array ? data : new Uint8Array(data);
-  const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
-  return (await new Response(stream).json()) as T;
 };

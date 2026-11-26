@@ -1,5 +1,5 @@
 import { getLimits } from './config';
-import { HttpError, errorResponse, json, noContent, preflight, readJson } from './http';
+import { HttpError, errorResponse, json, noContent, preflight, rawJson, readJson } from './http';
 import { authenticate, consumeKeyCreation, createKey, getKeyUsage, revokeKey } from './keys';
 import { servePage } from './pages';
 import {
@@ -66,9 +66,9 @@ const handleApi = async (request: Request, env: Env, ctx: ExecutionContext, url:
   const content = /^\/api\/previews\/([^/]+)\/content$/.exec(pathname);
   if (content != null) {
     if (method !== 'GET') throw methodNotAllowed('GET');
-    const response = json(await getPreviewContent(env, decodeURIComponent(content[1]), url, limits));
-    response.headers.set('referrer-policy', 'no-referrer');
-    return response;
+    const body = await getPreviewContent(env, ctx, decodeURIComponent(content[1]), url, limits);
+    const headers = { 'referrer-policy': 'no-referrer' };
+    return body instanceof ReadableStream ? rawJson(body, headers) : json(body, 200, headers);
   }
 
   const preview = /^\/api\/previews\/([^/]+)$/.exec(pathname);

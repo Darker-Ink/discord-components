@@ -19,17 +19,20 @@
       "migrations_dir": "migrations",
     },
   ],
+  // Preview payloads (gzipped message JSON, one object per preview). Metadata stays in D1.
+  "r2_buckets": [{ "binding": "PAYLOADS", "bucket_name": "discord-mana-preview-payloads" }],
   // Per-key burst protection for the authenticated API (approximate, per location; period is 10 or 60 s).
   "ratelimits": [{ "name": "API_RATE_LIMITER", "namespace_id": "1001", "simple": { "limit": 120, "period": 60 } }],
   // Daily sweep of expired previews and old rate limit windows.
   "triggers": { "crons": ["17 4 * * *"] },
   "vars": {
-    // Largest accepted request body, in bytes (D1 caps a row at 2 MB; payloads are stored gzipped).
-    "MAX_BODY_BYTES": 1048576,
-    "MAX_MESSAGES_PER_PREVIEW": 200,
-    // Live (unexpired) previews one key may hold, and their combined JSON size in bytes.
+    // Largest accepted request body, in bytes (10 MiB; at most 100 MiB, the Workers request limit).
+    "MAX_BODY_BYTES": 10485760,
+    // A sanity cap; the body size is the real limit.
+    "MAX_MESSAGES_PER_PREVIEW": 10000,
+    // Live (unexpired) previews one key may hold, and their combined JSON size in bytes (1 GiB).
     "MAX_PREVIEWS_PER_KEY": 1000,
-    "MAX_STORAGE_BYTES_PER_KEY": 104857600,
+    "MAX_STORAGE_BYTES_PER_KEY": 1073741824,
     // Preview lifetime: `ttl` in the request, defaulting to and capped by these (seconds).
     "DEFAULT_PREVIEW_TTL_SECONDS": 2592000,
     "MAX_PREVIEW_TTL_SECONDS": 31536000,
