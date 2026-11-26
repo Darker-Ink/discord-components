@@ -1,0 +1,169 @@
+.motion {
+  --custom-global-banner-spring-soft: cubic-bezier(0.23, 0.14, 0.21, 1.14);
+  --custom-global-banner-spring-smooth: linear(0, 0.041 5%, 0.198 13%, 0.543 29%, 0.715 40%, 0.845 53%, 0.933 70%, 1);
+  container: global-banner/inline-size;
+  display: grid;
+  grid-template-rows: 1fr;
+  overflow: clip;
+  transition: grid-template-rows 0.6s var(--custom-global-banner-spring-soft);
+  width: 100%;
+  @starting-style {
+    grid-template-rows: 0fr;
+  }
+}
+.motion .globalBanner {
+  transition: translate 0.6s var(--custom-global-banner-spring-soft);
+  @starting-style {
+    translate: 0 -100%;
+  }
+}
+.motionContent {
+  min-height: 0;
+}
+.exiting {
+  grid-template-rows: 0fr;
+  pointer-events: none;
+  transition: grid-template-rows 0.4s var(--custom-global-banner-spring-smooth);
+}
+.exiting .globalBanner {
+  transition: translate 0.4s var(--custom-global-banner-spring-smooth);
+  translate: 0 -100%;
+}
+:global(.reduce-motion) .motion,
+:global(.reduce-motion) .motion .globalBanner {
+  transition-duration: 1ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root:not(:global(.reduce-motion), :global(.full-motion)) .motion,
+  :root:not(:global(.reduce-motion), :global(.full-motion)) .motion .globalBanner {
+    transition-duration: 1ms;
+  }
+}
+.globalBanner {
+  --custom-global-banner-first-row: max(var(--space-32), 1lh);
+  background: var(--custom-global-banner-background);
+  border-block-start: 1px solid var(--border-subtle);
+  border-inline-start: 1px solid var(--border-subtle);
+  border-start-start-radius: var(--radius-md);
+  box-sizing: border-box;
+  color: var(--custom-global-banner-text);
+  min-height: var(--space-48);
+  overflow: clip;
+  padding-block: calc(var(--space-8) - 1px) var(--space-8);
+  padding-inline: var(--space-48);
+  position: relative;
+  width: 100%;
+}
+.content,
+.globalBanner {
+  align-items: flex-start;
+  display: flex;
+  justify-content: center;
+}
+.content {
+  gap: var(--space-4) var(--space-16);
+}
+.copy {
+  align-items: flex-start;
+  display: flex;
+  gap: var(--space-8);
+  min-width: 0;
+}
+.actions,
+.countdown,
+.dismiss,
+.iconContainer {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  height: var(--custom-global-banner-first-row);
+}
+.iconContainer {
+  color: var(--custom-global-banner-icon);
+}
+.leadingAccessory {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  max-height: var(--space-32);
+  max-width: var(--space-96);
+  overflow: hidden;
+}
+.leadingAccessory > :is(img, svg, picture, video) {
+  max-height: var(--space-32);
+  max-width: 100%;
+  -o-object-fit: contain;
+  object-fit: contain;
+}
+.countdown {
+  margin-inline-end: var(--space-4);
+}
+.message {
+  min-width: 0;
+  padding-block: calc((var(--custom-global-banner-first-row) - 1lh) / 2);
+  text-align: center;
+  text-wrap: pretty;
+}
+.message a {
+  color: currentColor;
+  text-decoration: underline;
+}
+.title {
+  margin-inline-end: var(--space-8);
+}
+.actions {
+  gap: var(--space-8);
+}
+@container global-banner (width < 600px) {
+  .content {
+    flex-wrap: wrap;
+  }
+}
+.dismiss {
+  inset-block-start: calc(var(--space-8) - 1px);
+  inset-inline-end: var(--space-8);
+  position: absolute;
+}
+.promotion,
+.status {
+  --custom-global-banner-text: var(--text-overlay-light);
+  --custom-global-banner-icon: var(--icon-overlay-light);
+}
+.critical {
+  --custom-global-banner-background: var(--background-feedback-critical);
+}
+.warning {
+  --custom-global-banner-background: var(--background-feedback-warning);
+  --custom-global-banner-text: var(--text-overlay-dark);
+  --custom-global-banner-icon: var(--icon-overlay-dark);
+}
+.warning .dismiss {
+  --icon-strong: var(--icon-overlay-dark);
+  --control-icon-only-icon-hover: var(--icon-overlay-dark);
+  --control-icon-only-icon-active: var(--icon-overlay-dark);
+}
+.info {
+  --custom-global-banner-background: var(--background-feedback-info);
+}
+.connected {
+  --custom-global-banner-background: var(--control-connected-background-default);
+}
+.expressive {
+  background:
+    linear-gradient(var(--opacity-black-20), var(--opacity-black-20)),
+    linear-gradient(to right, var(--brand-gradient-blurple), var(--brand-gradient-blurple-dark));
+}
+.nitro {
+  --custom-global-banner-text: var(--global-banner-nitro-text);
+  --custom-global-banner-icon: var(--global-banner-nitro-icon);
+  --custom-global-banner-nitro-middle-stop: 50%;
+  background: linear-gradient(
+    to right,
+    var(--global-banner-nitro-start),
+    var(--global-banner-nitro-middle) var(--custom-global-banner-nitro-middle-stop),
+    var(--global-banner-nitro-end)
+  );
+}
+:global(.theme-light) .nitro {
+  --custom-global-banner-nitro-middle-stop: 51.9%;
+}
