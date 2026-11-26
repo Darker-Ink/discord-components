@@ -6,10 +6,11 @@
   "scripts": {
     "dev": "pnpm --filter @discord-mana/playground dev",
     "build": "pnpm --filter discord-mana... build",
-    "build:sites": "pnpm --filter @discord-mana/playground --filter @discord-mana/preview --filter @discord-mana/site build",
+    "build:sites": "pnpm --filter @discord-mana/playground --filter @discord-mana/preview --filter @discord-mana/site --filter @discord-mana/builder-site build",
     "deploy:playground": "pnpm --filter @discord-mana/playground run deploy",
     "deploy:preview": "pnpm --filter @discord-mana/preview run deploy",
     "deploy:site": "pnpm --filter @discord-mana/site run deploy",
+    "deploy:builder": "pnpm --filter @discord-mana/builder-site run deploy",
     "typecheck": "tsc -p tsconfig.json && pnpm --filter @discord-mana/preview typecheck",
     "lint": "eslint .",
     "format": "prettier --write .",

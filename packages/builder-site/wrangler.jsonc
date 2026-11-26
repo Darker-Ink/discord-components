@@ -1,0 +1,12 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // Static assets only: no Worker script runs. Every path serves the app (drafts live in the URL hash).
+  "name": "discord-mana-builder",
+  "compatibility_date": "2026-11-20",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application",
+  },
+  // A Custom Domain: `wrangler deploy` creates its DNS record and certificate (the zone must be on Cloudflare).
+  "routes": [{ "pattern": "builder.discord-mana.dev", "custom_domain": true }],
+}
