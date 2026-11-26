@@ -30,6 +30,68 @@ const Editor = () => {
 const send = (payload) => sendWebhookMessage('https://discord.com/api/webhooks/…', payload);
 ```
 
+## Editor UI
+
+The whole builder in one component:
+
+```tsx
+import { MessageBuilder } from '@discord-mana/builders';
+import '@discord-mana/builders/style.css'; // only when you import from dist; the umbrella package includes it
+
+<AppRoot theme={ThemeTypes.DARK}>
+  <MessageBuilder
+    defaultValue={{ content: 'Hello!' }} // a payload or a BuilderDocument; or `value` + `onChange`
+    mode="classic" // or "cv2"; changing it converts the message
+    resolvers={resolvers} // users, roles, channels, emoji, avatars (as for <Message>)
+    author={{ username: 'Captain Hook', avatarUrl: null }} // the webhook's own name and avatar
+    webhookStorageKey="my-app:webhook" // offer to remember the webhook URL (opt-in, localStorage)
+  />
+</AppRoot>;
+```
+
+It is a palette, the message drawn exactly like `@discord-mana/messages` draws it (in a channel), and a side
+panel with Issues, JSON and Send tabs. Everything is also exported on its own, to lay out yourself inside a
+`BuilderProvider` (which takes the same options as `MessageBuilderProvider`, or `builder={useMessageBuilder(…)}`):
+
+| Component                                    | What it is                                                                                                                                                                                                                                                          |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `BuilderCanvas`                              | The message, editable in place. Unselected it is pixel-identical to `<Message>` with the same JSON (checked by `scripts/builder-parity.mjs`).                                                                                                                       |
+| `EditableEmbed`, `EditableEmbedField`        | One rich embed (and field): the client's embed markup with every part editable, a colour bar that opens a colour picker, and faint "add" placeholders for missing parts while selected.                                                                             |
+| `EditableComponents`, `EditableComponent`    | The message's components through `@discord-mana/messages`' own `ActionRow`, `Section`, `Container`, `TextDisplay`, `MediaGallery`…, each wrapped in an editing frame.                                                                                               |
+| `ComponentPalette`                           | What can be added, for the current mode. Drag an item to the canvas, or click it to add it next to the selection. Items with nowhere to go are dimmed.                                                                                                              |
+| `ValidationPanel`                            | Errors and warnings from the core with meters for the totals. Clicking one selects the node and focuses the text at fault.                                                                                                                                          |
+| `JsonPanel`                                  | The live payload, highlighted and editable (it applies as soon as it is valid JSON; invalid JSON is pointed out by line and column). Copy, download, import a file or drop one on it.                                                                               |
+| `WebhookPanel`                               | Sends with `sendWebhookMessage`, from the browser. Thread, thread name, username and avatar overrides; Discord's answer, with its field errors linked to the nodes. Looks the webhook up to report its name, avatar and whether an app owns it (`onWebhookChange`). |
+| `BuilderPanels`                              | The three panels as Mana `Tabs`.                                                                                                                                                                                                                                    |
+| `BuilderModeSwitch`, `BuilderHistoryButtons` | Classic / Components v2, and undo / redo.                                                                                                                                                                                                                           |
+| `BuilderChannel`                             | A channel's header bar and scroller around the canvas.                                                                                                                                                                                                              |
+| `BuilderTextField`, `BuilderPlainTextField`  | The in-place text editors: markdown (`InlineEditor` from `@discord-mana/slate`, with the client's rule set for the field) or plain text, saving as you type.                                                                                                        |
+| `NodeFrame`, `useNodeFrame`, `NodeToolbar*`  | The building blocks for editing your own kind of node: selection, focus, keyboard commands, dragging, issue outline and a toolbar.                                                                                                                                  |
+
+**Editing.** Text is edited where it renders: click a title, a field, a button's label or a Text Display and
+type. There are no inputs and no confirm buttons; every keystroke is saved into the document (consecutive
+typing in one field is one undo step). Settings that have no text on screen (a button's style, emoji and URL,
+a select's options, media URLs, a separator's spacing, a section's accessory, a container's accent colour and
+spoiler) are in small popouts from the selected node's toolbar, drawn like the client's message hover bar.
+Text near its limit gets a counter while you type; text over it, or invalid, gets a red underline and the
+problem on hover; nodes with problems get a red outline and a marker.
+
+**Drag and drop** uses `@dnd-kit/core`: it has pointer and keyboard sensors, screen reader instructions and a
+drag overlay, which a native HTML5 drag-and-drop library can't give keyboard users. Drops are only offered
+where the core's `canMove`/`canInsert` allow them: the nearest valid place in the innermost list under the
+pointer gets a line (or a box, for an empty list). Embeds, fields, top-level components, container children
+and buttons in a row move on the canvas; select options and gallery items are reordered in their editors
+(`@dnd-kit/sortable`).
+
+**Keyboard.** Tab to a node (it gets a focus ring and is selected). Enter edits its first text, Escape goes to
+the parent, the arrow keys move between siblings, Alt+arrows move the node, Space picks it up to move it with
+the arrow keys (Space drops, Escape cancels), Ctrl/⌘+D duplicates, Delete removes, Shift+F10 opens its menu
+(also on right-click), and Ctrl/⌘+Z / Ctrl/⌘+Shift+Z undo and redo, in text too.
+
+Media in a payload you send has no size, so the canvas measures images and videos to lay them out like
+Discord's response would (`prepareEmbed`, `prepareComponents`); the document and the JSON keep exactly what was
+written.
+
 ## Document model
 
 A `BuilderDocument` is the message payload as a tree in which every node has a stable `uid`, used for React
