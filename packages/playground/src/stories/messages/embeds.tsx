@@ -1,4 +1,10 @@
-import { MessageEmbeds, type APIEmbed, type EmbedMessage, type ObscureReason } from '@discord-components/messages';
+import {
+  MediaViewerProvider,
+  MessageEmbeds,
+  type APIEmbed,
+  type EmbedMessage,
+  type ObscureReason,
+} from '@discord-components/messages';
 import type { StoryGroup } from '../../types';
 
 // Fixtures shared with scripts/compare-messages.mjs; "{{assets}}" is the playground's /messages folder.
@@ -96,14 +102,17 @@ const Embeds = ({
   spoiler,
   canSuppressEmbeds,
 }: SharedProps & { embeds: APIEmbed[] }) => (
-  <MessageEmbeds
-    embeds={embeds}
-    message={DEFAULT_MESSAGE}
-    autoPlayGif={autoPlayGif}
-    inlineEmbedMedia={inlineEmbedMedia}
-    hasSpoilerEmbeds={spoiler}
-    onSuppressEmbeds={canSuppressEmbeds ? () => {} : undefined}
-  />
+  // Clicking an image opens the media viewer.
+  <MediaViewerProvider>
+    <MessageEmbeds
+      embeds={embeds}
+      message={DEFAULT_MESSAGE}
+      autoPlayGif={autoPlayGif}
+      inlineEmbedMedia={inlineEmbedMedia}
+      hasSpoilerEmbeds={spoiler}
+      onSuppressEmbeds={canSuppressEmbeds ? () => {} : undefined}
+    />
+  </MediaViewerProvider>
 );
 
 Embeds.displayName = 'Embeds';
