@@ -85,7 +85,7 @@ export const Clickable = ({
   if (blockInteractions) {
     const { role: _role, tabIndex: _tabIndex, ...inertProps } = props;
     return (
-      <Tag ref={setRef} className={className} {...inertProps}>
+      <Tag ref={setRef} {...inertProps} className={className}>
         {children}
       </Tag>
     );

@@ -52,6 +52,8 @@ export interface EmbedMarkdownContext {
   embed: MessageEmbed;
   /** `title` covers embed titles and field names (the client parses both the same way). */
   kind: 'title' | 'description' | 'field-value';
+  /** The channel of the embed's message (markdown resolves mentions against it). */
+  channelId?: string;
 }
 
 export type RenderEmbedMarkdown = (text: string, context: EmbedMarkdownContext) => ReactNode;
@@ -117,10 +119,16 @@ export const MessageEmbeds = ({
   );
   // Only rich embeds go through markdown; other embeds show their text as is.
   const renderTitle = (embed: MessageEmbed, title: string) =>
-    embed.type === EmbedType.Rich && renderMarkdown != null ? renderMarkdown(title, { embed, kind: 'title' }) : title;
+    embed.type === EmbedType.Rich && renderMarkdown != null
+      ? renderMarkdown(title, { embed, kind: 'title', channelId: message?.channel_id })
+      : title;
   const renderDescription = (embed: MessageEmbed, description: string, isField: boolean) =>
     embed.type === EmbedType.Rich && renderMarkdown != null
-      ? renderMarkdown(description, { embed, kind: isField ? 'field-value' : 'description' })
+      ? renderMarkdown(description, {
+          embed,
+          kind: isField ? 'field-value' : 'description',
+          channelId: message?.channel_id,
+        })
       : description;
 
   return embeds.map((embed, index) => {

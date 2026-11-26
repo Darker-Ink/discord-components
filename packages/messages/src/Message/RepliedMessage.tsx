@@ -1,6 +1,6 @@
 import { useState, type MouseEventHandler, type ReactNode } from 'react';
 import clsx from 'clsx';
-import { Clickable } from '@discord-mana/components';
+import { BlockInteractions, Clickable } from '@discord-mana/components';
 import { AppsIcon, ChatIcon, ImageIcon, MicrophoneIcon, SlashBoxIcon, StickerSmallIcon } from '@discord-mana/icons';
 import { createResolver, useMessageResolvers } from '../MessageComponents/resolvers';
 import { useRenderMarkdown } from './markdown';
@@ -156,7 +156,10 @@ export const RepliedMessage = ({ message, referencedMessage, onClickReply }: Rep
           onMouseEnter={toggleHovered}
           onMouseLeave={toggleHovered}
         >
-          {rendered ?? <span className={styles.repliedTextPlaceholder}>{placeholder}</span>}
+          {/* The preview's mentions, links and spoilers don't take clicks or focus. */}
+          <BlockInteractions>
+            {rendered ?? <span className={styles.repliedTextPlaceholder}>{placeholder}</span>}
+          </BlockInteractions>
         </Clickable>
         {trailingIcon}
       </>
