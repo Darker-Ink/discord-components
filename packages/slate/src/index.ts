@@ -49,7 +49,10 @@ export {
   type ChannelTextAreaButtonProps,
   type ChannelTextAreaButtonsProps,
 } from './components/ChannelTextArea/ChannelTextAreaButtons';
-export { CharacterCount, type CharacterCountProps } from './components/ChannelTextArea/CharacterCount';
+export {
+  CharacterCount as ChannelTextAreaCharacterCount,
+  type CharacterCountProps as ChannelTextAreaCharacterCountProps,
+} from './components/ChannelTextArea/CharacterCount';
 export {
   InlineEditor,
   type InlineEditorHandle,

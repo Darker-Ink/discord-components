@@ -144,6 +144,9 @@ importers:
       '@discord-mana/messages':
         specifier: workspace:*
         version: link:../messages
+      '@discord-mana/slate':
+        specifier: workspace:*
+        version: link:../slate
       '@discord-mana/tokens':
         specifier: workspace:*
         version: link:../tokens

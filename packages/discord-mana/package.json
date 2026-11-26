@@ -13,6 +13,7 @@
     "@discord-mana/icons": "workspace:*",
     "@discord-mana/markdown": "workspace:*",
     "@discord-mana/messages": "workspace:*",
+    "@discord-mana/slate": "workspace:*",
     "@discord-mana/tokens": "workspace:*"
   },
   "devDependencies": {
