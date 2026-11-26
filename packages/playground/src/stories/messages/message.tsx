@@ -154,13 +154,15 @@ const MessageStory = ({
   reactions,
 }: MessageStoryProps) => {
   const [interaction, setInteraction] = useState<APIMessageComponentInteractionData | null>(null);
+  // A recent id, so the "thinking" message hasn't timed out yet.
+  const [now] = useState(() => Date.now());
   const message: APIMessage = {
     ...BASE_MESSAGE,
-    id: loading ? `${(BigInt(Date.now() - 1420070400000) << 22n).toString()}` : BASE_MESSAGE.id,
+    id: loading ? `${(BigInt(now - 1420070400000) << 22n).toString()}` : BASE_MESSAGE.id,
     type: reply ? MessageType.Reply : loading ? MessageType.ChatInputCommand : MessageType.Default,
     content: loading ? '' : content,
-    timestamp: new Date().toISOString(),
-    edited_timestamp: edited ? new Date().toISOString() : null,
+    timestamp: new Date(now).toISOString(),
+    edited_timestamp: edited ? new Date(now).toISOString() : null,
     author: bot || loading ? APP : AUTHOR,
     flags:
       (ephemeral ? MessageFlags.Ephemeral : 0) |
