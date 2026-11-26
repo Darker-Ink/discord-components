@@ -9,6 +9,7 @@ import {
   Field,
   FieldSet,
   InputField,
+  Select,
   Stack,
   Switch,
   Text,
@@ -79,9 +80,14 @@ const DisabledFieldRow = ({
 
 DisabledFieldRow.displayName = 'DisabledFieldRow';
 
+const SELECT_OPTIONS = [
+  { label: 'Aardvark', value: 'aardvark', id: 'aardvark' },
+  { label: 'Cat', value: 'cat', id: 'cat' },
+  { label: 'Dog', value: 'dog', id: 'dog' },
+];
+
 const PICKER_COLORS = [1752220, 3066993, 3447003, 0x9b59b6, 0xe91e63, 0xf1c40f, 0xe67e22, 0xe74c3c];
 
-// Discord's story also has a Select row; that component isn't built here yet.
 const DisabledFields = ({ auxiliaryContentPosition }: { auxiliaryContentPosition?: FieldAuxiliaryContentPosition }) => (
   <Stack direction="vertical" gap={24}>
     <DisabledFieldRow title="Button" auxiliaryContentPosition={auxiliaryContentPosition}>
@@ -106,6 +112,17 @@ const DisabledFields = ({ auxiliaryContentPosition }: { auxiliaryContentPosition
           Inner InputField content
         </Text>
       </InputField>
+    </DisabledFieldRow>
+    <DisabledFieldRow title="Select" auxiliaryContentPosition={auxiliaryContentPosition}>
+      <Select
+        label="Animal"
+        hideLabel
+        options={SELECT_OPTIONS}
+        selectionMode="single"
+        value={undefined}
+        onSelectionChange={noop}
+        disabled
+      />
     </DisabledFieldRow>
     <DisabledFieldRow title="CopyInput" auxiliaryContentPosition={auxiliaryContentPosition}>
       <CopyInput value="https://discord.gg/disabled-example" supportsCopy onCopy={noop} disabled />
