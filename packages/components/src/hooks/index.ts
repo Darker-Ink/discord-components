@@ -7,3 +7,4 @@ export {
   type UseDropdownFloatingOptions,
 } from './useDropdownFloating';
 export { useStableCallback } from './useStableCallback';
+export { useElementSize, useResizeObserver, type UseResizeObserverOptions } from './useResizeObserver';
