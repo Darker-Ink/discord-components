@@ -44,8 +44,9 @@ export const EXAMPLE_MESSAGES = [
         size: 140222,
         url: '{{origin}}/example/landscape.png',
         proxy_url: '{{origin}}/example/landscape.png',
-        width: 1280,
-        height: 720,
+        // Declared smaller than the file so it shows at a modest size, as a resized upload would.
+        width: 400,
+        height: 225,
         content_type: 'image/png',
       },
     ],

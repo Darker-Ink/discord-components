@@ -1,12 +1,14 @@
 import { useEffect, useLayoutEffect, useMemo, useState, type ReactNode } from 'react';
 import clsx from 'clsx';
-import { AppRoot, HeaderBar, Spinner, Text } from '@discord-mana/components';
-import { CircleErrorIcon, LockIcon, TextIcon } from '@discord-mana/icons';
+import { AppRoot, Heading, HeaderBar, Text, tokens } from '@discord-mana/components';
+import { LockIcon, TextIcon } from '@discord-mana/icons';
 import { MediaViewerProvider, type APIMessage } from '@discord-mana/messages';
 import type { ApiErrorBody, PreviewContent, ResizeMessage } from '../../shared/api';
+import { BootSkeleton } from './BootSkeleton';
 import { MessageList } from './MessageList';
 import { THEME_CLASSES, parseViewParams, type ViewParams } from '../viewParams';
 import styles from './Viewer.module.css';
+import welcomeStyles from './ChannelWelcome.module.css';
 
 type LoadState =
   | { status: 'loading' }
@@ -90,49 +92,98 @@ const useResizeMessages = (id: string, element: HTMLElement | null) => {
   }, [id, element]);
 };
 
-const ERROR_TITLES: Record<number, string> = {
-  403: 'This preview is private',
-  404: 'Preview not found',
+const ERRORS: Record<string, { title: string; text: string }> = {
+  missing_signature: { title: 'This preview is private', text: 'Open it through the signed link you were given.' },
+  expired_signature: {
+    title: 'This link has expired',
+    text: 'Signed links only work for a while. Ask whoever shared it for a new one.',
+  },
+  invalid_signature: {
+    title: "This link isn't valid",
+    text: 'Part of it may be missing. Copy the whole link and try again.',
+  },
+  not_found: { title: 'Preview not found', text: 'It may have expired or been deleted.' },
 };
 
-const ErrorState = ({ httpStatus, code, message }: { httpStatus: number; code: string; message: string }) => (
-  <div className={styles.state} role="alert" data-error={code}>
-    <div className={styles.stateIcon}>
-      {httpStatus === 403 ? (
-        <LockIcon size="lg" color="currentColor" />
-      ) : (
-        <CircleErrorIcon size="lg" color="currentColor" />
-      )}
+const ErrorState = ({ httpStatus, code, message }: { httpStatus: number; code: string; message: string }) => {
+  const copy = ERRORS[code] ?? { title: "This preview couldn't be loaded", text: message };
+  return (
+    <div className={styles.state} role="alert" data-error={code}>
+      <div className={styles.stateIcon}>
+        {httpStatus === 403 ? (
+          <LockIcon size="custom" width={36} height={36} color={tokens.colors.ICON_STRONG} />
+        ) : (
+          <TextIcon size="custom" width={36} height={36} color={tokens.colors.ICON_STRONG} />
+        )}
+      </div>
+      <Text variant="heading-xl/semibold" color="text-strong" tag="h1">
+        {copy.title}
+      </Text>
+      <Text variant="body-md/normal" color="text-muted" tag="p" className={styles.stateText}>
+        {copy.text}
+      </Text>
     </div>
-    <Text variant="heading-lg/semibold" color="text-strong" tag="h1">
-      {ERROR_TITLES[httpStatus] ?? 'Something went wrong'}
-    </Text>
-    <Text variant="body-md/normal" color="text-muted" tag="p" className={styles.stateText}>
-      {httpStatus === 404 ? 'It may have expired or been deleted.' : message}
+  );
+};
+
+ErrorState.displayName = 'ErrorState';
+
+const rangeFormat = new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+
+const describeRange = (messages: APIMessage[]) => {
+  const first = new Date(messages[0]?.timestamp ?? NaN);
+  const last = new Date(messages[messages.length - 1]?.timestamp ?? NaN);
+  if (Number.isNaN(first.getTime()) || Number.isNaN(last.getTime())) return null;
+  return rangeFormat.formatRange(first, last);
+};
+
+const ViewerHeader = ({ title, messages }: { title: string; messages: APIMessage[] | null }) => {
+  const range = messages != null ? describeRange(messages) : null;
+  return (
+    <HeaderBar className={styles.header} aria-label={`#${title}`}>
+      <HeaderBar.ChannelIcon icon={TextIcon} aria-label="Text channel" disabled />
+      <HeaderBar.Title>{title}</HeaderBar.Title>
+      {messages != null ? (
+        <>
+          <HeaderBar.Divider />
+          <Text variant="body-sm/normal" color="text-muted" className={styles.headerMeta}>
+            {messages.length === 1 ? '1 message' : `${messages.length.toLocaleString()} messages`}
+            {range != null ? <span className={styles.headerRange}>, {range}</span> : null}
+          </Text>
+        </>
+      ) : null}
+    </HeaderBar>
+  );
+};
+
+ViewerHeader.displayName = 'ViewerHeader';
+
+/** The client's start-of-channel header, above the first message. */
+const ChannelWelcome = ({ title }: { title: string }) => (
+  <div className={clsx(welcomeStyles.container, styles.welcome)}>
+    <div className={clsx(welcomeStyles.emptyChannelIcon, welcomeStyles.emptyChannelIconComponent)}>
+      <TextIcon color={tokens.colors.ICON_STRONG} size="custom" width={42} height={42} />
+    </div>
+    <Heading aria-hidden className={welcomeStyles.header} variant="heading-xxl/semibold">
+      Welcome to #{title}!
+    </Heading>
+    <Text variant="body-md/normal" color="none" className={welcomeStyles.description}>
+      This is the start of the #{title} channel.
     </Text>
   </div>
 );
 
-ErrorState.displayName = 'ErrorState';
+ChannelWelcome.displayName = 'ChannelWelcome';
 
-const ViewerHeader = ({ title, messageCount }: { title: string; messageCount: number | null }) => (
-  <HeaderBar className={styles.header}>
-    <HeaderBar.ChannelIcon icon={TextIcon} aria-label="Channel" disabled />
-    <HeaderBar.Title>{title}</HeaderBar.Title>
-    {messageCount != null ? (
-      <>
-        <HeaderBar.Divider />
-        <Text variant="body-sm/normal" color="text-muted" className={styles.headerMeta}>
-          {messageCount === 1 ? '1 message' : `${messageCount} messages`}
-        </Text>
-      </>
-    ) : null}
-  </HeaderBar>
-);
-
-ViewerHeader.displayName = 'ViewerHeader';
-
-const ViewerFrame = ({ params, header, children }: { params: ViewParams; header: ReactNode; children: ReactNode }) => {
+const ViewerFrame = ({
+  params,
+  header,
+  children,
+}: {
+  params: ViewParams;
+  header: ReactNode;
+  children: (showChrome: boolean) => ReactNode;
+}) => {
   const [element, setElement] = useState<HTMLDivElement | null>(null);
   const id = window.location.pathname.split('/')[2] ?? '';
   useResizeMessages(id, element);
@@ -140,12 +191,12 @@ const ViewerFrame = ({ params, header, children }: { params: ViewParams; header:
   return (
     <div
       ref={setElement}
-      className={clsx(styles.frame, { [styles.transparent]: params.bg === 'transparent' })}
+      className={clsx(styles.frame, { [styles.transparent]: params.bg === 'transparent', [styles.framed]: isFramed })}
       data-testid="preview-frame"
     >
       {showChrome ? header : null}
       <main className={styles.body} style={{ padding: params.padding }}>
-        {children}
+        {children(showChrome)}
       </main>
     </div>
   );
@@ -165,7 +216,9 @@ export const Viewer = ({ id }: { id: string }) => {
     document.title = state.status === 'error' ? 'Preview unavailable' : `#${title}`;
   }, [state.status, title]);
 
-  const header = <ViewerHeader title={title} messageCount={content?.messages.length ?? null} />;
+  const messages = (content?.messages ?? null) as APIMessage[] | null;
+  // Error pages stand on their own; a channel header there would name a channel that isn't shown.
+  const header = state.status === 'error' ? null : <ViewerHeader title={title} messages={messages} />;
 
   return (
     <AppRoot
@@ -175,21 +228,22 @@ export const Viewer = ({ id }: { id: string }) => {
       reducedMotion={params.reducedMotion == null ? 'auto' : params.reducedMotion ? 'reduce' : 'no-preference'}
     >
       <ViewerFrame params={params} header={header}>
-        {state.status === 'loading' ? (
-          <div className={styles.state}>
-            <Spinner />
-          </div>
-        ) : state.status === 'error' ? (
-          <ErrorState {...state} />
-        ) : (
-          <MediaViewerProvider>
-            <MessageList
-              messages={state.content.messages as APIMessage[]}
-              interactive={state.content.options.interactive}
-              showDates={params.dates}
-            />
-          </MediaViewerProvider>
-        )}
+        {(showChrome) =>
+          state.status === 'loading' ? (
+            <BootSkeleton />
+          ) : state.status === 'error' ? (
+            <ErrorState {...state} />
+          ) : (
+            <MediaViewerProvider>
+              {(params.welcome ?? showChrome) ? <ChannelWelcome title={title} /> : null}
+              <MessageList
+                messages={state.content.messages as APIMessage[]}
+                interactive={state.content.options.interactive}
+                showDates={params.dates}
+              />
+            </MediaViewerProvider>
+          )
+        }
       </ViewerFrame>
     </AppRoot>
   );

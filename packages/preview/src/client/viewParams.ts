@@ -28,6 +28,8 @@ export interface ViewParams {
   /** `null`: shown when the page is opened directly, hidden inside an iframe. */
   chrome: boolean | null;
   dates: boolean;
+  /** The start-of-channel header above the first message; `null` follows `chrome`. */
+  welcome: boolean | null;
   reducedMotion: boolean | null;
 }
 
@@ -41,6 +43,7 @@ export const DEFAULT_VIEW_PARAMS: ViewParams = {
   saturation: 1,
   chrome: null,
   dates: true,
+  welcome: null,
   reducedMotion: null,
 };
 
@@ -76,6 +79,7 @@ export const parseViewParams = (search: URLSearchParams): ViewParams => {
     saturation: number(search.get('saturation'), 0, 1) ?? d.saturation,
     chrome: flag(search.get('chrome')),
     dates: flag(search.get('dates')) ?? d.dates,
+    welcome: flag(search.get('welcome')),
     reducedMotion: flag(search.get('reducedMotion')),
   };
 };

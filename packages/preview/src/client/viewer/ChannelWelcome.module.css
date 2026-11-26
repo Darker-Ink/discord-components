@@ -1,0 +1,27 @@
+/* Discord's start-of-channel header, extracted from the client build. */
+.container {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  justify-content: flex-end;
+  margin: var(--custom-message-margin-horizontal);
+}
+.header {
+  font-weight: var(--font-weight-bold);
+  margin: 8px 0;
+}
+.description {
+  color: var(--text-default);
+}
+.emptyChannelIcon {
+  background-color: var(--background-mod-muted);
+  border-radius: 50%;
+  height: 68px;
+  margin-top: 16px;
+  width: 68px;
+}
+.emptyChannelIconComponent {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
