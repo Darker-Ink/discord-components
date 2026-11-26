@@ -1,0 +1,119 @@
+.inputField {
+  align-items: center;
+  display: flex;
+  height: var(--control-input-height-md);
+  justify-content: space-between;
+  max-width: 180px;
+  padding-left: var(--space-8);
+  padding-right: var(--space-4);
+}
+.inputFieldMinute {
+  max-width: 320px;
+}
+.inputFieldRange {
+  max-width: 360px;
+}
+.inputFieldRangeMinute {
+  max-width: 680px;
+}
+.inputFieldFullWidth {
+  max-width: unset;
+}
+.picker {
+  box-sizing: border-box;
+  display: flex;
+  height: 100%;
+  padding-bottom: var(--space-4);
+  padding-top: var(--space-4);
+  width: 100%;
+}
+.placeholder {
+  color: var(--text-subtle);
+}
+.inputGroup {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+.segment {
+  border-radius: var(--radius-xs);
+  padding: 0 2px;
+}
+.segment:focus {
+  background-color: var(--opacity-blurple-8);
+  color: var(--text-strong);
+  outline: 1px solid var(--border-focus);
+}
+.separator {
+  color: var(--text-muted);
+  padding: 0 var(--space-4);
+}
+.calendarButton {
+  align-items: center;
+  align-self: flex-end;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  aspect-ratio: 1/1;
+  background: transparent;
+  border-radius: var(--radius-xs);
+  color: var(--control-icon-only-icon-default);
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  margin: 0 0 0 auto;
+  padding: 0;
+  transition: all 0.15s ease;
+}
+.calendarButton[data-hovered] {
+  background-color: var(--control-icon-only-background-hover);
+  border-color: var(--control-icon-only-border-hover);
+  color: var(--control-icon-only-icon-hover);
+}
+.calendarButton[data-pressed] {
+  background-color: var(--control-icon-only-background-active);
+  border-color: var(--control-icon-only-border-active);
+  color: var(--control-icon-only-icon-active);
+}
+.calendarButton[data-focus-visible] {
+  outline: 2px solid var(--border-focus);
+  outline-offset: -1px;
+}
+.dialog,
+.popover {
+  z-index: 10;
+}
+.dialog {
+  background-color: var(--background-surface-higher);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 2px 8px 0 var(--opacity-black-16);
+  box-sizing: border-box;
+  max-height: 100%;
+  overflow: auto !important;
+}
+:global(.enable-forced-colors) .inputGroup {
+  background-color: Field;
+  border-color: ButtonBorder;
+}
+:global(.enable-forced-colors) .inputGroup.error {
+  border-color: Mark;
+}
+:global(.enable-forced-colors) .segment {
+  color: FieldText;
+}
+:global(.enable-forced-colors) .segment:focus {
+  background-color: Highlight;
+  color: HighlightText;
+}
+:global(.enable-forced-colors) .separator {
+  color: FieldText;
+}
+:global(.enable-forced-colors) .calendarButton {
+  color: ButtonText;
+}
+:global(.enable-forced-colors) .calendarButton:hover {
+  background-color: ButtonFace;
+}

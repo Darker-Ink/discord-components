@@ -80,3 +80,4 @@ export * from './Calendar';
 export * from './GlobalBanner';
 export * from './AdvancedScroller';
 export * from './RangeCalendar';
+export * from './DatePicker';
