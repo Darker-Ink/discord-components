@@ -1,10 +1,26 @@
 {
   "name": "@discord-mana/tokens",
   "version": "0.0.0",
+  "description": "Design tokens for discord-mana: Discord's Mana color, spacing and typography variables, themes and fonts.",
+  "keywords": [
+    "discord",
+    "mana",
+    "design-tokens",
+    "css-variables",
+    "themes",
+    "fonts"
+  ],
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Darker-Ink/discord-components.git",
+    "directory": "packages/tokens"
+  },
   "type": "module",
   "sideEffects": [
     "**/*.css",
-    "./src/index.ts"
+    "./src/index.ts",
+    "./dist/index.js"
   ],
   "exports": {
     ".": "./src/index.ts",
@@ -12,5 +28,28 @@
     "./primitives.css": "./src/primitives.css",
     "./themes/*.css": "./src/themes/*.css",
     "./base.css": "./src/base.css"
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "vite build"
+  },
+  "publishConfig": {
+    "access": "public",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "./fonts.css": "./dist/fonts.css",
+      "./primitives.css": "./dist/primitives.css",
+      "./themes/*.css": "./dist/themes/*.css",
+      "./base.css": "./dist/base.css",
+      "./package.json": "./package.json"
+    }
   }
 }

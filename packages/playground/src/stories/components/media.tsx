@@ -42,8 +42,9 @@ const AUDIO = `${ASSETS}/audio.mp3`;
 const MIME_TYPE = ['text', 'plain'];
 
 const GRAPHIC_IMAGE = '/mana/expressive-modal-graphic.svg';
-// A copy of the client's box-wumpus.riv: Discord's CDN doesn't allow fetching it from other origins.
-const RIVE_ASSET = '/components/box-wumpus.riv';
+// The client's box-wumpus.riv (the playground serves a copy, see main.tsx).
+const RIVE_ASSET =
+  'https://cdn.discordapp.com/assets/content/a9d4129fe10ee310d96f95d04fbf382b9c26914a30780ebb307e908a826248f2.riv';
 const VIDEO_ASSET =
   'https://cdn.discordapp.com/assets/content/06fafa729efafb6235e0ee9df9482566fa9e74b96a792a9265dca70113c71ab7.webm';
 

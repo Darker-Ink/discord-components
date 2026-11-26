@@ -1,0 +1,121 @@
+.main {
+  align-items: center;
+  box-sizing: border-box;
+  display: grid;
+  flex: 1;
+  gap: 64px;
+  grid-template-columns: minmax(0, 440px) minmax(0, 1fr);
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 56px 32px 72px;
+  width: 100%;
+}
+.intro {
+  display: flex;
+  flex-direction: column;
+  scroll-margin-top: 80px;
+}
+.headline {
+  color: var(--text-strong);
+  font-size: 52px;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.025em;
+  line-height: 1.04;
+  margin: 0;
+  text-wrap: balance;
+}
+.lede {
+  color: var(--text-muted);
+  font-size: 18px;
+  line-height: 28px;
+  margin: 20px 0 40px;
+  max-width: 34em;
+}
+.keyForm,
+.keyCreated {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.keyRow {
+  align-items: flex-end;
+  display: flex;
+  gap: 8px;
+}
+.keyInput {
+  flex: 1;
+  min-width: 0;
+}
+.docsLink {
+  align-self: flex-start;
+  color: var(--text-link);
+  font-size: 15px;
+  font-weight: var(--font-weight-medium);
+  margin-top: 28px;
+}
+
+.example {
+  margin: 0;
+  min-width: 0;
+}
+.window {
+  background: var(--background-base-lower);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  box-shadow: var(--shadow-high);
+  overflow: hidden;
+}
+.frame {
+  border: 0;
+  display: block;
+  height: 600px;
+  width: 100%;
+}
+.caption {
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 18px;
+  margin-top: 14px;
+  text-align: center;
+}
+
+.notFound {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: center;
+  padding: 96px 24px;
+  text-align: center;
+}
+
+@media (max-width: 1000px) {
+  .main {
+    align-items: start;
+    gap: 48px;
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 720px;
+    padding-top: 40px;
+  }
+}
+@media (max-width: 640px) {
+  .main {
+    padding: 24px 16px 48px;
+  }
+  .headline {
+    font-size: 38px;
+  }
+  .lede {
+    font-size: 16px;
+    line-height: 24px;
+    margin-bottom: 32px;
+  }
+  .keyRow {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .frame {
+    height: 520px;
+  }
+}

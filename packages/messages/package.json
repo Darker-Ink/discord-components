@@ -1,12 +1,35 @@
 {
   "name": "@discord-mana/messages",
   "version": "0.0.0",
+  "description": "React components that render Discord messages: embeds, attachments, media and Components v2.",
+  "keywords": [
+    "discord",
+    "mana",
+    "react",
+    "messages",
+    "embeds",
+    "components-v2"
+  ],
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Darker-Ink/discord-components.git",
+    "directory": "packages/messages"
+  },
   "type": "module",
   "sideEffects": [
-    "**/*.css"
+    "**/*.css",
+    "./dist/index.js"
   ],
   "exports": {
     ".": "./src/index.ts"
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "vite build"
   },
   "dependencies": {
     "@discord-mana/components": "workspace:*",
@@ -23,6 +46,20 @@
     "react-dom": "^19.3.1"
   },
   "peerDependencies": {
-    "react": "^19"
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  "publishConfig": {
+    "access": "public",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "./style.css": "./dist/style.css",
+      "./package.json": "./package.json"
+    }
   }
 }

@@ -1,0 +1,114 @@
+/* The loading skeleton preview pages show before the app's JS arrives (the Worker puts it in the HTML) and while
+   the messages load. Plain colours per theme, since the design tokens come with the JS. */
+html[data-boot-theme] body {
+  margin: 0;
+}
+html[data-boot-theme='light'][data-page] body {
+  background: #fbfbfb;
+}
+html[data-boot-theme='ash'][data-page] body {
+  background: #323339;
+}
+html[data-boot-theme='dark'][data-page] body {
+  background: #1a1a1e;
+}
+html[data-boot-theme='onyx'][data-page] body {
+  background: #000;
+}
+html[data-boot-bg='transparent'][data-boot-theme][data-page] body {
+  background: transparent;
+  color-scheme: normal;
+}
+.boot {
+  --boot-fill: rgba(151, 151, 159, 0.16);
+  --boot-fill-strong: rgba(151, 151, 159, 0.24);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 24px 32px;
+}
+html[data-boot-theme='light'] .boot {
+  --boot-fill: rgba(151, 151, 159, 0.2);
+  --boot-fill-strong: rgba(151, 151, 159, 0.32);
+}
+.boot-group {
+  animation: boot-pulse 1.6s ease-in-out infinite;
+  display: flex;
+  gap: 16px;
+}
+.boot-group:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.boot-group:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.boot-group:nth-child(4) {
+  animation-delay: 0.45s;
+}
+.boot-avatar {
+  background: var(--boot-fill-strong);
+  border-radius: 50%;
+  flex: none;
+  height: 40px;
+  width: 40px;
+}
+.boot-lines {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 4px;
+}
+.boot-name,
+.boot-line {
+  background: var(--boot-fill);
+  border-radius: 8px;
+  height: 12px;
+  max-width: 100%;
+}
+.boot-name {
+  background: var(--boot-fill-strong);
+  height: 14px;
+  width: 120px;
+}
+.boot-line {
+  width: 72%;
+}
+.boot-group:nth-child(2) .boot-name {
+  width: 84px;
+}
+.boot-group:nth-child(2) .boot-line {
+  width: 48%;
+}
+.boot-group:nth-child(3) .boot-name {
+  width: 140px;
+}
+.boot-group:nth-child(3) .boot-line:first-of-type {
+  width: 86%;
+}
+.boot-group:nth-child(4) .boot-name {
+  width: 100px;
+}
+.boot-group:nth-child(4) .boot-line {
+  width: 60%;
+}
+.boot-short {
+  width: 38%;
+}
+.boot-label {
+  clip: rect(0 0 0 0);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  width: 1px;
+}
+@keyframes boot-pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .boot-group {
+    animation: none;
+  }
+}

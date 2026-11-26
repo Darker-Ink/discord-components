@@ -1,12 +1,37 @@
 {
   "name": "discord-mana",
   "version": "0.0.0",
+  "description": "Discord's Mana design system for React: tokens, icons, components and message rendering in one package.",
+  "keywords": [
+    "discord",
+    "mana",
+    "design-system",
+    "react",
+    "components",
+    "icons",
+    "embeds"
+  ],
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Darker-Ink/discord-components.git",
+    "directory": "packages/discord-mana"
+  },
   "type": "module",
   "sideEffects": [
-    "./src/index.ts"
+    "./src/index.ts",
+    "./dist/index.js",
+    "**/*.css"
   ],
   "exports": {
     ".": "./src/index.ts"
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "vite build"
   },
   "dependencies": {
     "@discord-mana/components": "workspace:*",
@@ -20,6 +45,20 @@
     "react": "^19.3.1"
   },
   "peerDependencies": {
-    "react": "^19.3.1"
+    "react": "^19.3.1",
+    "react-dom": "^19"
+  },
+  "publishConfig": {
+    "access": "public",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "./style.css": "./dist/style.css",
+      "./package.json": "./package.json"
+    }
   }
 }

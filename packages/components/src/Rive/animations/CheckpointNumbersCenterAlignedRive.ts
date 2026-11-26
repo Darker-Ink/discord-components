@@ -1,0 +1,11 @@
+import { createRiveAnimation } from './createRiveAnimation';
+
+export const CheckpointNumbersCenterAlignedRive = createRiveAnimation('CheckpointNumbersCenterAlignedRive', {
+  src: 'https://cdn.discordapp.com/assets/content/ce09db302fba4b6308baf379d0cbd02ee57cbf2503a998192e31df9637cc161e.riv',
+  defaultArtboard: 'Artboard',
+  artboardProperties: {
+    Artboard: { reducedMotion: 'boolean', TextColor: 'color', 'Fire CountUp': 'trigger', DisplayValue: 'number' },
+  },
+  artboardViewModelInstances: { Artboard: ['Instance'] },
+  artboardStateMachines: { Artboard: ['State Machine 1'] },
+});

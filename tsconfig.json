@@ -1,4 +1,9 @@
 {
   "extends": "./tsconfig.base.json",
-  "include": ["types", "packages/*/src", "packages/*/vite.config.ts"]
+  "compilerOptions": {
+    "allowImportingTsExtensions": true
+  },
+  "include": ["types", "build", "packages/*/src", "packages/*/vite.config.ts"],
+  // The preview Worker mixes DOM and Workers types; it has its own tsconfigs (run by `typecheck`).
+  "exclude": ["packages/preview"]
 }

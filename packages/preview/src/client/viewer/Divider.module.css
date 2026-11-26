@@ -1,0 +1,84 @@
+/* Discord's chat divider (date separators), extracted from the client build. */
+.divider {
+  align-items: center;
+  border-top: thin solid var(--border-subtle);
+  box-sizing: border-box;
+  display: flex;
+  flex: 0 0 auto;
+  height: 0;
+  justify-content: center;
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+  --divider-color: var(--background-feedback-notification);
+}
+:global(.custom-theme-background) .divider {
+  border-top-color: var(--border-strong);
+}
+:global(.low-saturation) .divider {
+  --divider-color: var(--red-430);
+}
+:global(.background-opacity-low) .divider,
+:global(.background-opacity-medium) .divider {
+  opacity: 0.5;
+}
+:global(.background-opacity-high) .divider {
+  opacity: 0.8;
+}
+.isUnread,
+:global(.custom-theme-background) .isUnread {
+  border-color: var(--divider-color);
+}
+.hasContent {
+  inset-inline: auto;
+  position: relative;
+}
+.endCap {
+  align-items: center;
+  border-inline-start: none;
+  border-radius: 0 4px 4px 0;
+  box-sizing: border-box;
+  color: var(--white);
+  display: flex;
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  height: 13px;
+  inset-inline-end: 0;
+  justify-content: center;
+  line-height: 9px;
+  padding-block: 0;
+  padding-inline: 1px 4px;
+  position: absolute;
+  text-transform: uppercase;
+  top: -7px;
+}
+.unreadPill {
+  background-color: var(--divider-color);
+}
+.unreadPillCap {
+  display: block;
+  height: 13px;
+  inset-inline-start: -8px;
+  position: absolute;
+  top: 0;
+}
+.unreadPillCapStroke {
+  color: var(--divider-color);
+  fill: var(--divider-color);
+}
+.content {
+  background: var(--background-gradient-chat, var(--background-base-lower));
+  border-radius: 8px;
+  color: var(--text-muted);
+  display: block;
+  flex: 0 0 auto;
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 13px;
+  margin-top: -1px;
+  padding: 2px 4px;
+  padding-inline-start: var(--space-4);
+}
+.isUnread .content {
+  color: var(--divider-color);
+}

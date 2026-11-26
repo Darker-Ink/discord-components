@@ -1,0 +1,19 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@4.0.1/schema.json",
+  "changelog": "@changesets/cli/changelog",
+  "commit": false,
+  "fixed": [
+    [
+      "discord-mana",
+      "@discord-mana/tokens",
+      "@discord-mana/icons",
+      "@discord-mana/components",
+      "@discord-mana/messages"
+    ]
+  ],
+  "linked": [],
+  "access": "public",
+  "baseBranch": "master",
+  "updateInternalDependencies": "patch",
+  "ignore": ["@discord-mana/playground", "@discord-mana/preview"]
+}

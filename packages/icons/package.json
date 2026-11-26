@@ -1,12 +1,33 @@
 {
   "name": "@discord-mana/icons",
   "version": "0.0.0",
+  "description": "Discord's icons as React components, for discord-mana.",
+  "keywords": [
+    "discord",
+    "mana",
+    "icons",
+    "react",
+    "svg"
+  ],
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Darker-Ink/discord-components.git",
+    "directory": "packages/icons"
+  },
   "type": "module",
   "sideEffects": [
     "**/*.css"
   ],
   "exports": {
     ".": "./src/index.ts"
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "vite build"
   },
   "devDependencies": {
     "@types/react": "^19.3.3",
@@ -16,5 +37,17 @@
   },
   "peerDependencies": {
     "react": "^19"
+  },
+  "publishConfig": {
+    "access": "public",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "./package.json": "./package.json"
+    }
   }
 }
