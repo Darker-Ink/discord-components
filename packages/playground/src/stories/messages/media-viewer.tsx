@@ -2,10 +2,11 @@ import { useEffect, useMemo } from 'react';
 import {
   MediaViewerProvider,
   MessageAttachments,
-  useMediaContext,
+  openMediaViewer,
   type APIAttachment,
   type MediaViewerItem,
 } from '@discord-components/messages';
+import { closeModal } from '@discord-components/components';
 import type { StoryGroup } from '../../types';
 
 interface ViewerFixtureData {
@@ -36,12 +37,14 @@ const fixtures = Object.fromEntries(
   ),
 );
 
-// Opens the viewer as soon as it mounts, like clicking a piece of media.
+// Opens the viewer as soon as it mounts, like clicking a piece of media, and closes it on unmount.
 const OpenOnMount = ({ items, startingIndex, shouldHideMediaOptions }: ViewerFixtureData) => {
-  const { openMediaViewer } = useMediaContext();
   useEffect(() => {
-    openMediaViewer?.({ items, startingIndex, shouldHideMediaOptions });
-  }, [openMediaViewer, items, startingIndex, shouldHideMediaOptions]);
+    const key = openMediaViewer({ items, startingIndex, shouldHideMediaOptions });
+    return () => {
+      closeModal(key);
+    };
+  }, [items, startingIndex, shouldHideMediaOptions]);
   return null;
 };
 
@@ -50,11 +53,7 @@ OpenOnMount.displayName = 'OpenOnMount';
 const ViewerFixture = ({ fixture }: { fixture: string }) => {
   const data = fixtures[fixture];
   if (data == null) return null;
-  return (
-    <MediaViewerProvider>
-      <OpenOnMount {...data} />
-    </MediaViewerProvider>
-  );
+  return <OpenOnMount {...data} />;
 };
 
 ViewerFixture.displayName = 'ViewerFixture';
@@ -97,13 +96,11 @@ const MediaViewerStory = ({ count, includeVideo, startingIndex, shouldHideMediaO
     return list;
   }, [count, includeVideo]);
   return (
-    <MediaViewerProvider key={`${count}-${includeVideo}-${startingIndex}-${shouldHideMediaOptions}`}>
-      <OpenOnMount
-        items={items}
-        startingIndex={Math.min(startingIndex, items.length - 1)}
-        shouldHideMediaOptions={shouldHideMediaOptions}
-      />
-    </MediaViewerProvider>
+    <OpenOnMount
+      items={items}
+      startingIndex={Math.min(startingIndex, items.length - 1)}
+      shouldHideMediaOptions={shouldHideMediaOptions}
+    />
   );
 };
 

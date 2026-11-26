@@ -8,28 +8,26 @@ import {
   useRef,
   useState,
   type ComponentType,
-  type HTMLAttributes,
   type MouseEvent,
   type ReactNode,
   type Ref,
 } from 'react';
 import clsx from 'clsx';
-import { animated, useSpringValue } from '@react-spring/web';
+import { useSpringValue } from '@react-spring/web';
 import {
   AccessibilityPreferencesContext,
   Clickable,
-  DialogAnnouncerTarget,
-  HeadingLevel,
-  useFocusLock,
-  FocusRingScope,
+  ComponentActions,
+  ModalAnimation,
+  ModalRoot,
+  ModalSize,
+  windowDispatch,
   IconButton,
-  ModalContext,
   ModalTransitionState,
   ScrollerThin,
   Stack,
   ThemeProvider,
   Tooltip,
-  useSpring,
   type ModalTransitionStateValue,
 } from '@discord-components/components';
 import {
@@ -62,7 +60,6 @@ import {
   type MediaViewerPlaybackHandle,
 } from './MediaViewerMedia';
 import { MediaViewerZoomContext, type MediaViewerZoomContextValue } from './MediaViewerZoomContext';
-import modalRootStyles from './ModalRoot.module.css';
 import modalStyles from './MediaViewerModal.module.css';
 import mediaStyles from './Media.module.css';
 import carouselStyles from './Carousel.module.css';
@@ -586,7 +583,7 @@ export interface MediaViewerModalProps {
   onClose: () => void;
   onIndexChange?: (index: number) => void;
   shouldHideMediaOptions?: boolean;
-  transitionState?: ModalTransitionStateValue;
+  transitionState?: ModalTransitionStateValue | null;
   isItemObscured?: (item: MediaViewerItem) => boolean;
   /** Opens the "More" menu for the current item (the client shows copy/details actions there). */
   onOpenMoreMenu?: (item: MediaViewerItem) => void;
@@ -627,7 +624,7 @@ export const MediaViewerModal = ({
     [reduced],
   );
 
-  const previousState = useRef<ModalTransitionStateValue | undefined>(undefined);
+  const previousState = useRef<ModalTransitionStateValue | null | undefined>(undefined);
   useEffect(() => {
     if (transitionState === previousState.current) return;
     previousState.current = transitionState;
@@ -649,12 +646,12 @@ export const MediaViewerModal = ({
     scale.set(1);
   }
 
+  // Escape closes the viewer before anything else (the client's MEDIA_MODAL_CLOSE keybind).
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && !event.defaultPrevented) onClose();
+    windowDispatch.subscribe(ComponentActions.MEDIA_MODAL_CLOSE, onClose);
+    return () => {
+      windowDispatch.unsubscribe(ComponentActions.MEDIA_MODAL_CLOSE, onClose);
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
   const handleIndexChange = useCallback(
@@ -692,10 +689,16 @@ export const MediaViewerModal = ({
     <ThemeProvider theme={ThemeTypes.ONYX}>
       {(themeClassName) => (
         <ModalRoot
+          data-migration-pending
+          hideShadow
           className={clsx(modalStyles.carouselModal, themeClassName)}
-          transitionState={transitionState}
+          transitionState={transitionState ?? undefined}
+          size={ModalSize.DYNAMIC}
+          animation={ModalAnimation.SUBTLE}
+          fullscreenOnMobile={false}
           onClick={onClose}
           aria-label={i18n.MEDIA_VIEWER_MODAL}
+          parentComponent="MediaViewerModal"
         >
           <MediaViewerZoomContext.Provider value={zoomContext}>
             <TopBar
@@ -721,71 +724,3 @@ export const MediaViewerModal = ({
 };
 
 MediaViewerModal.displayName = 'MediaViewerModal';
-
-type FocusLockDialogProps = HTMLAttributes<HTMLDivElement> & { 'data-migration-pending'?: boolean };
-
-/** The client's legacy focus-locked dialog (the one its legacy ModalRoot renders). */
-const FocusLockDialog = ({ children, ...props }: FocusLockDialogProps) => {
-  const ref = useRef<HTMLDivElement>(null);
-  useFocusLock(ref);
-  return (
-    <div {...props} ref={ref} role="dialog" tabIndex={-1} aria-modal>
-      <DialogAnnouncerTarget />
-      <HeadingLevel forceLevel={1}>
-        <FocusRingScope containerRef={ref}>{children}</FocusRingScope>
-      </HeadingLevel>
-    </div>
-  );
-};
-
-FocusLockDialog.displayName = 'FocusLockDialog';
-
-/**
- * The legacy ModalRoot as the viewer uses it (size "dynamic", subtle animation, no shadow, not fullscreen on mobile).
- * To be replaced by the shared modal stack's ModalRoot once it exists.
- */
-const ModalRoot = ({
-  className,
-  transitionState,
-  children,
-  onClick,
-  'aria-label': ariaLabel,
-}: {
-  className: string;
-  transitionState?: ModalTransitionStateValue;
-  children: ReactNode;
-  onClick: () => void;
-  'aria-label': string;
-}) => {
-  const visible = transitionState === ModalTransitionState.ENTERING || transitionState === ModalTransitionState.ENTERED;
-  const style = useSpring(
-    {
-      opacity: Number(visible),
-      transform: 'scale(1)',
-      config: { duration: 200, easing: (t: number) => 1 - (1 - t) * (1 - t), clamp: true },
-    },
-    'animate-always',
-  );
-  const rootRef = useRef<HTMLDivElement>(null);
-  const contextValue = useMemo(
-    () => ({ headerId: undefined, headerIdIsManaged: false, transitionState }),
-    [transitionState],
-  );
-  return (
-    <ModalContext.Provider value={contextValue}>
-      <FocusLockDialog
-        className={modalRootStyles.focusLock}
-        role="dialog"
-        data-migration-pending
-        aria-label={ariaLabel}
-        onClick={onClick}
-      >
-        <animated.div className={clsx(className, modalRootStyles.root)} ref={rootRef} style={style}>
-          <FocusRingScope containerRef={rootRef}>{children}</FocusRingScope>
-        </animated.div>
-      </FocusLockDialog>
-    </ModalContext.Provider>
-  );
-};
-
-ModalRoot.displayName = 'MediaViewerModalRoot';

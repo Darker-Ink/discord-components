@@ -1,4 +1,10 @@
-export { MediaViewerProvider, MEDIA_VIEWER_MODAL_KEY, type MediaViewerProviderProps } from './MediaViewerProvider';
+export {
+  MediaViewerProvider,
+  MEDIA_VIEWER_MODAL_KEY,
+  openMediaViewer,
+  type MediaViewerProviderProps,
+  type OpenMediaViewerOptions,
+} from './MediaViewerProvider';
 export {
   MediaViewerModal,
   MediaViewerCarousel,

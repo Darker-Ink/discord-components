@@ -1,5 +1,5 @@
 // Opens Discord's media viewer the way clicking media does (module 256905 R: openModalLazy with the lightbox
-// backdrop) and renders the client's modal stack (638495) so the viewer (2323) shows in the app layer.
+// backdrop); the reference root renders the client's modal stack (638495), which shows the viewer (2323).
 async (ref, data) => {
   // The viewer (2323) is lazily loaded; booting it pulls its dependencies from the main bundle too.
   await ref.boot(['638495', '256905', '192308', '2323']);
@@ -13,7 +13,6 @@ async (ref, data) => {
     window.__ref.modules['775121'] = (module) => (module.exports = { A: keybinds });
   }
   const h = ref.React.createElement;
-  const Modals = ref.req('638495').b;
   const { R: openMediaViewer } = ref.req('256905');
   const message = data.message ?? null;
   const items = data.items.map((item) => ({ ...item, sourceMetadata: message != null ? { message } : undefined }));
@@ -27,5 +26,5 @@ async (ref, data) => {
       }),
     0,
   );
-  return h(Modals);
+  return h('div');
 };
