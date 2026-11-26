@@ -1,0 +1,29 @@
+.button {
+  background-color: var(--background-surface-highest);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: grid;
+  height: 40px;
+  place-items: center;
+  width: 40px;
+}
+.buttonInner {
+  border: 1px solid var(--border-muted);
+  border-radius: inherit;
+  color: var(--interactive-text-default);
+  display: grid;
+  height: 38px;
+  place-items: center;
+  transition:
+    color 0.2s ease-in-out,
+    background-color 0.2s ease-in-out;
+  width: 38px;
+}
+.buttonInner:hover {
+  background-color: var(--background-mod-muted);
+  color: var(--interactive-text-hover);
+}
+.buttonInner:active {
+  background-color: var(--background-mod-subtle);
+  color: var(--interactive-text-active);
+}

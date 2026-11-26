@@ -1,0 +1,44 @@
+.mediaContainer {
+  flex-grow: 1;
+  grid-column: 1 / span 5;
+  grid-row: 1 / span 3;
+  position: relative;
+}
+.mediaContainer,
+.mediaWrapper {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+.mediaWrapper {
+  height: 100%;
+  margin: auto;
+  -o-object-fit: contain;
+  object-fit: contain;
+  width: 100%;
+}
+.nav {
+  grid-row: 1 / span 3;
+  place-self: center;
+  position: relative;
+  z-index: 1;
+}
+.navPrev {
+  grid-column: 1;
+}
+.navNext {
+  grid-column: 5;
+}
+.obscureWrapper {
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  overflow: hidden;
+}
+.obscureWrapper.obscure {
+  filter: blur(var(--__obscured-background-blur-radius)) brightness(var(--__obscured-background-brightness));
+  pointer-events: none;
+}
+.fadeInWrapper {
+  margin: auto;
+}

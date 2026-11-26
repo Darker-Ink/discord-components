@@ -12,6 +12,12 @@
 // The reference side runs scripts/fixtures/<group>/reference.js in the reference page: an async function
 // `(ref, data) => ReactElement` that boots Discord's modules and builds the element to render.
 //
+// Optional fixture fields for content outside the story root (e.g. modals in the app layer):
+//   "capture": "viewport"   screenshot the whole viewport instead of the story's box
+//   "dom": "<selector>"     compare the DOM of this element (document-wide) instead of the story root
+//   "actions": [{ "click": sel } | { "hover": sel } | { "key": "ArrowRight" } | { "wheel": [dx, dy] } | { "wait": ms }]
+//                           run after the page settled, on both sides (selectors are document-wide)
+//
 // "{{assets}}" in a fixture stands for the playground's /messages folder (packages/playground/public/messages),
 // so both sides load the same images.
 //
@@ -108,7 +114,17 @@ const STYLE_PROPS = [
 
 const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined });
 
-const settle = async (page) => {
+const runActions = async (page, actions = []) => {
+  for (const action of actions) {
+    if (action.click) await page.click(action.click).catch((e) => console.log(`  click failed: ${e.message}`));
+    else if (action.hover) await page.hover(action.hover).catch((e) => console.log(`  hover failed: ${e.message}`));
+    else if (action.key) await page.keyboard.press(action.key);
+    else if (action.wheel) await page.mouse.wheel(action.wheel[0], action.wheel[1]);
+    else if (action.wait) await page.waitForTimeout(action.wait);
+  }
+};
+
+const settle = async (page, fixture) => {
   const root = page.locator('[data-story]');
   await root.waitFor({ timeout: 30000 });
   await page.evaluate(() => document.fonts.ready);
@@ -128,17 +144,37 @@ const settle = async (page) => {
     await page.click(`[data-story] ${click}`).catch((e) => console.log(`  click failed: ${e.message}`));
     await page.waitForTimeout(600);
   }
+  if (fixture.dom != null) {
+    await page.waitForSelector(`${fixture.dom} img`, { timeout: 10000 }).catch(() => {});
+    await page
+      .waitForFunction(
+        (sel) => [...document.querySelectorAll(`${sel} img`)].every((img) => img.complete),
+        fixture.dom,
+        {
+          timeout: 10000,
+        },
+      )
+      .catch(() => {});
+    await page.waitForTimeout(600);
+  }
+  await runActions(page, fixture.actions);
   return root;
 };
 
-const capture = async (page, errors) => {
-  const root = await settle(page);
+const capture = async (page, errors, fixture) => {
+  const root = await settle(page, fixture);
   const box = await root.boundingBox();
   const shot = await page.screenshot({
-    clip: { x: 0, y: 0, width: 1000, height: Math.max(1, Math.ceil(box.y + box.height)) },
+    clip:
+      fixture.capture === 'viewport'
+        ? undefined
+        : { x: 0, y: 0, width: 1000, height: Math.max(1, Math.ceil(box.y + box.height)) },
     animations: 'disabled',
   });
-  const html = await root.evaluate((el) => el.outerHTML);
+  const html =
+    fixture.dom != null
+      ? await page.evaluate((sel) => document.querySelector(sel)?.outerHTML ?? '', fixture.dom)
+      : await root.evaluate((el) => el.outerHTML);
   const styles = stylesSelector
     ? await page.evaluate(
         ([sel, keys]) => {
@@ -200,7 +236,7 @@ const captureRef = async (fixture, theme) => {
     },
     [referenceSource, fixture.data, fixture.story, theme],
   );
-  const result = await capture(page, errors);
+  const result = await capture(page, errors, fixture);
   await page.close();
   return result;
 };
@@ -208,7 +244,7 @@ const captureRef = async (fixture, theme) => {
 const captureOurs = async (fixture, name, theme) => {
   const { page, errors } = await newPage();
   await page.goto(`${OURS}/?embed&collection=messages&story=${fixture.story}&fixture=${group}/${name}&theme=${theme}`);
-  const result = await capture(page, errors);
+  const result = await capture(page, errors, fixture);
   await page.close();
   return result;
 };

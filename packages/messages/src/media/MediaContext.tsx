@@ -26,6 +26,18 @@ export const DEFAULT_MEDIA_I18N = {
   CONTROL_VOLUME: 'Control volume',
   ATTACHMENT_FILE_TYPE: (fileType: string) => `Attachment file type: ${fileType}`,
   UNKNOWN: 'unknown',
+  PREVIOUS: 'Previous',
+  NEXT: 'Next',
+  CLOSE: 'Close',
+  ZOOM_IN: 'Zoom In',
+  ZOOM_OUT: 'Zoom Out',
+  SAVE_IMAGE: 'Save Image',
+  SAVE_VIDEO: 'Save Video',
+  OPEN_IN_BROWSER: 'Open in Browser',
+  MORE: 'More',
+  MEDIA_VIEWER_MODAL: 'Media Viewer Modal',
+  MEDIA_VIEWER_ITEM: (page: number, total: number) => `Item ${page} of ${total}`,
+  MEDIA_VIEWER_ITEM_CURRENT: (page: number, total: number) => `Item ${page} of ${total} (current)`,
 };
 
 export type MediaI18n = typeof DEFAULT_MEDIA_I18N;

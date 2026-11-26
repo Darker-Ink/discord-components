@@ -1,0 +1,14 @@
+.carouselModal {
+  background: transparent !important;
+  border: none !important;
+  bottom: 0;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 40px minmax(0, 184px) minmax(0, 1fr) minmax(0, 184px) 40px;
+  grid-template-rows: 40px 1fr 40px;
+  position: absolute;
+  top: 0;
+  inset-inline: 0;
+  margin: 36px 24px;
+  width: auto;
+}

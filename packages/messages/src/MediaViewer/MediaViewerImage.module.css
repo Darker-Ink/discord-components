@@ -1,0 +1,15 @@
+.dimensionlessImage {
+  height: 100%;
+  -o-object-fit: scale-down;
+  object-fit: scale-down;
+  width: 100%;
+}
+.wrapper {
+  cursor: zoom-in;
+}
+.zoomed {
+  cursor: zoom-out;
+}
+.media {
+  border-radius: 0;
+}

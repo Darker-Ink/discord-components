@@ -1,0 +1,47 @@
+{
+  "story": "media-viewer-fixtures",
+  "capture": "viewport",
+  "dom": "[class*=\"layerContainer\"]",
+  "actions": [
+    {
+      "key": "ArrowRight"
+    },
+    {
+      "wait": 800
+    }
+  ],
+  "data": {
+    "items": [
+      {
+        "type": "IMAGE",
+        "url": "{{assets}}/attachments/photo-1.jpg",
+        "proxyUrl": "{{assets}}/attachments/photo-1.jpg",
+        "width": 1600,
+        "height": 900,
+        "contentType": "image/jpeg",
+        "original": "{{assets}}/attachments/photo-1.jpg",
+        "srcIsAnimated": false
+      },
+      {
+        "type": "IMAGE",
+        "url": "{{assets}}/attachments/photo-2.jpg",
+        "proxyUrl": "{{assets}}/attachments/photo-2.jpg",
+        "width": 900,
+        "height": 1200,
+        "contentType": "image/jpeg",
+        "original": "{{assets}}/attachments/photo-2.jpg",
+        "srcIsAnimated": false
+      },
+      {
+        "type": "IMAGE",
+        "url": "{{assets}}/attachments/photo-3.jpg",
+        "proxyUrl": "{{assets}}/attachments/photo-3.jpg",
+        "width": 1000,
+        "height": 1000,
+        "contentType": "image/jpeg",
+        "original": "{{assets}}/attachments/photo-3.jpg",
+        "srcIsAnimated": false
+      }
+    ]
+  }
+}

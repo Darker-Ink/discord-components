@@ -1,0 +1,41 @@
+.actionButtons {
+  background-color: var(--background-surface-highest);
+  border: 1px solid var(--border-muted);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex: 0 1 auto;
+  gap: 4px;
+  justify-content: space-between;
+  margin-inline-start: auto;
+  min-width: 0;
+  padding: 3px;
+  z-index: 1;
+}
+.actionButton {
+  border-radius: 4px;
+  color: var(--interactive-text-default);
+  height: 32px;
+  transition:
+    background-color 0.2s ease-in-out,
+    color 0.2s ease-in-out;
+  width: 32px;
+}
+.actionButton:hover {
+  background-color: var(--background-mod-muted);
+  color: var(--interactive-text-hover);
+}
+.actionButton.selected,
+.actionButton:active {
+  background-color: var(--background-mod-subtle);
+  color: var(--interactive-text-active);
+}
+.actionButtonWrapper {
+  padding: 0;
+}
+.actionButtonInner {
+  align-items: center;
+  display: flex;
+  height: 24px;
+  justify-content: center;
+  width: 24px;
+}

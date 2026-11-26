@@ -6,3 +6,4 @@ export * from './media';
 export * from './MediaMosaic';
 export * from './attachments';
 export * from './MediaGallery';
+export * from './MediaViewer';

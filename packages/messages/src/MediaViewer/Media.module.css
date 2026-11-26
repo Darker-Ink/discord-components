@@ -1,0 +1,15 @@
+.horizontal {
+  grid-column: 1 / span 5;
+  grid-row: 2;
+  margin: 24px;
+}
+.vertical {
+  grid-column: 3;
+  grid-row: 1 / span 3;
+  margin: 24px;
+}
+.mediaArea {
+  grid-column: 1 / span 5;
+  grid-row: 1 / span 3;
+  place-self: center;
+}

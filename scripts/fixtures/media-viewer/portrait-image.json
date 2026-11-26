@@ -1,0 +1,19 @@
+{
+  "story": "media-viewer-fixtures",
+  "capture": "viewport",
+  "dom": "[class*=\"layerContainer\"]",
+  "data": {
+    "items": [
+      {
+        "type": "IMAGE",
+        "url": "{{assets}}/attachments/photo-5.jpg",
+        "proxyUrl": "{{assets}}/attachments/photo-5.jpg",
+        "width": 800,
+        "height": 1400,
+        "contentType": "image/jpeg",
+        "original": "{{assets}}/attachments/photo-5.jpg",
+        "srcIsAnimated": false
+      }
+    ]
+  }
+}
