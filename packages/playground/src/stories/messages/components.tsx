@@ -16,6 +16,7 @@ import {
   type APIModalInteractionResponseCallbackData,
   type InteractionModalApplication,
 } from '@discord-mana/messages';
+import { renderEmbedMarkdown, renderMessageMarkdown } from '@discord-mana/markdown';
 import type { StoryGroup } from '../../types';
 import { BASE_MESSAGE, ChatList, InteractionLog } from './message';
 
@@ -124,6 +125,8 @@ const ComponentsMessage = ({ components, v2 = false }: { components: APIMessageT
             <Message
               message={message}
               resolvers={RESOLVERS}
+              renderMarkdown={renderMessageMarkdown}
+              renderEmbedMarkdown={renderEmbedMarkdown}
               onInteraction={({ data }) => {
                 setInteraction(data);
                 return new Promise((resolve) => setTimeout(resolve, 800));

@@ -11,6 +11,7 @@ import {
   type APIUser,
   type MessageResolvers,
 } from '@discord-mana/messages';
+import { renderEmbedMarkdown, renderMessageMarkdown } from '@discord-mana/markdown';
 import type { StoryGroup } from '../../types';
 
 interface MessageFixtureData {
@@ -22,6 +23,8 @@ interface MessageFixtureData {
   /** Shortcodes of unicode emojis (the client's emoji database), for reaction labels. */
   emoji_names?: Record<string, string>;
   props?: { isInteracting?: boolean };
+  /** Renders content, replies, embeds and Text Displays with @discord-mana/markdown (the reference with the client's). */
+  markdown?: boolean;
 }
 
 const fixtureFiles = import.meta.glob<{ story: string; data: MessageFixtureData }>(
@@ -94,7 +97,12 @@ const MessageFixture = ({ fixture }: { fixture: string }) => {
       <MediaViewerProvider>
         <ChatList>
           <MessageListItem message={message}>
-            <Message message={message} resolvers={resolvers} />
+            <Message
+              message={message}
+              resolvers={resolvers}
+              renderMarkdown={data?.markdown ? renderMessageMarkdown : undefined}
+              renderEmbedMarkdown={data?.markdown ? renderEmbedMarkdown : undefined}
+            />
           </MessageListItem>
         </ChatList>
       </MediaViewerProvider>
@@ -140,6 +148,7 @@ interface MessageStoryProps {
   withButtons: boolean;
   reply: boolean;
   reactions: boolean;
+  markdown: boolean;
 }
 
 const MessageStory = ({
@@ -152,6 +161,7 @@ const MessageStory = ({
   withButtons,
   reply,
   reactions,
+  markdown,
 }: MessageStoryProps) => {
   const [interaction, setInteraction] = useState<APIMessageComponentInteractionData | null>(null);
   // A recent id, so the "thinking" message hasn't timed out yet.
@@ -198,6 +208,8 @@ const MessageStory = ({
         <MessageListItem message={message}>
           <Message
             message={message}
+            renderMarkdown={markdown ? renderMessageMarkdown : undefined}
+            renderEmbedMarkdown={markdown ? renderEmbedMarkdown : undefined}
             onInteraction={({ data }) => {
               setInteraction(data);
               return new Promise((resolve) => setTimeout(resolve, 1000));
@@ -221,7 +233,12 @@ const message: StoryGroup = {
       component: MessageStory,
       docs: 'A message from its API object. Clicking a button calls onInteraction; returning a promise shows the loading state until it settles.',
       controls: {
-        content: { label: 'Content', type: 'text', defaultValue: 'Hello from the message renderer!' },
+        content: {
+          label: 'Content',
+          type: 'text',
+          defaultValue: 'Hello from the **message** renderer! It speaks `markdown`, ||spoilers|| and :tada:',
+        },
+        markdown: { label: 'Markdown', type: 'boolean', defaultValue: true },
         bot: { label: 'Sent by an app', type: 'boolean', defaultValue: true },
         edited: { label: 'Edited', type: 'boolean', defaultValue: false },
         reply: { label: 'Reply', type: 'boolean', defaultValue: false },
