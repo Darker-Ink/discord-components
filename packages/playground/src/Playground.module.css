@@ -42,9 +42,6 @@
   padding-bottom: var(--space-24);
   width: 280px;
 }
-.deprecationNotice {
-  border-radius: 0;
-}
 .page {
   box-sizing: border-box;
   display: grid;

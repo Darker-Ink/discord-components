@@ -1,17 +1,6 @@
 import { useEffect, useMemo, useSyncExternalStore } from 'react';
 import clsx from 'clsx';
-import {
-  AppRoot,
-  BlobMask,
-  HeaderBar,
-  IconButton,
-  NavItem,
-  Notice,
-  NoticeColors,
-  ScrollerThin,
-  Tooltip,
-} from '@discord-components/components';
-import { XSmallIcon } from '@discord-components/icons';
+import { AppRoot, BlobMask, HeaderBar, NavItem, ScrollerThin, Tooltip } from '@discord-components/components';
 import { ThemeTypes, type Theme } from '@discord-components/tokens';
 import { useAppSettings, type ThemeSetting } from './appSettings';
 import { dynamicGraphicComponents } from './dynamicGraphics';
@@ -67,9 +56,6 @@ const useResolvedTheme = (setting: ThemeSetting): Theme => {
   if (setting !== 'system') return setting;
   return systemDark ? ThemeTypes.DARK : ThemeTypes.LIGHT;
 };
-
-// The standalone playground has nothing to close back to.
-const closePlayground = () => {};
 
 const selectCollection = (id: string) =>
   playgroundStore.setState({ selectedCollection: id, selectedStory: null, controlOverrides: null, currentProps: null });
@@ -159,20 +145,8 @@ export const Playground = ({ collections }: { collections: Collection[] }) => {
             <div className={styles.headerRight}>
               {HeaderControl != null ? <HeaderControl /> : null}
               <SettingsButton />
-              <IconButton
-                size="sm"
-                icon={XSmallIcon}
-                aria-label="Close"
-                variant="icon-only"
-                onClick={closePlayground}
-              />
             </div>
           </HeaderBar>
-          {collection?.deprecationNotice != null && (
-            <Notice color={NoticeColors.WARNING} className={styles.deprecationNotice}>
-              {collection.deprecationNotice}
-            </Notice>
-          )}
           <div className={clsx(styles.page, frameStyles.page)}>
             <ScrollerThin fade className={styles.sidebar}>
               {collection != null ? (

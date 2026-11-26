@@ -56,5 +56,4 @@ export interface Collection {
   /** Rendered at the end of the header, before the settings button. */
   HeaderControl?: ComponentType;
   /** Shown as a warning notice under the header. */
-  deprecationNotice?: ReactNode;
 }
