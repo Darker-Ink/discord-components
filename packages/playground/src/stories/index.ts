@@ -50,12 +50,9 @@ const messageGroups = Object.values(
 
 // Discord's older component collection, kept for app components that predate Mana.
 const VOID_GROUP_ORDER = [
-  'Select',
-  'Slider',
   'TabBar',
   'Avatar',
   'Badges',
-  'Chip',
   'Notice',
   'VoidInputs',
   'Form Components',

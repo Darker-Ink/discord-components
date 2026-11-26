@@ -15,9 +15,13 @@
 // Discord's playground is a dev tool inside the client, under the app's title bar; neither side has the
 // app frame here, so the `--custom-app-top-bar-height` gap at the top is empty on both. Collections that
 // only exist on one side (our "Messages") are hidden on ours (`--keep-extra-collections` keeps them), and
-// the header's "Docs" link, the settings menu's Experiments submenu and the Void deprecation notice, which
-// ours leaves out, are hidden on Discord's. Ours fits the window instead of running past its bottom like
-// Discord's does under the client's top bar; Discord's gets the same fit for the comparison.
+// the header's "Docs" link, the settings menu's Experiments submenu, the Void deprecation notice and the
+// Void groups that duplicate Mana ones, which ours leaves out, are hidden on Discord's. Ours fits the window
+// instead of running past its bottom like Discord's does under the client's top bar; Discord's gets the same
+// fit for the comparison.
+//
+// Discord's controls panel renders slider controls with the legacy Void slider; ours uses the Mana Slider,
+// so the slider-control scenarios aren't expected to match.
 import fs from 'node:fs';
 import path from 'node:path';
 import { PNG } from 'pngjs';
@@ -43,6 +47,9 @@ const hover =
     await page.waitForTimeout(400);
   };
 
+// Void groups that duplicate Mana components; ours removed them.
+const REMOVED_VOID_GROUPS = ['Select', 'Slider', 'Chip'];
+
 const SCENARIOS = {
   'no-story': { target: 'mana' },
   text: { target: 'mana/text' },
@@ -54,7 +61,6 @@ const SCENARIOS = {
   'global-banner': { target: 'mana/global-banner' },
   'text-input': { target: 'mana/text-input' },
   'void-collection': { target: 'void' },
-  'void-slider': { target: 'void/slider' },
   'sidebar-scrolled': {
     target: 'mana/button',
     run: async (page) => {
@@ -147,11 +153,11 @@ const SCENARIOS = {
       await page.waitForTimeout(400);
     },
   },
-  'slider-hover': { target: 'mana/progress-bar', run: hover(`${controls} [role="slider"]`, 0) },
+  'slider-hover': { target: 'mana/progress-bar', run: hover(`${controls} ${cls('grabber')}`, 0) },
   'slider-drag': {
     target: 'mana/progress-bar',
     run: async (page) => {
-      const box = await page.locator(`${controls} [role="slider"]`).first().boundingBox();
+      const box = await page.locator(`${controls} ${cls('grabber')}`).first().boundingBox();
       await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
       await page.mouse.down();
       await page.mouse.move(box.x - 60, box.y + box.height / 2, { steps: 5 });
@@ -246,7 +252,7 @@ const settle = async (page) => {
 const openRef = async (page, { collection, story, theme }) => {
   await page.goto(`${REF}/`);
   await page.evaluate(
-    async ({ collection, story, theme }) => {
+    async ({ collection, story, theme, removedVoidGroups }) => {
       ref.setTheme(theme);
       await ref.boot(['995199', '352611']);
       // The settings menu checks the client's theme setting, which the reference page doesn't set.
@@ -256,9 +262,13 @@ const openRef = async (page, { collection, story, theme }) => {
       store.setState({ selectedCollection: collection, selectedStory: story });
       await ref.loadTranslations();
       const React = ref.React;
-      await ref.render(React.createElement(ref.req('995199').Q, { configs: [ref.req('352611').playgroundConfig] }));
+      const config = ref.req('352611').playgroundConfig;
+      const collections = config.collections.map((c) =>
+        c.id === 'void' ? { ...c, groups: c.groups.filter((g) => !removedVoidGroups.includes(g.title)) } : c,
+      );
+      await ref.render(React.createElement(ref.req('995199').Q, { configs: [{ ...config, collections }] }));
     },
-    { collection, story, theme },
+    { collection, story, theme, removedVoidGroups: REMOVED_VOID_GROUPS },
   );
   // Ours leaves out, on purpose, the header's "Docs" link (divider dot plus linked title), the settings
   // menu's Experiments submenu (client experiments aren't supported) and the Void deprecation notice.
