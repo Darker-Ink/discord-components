@@ -57,9 +57,8 @@ const MIN_HEIGHT = 110;
 const EMPTY_TIME = '-:--';
 
 const ReplayIcon = ({ className }: { className?: string }) => (
-  <svg aria-hidden="true" role="img" width={16} height={16} viewBox="0 0 24 24">
+  <svg className={className} aria-hidden="true" role="img" width={16} height={16} viewBox="0 0 24 24">
     <path
-      className={className}
       fill="currentColor"
       d="M12,5 L12,1 L7,6 L12,11 L12,7 C15.31,7 18,9.69 18,13 C18,16.31 15.31,19 12,19 C8.69,19 6,16.31 6,13 L4,13 C4,17.42 7.58,21 12,21 C16.42,21 20,17.42 20,13 C20,8.58 16.42,5 12,5 L12,5 Z"
     />
@@ -341,8 +340,8 @@ const PlayPausePop = ({ ref }: { ref?: Ref<PlayPausePopHandle> }) => {
       className={styles.playPausePop}
       style={{
         opacity: opacity.to([0, 1], [0, 0.8]),
-        // Like the client's Animated, the identity transform isn't written out.
-        transform: scale.to([0, 1], [1, 2]).to((value) => (value === 1 ? '' : `scale(${value})`)),
+        // Like the client's Animated (with `accelerate`), the identity transform isn't written out.
+        transform: scale.to([0, 1], [1, 2]).to((value) => (value === 1 ? '' : `scale(${value}) translateZ(0px)`)),
       }}
     >
       <Icon className={styles.playPausePopIcon} />
@@ -470,6 +469,7 @@ export const MediaPlayer = ({
   initialTimeSec,
   ref,
 }: MediaPlayerProps) => {
+  const { i18n } = useMediaContext();
   const mediaRef = useRef<HTMLMediaElement | null>(null);
   const controlsRef = useRef<ControlsHandle>(null);
   const popRef = useRef<PlayPausePopHandle>(null);
@@ -820,6 +820,7 @@ export const MediaPlayer = ({
         {type === MediaPlayerTypes.VIDEO && allowFullScreen !== false ? (
           <FullscreenButton
             focusProps={{ offset: 4 }}
+            aria-label={i18n.FULL_SCREEN}
             className={styles.videoButton}
             iconClassName={styles.controlIcon}
             guestWindow={window}

@@ -29,14 +29,22 @@ import {
   ThemeProvider,
   Tooltip,
   type ModalTransitionStateValue,
+  Menu,
+  MenuGroup,
+  MenuItem,
+  Popout,
+  showToast,
 } from '@discord-components/components';
 import {
   ArrowLargeLeftIcon,
   ArrowLargeRightIcon,
+  CopyIcon,
   DownloadIcon,
+  IdIcon,
   ImageWarningIcon,
   MagnifyingGlassMinusIcon,
   MagnifyingGlassPlusIcon,
+  LinkIcon,
   MoreHorizontalIcon,
   WindowLaunchIcon,
   XSmallIcon,
@@ -50,6 +58,7 @@ import { Video } from '../media/MediaPlayer/Video';
 import { getAttachmentSrc, isImageLoaded, loadImage } from '../media/mediaUrl';
 import { getMediaViewerMaxSize, preloadZoomedImage } from '../media/preload';
 import { hasDimensions } from '../media/sizing';
+import { getAttachmentFileName } from '../media/utils/filesize';
 import type { MediaViewerItem } from '../media/mediaViewerTypes';
 import { MediaViewerChrome, MediaViewerChromeMode } from './MediaViewerChrome';
 import {
@@ -478,34 +487,204 @@ const OpenInBrowserButton = ({ item }: { item: MediaViewerItem }) => {
 
 OpenInBrowserButton.displayName = 'MediaViewerOpenInBrowserButton';
 
-/**
- * The "More" menu (copy image/link, file details). Its menu needs the client's context menus, which aren't built yet;
- * the button renders where the client shows it.
- */
-const MoreButton = ({ item, onOpenMenu }: { item: MediaViewerItem; onOpenMenu?: (item: MediaViewerItem) => void }) => {
+// Stickers and role icons can't be shared as links; everything else the viewer shows can.
+const isShareableMediaUrl = (url: string) => !/\/stickers\/|\/role-icons\//.test(url);
+
+const copyText = async (text: string, onSuccess?: () => void, onError?: () => void) => {
+  try {
+    await navigator.clipboard.writeText(text);
+    onSuccess?.();
+  } catch {
+    onError?.();
+  }
+};
+
+// The client's file size format for details (`1 MB`, `1.5 GB`), from kilobytes.
+const formatDetailsSize = (kilobytes: number) => {
+  const megabytes = Math.ceil(kilobytes / 1000);
+  if (megabytes < 1000) return `${megabytes} MB`;
+  return `${Math.round((10 * megabytes) / 1000) / 10} GB`;
+};
+
+export interface MediaViewerMoreMenuOptions {
+  /** Discord's developer mode: adds "Copy Attachment ID" (and shows the More button even without other items). */
+  developerMode?: boolean;
+  /**
+   * Copies the image to the clipboard. The client only offers "Copy Image" in its desktop app (it needs native
+   * clipboard access); passing this enables the item.
+   */
+  onCopyImage?: (item: MediaViewerItem, url: string) => Promise<void> | void;
+}
+
+const MoreMenu = ({
+  item,
+  canCopyImage,
+  canCopyLink,
+  onClose,
+  src,
+  options,
+}: {
+  item: MediaViewerItem;
+  canCopyImage: boolean;
+  canCopyLink: boolean;
+  onClose: () => void;
+  src: string;
+  options: MediaViewerMoreMenuOptions;
+}) => {
   const { i18n } = useMediaContext();
-  const source = getSourceUrl(item);
-  const canCopyLink = /^https?:/.test(new URL(source, window.location.href).protocol);
+  const identifier = item.sourceMetadata?.identifier;
+  const attachment =
+    identifier?.type === 'attachment'
+      ? (identifier as { attachmentId?: string; filename?: string; title?: string; size?: number })
+      : null;
+  const copyDetail = (value: string) =>
+    copyText(value, () => showToast({ text: i18n.COPIED_TO_CLIPBOARD, variant: 'success' }));
+  const detailItem = (label: string, id: string, value: string | null | undefined, lineClamp?: number) =>
+    value != null ? (
+      <MenuItem
+        key={id}
+        id={id}
+        label={label}
+        subtext={value}
+        subtextLineClamp={lineClamp}
+        action={() => copyDetail(value)}
+      />
+    ) : null;
+  const details =
+    attachment != null ? (
+      <MenuItem key="media-viewer-details" id="media-viewer-details" label={i18n.VIEW_DETAILS}>
+        {detailItem(
+          i18n.FILENAME,
+          'name',
+          attachment.filename != null
+            ? getAttachmentFileName({ filename: attachment.filename, title: attachment.title })
+            : null,
+          1,
+        )}
+        {detailItem(
+          i18n.SIZE,
+          'size',
+          i18n.MEDIA_DETAILS_SIZE(item.width, item.height, formatDetailsSize((attachment.size ?? 0) / 1000)),
+        )}
+        {detailItem(i18n.DESCRIPTION_ALT_TEXT, 'alt', item.alt, 2)}
+      </MenuItem>
+    ) : null;
+  const copyId =
+    options.developerMode && attachment?.attachmentId != null ? (
+      <MenuItem
+        key={`devmode-copy-id-${attachment.attachmentId}`}
+        id={`devmode-copy-id-${attachment.attachmentId}`}
+        label={i18n.COPY_ATTACHMENT_ID}
+        action={() => copyText(attachment.attachmentId!)}
+        icon={IdIcon}
+        leadingAccessory={{ type: 'icon', icon: IdIcon }}
+      />
+    ) : null;
+  return (
+    <Menu data-menu-migrated navId="image-menu" aria-label="placeholder" onClose={onClose} onSelect={undefined}>
+      <MenuGroup>
+        {canCopyImage && (
+          <MenuItem
+            label={i18n.COPY_IMAGE}
+            id="media-viewer-copy-image"
+            icon={CopyIcon}
+            leadingAccessory={{ type: 'icon', icon: CopyIcon }}
+            action={async () => {
+              const url = getOriginalMediaUrl(src, 'png');
+              try {
+                await options.onCopyImage?.(item, url);
+                showToast({ text: i18n.IMAGE_COPIED, variant: 'success' });
+              } catch {
+                showToast({ text: i18n.UNABLE_TO_COPY_IMAGE, variant: 'critical' });
+              }
+            }}
+          />
+        )}
+        {canCopyLink && (
+          <MenuItem
+            id="media-viewer-copy-link"
+            label={i18n.COPY_MEDIA_LINK}
+            icon={LinkIcon}
+            leadingAccessory={{ type: 'icon', icon: LinkIcon }}
+            action={() =>
+              copyText(
+                getOriginalMediaUrl(src),
+                () => showToast({ text: i18n.LINK_COPIED, variant: 'success' }),
+                () => showToast({ text: i18n.UNABLE_TO_COPY_LINK, variant: 'critical' }),
+              )
+            }
+          />
+        )}
+      </MenuGroup>
+      {details}
+      {copyId}
+    </Menu>
+  );
+};
+
+MoreMenu.displayName = 'MediaViewerMoreMenu';
+
+/** The "More" button: copy the media link (and image on desktop), view the attachment's details. */
+const MoreButton = ({ item, options }: { item: MediaViewerItem; options: MediaViewerMoreMenuOptions }) => {
+  const { i18n } = useMediaContext();
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [open, setOpen] = useState(false);
+  const src = getSourceUrl(item);
   const canCopyImage =
+    options.onCopyImage != null &&
     item.type === 'IMAGE' &&
     item.children == null &&
     !item.animated &&
-    isDiscordAssetUrl(source, item.contentType, item.originalContentType);
-  if (!(canCopyImage || canCopyLink || item.sourceMetadata?.identifier?.type === 'attachment')) return null;
-  return <ToolbarButton tooltipText={i18n.MORE} onClick={() => onOpenMenu?.(item)} icon={MoreHorizontalIcon} />;
+    isDiscordAssetUrl(src, item.contentType, item.originalContentType) &&
+    isShareableMediaUrl(src);
+  const canCopyLink = isShareableMediaUrl(src);
+  if (!(options.developerMode || canCopyImage || canCopyLink || item.sourceMetadata?.identifier?.type === 'attachment'))
+    return null;
+  return (
+    <Popout
+      targetElementRef={buttonRef}
+      shouldShow={open}
+      align="left"
+      position="top"
+      spacing={18}
+      onRequestClose={() => setOpen(false)}
+      animation={Popout.Animation.NONE}
+      renderPopout={() => (
+        <MoreMenu
+          item={item}
+          canCopyImage={canCopyImage}
+          canCopyLink={canCopyLink}
+          onClose={() => setOpen(false)}
+          src={src}
+          options={options}
+        />
+      )}
+    >
+      {() => (
+        <ToolbarButton
+          buttonRef={buttonRef}
+          tooltipText={i18n.MORE}
+          onClick={() => setOpen(!open)}
+          icon={MoreHorizontalIcon}
+        />
+      )}
+    </Popout>
+  );
 };
 
 MoreButton.displayName = 'MediaViewerMoreButton';
+
+const DEFAULT_MORE_MENU_OPTIONS: MediaViewerMoreMenuOptions = {};
 
 const Toolbar = memo(
   ({
     item,
     hideMediaOptions,
-    onOpenMenu,
+    moreMenuOptions,
   }: {
     item: MediaViewerItem;
     hideMediaOptions: boolean;
-    onOpenMenu?: (item: MediaViewerItem) => void;
+    moreMenuOptions: MediaViewerMoreMenuOptions;
   }) => {
     const { keyboardModeEnabled } = useContext(AccessibilityPreferencesContext);
     const ref = useRef<HTMLDivElement>(null);
@@ -528,7 +707,7 @@ const Toolbar = memo(
               <>
                 <DownloadButton item={item} />
                 <OpenInBrowserButton item={item} />
-                <MoreButton item={item} onOpenMenu={onOpenMenu} />
+                <MoreButton item={item} options={moreMenuOptions} />
               </>
             )}
           </div>
@@ -544,13 +723,13 @@ const TopBar = ({
   item,
   hideMediaOptions,
   onClose,
-  onOpenMenu,
+  moreMenuOptions,
   renderAuthor,
 }: {
   item: MediaViewerItem;
   hideMediaOptions: boolean;
   onClose: () => void;
-  onOpenMenu?: (item: MediaViewerItem) => void;
+  moreMenuOptions: MediaViewerMoreMenuOptions;
   renderAuthor?: (message: unknown, className: string) => ReactNode;
 }) => {
   const { i18n } = useMediaContext();
@@ -560,7 +739,7 @@ const TopBar = ({
       {message != null && renderAuthor != null && (
         <MediaViewerChrome>{(className) => renderAuthor(message, className)}</MediaViewerChrome>
       )}
-      <Toolbar item={item} hideMediaOptions={hideMediaOptions} onOpenMenu={onOpenMenu} />
+      <Toolbar item={item} hideMediaOptions={hideMediaOptions} moreMenuOptions={moreMenuOptions} />
       <MediaViewerChrome mode={MediaViewerChromeMode.PINNED}>
         {(className) => (
           <NavButton
@@ -585,8 +764,8 @@ export interface MediaViewerModalProps {
   shouldHideMediaOptions?: boolean;
   transitionState?: ModalTransitionStateValue | null;
   isItemObscured?: (item: MediaViewerItem) => boolean;
-  /** Opens the "More" menu for the current item (the client shows copy/details actions there). */
-  onOpenMoreMenu?: (item: MediaViewerItem) => void;
+  /** Options of the "More" menu (developer mode, copying images where the platform allows it). */
+  moreMenuOptions?: MediaViewerMoreMenuOptions;
   /**
    * Renders the author of the message the media is from (avatar, name, timestamp). The client draws it from its
    * user and channel stores; nothing renders when this is omitted.
@@ -605,7 +784,7 @@ export const MediaViewerModal = ({
   shouldHideMediaOptions = false,
   transitionState,
   isItemObscured,
-  onOpenMoreMenu,
+  moreMenuOptions = DEFAULT_MORE_MENU_OPTIONS,
   renderAuthor,
 }: MediaViewerModalProps) => {
   const { i18n } = useMediaContext();
@@ -705,7 +884,7 @@ export const MediaViewerModal = ({
               item={items[currentIndex]}
               hideMediaOptions={shouldHideMediaOptions}
               onClose={onClose}
-              onOpenMenu={onOpenMoreMenu}
+              moreMenuOptions={moreMenuOptions}
               renderAuthor={renderAuthor}
             />
             <div style={{ display: 'none' }} />

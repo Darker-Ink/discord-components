@@ -152,7 +152,7 @@ const video = (index: number, flags: number, description?: string): APIAttachmen
     filename: `video-${n}.webm`,
     size: 19000,
     url: `${MEDIA}/video-${n}.webm`,
-    proxy_url: `${MEDIA}/video-${n}-poster.jpg`,
+    proxy_url: `${MEDIA}/video-${n}.webm`,
     width: n === 1 ? 1280 : 720,
     height: n === 1 ? 720 : 1280,
     content_type: 'video/webm',
@@ -372,7 +372,7 @@ const mediaMosaic: StoryGroup = {
       name: 'Media Gallery (Components v2)',
       id: 'media-gallery',
       component: MediaGalleryStory,
-      docs: 'Components v2’s Media Gallery uses the same mosaic, up to 600px wide. Gallery videos play the proxy URL, so the sample videos only show their poster.',
+      docs: 'Components v2’s Media Gallery uses the same mosaic, up to 600px wide.',
       controls: mosaicControls(3),
     },
     {

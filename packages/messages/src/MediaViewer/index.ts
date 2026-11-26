@@ -10,6 +10,7 @@ export {
   MediaViewerCarousel,
   type MediaViewerModalProps,
   type MediaViewerCarouselProps,
+  type MediaViewerMoreMenuOptions,
 } from './MediaViewerModal';
 export {
   MediaViewerMedia,

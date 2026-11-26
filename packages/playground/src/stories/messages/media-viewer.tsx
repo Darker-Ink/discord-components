@@ -72,11 +72,10 @@ const photo = (index: number): MediaViewerItem => {
   return { type: 'IMAGE', url, proxyUrl: url, width, height, contentType: 'image/jpeg', original: url };
 };
 
-const video = (): MediaViewerItem & { poster: string } => ({
+const video = (): MediaViewerItem => ({
   type: 'VIDEO',
   url: `${MEDIA}/video-1.webm`,
   proxyUrl: `${MEDIA}/video-1.webm`,
-  poster: `${MEDIA}/video-1-poster.jpg`,
   width: 1280,
   height: 720,
   contentType: 'video/webm',

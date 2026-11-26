@@ -15,7 +15,9 @@ async (ref, data) => {
   const h = ref.React.createElement;
   const { R: openMediaViewer } = ref.req('256905');
   const message = data.message ?? null;
-  const items = data.items.map((item) => ({ ...item, sourceMetadata: message != null ? { message } : undefined }));
+  const items = data.items.map((item) =>
+    message != null ? { ...item, sourceMetadata: { ...item.sourceMetadata, message } } : item,
+  );
   setTimeout(
     () =>
       openMediaViewer({

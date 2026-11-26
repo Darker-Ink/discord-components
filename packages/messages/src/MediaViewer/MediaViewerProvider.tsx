@@ -7,7 +7,7 @@ import { MediaViewerModal, type MediaViewerModalProps } from './MediaViewerModal
 export const MEDIA_VIEWER_MODAL_KEY = 'Media Viewer Modal';
 
 export interface OpenMediaViewerOptions
-  extends MediaViewerOpenOptions, Pick<MediaViewerModalProps, 'isItemObscured' | 'onOpenMoreMenu' | 'renderAuthor'> {
+  extends MediaViewerOpenOptions, Pick<MediaViewerModalProps, 'isItemObscured' | 'moreMenuOptions' | 'renderAuthor'> {
   /** The modal stack context to open in (defaults to the app's). */
   contextKey?: ModalContextKey;
 }
@@ -20,7 +20,7 @@ export const openMediaViewer = ({
   contextKey,
   onClose,
   isItemObscured,
-  onOpenMoreMenu,
+  moreMenuOptions,
   renderAuthor,
   items,
   startingIndex,
@@ -38,7 +38,7 @@ export const openMediaViewer = ({
           void closeModal();
         }}
         isItemObscured={isItemObscured}
-        onOpenMoreMenu={onOpenMoreMenu}
+        moreMenuOptions={moreMenuOptions}
         renderAuthor={renderAuthor}
       />
     ),
@@ -48,7 +48,7 @@ export const openMediaViewer = ({
 
 export interface MediaViewerProviderProps extends Pick<
   MediaViewerModalProps,
-  'isItemObscured' | 'onOpenMoreMenu' | 'renderAuthor'
+  'isItemObscured' | 'moreMenuOptions' | 'renderAuthor'
 > {
   children?: ReactNode;
   contextKey?: ModalContextKey;
@@ -59,14 +59,14 @@ export const MediaViewerProvider = ({
   children,
   contextKey,
   isItemObscured,
-  onOpenMoreMenu,
+  moreMenuOptions,
   renderAuthor,
 }: MediaViewerProviderProps) => {
   const open = useCallback(
     (options: MediaViewerOpenOptions) => {
-      openMediaViewer({ ...options, contextKey, isItemObscured, onOpenMoreMenu, renderAuthor });
+      openMediaViewer({ ...options, contextKey, isItemObscured, moreMenuOptions, renderAuthor });
     },
-    [contextKey, isItemObscured, onOpenMoreMenu, renderAuthor],
+    [contextKey, isItemObscured, moreMenuOptions, renderAuthor],
   );
   return <MediaContextProvider openMediaViewer={open}>{children}</MediaContextProvider>;
 };

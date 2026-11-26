@@ -1,7 +1,7 @@
 import { useSyncExternalStore, type ComponentType, type MouseEvent } from 'react';
 import clsx from 'clsx';
 import { FocusRing, Tooltip } from '@discord-components/components';
-import { FullscreenEnterIcon, FullscreenExitIcon, type IconProps } from '@discord-components/icons';
+import { FullscreenEnterIcon, FullscreenExitIcon, type IconProps, type IconSize } from '@discord-components/icons';
 import type { FocusRingProps } from 'react-focus-rings';
 import { useMediaContext } from '../MediaContext';
 import { isFullscreen } from './fullscreen';
@@ -20,6 +20,10 @@ interface ControlButtonProps {
   'aria-label'?: string;
 }
 
+// The legacy icon size table's `md` (24): new icons don't know numeric sizes, so they render without
+// width/height attributes and take their size from CSS, exactly as in the client.
+const LEGACY_ICON_SIZE_MD = 24 as unknown as IconSize;
+
 // The client's call-control button (a blank legacy Button with a tooltip), as the video player uses it.
 const ControlButton = ({
   label,
@@ -36,6 +40,7 @@ const ControlButton = ({
     <Tooltip position="top" __unsupportedReactNodeAsText={label} ariaHidden>
       <FocusRing {...focusProps}>
         <button
+          data-migration-pending
           aria-label={ariaLabel ?? label}
           onMouseDown={(event) => event.preventDefault()}
           onClick={onClick}
@@ -51,7 +56,7 @@ const ControlButton = ({
         >
           <div className={clsx(legacyButtonStyles.contents, controlStyles.lineHeightReset)}>
             <Icon
-              size="md"
+              size={LEGACY_ICON_SIZE_MD}
               className={clsx(iconClassName, controlStyles.controlIcon, { [controlStyles.active]: isActive })}
               color={iconColor}
             />

@@ -1,0 +1,36 @@
+{
+  "story": "media-viewer-fixtures",
+  "capture": "viewport",
+  "dom": "[class*=\"layerContainer\"]",
+  "data": {
+    "items": [
+      {
+        "type": "IMAGE",
+        "url": "{{assets}}/attachments/photo-1.jpg",
+        "proxyUrl": "{{assets}}/attachments/photo-1.jpg",
+        "width": 1600,
+        "height": 900,
+        "contentType": "image/jpeg",
+        "original": "{{assets}}/attachments/photo-1.jpg",
+        "srcIsAnimated": false,
+        "alt": "The first photo",
+        "sourceMetadata": {
+          "identifier": {
+            "type": "attachment",
+            "attachmentId": "1000000000000000001",
+            "filename": "photo-1.jpg",
+            "size": 21000
+          }
+        }
+      }
+    ]
+  },
+  "actions": [
+    {
+      "click": "[class*=\"layerContainer\"] [aria-label=\"More\"]"
+    },
+    {
+      "wait": 800
+    }
+  ]
+}
