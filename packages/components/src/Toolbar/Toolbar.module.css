@@ -1,0 +1,17 @@
+.group,
+.toolbar {
+  align-items: center;
+  display: flex;
+  gap: var(--space-8);
+}
+.toolbar {
+  max-width: 100%;
+  width: -moz-fit-content;
+  width: fit-content;
+}
+.separator {
+  align-self: stretch;
+  background-color: var(--border-subtle);
+  flex: none;
+  width: 1px;
+}
