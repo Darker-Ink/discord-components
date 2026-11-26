@@ -11,15 +11,8 @@ export {
   MEDIA_EMBED_TYPES,
 } from './createEmbed';
 export * from './renderProps';
-export {
-  Embed,
-  getEmbedColor,
-  type EmbedProps,
-  type ObscuredEmbedProps,
-  type RenderEmbedTitle,
-  type RenderEmbedDescription,
-  type RenderObscuredEmbed,
-} from './Embed';
+export { Embed, getEmbedColor, type EmbedProps, type RenderEmbedTitle, type RenderEmbedDescription } from './Embed';
+export { EmbedGallery, type EmbedGalleryProps } from './EmbedGallery';
 export { EmbedVideo, EmbedGIFV, getEmbedPlayerUrl, type EmbedVideoProps, type EmbedGIFVProps } from './EmbedVideo';
 export { VideoPlayPill, type VideoPlayPillProps } from './VideoPlayPill';
 export {
@@ -34,6 +27,9 @@ export {
 export {
   MessageEmbeds,
   isRenderableEmbed,
+  renderEmbedLink,
+  renderEmbedImage,
+  renderEmbedVideo,
   type MessageEmbedsProps,
   type EmbedMarkdownContext,
   type RenderEmbedMarkdown,

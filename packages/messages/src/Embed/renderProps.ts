@@ -89,36 +89,3 @@ export interface EmbedVideoComponentProps {
 }
 
 export type RenderVideoComponent = (props: EmbedVideoComponentProps) => ReactNode;
-
-export interface EmbedAudioComponentProps {
-  src: string;
-  mimeType?: string[];
-  autoPlay: boolean;
-  playable: boolean;
-}
-
-export type RenderAudioComponent = (props: EmbedAudioComponentProps) => ReactNode;
-
-export interface EmbedGalleryImage {
-  src: string;
-  original: string;
-  alt: string;
-  width: number;
-  height: number;
-  srcIsAnimated: boolean;
-  placeholder?: string;
-  placeholderVersion?: number;
-  disableAltTextDisplay: boolean;
-}
-
-export interface EmbedGalleryProps {
-  images: EmbedGalleryImage[];
-  message: EmbedMessage;
-  autoPlayGif: boolean;
-  hiddenSpoiler: boolean;
-  isVisible: boolean;
-  sourceMetadata: EmbedSourceMetadata;
-  renderImageComponent: RenderImageComponent;
-}
-
-export type RenderGallery = (props: EmbedGalleryProps) => ReactNode;

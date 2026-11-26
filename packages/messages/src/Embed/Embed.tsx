@@ -17,6 +17,9 @@ import { useMediaContext } from '../media/MediaContext';
 import markupStyles from '../markup/markup.module.css';
 import { ImageReadyState, MediaLayoutType, ObscureReason, SENSITIVE_OBSCURE_REASONS } from '../media/constants';
 import { Image } from '../media/Image/Image';
+import { MediaPlayer, MediaPlayerTypes } from '../media/MediaPlayer/MediaPlayer';
+import { ObscuredContent, ObscuredContentTypes } from '../media/ObscuredContent/ObscuredContent';
+import { MaskedLink } from '../MaskedLink';
 import { PlaceholderBlob } from '../MessagePlaceholder/PlaceholderBlob';
 import { MediaInteractionContext } from '../media/MediaInteractionContext';
 import { getMaxMediaSize, getVideoProvider, isInlineMediaEmbed, MEDIA_EMBED_TYPES } from './createEmbed';
@@ -35,13 +38,14 @@ import {
 } from './MusicEmbeds';
 import type {
   EmbedSourceMetadata,
-  RenderAudioComponent,
   RenderImageComponent,
   RenderLinkComponent,
   RenderVideoComponent,
 } from './renderProps';
 import { EmbedType, type EmbedMedia, type EmbedMessage, type MessageEmbed } from './types';
 import styles from './Embed.module.css';
+
+const renderMaskedLink = (props: Record<string, unknown>) => <MaskedLink {...props} />;
 
 const PLAYSTATION_PROVIDERS = ['PlayStation'];
 
@@ -89,19 +93,6 @@ const graphemeLength = (text: string) => {
 export type RenderEmbedTitle = (embed: MessageEmbed, title: string) => ReactNode;
 export type RenderEmbedDescription = (embed: MessageEmbed, description: string, isField: boolean) => ReactNode;
 
-export interface ObscuredEmbedProps {
-  type: 'attachment' | 'embed';
-  reason: ObscureReason;
-  onReveal: () => void;
-  onToggleObscurity: () => void;
-  isSingleMosaicItem: boolean;
-  containerStyles: CSSProperties;
-  obscurityControlClassName?: string;
-  children: (hidden: boolean) => ReactNode;
-}
-
-export type RenderObscuredEmbed = (props: ObscuredEmbedProps) => ReactNode;
-
 export interface EmbedProps {
   embed: MessageEmbed;
   className?: string;
@@ -124,9 +115,6 @@ export interface EmbedProps {
   renderImageComponent: RenderImageComponent;
   renderVideoComponent: RenderVideoComponent;
   renderLinkComponent: RenderLinkComponent;
-  renderAudioComponent?: RenderAudioComponent;
-  /** Wraps spoilered and explicit embeds in the blur/reveal overlay. */
-  renderObscured?: RenderObscuredEmbed;
   /** The GIF favourite star for a gallery image (needs the app's favourites). */
   renderGifFavoriteButton?: (image: EmbedMedia) => () => ReactNode;
   onImageHover?: () => void;
@@ -152,8 +140,6 @@ export const Embed = (props: EmbedProps) => {
     renderImageComponent,
     renderVideoComponent,
     renderLinkComponent,
-    renderAudioComponent,
-    renderObscured,
     renderGifFavoriteButton,
     onImageHover,
   } = props;
@@ -477,12 +463,14 @@ export const Embed = (props: EmbedProps) => {
       case EmbedType.Audio:
         if (embed.audio != null) {
           return (
-            renderAudioComponent?.({
-              src: embed.audio.proxyURL,
-              mimeType: embed.audio.contentType != null ? [embed.audio.contentType] : undefined,
-              autoPlay: false,
-              playable: isVisible && !hiddenSpoiler,
-            }) ?? null
+            <MediaPlayer
+              src={embed.audio.proxyURL}
+              type={MediaPlayerTypes.AUDIO}
+              mimeType={embed.audio.contentType != null ? [embed.audio.contentType] : undefined}
+              autoPlay={false}
+              playable={isVisible && !hiddenSpoiler}
+              renderLinkComponent={renderMaskedLink}
+            />
           );
         }
         return renderImage(embed.image, hiddenSpoiler, isVisible, embed.rawTitle);
@@ -659,30 +647,36 @@ export const Embed = (props: EmbedProps) => {
   const onToggleObscurity = () => setIsVisible((visible) => !visible);
 
   if (!hideMedia && isInlineMediaEmbed(embed)) {
-    if (obscureReason != null && renderObscured != null) {
-      return renderObscured({
-        type: 'attachment',
-        reason: obscureReason,
-        onReveal,
-        onToggleObscurity,
-        isSingleMosaicItem: true,
-        containerStyles: getSpoilerStyles(true),
-        obscurityControlClassName: clsx({ [styles.obscureVideoSpacing]: isVisible && videoControlsShown }),
-        children: renderInlineMediaEmbed,
-      });
+    if (obscureReason != null) {
+      return (
+        <ObscuredContent
+          type={ObscuredContentTypes.ATTACHMENT}
+          reason={obscureReason}
+          onReveal={onReveal}
+          onToggleObscurity={onToggleObscurity}
+          isSingleMosaicItem
+          containerStyles={getSpoilerStyles(true)}
+          obscurityControlClassName={clsx({ [styles.obscureVideoSpacing]: isVisible && videoControlsShown })}
+        >
+          {renderInlineMediaEmbed}
+        </ObscuredContent>
+      );
     }
     return renderInlineMediaEmbed();
   }
-  if (obscureReason != null && renderObscured != null) {
-    return renderObscured({
-      type: 'embed',
-      onReveal,
-      onToggleObscurity,
-      reason: obscureReason,
-      isSingleMosaicItem: true,
-      containerStyles: getSpoilerStyles(false),
-      children: renderEmbedContent,
-    });
+  if (obscureReason != null) {
+    return (
+      <ObscuredContent
+        type={ObscuredContentTypes.EMBED}
+        onReveal={onReveal}
+        onToggleObscurity={onToggleObscurity}
+        reason={obscureReason}
+        isSingleMosaicItem
+        containerStyles={getSpoilerStyles(false)}
+      >
+        {renderEmbedContent}
+      </ObscuredContent>
+    );
   }
   return renderEmbedContent();
 };

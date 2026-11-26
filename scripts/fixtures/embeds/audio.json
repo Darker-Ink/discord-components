@@ -1,0 +1,15 @@
+{
+  "story": "embed-fixtures",
+  "data": {
+    "embeds": [
+      {
+        "type": "audio",
+        "url": "https://example.com/track",
+        "title": "Audio embed",
+        "description": "Audio embeds play in the inline media player.",
+        "provider": { "name": "Example Audio" },
+        "audio": { "url": "{{assets}}/audio.mp3", "proxy_url": "{{assets}}/audio.mp3", "content_type": "audio/mpeg" }
+      }
+    ]
+  }
+}

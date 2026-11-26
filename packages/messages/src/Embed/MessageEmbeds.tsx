@@ -2,20 +2,16 @@ import { useMemo, type MouseEventHandler, type ReactNode } from 'react';
 import { MaskedLink } from '../MaskedLink';
 import type { ObscureReason } from '../media/constants';
 import { useMediaContext } from '../media/MediaContext';
-import { MediaPlayer, MediaPlayerTypes } from '../media/MediaPlayer/MediaPlayer';
 import { MediaImage, MediaVideoWithAltText, type MediaImageProps } from '../media/MediaRenderers/MediaRenderers';
-import { ObscuredContent } from '../media/ObscuredContent/ObscuredContent';
 import { createEmbeds, NON_EMBED_TYPES } from './createEmbed';
 import { Embed, type EmbedProps } from './Embed';
 import type {
-  EmbedAudioComponentProps,
   EmbedImageComponentProps,
   EmbedVideoComponentProps,
   LinkComponentProps,
   RenderImageComponent,
   RenderVideoComponent,
 } from './renderProps';
-import type { ObscuredEmbedProps } from './Embed';
 import { EmbedType, type APIEmbed, type EmbedMessage, type MessageEmbed } from './types';
 
 const DISCORD_URL = '^https?://(?:canary\\.|ptb\\.|www\\.)?discord(?:app)?\\.com';
@@ -61,10 +57,7 @@ export interface EmbedMarkdownContext {
 export type RenderEmbedMarkdown = (text: string, context: EmbedMarkdownContext) => ReactNode;
 
 export interface MessageEmbedsProps extends Partial<
-  Pick<
-    EmbedProps,
-    'renderAudioComponent' | 'renderGifFavoriteButton' | 'renderObscured' | 'shouldAgeVerify' | 'allowFullScreen'
-  >
+  Pick<EmbedProps, 'renderGifFavoriteButton' | 'shouldAgeVerify' | 'allowFullScreen'>
 > {
   /** The message's embeds, as the API sends them. */
   embeds: readonly APIEmbed[];
@@ -102,23 +95,6 @@ export const renderEmbedVideo = (props: EmbedVideoComponentProps) => (
   />
 );
 
-export const renderEmbedAudio = ({ src, mimeType, autoPlay, playable }: EmbedAudioComponentProps) => (
-  <MediaPlayer
-    src={src}
-    type={MediaPlayerTypes.AUDIO}
-    mimeType={mimeType}
-    autoPlay={autoPlay}
-    playable={playable}
-    renderLinkComponent={renderEmbedLink as never}
-  />
-);
-
-export const renderEmbedObscured = ({ type, reason, children, ...props }: ObscuredEmbedProps) => (
-  <ObscuredContent type={type} reason={reason} {...props}>
-    {children}
-  </ObscuredContent>
-);
-
 /** A message's embeds, converted, merged and filtered exactly like the client's message accessories. */
 export const MessageEmbeds = ({
   embeds: apiEmbeds,
@@ -132,8 +108,6 @@ export const MessageEmbeds = ({
   renderLinkComponent = renderEmbedLink,
   renderImageComponent = renderEmbedImage,
   renderVideoComponent = renderEmbedVideo,
-  renderAudioComponent = renderEmbedAudio,
-  renderObscured = renderEmbedObscured,
   ...rest
 }: MessageEmbedsProps) => {
   const media = useMediaContext();
@@ -167,8 +141,6 @@ export const MessageEmbeds = ({
         renderLinkComponent={renderLinkComponent}
         renderImageComponent={renderImageComponent}
         renderVideoComponent={renderVideoComponent}
-        renderAudioComponent={renderAudioComponent}
-        renderObscured={renderObscured}
         {...rest}
       />
     );
