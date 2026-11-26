@@ -1,17 +1,41 @@
 {
   "name": "@discord-mana/components",
   "version": "0.0.0",
+  "description": "React recreations of Discord's Mana design system components.",
+  "keywords": [
+    "discord",
+    "mana",
+    "design-system",
+    "react",
+    "components",
+    "ui"
+  ],
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Darker-Ink/discord-components.git",
+    "directory": "packages/components"
+  },
   "type": "module",
   "sideEffects": [
-    "**/*.css"
+    "**/*.css",
+    "./dist/index.js"
   ],
   "exports": {
     ".": "./src/index.ts"
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "vite build"
   },
   "dependencies": {
     "@discord-mana/icons": "workspace:*",
     "@discord-mana/tokens": "workspace:*",
     "@floating-ui/react": "^0.27.20",
+    "@floating-ui/react-dom": "^2.1.9",
     "@internationalized/date": "3.12.4",
     "@react-spring/web": "^10.1.2",
     "@rive-app/canvas": "2.40.0",
@@ -39,6 +63,20 @@
     "react-dom": "^19.3.1"
   },
   "peerDependencies": {
-    "react": "^19"
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  "publishConfig": {
+    "access": "public",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "./style.css": "./dist/style.css",
+      "./package.json": "./package.json"
+    }
   }
 }
