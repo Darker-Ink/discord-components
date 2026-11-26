@@ -10,7 +10,8 @@ React versions of Discord's UI components. The styles, props and markup come str
 | `@discord-mana/icons`      | Every icon in the Discord client, under the same names Discord uses                                                                       |
 | `@discord-mana/components` | The Mana design system (buttons, inputs, selects, modals, tooltips, menus, date pickers, toasts and more), plus the older Void components |
 | `@discord-mana/messages`   | Message rendering: embeds, attachments, the media gallery and viewer, message components (including Components v2) and interaction modals |
-| `@discord-mana/markdown`   | Discord's markdown renderer: its fork of simple-markdown with every rule the client uses, mentions, emoji, timestamps and code blocks     |
+| `@discord-mana/markdown`   | Discord's markdown: the parser and renderer for messages and embeds, with mentions, emoji, timestamps and highlighted code blocks         |
+| `@discord-mana/slate`      | The chat input: Discord's rich text editor with live markdown, mentions and emoji                                                         |
 | `@discord-mana/playground` | A playground for browsing and trying out every component                                                                                  |
 
 Void is Discord's older design system. Discord hardly uses it anymore, so use the Mana components for anything new.
@@ -79,38 +80,55 @@ The pieces are also exported on their own: `MessageEmbeds`, `MessageAttachments`
 
 ## Markdown
 
-`@discord-mana/markdown` is a port of the client's markdown: Discord's patched simple-markdown, the same rules with the same regexes and order, the same parse state per context, and the same React output. Contexts are presets named after where the client parses text (`message`, `reply`, `textDisplay`, `embedTitle`, `embedTitleWithoutLinks`, `embedDescription`, `embedFieldValue`, `channelTopic`, `poll`…). Rules can be turned off (or on) by name; there's no API for custom rules.
+`@discord-mana/markdown` is a port of Discord's markdown parser. It has the same rules and renders the same elements as the client, so mentions, emoji, timestamps, spoilers and code blocks look like they do in Discord.
 
-```tsx
-import { Markdown, parse } from '@discord-mana/markdown';
-
-<div className="your-markup-container">
-  <Markdown content="**Hi** <@1234> ||spoiler|| <t:1764158400:R>" rules={{ codeBlock: false }} />
-</div>;
-
-parse('`code` and :tada:', { preset: 'embedDescription', rules: ['inlineCode', 'emoji'] }); // the AST
+```bash
+npm i @discord-mana/markdown
 ```
 
-Mentions, channels, roles, servers, slash commands and emoji images come from the same `resolvers` as `Message` (`MessageResolversContext`); unknown ones show what Discord shows (`@unknown-user`, `#unknown-channel`…). Clicks on mentions and links go to `onMarkdownInteraction` in `MessageActionsContext`. Code blocks are highlighted with Arborium like the client, for the languages you enable (see below); `setCodeHighlighter` swaps in another engine.
+`renderMessageMarkdown` and `renderEmbedMarkdown` plug into `Message` (see above). To render markdown on its own, use `Markdown`:
+
+```tsx
+import { Markdown } from '@discord-mana/markdown';
+
+<Markdown content="**Hi** <@1234> ||spoiler|| <t:1764158400:R>" />;
+```
+
+Mentions and custom emoji are looked up through the same `resolvers` as `Message`.
 
 ### Syntax highlighting
 
-The client highlights code blocks with Arborium (tree-sitter grammars compiled to WebAssembly). Grammars are optional peer dependencies, so nothing is installed or bundled until you pick languages. Install Arborium and the grammars you want, and import their entries once (e.g. next to your app's root):
+Code blocks are plain text until you enable languages. Install Arborium and the grammars you want:
 
 ```bash
-npm i @arborium/arborium @arborium/rust @arborium/python
+npm i @arborium/arborium @arborium/rust
 ```
+
+Then import each language once, for example next to your app's root:
 
 ```ts
 import '@discord-mana/markdown/languages/rust';
-import '@discord-mana/markdown/languages/python';
-// or every language Discord highlights (installs about 180 MB of grammars):
-// import '@discord-mana/markdown/languages/all';
 ```
 
-Each grammar becomes its own chunk that loads the first time a code block uses it (plain text shows meanwhile), and nothing is fetched from a CDN. Code in a language you haven't enabled stays plain text. Aliases work like in Discord (`js`, `ts`, `py`, `rs`, `sh`, `yml`, `c#`…) once their language is enabled.
+`@discord-mana/markdown/languages/all` enables every language Discord highlights, but that needs all of the grammar packages (about 180 MB). Each grammar is loaded the first time a code block uses it.
 
-Languages: `ada`, `agda`, `asciidoc`, `asm`, `awk`, `bash`, `batch`, `c`, `c-sharp`, `caddy`, `capnp`, `cedar`, `cedarschema`, `clojure`, `cmake`, `commonlisp`, `cpp`, `css`, `d`, `dart`, `devicetree`, `diff`, `dockerfile`, `dot`, `elisp`, `elixir`, `elm`, `erlang`, `fish`, `fsharp`, `gleam`, `glsl`, `go`, `graphql`, `groovy`, `haskell`, `hcl`, `hlsl`, `html`, `idris`, `ini`, `java`, `javascript`, `jinja2`, `jq`, `json`, `julia`, `kotlin`, `lean`, `lua`, `markdown`, `matlab`, `meson`, `ninja`, `nix`, `objc`, `ocaml`, `perl`, `php`, `postscript`, `powershell`, `prolog`, `python`, `query`, `r`, `rego`, `rescript`, `ron`, `ruby`, `rust`, `scala`, `scheme`, `scss`, `solidity`, `sparql`, `sql`, `ssh-config`, `starlark`, `styx`, `svelte`, `swift`, `textproto`, `thrift`, `tlaplus`, `toml`, `tsx`, `typescript`, `typst`, `verilog`, `vhdl`, `vim`, `vue`, `wit`, `x86asm`, `xml`, `yaml`, `yuri`, `zig`, `zsh`. Discord also highlights `luau` and `ansi`: `luau` has no Arborium package (it stays plain), and ` ```ansi ` blocks need no grammar.
+Languages: `ada`, `agda`, `asciidoc`, `asm`, `awk`, `bash`, `batch`, `c`, `c-sharp`, `caddy`, `capnp`, `cedar`, `cedarschema`, `clojure`, `cmake`, `commonlisp`, `cpp`, `css`, `d`, `dart`, `devicetree`, `diff`, `dockerfile`, `dot`, `elisp`, `elixir`, `elm`, `erlang`, `fish`, `fsharp`, `gleam`, `glsl`, `go`, `graphql`, `groovy`, `haskell`, `hcl`, `hlsl`, `html`, `idris`, `ini`, `java`, `javascript`, `jinja2`, `jq`, `json`, `julia`, `kotlin`, `lean`, `lua`, `markdown`, `matlab`, `meson`, `ninja`, `nix`, `objc`, `ocaml`, `perl`, `php`, `postscript`, `powershell`, `prolog`, `python`, `query`, `r`, `rego`, `rescript`, `ron`, `ruby`, `rust`, `scala`, `scheme`, `scss`, `solidity`, `sparql`, `sql`, `ssh-config`, `starlark`, `styx`, `svelte`, `swift`, `textproto`, `thrift`, `tlaplus`, `toml`, `tsx`, `typescript`, `typst`, `verilog`, `vhdl`, `vim`, `vue`, `wit`, `x86asm`, `xml`, `yaml`, `yuri`, `zig`, `zsh`.
+
+## Chat input
+
+`@discord-mana/slate` is Discord's chat input: the rich text editor from the message bar, with live markdown, mentions, emoji and the buttons next to it.
+
+```bash
+npm i @discord-mana/slate
+```
+
+```tsx
+import { ChannelTextArea } from '@discord-mana/slate';
+
+<ChannelTextArea placeholder="Message #general" onSubmit={(text) => console.log(text)} />;
+```
+
+`onSubmit` gets the text in message format (`<@id>` for mentions, `<:name:id>` for custom emoji). Pass `resolvers` (the same ones `Message` uses) so mentions and emoji show as pills.
 
 ## Playground
 
