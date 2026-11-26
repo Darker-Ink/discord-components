@@ -205,7 +205,7 @@ window.ref = (() => {
     const a11yValue = { ...a11y._currentValue, reducedMotion: { enabled: matchMedia('(prefers-reduced-motion: reduce)').matches, rawValue: 'auto' }, keyboardModeEnabled: keyboardMode, minToastDurationMs: 3000 };
     const layers = req('750506');
     const contents = req('638274').P;
-    const manaValue = { ...mana.VO._currentValue, theme, saturation: 1, experiments: { enabledExperiments: [] }, defaultLayerContext: layers.uY };
+    const manaValue = { ...mana.VO._currentValue, theme, saturation: 1, experiments: { enabledExperiments: experiments }, defaultLayerContext: layers.uY };
     return h(a11y.Provider, { value: a11yValue },
       h(mana.GE, { value: manaValue },
         h(req('86182').w, { theme },
@@ -218,6 +218,27 @@ window.ref = (() => {
   const rerender = () => root.render(appRoot(lastElement));
   const render = (element) => new Promise((resolve) => { lastElement = element; rerender(); setTimeout(resolve, 50); });
   const setTheme = (theme) => { document.documentElement.className = document.documentElement.className.replace(/theme-\\w+/, 'theme-' + theme); };
+  // Client experiments that switch on through a root class plus ManaContext, like the playground's ?experiments=.
+  let experiments = [];
+  const setExperiments = (names) => {
+    experiments.forEach((name) => document.documentElement.classList.remove(name));
+    experiments = names;
+    experiments.forEach((name) => document.documentElement.classList.add(name));
+  };
+  // Translations load lazily per chunk; wait for the English strings of every loader that's been required.
+  const loadTranslations = async () => {
+    const loaders = new Set();
+    for (const module of Object.values(req.c)) {
+      const exports = module.exports;
+      if (exports == null || typeof exports !== 'object') continue;
+      for (const key of Object.keys(exports)) {
+        let value;
+        try { value = exports[key]; } catch { continue; }
+        if (value != null && typeof value === 'object' && Object.getOwnPropertyNames(value).includes('localeImportMap')) loaders.add(value);
+      }
+    }
+    await Promise.all([...loaders].map((loader) => Promise.resolve(loader.waitForDefaultLocale()).catch(() => {})));
+  };
   // The client's keyboard mode: navigation keys switch focus rings on, a mouse press switches them off.
   const NAV_KEYS = new Set(['Tab', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End', 'F6']);
   const setKeyboardMode = (enabled) => {
@@ -237,7 +258,7 @@ window.ref = (() => {
     if (NAV_KEYS.has(e.key)) setKeyboardMode(true);
   }, true);
   window.addEventListener('mousedown', () => setKeyboardMode(false), true);
-  return { boot, render, setTheme, req, get React() { return React; } };
+  return { boot, render, setTheme, setExperiments, loadTranslations, req, get React() { return React; } };
 })();
 </script>`;
 
@@ -245,6 +266,7 @@ const storyScript = (collection, storyId) => `
 <script type="module">
 const params = Object.fromEntries(new URLSearchParams(location.search));
 if (params.theme) ref.setTheme(params.theme);
+if (params.experiments) ref.setExperiments(params.experiments.split(','));
 const configModule = ${JSON.stringify(playgroundModules[collection])};
 await ref.boot([configModule]);
 const exports = ref.req(configModule);
@@ -264,6 +286,7 @@ for (const [key, control] of Object.entries(story.controls ?? {})) {
   }
   props[key] = value;
 }
+await ref.loadTranslations();
 const React = ref.React;
 const el = React.createElement('div', { 'data-story': story.id, style: { padding: 24 } }, React.createElement(story.component, props));
 await ref.render(col.Provider ? React.createElement(col.Provider, null, el) : el);
