@@ -106,3 +106,4 @@ export * from './Mask';
 export * from './Avatar';
 export * from './GuildIcon';
 export * from './StackedGuildIcons';
+export * from './StackedAvatars';
