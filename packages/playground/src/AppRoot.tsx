@@ -2,6 +2,7 @@ import { useContext, useEffect, useMemo, useRef, useState, type ReactNode } from
 import {
   AccessibilityPreferencesContext,
   AccessibilityPreferencesProvider,
+  AppToastContainer,
   appLayerContext,
   DEFAULT_MANA_CONTEXT,
   FocusRingManager,
@@ -97,6 +98,7 @@ export const AppRoot = ({
           <RootElement theme={theme} experiments={experiments}>
             <FocusRingScope containerRef={bodyRef}>
               <ModalLayerRoot>{children}</ModalLayerRoot>
+              <AppToastContainer appContext="APP" />
             </FocusRingScope>
           </RootElement>
         </ThemeContextProvider>

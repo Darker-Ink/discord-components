@@ -66,3 +66,4 @@ export * from './LegacyButton';
 export * from './Flex';
 export * from './CopyInput';
 export * from './ColorPicker';
+export * from './Toast';

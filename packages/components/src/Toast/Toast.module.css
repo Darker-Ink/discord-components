@@ -1,0 +1,53 @@
+.wrapper {
+  background-color: var(--background-surface-highest);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-high);
+  box-sizing: border-box;
+  display: inline-flex;
+  max-width: var(--toast-max-width);
+  padding: var(--space-12);
+  position: relative;
+  width: -moz-fit-content;
+  width: fit-content;
+}
+.wrapper.critical,
+.wrapper.success {
+  background-color: var(--background-base-low);
+}
+.baselayer {
+  border: 1px solid;
+  border-radius: var(--radius-md);
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 0;
+}
+.baselayer.default {
+  border-color: var(--border-normal);
+}
+.baselayer.success {
+  background-color: var(--toast-success-background);
+  border-color: var(--toast-success-border);
+}
+.baselayer.critical {
+  background-color: var(--toast-critical-background);
+  border-color: var(--toast-critical-border);
+}
+.icon {
+  flex-shrink: 0;
+}
+.content {
+  align-items: center;
+  display: inline-flex;
+  flex-direction: row;
+  gap: var(--space-8);
+  justify-content: center;
+  z-index: 1;
+}
+.customContent {
+  display: flex;
+  max-width: 100%;
+  pointer-events: auto;
+}

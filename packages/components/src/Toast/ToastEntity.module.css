@@ -1,0 +1,28 @@
+.entity {
+  align-items: center;
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 24px;
+  justify-content: center;
+  overflow: hidden;
+  width: 24px;
+}
+.image {
+  height: 100%;
+  -o-object-fit: cover;
+  object-fit: cover;
+  width: 100%;
+}
+.imageContain {
+  -o-object-fit: contain;
+  object-fit: contain;
+}
+.avatar {
+  border-radius: var(--radius-round);
+}
+.guild {
+  border-radius: var(--radius-sm);
+}
+.guildAcronym {
+  background-color: var(--background-base-lower);
+}

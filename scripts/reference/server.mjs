@@ -56,6 +56,7 @@ const APP_ROOT_MODULES = [
   '116833',
   '188567',
   '267102',
+  '616667',
 ];
 
 // Playground configs and the webpack module that exposes them.
@@ -131,6 +132,14 @@ window.__BILLING_STANDALONE__ = false;
   const req = (id) => {
     id = String(id);
     if (cache[id]) return cache[id].exports;
+    // Modules reached only through a require context (e.g. emoji images by code point) aren't in the
+    // static closure; fetch them on demand.
+    if (!modules[id]) {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', '/closure.js?ids=' + id, false);
+      xhr.send();
+      if (xhr.status === 200) (0, eval)(xhr.responseText);
+    }
     const factory = modules[id];
     // A handful of ids are required at the top of a chunk but never defined in the build.
     if (!factory) { console.warn('module ' + id + ' is not in the build, stubbing it'); return {}; }
@@ -212,7 +221,7 @@ window.ref = (() => {
   // theme, a focus ring scope (559106) over document.body, and the App and Verification layers
   // (750506, 80556) with the modal stack (638495) after the app content, followed by the
   // #popover-portal target (337836) and the layer containers inside two display: contents wrappers
-  // (638274).
+  // (638274), then the app's toast container (616667).
   const appRoot = (element) => {
     const h = React.createElement;
     const theme = document.documentElement.className.match(/theme-(\\w+)/)?.[1] ?? 'darker';
@@ -232,7 +241,8 @@ window.ref = (() => {
                 element,
                 h(req('638495').b),
                 h('div', { className: contents },
-                  h('div', { className: contents }, h(req('337836').P), h(layers.C8), h(verification.ok)))))))));
+                  h('div', { className: contents }, h(req('337836').P), h(layers.C8), h(verification.ok)))),
+              h(req('616667').N, { appContext: 'APP' }))))));
   };
   const rerender = () => root.render(appRoot(lastElement));
   const render = (element) => new Promise((resolve) => { lastElement = element; rerender(); setTimeout(resolve, 50); });
