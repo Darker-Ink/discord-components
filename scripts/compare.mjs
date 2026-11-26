@@ -109,6 +109,9 @@ const capture = async (url) => {
   // Layers promoted with will-change can keep a mid-animation raster scale, which shows up as
   // anti-aliasing noise that differs between runs.
   await page.addStyleTag({ content: '* { will-change: auto !important; }' });
+  // Ambient animations (spinners) only run while the window is focused; take both sides unfocused so
+  // screenshots don't depend on the animation frame.
+  await page.evaluate(() => document.documentElement.classList.remove('app-focused'));
   await page.waitForTimeout(50);
   const box = await root.boundingBox();
   const shot = await page.screenshot({
