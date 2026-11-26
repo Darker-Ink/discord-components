@@ -10,7 +10,7 @@ import {
 import clsx from 'clsx';
 import { Clickable, useManaContext } from '@discord-components/components';
 import { XSmallIcon } from '@discord-components/icons';
-import textVariants from '../../../components/src/Text/TextVariants.module.css';
+import { textVariantClassNames as textVariants } from '@discord-components/components';
 import { formatCalendarTimestamp } from '../formatTimestamp';
 import { useEmbedI18n } from './embedI18n';
 import { useMediaContext } from '../media/MediaContext';
