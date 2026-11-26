@@ -1,7 +1,7 @@
 import { memo, useMemo, useState, type HTMLAttributes, type Ref } from 'react';
 import clsx from 'clsx';
 import { useMediaContext } from '../media/MediaContext';
-import { useWindowFocused } from '../media/useWindowFocused';
+import { useWindowFocused } from '@discord-mana/components';
 import { createResolver, useMessageResolvers } from '../MessageComponents/resolvers';
 import './Emoji.css';
 

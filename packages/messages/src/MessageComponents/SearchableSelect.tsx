@@ -374,11 +374,11 @@ const ChannelSelect = (component: ChannelSelectComponent) => {
 ChannelSelect.displayName = 'ChannelSelect';
 
 /** User, role, mentionable and channel selects (searchable, filled from the resolvers). */
-export const SearchableSelect = (component: SearchableSelectComponent) =>
+export const ComponentSearchableSelect = (component: SearchableSelectComponent) =>
   component.type === ComponentType.ChannelSelect ? (
     <ChannelSelect {...component} />
   ) : (
     <MentionableSelect {...component} />
   );
 
-SearchableSelect.displayName = 'SearchableSelect';
+ComponentSearchableSelect.displayName = 'ComponentSearchableSelect';

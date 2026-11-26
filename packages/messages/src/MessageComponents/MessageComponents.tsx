@@ -18,7 +18,7 @@ import {
 } from './LayoutComponents';
 import { Checkbox, CheckboxGroup, FileUpload, Label, RadioGroup, TextInput } from './ModalComponents';
 import type { APIResolvedData } from './resolvers';
-import { SearchableSelect } from './SearchableSelect';
+import { ComponentSearchableSelect } from './SearchableSelect';
 import { StringSelect } from './StringSelect';
 import { ComponentType, type APIMessageComponent, type MessageComponent } from './types';
 import styles from './MessageComponents.module.css';
@@ -46,7 +46,7 @@ export const renderComponent = (component: MessageComponent, key?: string, locat
     case ComponentType.UserSelect:
     case ComponentType.RoleSelect:
     case ComponentType.MentionableSelect:
-      return <SearchableSelect key={key} {...component} />;
+      return <ComponentSearchableSelect key={key} {...component} />;
     case ComponentType.Section:
       return <Section key={key} {...component} renderComponents={renderComponents} renderAccessory={renderAccessory} />;
     case ComponentType.TextDisplay:

@@ -15,7 +15,7 @@ export {
 export { MessageComponents, renderComponent, renderComponents, type MessageComponentsProps } from './MessageComponents';
 export { ComponentButton, type ComponentButtonSKU } from './ComponentButton';
 export { StringSelect } from './StringSelect';
-export { SearchableSelect } from './SearchableSelect';
+export { ComponentSearchableSelect } from './SearchableSelect';
 export {
   ActionRow,
   Container,

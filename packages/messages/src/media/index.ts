@@ -54,4 +54,3 @@ export {
   type MediaVideoWithAltTextProps,
 } from './MediaRenderers/MediaRenderers';
 export { formatFileSize, getAttachmentFileName, getFileType } from './utils/filesize';
-export { useWindowFocused } from './useWindowFocused';

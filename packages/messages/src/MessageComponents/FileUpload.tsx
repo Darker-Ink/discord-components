@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, ty
 import clsx from 'clsx';
 import { Anchor, Clickable, Text, Tooltip, tokens, useManaContext } from '@discord-mana/components';
 import { CircleCheckIcon, FileUpIcon, TrashIcon } from '@discord-mana/icons';
-import { FileIcon } from '../attachments/FileAttachment';
+import { AttachmentFileIcon } from '../attachments/FileAttachment';
 import { useMessageI18n } from '../Message/messageI18n';
 import { useComponentContext, useComponentState } from './ComponentState';
 import { ComponentType, type FileUploadComponent } from './types';
@@ -110,7 +110,7 @@ const UploadRow = ({
   const i18n = useMessageI18n();
   return (
     <div className={clsx(styles.file, { [styles.singleFileInput]: singleFileInput })}>
-      <FileIcon filename={file.name} />
+      <AttachmentFileIcon filename={file.name} />
       <Text variant={singleFileInput ? 'body-md/medium' : 'body-xs/medium'} className={styles.filename}>
         {file.name ?? i18n.FILE_UPLOAD_UNKNOWN_FILE}
       </Text>

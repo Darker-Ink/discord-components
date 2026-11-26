@@ -8,10 +8,10 @@ import type { MenuInteractionType } from './MenuContext';
 
 export type MenuItemColor = 'default' | 'brand' | 'danger' | 'premium' | 'premium-gradient' | 'success';
 
-export type MenuIcon = ComponentType<IconProps<'color'>>;
+export type MenuIconComponent = ComponentType<IconProps<'color'>>;
 
 // An icon component, or an element (or other node) rendered as is.
-export type MenuIconSource = MenuIcon | ReactElement | string | number | boolean | null;
+export type MenuIconSource = MenuIconComponent | ReactElement | string | number | boolean | null;
 
 export type MenuLabel<State> = ReactNode | ((state: State) => ReactNode);
 
@@ -21,7 +21,7 @@ export interface MenuItemRenderState {
 }
 
 export type MenuLeadingAccessory =
-  | ({ type: 'icon'; icon: MenuIcon; color?: string; className?: string } & Omit<
+  | ({ type: 'icon'; icon: MenuIconComponent; color?: string; className?: string } & Omit<
       IconProps<'color'>,
       'color' | 'className'
     >)
@@ -32,10 +32,12 @@ export type MenuLeadingAccessory =
   | { type: 'status'; status: string }
   | { type: 'guildTag'; element: ReactNode };
 
-export type MenuTrailingIndicator = { type: 'icon'; icon: MenuIcon; color?: string; className?: string } & Omit<
-  IconProps<'color'>,
-  'color' | 'className'
->;
+export type MenuTrailingIndicator = {
+  type: 'icon';
+  icon: MenuIconComponent;
+  color?: string;
+  className?: string;
+} & Omit<IconProps<'color'>, 'color' | 'className'>;
 
 export type MenuItemAction = (event: MouseEvent<HTMLElement>) => void;
 

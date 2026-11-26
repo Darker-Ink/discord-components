@@ -15,7 +15,7 @@ export {
   type MenuControlRenderProps,
   type MenuCustomItemRenderProps,
   type MenuGroupProps,
-  type MenuIcon,
+  type MenuIconComponent,
   type MenuIconSource,
   type MenuItemAction,
   type MenuItemColor,

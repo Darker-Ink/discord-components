@@ -1,6 +1,6 @@
 export * from './types';
 export * from './attachmentMedia';
-export { FileAttachment, FileIcon, type FileAttachmentProps } from './FileAttachment';
+export { FileAttachment, AttachmentFileIcon, type FileAttachmentProps } from './FileAttachment';
 export {
   DEFAULT_ATTACHMENT_RENDERERS,
   MessageAttachments,

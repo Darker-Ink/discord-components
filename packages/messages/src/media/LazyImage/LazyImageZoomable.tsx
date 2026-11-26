@@ -1,6 +1,6 @@
 import { useCallback, type MouseEvent, type ReactNode } from 'react';
 import { useMediaContext } from '../MediaContext';
-import { useWindowFocused } from '../useWindowFocused';
+import { useWindowFocused } from '@discord-mana/components';
 import { preloadZoomedImage } from '../preload';
 import type { MediaSourceMetadata, MediaViewerItem } from '../mediaViewerTypes';
 import { LazyImage, type LazyImageProps, type LazyImageZoomInfo } from './LazyImage';

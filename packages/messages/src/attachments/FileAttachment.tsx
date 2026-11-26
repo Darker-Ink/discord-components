@@ -6,7 +6,7 @@ import { formatFileSize, getFileType } from '../media/utils/filesize';
 import { FILE_ICONS } from './fileIcons';
 import styles from './FileAttachment.module.css';
 
-export const FileIcon = ({ filename }: { filename: string }) => {
+export const AttachmentFileIcon = ({ filename }: { filename: string }) => {
   const { i18n } = useMediaContext();
   const fileType = getFileType(filename);
   return (
@@ -19,7 +19,7 @@ export const FileIcon = ({ filename }: { filename: string }) => {
   );
 };
 
-FileIcon.displayName = 'FileIcon';
+AttachmentFileIcon.displayName = 'AttachmentFileIcon';
 
 export interface FileAttachmentProps {
   className?: string;
@@ -45,7 +45,7 @@ export const FileAttachment = ({
 }: FileAttachmentProps) => (
   <div className={clsx(styles.fileWrapper, className)}>
     <div className={styles.file}>
-      <FileIcon filename={fileName} />
+      <AttachmentFileIcon filename={fileName} />
       <div className={styles.fileInner}>
         <div className={styles.filenameLinkWrapper}>
           <Anchor className={styles.fileNameLink} href={url} onClick={onClick} onContextMenu={onContextMenu}>
