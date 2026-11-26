@@ -72,7 +72,6 @@ export const collections: Collection[] = [
     id: 'void',
     name: 'Void',
     groups: voidGroups.sort(byOrder(VOID_GROUP_ORDER)),
-    deprecationNotice: 'Void is deprecated. Use Mana instead.',
   },
   { id: 'messages', name: 'Messages', groups: messageGroups.sort(byOrder(MESSAGE_GROUP_ORDER)) },
 ];
