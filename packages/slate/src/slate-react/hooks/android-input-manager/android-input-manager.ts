@@ -1,5 +1,5 @@
 // @ts-nocheck -- vendored slate-react 0.91.11, written against an older TypeScript and @types/react.
-import { type DebouncedFunc } from 'lodash'
+import type { DebouncedFunc } from 'lodash'
 import { Editor, Node, Path, Point, Range, Text, Transforms } from 'slate'
 import { ReactEditor } from '../../plugin/react-editor'
 import {
