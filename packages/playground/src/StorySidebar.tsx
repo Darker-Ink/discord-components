@@ -1,5 +1,6 @@
-import { useMemo, useState, type ReactNode } from 'react';
-import { SearchBar, Stack, TabBar, Text } from '@discord-components/components';
+import { Fragment, useMemo, useState } from 'react';
+import { SearchBar, Stack, Text } from '@discord-components/components';
+import { StoryTabBar, StoryTabBarHeader, StoryTabBarItem, StoryTabBarSeparator } from './sidebar/StoryTabBar';
 import type { StoryGroup } from './types';
 
 interface StorySidebarProps {
@@ -7,12 +8,6 @@ interface StorySidebarProps {
   selectedStory: string | null;
   onStorySelect: (id: string) => void;
 }
-
-// Discord wraps each group in a Fragment, which TabBar clones like an item: the stories inside don't get
-// the bar's item type and look. A plain wrapper renders the same without React's Fragment prop warning.
-const GroupItems = ({ children }: { children: ReactNode }) => children;
-
-GroupItems.displayName = 'GroupItems';
 
 // Story search and the list of stories by group.
 export const StorySidebar = ({ groups, selectedStory, onStorySelect }: StorySidebarProps) => {
@@ -42,31 +37,25 @@ export const StorySidebar = ({ groups, selectedStory, onStorySelect }: StorySide
           No results
         </Text>
       ) : (
-        <TabBar
-          selectedItem={selectedStory}
-          orientation="vertical"
-          onItemSelect={(id) => {
-            if (id != null) onStorySelect(String(id));
-          }}
-        >
+        <StoryTabBar>
           {filtered.map((group, index) => (
-            <GroupItems key={group.title}>
-              <TabBar.Header>{group.title}</TabBar.Header>
+            <Fragment key={group.title}>
+              <StoryTabBarHeader>{group.title}</StoryTabBarHeader>
               {group.stories.map((story) => (
-                <TabBar.Item
+                <StoryTabBarItem
                   key={story.id}
-                  selectedItem={selectedStory}
                   id={story.id}
+                  selected={story.id === selectedStory}
+                  onSelect={() => onStorySelect(story.id)}
                   aria-label={story.name}
-                  onItemSelect={() => onStorySelect(story.id)}
                 >
                   <span data-testid={`playground-story-${story.id}`}>{story.name}</span>
-                </TabBar.Item>
+                </StoryTabBarItem>
               ))}
-              {index < filtered.length - 1 && <TabBar.Separator />}
-            </GroupItems>
+              {index < filtered.length - 1 && <StoryTabBarSeparator />}
+            </Fragment>
           ))}
-        </TabBar>
+        </StoryTabBar>
       )}
     </>
   );
