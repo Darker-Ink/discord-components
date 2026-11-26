@@ -1,0 +1,42 @@
+.autocomplete {
+  border-radius: 5px;
+  box-shadow: var(--shadow-border), var(--shadow-high);
+  overflow: hidden;
+}
+.autocompleteAttached {
+  bottom: calc(100% + 8px);
+  inset-inline: var(--space-8) var(--space-16);
+  position: absolute;
+}
+.autocompleteAttached.bottom {
+  inset-inline: 0;
+  bottom: inherit;
+  top: 100%;
+}
+.autocompletePopout {
+  max-width: 800px;
+  min-width: 430px;
+  pointer-events: all;
+}
+.autocompleteInner {
+  padding-bottom: 0;
+}
+.autocompleteTop {
+  z-index: 1001;
+}
+.scroller {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 8px;
+}
+.stickerAutoComplete {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 116px);
+  grid-template-rows: repeat(auto-fill, 116px);
+  grid-gap: 8px;
+  padding: 8px 16px;
+}
+.sticker {
+  margin-top: 2px;
+  margin-inline-start: 2px;
+}

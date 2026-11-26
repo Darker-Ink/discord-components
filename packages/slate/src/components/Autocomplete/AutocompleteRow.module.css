@@ -1,0 +1,155 @@
+.autocomplete {
+  background-color: var(--background-surface-high);
+  border-radius: 5px 5px 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  z-index: 3;
+}
+.autocompleteInner {
+  padding-bottom: 8px;
+}
+.autocompleteRow {
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  line-height: 16px;
+  padding: 0 8px;
+}
+.autocompleteRowVertical {
+  composes: autocompleteRow;
+}
+.autocompleteRowHorizontal {
+  composes: autocompleteRow;
+  padding: 0;
+}
+.autocompleteRowContent {
+  align-items: center;
+  color: var(--interactive-text-default);
+  display: flex;
+  min-height: 16px;
+}
+.autocompleteRowContentPrimary {
+  flex-grow: 0;
+  flex-shrink: 1;
+  min-width: 10ch;
+  overflow: hidden;
+}
+.autocompleteRowIcon {
+  flex: 0 0 auto;
+  margin-inline-end: 8px;
+}
+.autocompleteRowHeading {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.headingWithBadge {
+  align-items: center;
+  display: flex;
+  gap: var(--space-4);
+  min-width: 0;
+}
+.autocompleteRowSubheading {
+  margin-top: 2px;
+}
+.autocompleteRowContentSecondary {
+  flex-basis: 10ch;
+  flex-grow: 1;
+  flex-shrink: 0;
+  margin-inline-start: var(--space-16);
+  min-width: 10ch;
+  overflow: hidden;
+  text-align: end;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.base {
+  border-radius: 3px;
+  padding: 8px;
+}
+.clickable[role='option'] > .base {
+  cursor: pointer;
+}
+.clickable[role='option'] > .base:hover {
+  background-color: var(--interactive-background-hover);
+}
+.clickable[aria-selected='true'] > .base {
+  background-color: var(--interactive-background-hover);
+}
+.dividerContainer .base {
+  padding-bottom: 0;
+  padding-top: 0;
+}
+.divider {
+  padding: 8px;
+}
+.divider:after {
+  background-color: var(--border-subtle);
+  content: '';
+  display: block;
+  height: 1px;
+  width: 100%;
+}
+.contentTitle {
+  color: var(--interactive-text-default);
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  padding: 4px 0;
+  text-transform: none;
+}
+.contentTitle strong {
+  color: var(--text-subtle);
+  text-transform: none;
+}
+.icon {
+  color: var(--interactive-text-default);
+  height: 16px;
+  -o-object-fit: contain;
+  object-fit: contain;
+  width: 16px;
+}
+.iconForeground {
+  fill: var(--interactive-text-default);
+}
+.emojiImage {
+  height: 20px;
+  -o-object-fit: contain;
+  object-fit: contain;
+  width: 20px;
+}
+.emojiRaw {
+  composes: emojiImage;
+  display: block;
+  font-size: 20px;
+}
+.descriptionDiscriminator {
+  opacity: 0.6;
+}
+.autocompleteRowVerticalSmall .base {
+  padding: 4px 8px;
+}
+.roleDot {
+  margin-inline-end: 4px;
+}
+.autocompletePlaceholder {
+  background: var(--background-base-low);
+  border-radius: 16px;
+  height: 16px;
+  margin-top: 8px;
+}
+.autocompleteContentWrapper {
+  display: flex;
+  flex-grow: 1;
+  gap: var(--space-16);
+}
+:global(.enable-forced-colors) .autocomplete {
+  border: 2px solid CanvasText;
+}
+:global(.enable-forced-colors) .clickable[aria-selected='true'] > .base {
+  outline: 2px solid Highlight;
+  outline-offset: Highlight;
+}
+:global(.enable-forced-colors) .descriptionDiscriminator {
+  opacity: 1;
+}
