@@ -1,0 +1,8 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // A one-line Worker that sends www.discord-mana.dev to the apex, path and query included.
+  "name": "discord-mana-www",
+  "main": "./src/www/redirect.ts",
+  "compatibility_date": "2026-11-20",
+  "routes": [{ "pattern": "www.discord-mana.dev", "custom_domain": true }],
+}

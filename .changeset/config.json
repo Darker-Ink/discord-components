@@ -17,5 +17,5 @@
   "access": "public",
   "baseBranch": "master",
   "updateInternalDependencies": "patch",
-  "ignore": ["@discord-mana/playground", "@discord-mana/preview"]
+  "ignore": ["@discord-mana/playground", "@discord-mana/preview", "@discord-mana/site"]
 }

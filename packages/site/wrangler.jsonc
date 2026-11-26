@@ -1,0 +1,12 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // Static assets only: no Worker script runs.
+  "name": "discord-mana-site",
+  "compatibility_date": "2026-11-20",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page",
+  },
+  // A Custom Domain: `wrangler deploy` creates its DNS record and certificate (the zone must be on Cloudflare).
+  "routes": [{ "pattern": "discord-mana.dev", "custom_domain": true }],
+}

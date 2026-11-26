@@ -1,0 +1,258 @@
+/* One centered column: header, intro, the live message, packages, footer. */
+
+.page {
+  --column: 720px;
+  --gutter: 24px;
+  box-sizing: border-box;
+  color: var(--text-default);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  user-select: text;
+}
+
+.header,
+.main,
+.footer {
+  box-sizing: border-box;
+  margin: 0 auto;
+  max-width: calc(var(--column) + 2 * var(--gutter));
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+  width: 100%;
+}
+
+/* Header */
+.header {
+  align-items: center;
+  display: flex;
+  height: 72px;
+  justify-content: space-between;
+}
+.logo {
+  align-items: center;
+  color: var(--text-strong);
+  display: flex;
+  gap: 10px;
+}
+.logo:hover {
+  text-decoration: none;
+}
+.logoMark {
+  display: block;
+  flex: none;
+  height: 24px;
+  width: 24px;
+}
+.wordmark {
+  font-size: 17px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.01em;
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+/* Theme swatches */
+.themeSwitcher {
+  display: flex;
+  gap: 10px;
+}
+.swatch {
+  background: var(--background-base-lower);
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  box-sizing: border-box;
+  cursor: pointer;
+  height: 18px;
+  width: 18px;
+}
+.swatchSelected {
+  box-shadow:
+    0 0 0 2px var(--background-base-lowest),
+    0 0 0 4px var(--brand-500);
+}
+
+.main {
+  flex: 1;
+  padding-bottom: 96px;
+  padding-top: 112px;
+}
+
+/* Intro */
+.headline {
+  color: var(--text-strong);
+  font-size: 52px;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.025em;
+  line-height: 1.06;
+  margin: 0;
+  text-wrap: balance;
+}
+.lede {
+  color: var(--text-muted);
+  font-size: 20px;
+  line-height: 30px;
+  margin: 20px 0 0;
+  max-width: 30em;
+  text-wrap: pretty;
+}
+.lede a {
+  color: var(--text-link);
+}
+
+.install {
+  align-items: center;
+  background: var(--background-base-lower);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  display: inline-flex;
+  gap: 16px;
+  margin-top: 40px;
+  padding: 6px 6px 6px 16px;
+}
+.installCommand {
+  color: var(--text-strong);
+  font-family: var(--font-code);
+  font-size: 15px;
+  line-height: 20px;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 48px;
+  list-style: none;
+  margin: 40px 0 0;
+  padding: 0;
+}
+.link {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.link:hover {
+  text-decoration: none;
+}
+.linkLabel {
+  color: var(--text-strong);
+  font-size: 16px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 22px;
+}
+.link:hover .linkLabel {
+  text-decoration: underline;
+}
+.linkHost {
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 18px;
+}
+
+/* The live message */
+.specimen {
+  margin: 88px 0 0;
+}
+.channel {
+  background: var(--background-base-lower);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 16px 0 20px;
+}
+.caption {
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 20px;
+  margin-top: 12px;
+}
+
+/* Packages */
+.packages {
+  margin-top: 96px;
+}
+.h2 {
+  color: var(--text-strong);
+  font-size: 20px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 26px;
+  margin: 0 0 12px;
+}
+.packageList {
+  margin: 0;
+}
+.packageRow {
+  border-top: 1px solid var(--border-subtle);
+  display: grid;
+  gap: 4px 24px;
+  grid-template-columns: 15.5rem minmax(0, 1fr);
+  padding: 14px 0;
+}
+.packageRow dt,
+.packageRow dd {
+  margin: 0;
+}
+.packageName {
+  color: var(--text-strong);
+  font-family: var(--font-code);
+  font-size: 14px;
+  line-height: 22px;
+}
+.packageDescription {
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 22px;
+}
+
+.footer {
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 18px;
+  padding-bottom: 40px;
+}
+
+@media (max-width: 640px) {
+  .page {
+    --gutter: 20px;
+  }
+  .header {
+    height: 64px;
+  }
+  .main {
+    padding-bottom: 64px;
+    padding-top: 56px;
+  }
+  .headline {
+    font-size: 38px;
+  }
+  .lede {
+    font-size: 18px;
+    line-height: 27px;
+  }
+  .install {
+    margin-top: 32px;
+  }
+  .links {
+    flex-direction: column;
+    margin-top: 32px;
+  }
+  .specimen {
+    margin-left: calc(-1 * var(--gutter));
+    margin-right: calc(-1 * var(--gutter));
+    margin-top: 56px;
+  }
+  .channel {
+    border-left: 0;
+    border-radius: 0;
+    border-right: 0;
+  }
+  .caption {
+    padding: 0 var(--gutter);
+  }
+  .packages {
+    margin-top: 64px;
+  }
+  .packageRow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
