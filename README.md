@@ -2,7 +2,7 @@
 
 React versions of Discord's UI components. The styles, props and markup come straight from Discord's own web build, and every component is checked pixel by pixel against the real thing in all four themes.
 
-Links: [Home](https://discord-mana.dev), [Playground](https://play.discord-mana.dev), [Preview](https://preview.discord-mana.dev)
+Links: [Home](https://discord-mana.dev), [Playground](https://play.discord-mana.dev), [Preview](https://preview.discord-mana.dev), [Builder](https://builder.discord-mana.dev)
 
 ## What's included
 
@@ -14,6 +14,7 @@ Links: [Home](https://discord-mana.dev), [Playground](https://play.discord-mana.
 | `@discord-mana/messages`   | Message rendering: embeds, attachments, the media gallery and viewer, message components (including Components v2) and interaction modals |
 | `@discord-mana/markdown`   | Discord's markdown: the parser and renderer for messages and embeds, with mentions, emoji, timestamps and highlighted code blocks         |
 | `@discord-mana/slate`      | The chat input: Discord's rich text editor with live markdown, mentions and emoji                                                         |
+| `@discord-mana/builders`   | A message builder for embeds and Components v2, edited in place and checked against Discord's limits                                      |
 | `@discord-mana/playground` | A playground for browsing and trying out every component                                                                                  |
 
 Void is Discord's older design system. Discord hardly uses it anymore, so use the Mana components for anything new.
@@ -132,6 +133,24 @@ import { ChannelTextArea } from '@discord-mana/slate';
 
 `onSubmit` gets the text in message format (`<@id>` for mentions, `<:name:id>` for custom emoji). Pass `resolvers` (the same ones `Message` uses) so mentions and emoji show as pills.
 
+## Message builder
+
+`@discord-mana/builders` is an editor for messages. The message renders the way Discord shows it, and you edit it in place: click any text to change it, drag components around, and pick colors, styles and media from small popouts. Every change is checked against Discord's limits as you go.
+
+```bash
+npm i @discord-mana/builders
+```
+
+```tsx
+import { MessageBuilder, toJSON } from '@discord-mana/builders';
+
+<MessageBuilder defaultValue={{ content: 'Hello!' }} onChange={(doc) => console.log(toJSON(doc))} />;
+```
+
+`toJSON` turns the builder's document into the payload in the API's format, ready to send. You can limit what people can build with `restrictions`, for example to allow only text in Components v2 messages and no files. The smaller pieces (`EditableEmbed`, `ComponentPalette`, `ValidationPanel`, `JsonPanel` and more), the headless store, `validateMessage` and `sendWebhookMessage` are all exported too. See the package's README for the full API.
+
+The hosted builder at https://builder.discord-mana.dev can import and export JSON and send messages to a webhook.
+
 ## Playground
 
 ```bash
@@ -167,12 +186,12 @@ The reference server runs Discord's own components from the downloaded build. `c
 
 ## Scripts
 
-| Command              | What it does                                                                       |
-| -------------------- | ---------------------------------------------------------------------------------- |
-| `pnpm dev`           | Start the playground                                                               |
-| `pnpm build`         | Build every package                                                                |
-| `pnpm build:sites`   | Build the playground, the preview site and the home page                           |
-| `pnpm deploy:<name>` | Deploy `playground`, `preview` or `site` to Cloudflare (see each package's README) |
-| `pnpm typecheck`     | Type check the whole repo                                                          |
-| `pnpm lint`          | Run ESLint                                                                         |
-| `pnpm format`        | Format everything with Prettier                                                    |
+| Command              | What it does                                                                                  |
+| -------------------- | --------------------------------------------------------------------------------------------- |
+| `pnpm dev`           | Start the playground                                                                          |
+| `pnpm build`         | Build every package                                                                           |
+| `pnpm build:sites`   | Build the playground, the preview site, the builder and the home page                         |
+| `pnpm deploy:<name>` | Deploy `playground`, `preview`, `builder` or `site` to Cloudflare (see each package's README) |
+| `pnpm typecheck`     | Type check the whole repo                                                                     |
+| `pnpm lint`          | Run ESLint                                                                                    |
+| `pnpm format`        | Format everything with Prettier                                                               |
