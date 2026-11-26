@@ -57,3 +57,19 @@ export {
   type SetModeOptions,
 } from './actions';
 export { convertToClassic, convertToCV2, embedToContainer } from './convert';
+export {
+  characterLength,
+  countEmbedCharacters,
+  getDocumentStats,
+  getLimit,
+  validateAllowedMentions,
+  validateButton,
+  validateComponent,
+  validateDocument,
+  validateEmbed,
+  validateMessage,
+  validatePoll,
+  validateSelect,
+  type DocumentStats,
+  type IssuePath,
+} from './validate';
