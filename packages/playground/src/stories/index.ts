@@ -66,8 +66,29 @@ const VOID_GROUP_ORDER = [
 
 const voidGroups = Object.values(import.meta.glob<StoryGroup>('./void/*.tsx', { eager: true, import: 'default' }));
 
+// Every other component the packages export, so each can be seen on its own.
+const COMPONENTS_GROUP_ORDER = [
+  'Layout',
+  'Typography',
+  'Buttons',
+  'Feedback',
+  'Overlays',
+  'Forms',
+  'Navigation',
+  'Media',
+  'Message Parts',
+  'Icons',
+  'Legacy',
+  'Utilities',
+];
+
+const componentsGroups = Object.values(
+  import.meta.glob<StoryGroup>('./components/*.tsx', { eager: true, import: 'default' }),
+);
+
 export const collections: Collection[] = [
   { id: 'mana', name: 'Mana', groups: manaGroups.sort(byOrder(MANA_GROUP_ORDER)) },
   { id: 'void', name: 'Void', groups: voidGroups.sort(byOrder(VOID_GROUP_ORDER)) },
   { id: 'messages', name: 'Messages', groups: messageGroups.sort(byOrder(MESSAGE_GROUP_ORDER)) },
+  { id: 'components', name: 'Components', groups: componentsGroups.sort(byOrder(COMPONENTS_GROUP_ORDER)) },
 ];

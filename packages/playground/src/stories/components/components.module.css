@@ -1,0 +1,113 @@
+.box {
+  align-items: center;
+  background: var(--background-mod-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xs);
+  color: var(--text-default);
+  display: flex;
+  justify-content: center;
+  min-height: 40px;
+  min-width: 56px;
+  padding: var(--space-8);
+}
+.frame {
+  border: 1px dashed var(--border-normal);
+  border-radius: var(--radius-sm);
+  width: 100%;
+}
+.scroller {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  height: 240px;
+  width: 360px;
+}
+.scrollerRow {
+  align-items: center;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-default);
+  display: flex;
+  height: 40px;
+  padding: 0 var(--space-12);
+  white-space: nowrap;
+}
+.horizontalRow {
+  display: flex;
+  gap: var(--space-8);
+  padding: var(--space-8);
+  width: max-content;
+}
+.listSection {
+  align-items: center;
+  background: var(--background-base-lower);
+  color: var(--text-strong);
+  display: flex;
+  padding: 0 var(--space-12);
+}
+.gradient {
+  border-radius: var(--radius-md);
+  height: 200px;
+  padding: var(--space-16);
+  width: 360px;
+}
+.narrow {
+  width: 200px;
+}
+.iconGrid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  width: 100%;
+}
+.iconCell {
+  align-items: center;
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-12) var(--space-4);
+  text-align: center;
+}
+.iconCell:hover {
+  background: var(--background-mod-subtle);
+}
+.iconName {
+  overflow-wrap: anywhere;
+}
+.popoutContent {
+  background: var(--background-surface-higher);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-high);
+  padding: var(--space-12) var(--space-16);
+}
+.dialog {
+  background: var(--background-surface-high);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  max-width: 400px;
+  padding: var(--space-16);
+}
+.headerBar {
+  background: var(--background-base-lower);
+  width: 600px;
+}
+.navRail {
+  background: var(--background-base-lowest);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-12);
+}
+.blob {
+  height: 48px;
+  width: 48px;
+}
+.blobImage {
+  height: 48px;
+  width: 48px;
+}
+.media {
+  max-width: 560px;
+  width: 100%;
+}
