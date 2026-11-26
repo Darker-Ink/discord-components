@@ -196,7 +196,7 @@ window.__BILLING_STANDALONE__ = false;
 `;
 
 const page = (body) => `<!doctype html>
-<html class="theme-darker platform-web density-default visual-refresh full-motion mouse-mode has-webkit-scrollbar">
+<html lang="en-US" class="theme-darker platform-web density-default visual-refresh full-motion mouse-mode has-webkit-scrollbar">
 <head><meta charset="utf-8"><title>reference</title>
 ${stylesheets.map((href) => `<link rel="stylesheet" href="${href}">`).join('\n')}
 <script src="/runtime.js"></script>
