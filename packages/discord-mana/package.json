@@ -1,0 +1,23 @@
+{
+  "name": "discord-mana",
+  "version": "0.0.0",
+  "type": "module",
+  "sideEffects": [
+    "./src/index.ts"
+  ],
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@discord-mana/components": "workspace:*",
+    "@discord-mana/icons": "workspace:*",
+    "@discord-mana/messages": "workspace:*",
+    "@discord-mana/tokens": "workspace:*"
+  },
+  "devDependencies": {
+    "react": "^19.3.1"
+  },
+  "peerDependencies": {
+    "react": "^19.3.1"
+  }
+}
