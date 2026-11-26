@@ -97,11 +97,25 @@ const capture = async (page, errors, fixture) => {
   // Tooltips and the autocomplete animate in; let them settle.
   await page.waitForTimeout(700);
   const box = await root.boundingBox();
+  // Spellcheck underlines appear whenever the browser gets to them; hide them for the screenshot.
+  await page.evaluate(() =>
+    document.querySelectorAll('[data-slate-editor]').forEach((el) => {
+      el.__spellcheck = el.getAttribute('spellcheck');
+      el.setAttribute('spellcheck', 'false');
+    }),
+  );
+  await page.waitForTimeout(100);
   const shot = await page.screenshot({
     clip: { x: 0, y: 0, width: 1000, height: Math.max(1, Math.ceil(box.y + box.height)) },
     animations: 'disabled',
     caret: 'hide',
   });
+  await page.evaluate(() =>
+    document.querySelectorAll('[data-slate-editor]').forEach((el) => {
+      if (el.__spellcheck == null) el.removeAttribute('spellcheck');
+      else el.setAttribute('spellcheck', el.__spellcheck);
+    }),
+  );
   const html = await root.evaluate((el) => el.outerHTML);
   const value = await page.evaluate(() => window.__slateValue ?? null);
   return { png: PNG.sync.read(shot), html, value, errors };

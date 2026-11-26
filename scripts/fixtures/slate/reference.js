@@ -17,6 +17,9 @@ async (ref, data) => {
     '486020',
     '690521',
     '121681',
+    '696451',
+    '808728',
+    '857071',
   ]);
   const h = ref.React.createElement;
   const req = ref.req;
@@ -57,8 +60,34 @@ async (ref, data) => {
     mentionable: true,
   }));
   RoleStore.getRole = (guildId, id) => roles.find((role) => role.id === id);
+  const everyoneRole = { id: data.guild_id, name: '@everyone', color: 0, position: 0, permissions: -1n };
+  RoleStore.getEveryoneRole = () => everyoneRole;
   RoleStore.getSortedRoles = () => [...roles].sort((a, b) => (b.position ?? 0) - (a.position ?? 0));
   RoleStore.getRolesSnapshot = () => Object.fromEntries(roles.map((role) => [role.id, role]));
+  // The server, its members (typed `@username`) and its channels by name (typed `#channel`).
+  const GuildStore = req('71393').A;
+  const guild = (data.guilds ?? []).find((g) => g.id === data.guild_id);
+  if (guild != null) {
+    const getGuild = GuildStore.getGuild.bind(GuildStore);
+    const record = { ...guild, features: new Set(guild.features ?? []), getIconURL: () => null };
+    GuildStore.getGuild = (id) => (id === guild.id ? record : getGuild(id));
+  }
+  const GuildMemberStore = req('696451').Ay;
+  const getMembers = GuildMemberStore.getMembers.bind(GuildMemberStore);
+  GuildMemberStore.getMembers = (guildId) =>
+    guildId === data.guild_id ? [...users.keys()].map((userId) => ({ userId, guildId })) : getMembers(guildId);
+  const GuildChannelStore = req('808728').A;
+  const getDisambiguations = GuildChannelStore.getTextChannelNameDisambiguations.bind(GuildChannelStore);
+  GuildChannelStore.getTextChannelNameDisambiguations = (guildId) =>
+    guildId === data.guild_id
+      ? Object.fromEntries(
+          [...channels.values()]
+            .filter((c) => c.type === 0 || c.type === 5)
+            .map((c) => [c.id, { id: c.id, name: c.name }]),
+        )
+      : getDisambiguations(guildId);
+  // A member of the server (not previewing it).
+  req('857071').A.isLurking = () => false;
   const PermissionStore = req('576705').A;
   PermissionStore.can = () => true;
   PermissionStore.computePermissions = () => -1n;
@@ -122,19 +151,26 @@ async (ref, data) => {
       accessibilityLabel: data.placeholder ?? 'Message #general',
       disabled: data.disabled ?? false,
       onChange: (_event, textValue, richValue) => setState({ textValue, richValue }),
-      onSubmit: () => Promise.resolve({ shouldClear: true, shouldRefocus: true }),
+      // The channel chat clears its draft state after sending.
+      onSubmit: () => {
+        setState({ textValue: '', richValue: toRichValue('') });
+        return Promise.resolve({ shouldClear: true, shouldRefocus: true });
+      },
       maxCharacterCount: data.maxCharacterCount,
-      // The channel chat's "+" button (5206 renderAttachButton).
+      // The channel chat's "+" button (5206 renderAttachButton); the edit input has none, and it is left out
+      // without permission to send.
       renderAttachButton: (canOnlyUseTextCommands, className) =>
-        h(AttachButton, {
-          className,
-          channel,
-          draftType: 0,
-          editorTextContent: state.textValue,
-          setValue: () => {},
-          canOnlyUseTextCommands,
-          chatInputType: type,
-        }),
+        type !== types.NORMAL || data.disabled
+          ? null
+          : h(AttachButton, {
+              className,
+              channel,
+              draftType: 0,
+              editorTextContent: state.textValue,
+              setValue: () => {},
+              canOnlyUseTextCommands,
+              chatInputType: type,
+            }),
     });
   };
   return h('div', { style: { width: 640 } }, h(Chat));
