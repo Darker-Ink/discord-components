@@ -25,4 +25,5 @@ export {
   getItemIdFromListItemId,
   getListItemSelector,
   makeListItemId,
+  subscribeToFocusChange,
 } from './utils';

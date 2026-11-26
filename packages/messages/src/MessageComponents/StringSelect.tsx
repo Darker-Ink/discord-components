@@ -1,16 +1,10 @@
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
-import {
-  VoidVariableSelect,
-  selectMultiToggle,
-  selectSingle,
-  selectSingleToggle,
-  useVariableSelect,
-} from '@discord-components/components';
 import { Emoji } from '../Emoji/Emoji';
 import { useMessageI18n } from '../Message/messageI18n';
 import { ComponentStatusLine, errorStatus } from './ComponentStatus';
 import { ComponentVisualState, isSelectOptional, useComponentContext, useComponentState } from './ComponentState';
+import { PopoutSelect, selectMultiToggle, selectSingle, selectSingleToggle, useVariableSelect } from './PopoutSelect';
 import { ComponentType, type ComponentEmoji, type StringSelectComponent, type StringSelectOption } from './types';
 import styles from './StringSelect.module.css';
 
@@ -136,7 +130,7 @@ export const StringSelect = (component: StringSelectComponent) => {
   return (
     <Fragment>
       <div className={styles.container}>
-        <VoidVariableSelect<string, SelectOption>
+        <PopoutSelect<string, SelectOption>
           isProcessing={processing}
           isDisabled={disabled || visualState === ComponentVisualState.DISABLED || isDisabled}
           className={clsx(styles.select, { [styles.inModal]: inModal })}
