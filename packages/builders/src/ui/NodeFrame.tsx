@@ -1,10 +1,13 @@
 import {
   useCallback,
   useMemo,
+  useRef,
   type CSSProperties,
   type ElementType,
   type FocusEvent,
   type KeyboardEvent,
+  type MouseEvent,
+  type PointerEvent,
   type PointerEventHandler,
   type ReactNode,
   type Ref,
@@ -19,6 +22,14 @@ import { useBuilderContext } from './useBuilderContext';
 import { useBuilderUI, useBuilderUIStore, useIsSelected, type BuilderUIStore } from './uiStore';
 import { useMergeRefs } from '@discord-mana/components';
 import styles from './NodeFrame.module.css';
+
+/** The innermost node frame around an element. */
+export const nodeOf = (target: EventTarget | null) =>
+  target instanceof Element ? target.closest<HTMLElement>('[data-builder-node]') : null;
+
+/** Whether an element is the editor's own UI or editable text (which handle presses themselves). */
+export const isEditorUI = (target: EventTarget | null) =>
+  target instanceof Element && target.closest('[data-builder-ui], [data-builder-field], [role="textbox"]') != null;
 
 export const isMac = () => typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
 export const isMod = (event: { metaKey: boolean; ctrlKey: boolean }) => (isMac() ? event.metaKey : event.ctrlKey);
@@ -162,6 +173,46 @@ export const useNodeFrame = ({ uid, kind, disabled = false }: NodeFrameOptions) 
     [ui, uid],
   );
 
+  // Selection happens on release, not on press: selecting shows a node's empty parts, and the layout must not
+  // move under a press that turns into a drag. Only the innermost node under the pointer reacts.
+  const pressRef = useRef<{ x: number; y: number } | null>(null);
+  const isInnermost = (event: { target: EventTarget; currentTarget: EventTarget }) =>
+    nodeOf(event.target) === event.currentTarget && (event.currentTarget as Element).contains(event.target as Node);
+
+  const onPointerDown = (event: PointerEvent<HTMLElement>) => {
+    if (isInnermost(event)) pressRef.current = event.button === 0 ? { x: event.clientX, y: event.clientY } : null;
+    (listeners?.onPointerDown as PointerEventHandler<HTMLElement> | undefined)?.(event);
+  };
+
+  const onPointerUp = (event: PointerEvent<HTMLElement>) => {
+    const press = pressRef.current;
+    pressRef.current = null;
+    if (disabled || press == null || !isInnermost(event)) return;
+    if (ui.getState().drag != null || Math.hypot(event.clientX - press.x, event.clientY - press.y) > 6) return;
+    if ((event.target as Element).closest('[data-builder-ui]') != null) return;
+    ui.set({ selectedId: uid, contextMenu: null });
+    // Focus the node, unless the press is in its text (which focuses itself).
+    if (!isEditorUI(event.target)) event.currentTarget.focus({ preventScroll: true });
+  };
+
+  // A builder's buttons, links, selects and images do nothing but get selected.
+  const onClickCapture = (event: MouseEvent<HTMLElement>) => {
+    if (disabled || !isInnermost(event) || isEditorUI(event.target)) return;
+    event.preventDefault();
+    event.stopPropagation();
+  };
+  const onMouseDownCapture = (event: MouseEvent<HTMLElement>) => {
+    if (disabled || !isInnermost(event) || isEditorUI(event.target)) return;
+    // Pressing a button or link would focus or activate it; text selection still works in editable text.
+    if ((event.target as Element).closest('a, button, img, video, [role="button"], [role="combobox"]') != null)
+      event.preventDefault();
+  };
+  const onContextMenu = (event: MouseEvent<HTMLElement>) => {
+    if (disabled || !isInnermost(event) || isEditorUI(event.target)) return;
+    event.preventDefault();
+    ui.set({ selectedId: uid, contextMenu: { uid, x: event.clientX, y: event.clientY } });
+  };
+
   const errors = issues.filter((issue) => issue.severity === 'error' && issue.field == null);
   const warnings = issues.filter((issue) => issue.severity === 'warning' && issue.field == null);
 
@@ -178,7 +229,11 @@ export const useNodeFrame = ({ uid, kind, disabled = false }: NodeFrameOptions) 
     'aria-describedby': disabled ? undefined : attributes['aria-describedby'],
     onKeyDown,
     onFocus,
-    onPointerDown: listeners?.onPointerDown as PointerEventHandler<HTMLElement> | undefined,
+    onPointerDown,
+    onPointerUp,
+    onClickCapture,
+    onMouseDownCapture,
+    onContextMenu,
   };
 
   return { ref, frameProps, selected, isDragging, label, nodeIssues: issues };

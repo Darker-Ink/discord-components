@@ -38,10 +38,10 @@
 }
 
 /*
- * An empty message content shows "Add a message" only while the canvas is pointed at or focused; otherwise it
- * takes no room, like the client's empty content.
+ * Empty content next to embeds or components shows "Add a message" only while the canvas is pointed at or
+ * focused; otherwise it takes no room, like the client's empty content.
  */
-.canvas:not(:hover):not(:focus-within) [data-builder-field='content'][data-empty] > * {
+.canvas:not(:hover):not(:focus-within):has([data-builder-node]) [data-builder-field='content'][data-empty] > * {
   display: block;
   height: 0;
   overflow: hidden;

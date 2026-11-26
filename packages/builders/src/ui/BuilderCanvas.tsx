@@ -1,13 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type MouseEvent,
-  type PointerEvent,
-  type ReactNode,
-} from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent, type ReactNode } from 'react';
 import clsx from 'clsx';
 import { Popout, Text } from '@discord-mana/components';
 import { Message, MessageListItem, type APIMessage } from '@discord-mana/messages';
@@ -16,7 +7,7 @@ import { BuilderTextField } from './BuilderTextField';
 import { EditableComponents } from './EditableComponents';
 import { EditableEmbed } from './EditableEmbed';
 import { NodeContextMenu } from './NodeContextMenu';
-import { focusFirstText } from './NodeFrame';
+import { focusFirstText, nodeOf } from './NodeFrame';
 import { NodeTextInput, PopoutPanel } from './popouts';
 import { useBuilderRender } from './renderContext';
 import { listKey, useBuilderUI, useBuilderUIStore } from './uiStore';
@@ -65,13 +56,6 @@ export const toPreviewMessage = (
     components: payload.components ?? [],
   } as APIMessage;
 };
-
-/** Selection follows the innermost node under the pointer; anything else on the canvas clears it. */
-const nodeOf = (target: EventTarget | null) =>
-  target instanceof Element ? target.closest<HTMLElement>('[data-builder-node]') : null;
-
-const isEditorUI = (target: EventTarget | null) =>
-  target instanceof Element && target.closest('[data-builder-ui], [data-builder-field], [role="textbox"]') != null;
 
 /**
  * Focuses the text the editor asked for once its node has rendered: the first text of a node just added, or
@@ -166,8 +150,6 @@ export const BuilderCanvas = ({ author = DEFAULT_AUTHOR, timestamp, className, e
   );
   const scope = useBuilderScope();
 
-  // Selection happens on release, not on press: selecting shows a node's empty parts, and the layout must not
-  // move under a press that turns into a drag.
   const pressRef = useRef<{ x: number; y: number } | null>(null);
   const onPointerDownCapture = useCallback((event: PointerEvent<HTMLDivElement>) => {
     // Popouts opened from the canvas are portals: their events arrive here through React, not the DOM.
@@ -183,35 +165,9 @@ export const BuilderCanvas = ({ author = DEFAULT_AUTHOR, timestamp, className, e
       if (readOnly || press == null || !event.currentTarget.contains(event.target as Node)) return;
       if (ui.getState().drag != null || Math.hypot(event.clientX - press.x, event.clientY - press.y) > 6) return;
       const target = event.target as Element;
-      if (target.closest('[data-builder-ui]') != null && nodeOf(target) == null) return;
-      const frame = nodeOf(target);
-      const uid = frame?.dataset.builderNode ?? null;
-      ui.set({ selectedId: uid, contextMenu: null });
-      // Focus the node, unless the press is in its text (which focuses itself).
-      if (frame != null && !isEditorUI(target)) frame.focus({ preventScroll: true });
-    },
-    [readOnly, ui],
-  );
-
-  // A builder's buttons, links, selects and images do nothing but get selected.
-  const swallow = useCallback(
-    (event: MouseEvent<HTMLDivElement>) => {
-      if (readOnly || isEditorUI(event.target) || !event.currentTarget.contains(event.target as Node)) return;
-      if (nodeOf(event.target) == null && !(event.target as Element).closest('a, button')) return;
-      event.preventDefault();
-      event.stopPropagation();
-    },
-    [readOnly],
-  );
-
-  const onContextMenu = useCallback(
-    (event: MouseEvent<HTMLDivElement>) => {
-      if (readOnly || !event.currentTarget.contains(event.target as Node)) return;
-      const frame = nodeOf(event.target);
-      if (frame == null || isEditorUI(event.target)) return;
-      event.preventDefault();
-      const uid = frame.dataset.builderNode!;
-      ui.set({ selectedId: uid, contextMenu: { uid, x: event.clientX, y: event.clientY } });
+      // Nodes select themselves (useNodeFrame); a press on nothing clears the selection.
+      if (target.closest('[data-builder-ui]') != null || nodeOf(target) != null) return;
+      ui.set({ selectedId: null, contextMenu: null });
     },
     [readOnly, ui],
   );
@@ -260,15 +216,6 @@ export const BuilderCanvas = ({ author = DEFAULT_AUTHOR, timestamp, className, e
       data-readonly={readOnly || undefined}
       onPointerDownCapture={onPointerDownCapture}
       onPointerUpCapture={onPointerUpCapture}
-      onClickCapture={swallow}
-      onMouseDownCapture={(event) => {
-        // Text selection and focus still work in editable text; elsewhere, nothing should react to a press.
-        if (readOnly || isEditorUI(event.target) || nodeOf(event.target) == null) return;
-        if (!event.currentTarget.contains(event.target as Node)) return;
-        if ((event.target as Element).closest('a, button, img, video, [role="button"], [role="combobox"]') != null)
-          event.preventDefault();
-      }}
-      onContextMenu={onContextMenu}
       // Focus rings are for keyboard users; a click selects without one.
       onKeyDownCapture={(event) => {
         if (event.currentTarget.contains(event.target as Node)) event.currentTarget.setAttribute('data-keyboard', '');
