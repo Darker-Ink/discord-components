@@ -18,6 +18,20 @@ const packageName = (spec) =>
     .slice(0, spec.startsWith('@') ? 2 : 1)
     .join('/');
 
+// A pattern target (`./dist/themes/*.css`) must match at least one file.
+const exportTargetExists = (pkgDir, target) => {
+  if (!target.includes('*')) return fs.existsSync(path.join(pkgDir, target));
+  const [prefix, suffix] = target.split('*');
+  const dir = path.join(pkgDir, prefix.slice(0, prefix.lastIndexOf('/') + 1));
+  const start = prefix.slice(prefix.lastIndexOf('/') + 1);
+  return (
+    fs.existsSync(dir) &&
+    fs
+      .readdirSync(dir)
+      .some((name) => name.length > start.length + suffix.length && name.startsWith(start) && name.endsWith(suffix))
+  );
+};
+
 for (const dir of fs.readdirSync(packagesDir)) {
   const manifestPath = path.join(packagesDir, dir, 'package.json');
   if (!fs.existsSync(manifestPath)) continue;
@@ -37,8 +51,9 @@ for (const dir of fs.readdirSync(packagesDir)) {
   for (const target of Object.values(manifest.publishConfig?.exports ?? {}).flatMap((t) =>
     typeof t === 'string' ? [t] : Object.values(t),
   )) {
-    const file = path.join(packagesDir, dir, target.replace('*', 'light'));
-    if (!fs.existsSync(file)) problems.push(`${manifest.name}: export target ${target} is missing`);
+    if (!exportTargetExists(path.join(packagesDir, dir), target)) {
+      problems.push(`${manifest.name}: export target ${target} is missing`);
+    }
   }
 
   for (const entry of fs.readdirSync(dist, { recursive: true, withFileTypes: true })) {

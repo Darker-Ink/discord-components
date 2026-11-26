@@ -13,18 +13,26 @@ export const STYLESHEET = 'style.css';
 
 export interface LibraryOptions {
   /**
-   * CSS imported by the package is not bundled: the imports stay in the JS and the files (with everything
-   * under `copy`) are copied to `dist` as they are. Used by `@discord-mana/tokens`, whose CSS refers to its
-   * font files by relative URL.
+   * CSS imported by the package is not bundled: the imports stay in the JS and the files are copied to `dist`
+   * as they are. Used by `@discord-mana/tokens`, whose CSS refers to its font files (under `copy`) by relative
+   * URL.
    */
   keepCss?: boolean;
-  /** Directories under `src` copied to `dist` verbatim. */
+  /** Files or directories under `src` copied to the same path in `dist` verbatim. */
   copy?: string[];
   /**
    * Content of a `dist/style.css` written as is. For packages without CSS of their own that re-export other
    * packages; their JS doesn't import it (the re-exported packages already import their CSS).
    */
   stylesheet?: string;
+  /** Entry points besides `src/index.ts`, as `{ name: path relative to src }` (e.g. subpath exports). */
+  entries?: Record<string, string>;
+  /**
+   * `new URL('<dependency>/<file>', import.meta.url)` stays as written instead of being inlined as a data URL,
+   * so the app's bundler resolves the file in the installed dependency. Used by `@discord-mana/markdown`, whose
+   * code highlighting loads grammar files from optional peer dependencies.
+   */
+  keepDependencyUrls?: boolean;
 }
 
 const readJson = (file: string) => JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -78,6 +86,36 @@ const dependencyAssetUrls = (pkgDir: string): Plugin => {
   };
 };
 
+/**
+ * Without this, Vite's library mode inlines every `new URL('<dependency>/<file>', import.meta.url)` as a base64
+ * data URL (248 MB for the markdown package's language entries). With it, the expression stays as written in
+ * dist, so the app's bundler resolves the file in the installed (optional peer) dependency and emits it once,
+ * only for the languages the app imports.
+ */
+const keepDependencyUrls = (): Plugin => {
+  const MARK = '/* @vite-ignore */ ';
+  return {
+    name: 'discord-mana:keep-dependency-urls',
+    enforce: 'pre',
+    transform(code) {
+      if (!code.includes('import.meta.url')) return null;
+      const next = code.replace(
+        /new URL\((['"])([^'"./][^'"]*)\1, import\.meta\.url\)/g,
+        (match, quote: string, spec: string) =>
+          isBareImport(spec) && !spec.includes(':')
+            ? `new URL(${MARK}${quote}${spec}${quote}, import.meta.url)`
+            : match,
+      );
+      return next === code ? null : { code: next, map: null };
+    },
+    // The bundler moves the comment onto its own line; drop it so the app's bundler handles the URL.
+    renderChunk(code) {
+      const next = code.replace(/new URL\(\s*\/\* @vite-ignore \*\/\s*(['"])/g, 'new URL($1');
+      return next === code ? null : { code: next, map: null };
+    },
+  };
+};
+
 /** Makes the entry module import the extracted stylesheet, so bundlers pick up the styles with the JS. */
 const importStylesheet = (): Plugin => ({
   name: 'discord-mana:import-stylesheet',
@@ -86,7 +124,9 @@ const importStylesheet = (): Plugin => ({
     if (!(STYLESHEET in bundle)) return;
     for (const chunk of Object.values(bundle)) {
       // Imported after everything else so the package's CSS comes after its dependencies' CSS, as in development.
-      if (chunk.type === 'chunk' && chunk.isEntry) chunk.code += `import './${STYLESHEET}';\n`;
+      if (chunk.type !== 'chunk' || !chunk.isEntry) continue;
+      const relative = path.posix.relative(path.posix.dirname(chunk.fileName), STYLESHEET);
+      chunk.code += `import '${relative.startsWith('.') ? relative : `./${relative}`}';\n`;
     }
   },
 });
@@ -98,8 +138,28 @@ const emitStylesheet = (source: string): Plugin => ({
   },
 });
 
-/** Leaves CSS imports in the JS untouched and copies the CSS files (and `copy` directories) to `dist`. */
-const keepCssFiles = (pkgDir: string, copy: string[]): Plugin => {
+/** Emits the files under `target` (a file or a directory under `src`) to the same path in `dist`. */
+const emitSourceFiles = (
+  ctx: { emitFile: (file: { type: 'asset'; fileName: string; source: Uint8Array }) => string },
+  srcDir: string,
+  target: string,
+  filter: (file: string) => boolean = () => true,
+) => {
+  const files = fs.statSync(target).isDirectory()
+    ? fs
+        .readdirSync(target, { recursive: true, withFileTypes: true })
+        .filter((entry) => entry.isFile())
+        .map((entry) => path.join(entry.parentPath, entry.name))
+    : [target];
+  for (const file of files) {
+    if (!filter(file)) continue;
+    const fileName = path.relative(srcDir, file).split(path.sep).join('/');
+    ctx.emitFile({ type: 'asset', fileName, source: fs.readFileSync(file) });
+  }
+};
+
+/** Leaves CSS imports in the JS untouched and copies the CSS files to `dist`. */
+const keepCssFiles = (pkgDir: string): Plugin => {
   const srcDir = path.join(pkgDir, 'src');
   return {
     name: 'discord-mana:keep-css',
@@ -109,17 +169,17 @@ const keepCssFiles = (pkgDir: string, copy: string[]): Plugin => {
       return { id: id.startsWith('.') ? id : path.relative(path.dirname(importer), id), external: true };
     },
     generateBundle() {
-      const emit = (dir: string, filter: (file: string) => boolean) => {
-        for (const entry of fs.readdirSync(dir, { recursive: true, withFileTypes: true })) {
-          if (!entry.isFile()) continue;
-          const file = path.join(entry.parentPath, entry.name);
-          if (!filter(file)) continue;
-          const fileName = path.relative(srcDir, file).split(path.sep).join('/');
-          this.emitFile({ type: 'asset', fileName, source: fs.readFileSync(file) });
-        }
-      };
-      emit(srcDir, (file) => file.endsWith('.css'));
-      for (const dir of copy) emit(path.join(srcDir, dir), () => true);
+      emitSourceFiles(this, srcDir, srcDir, (file) => file.endsWith('.css'));
+    },
+  };
+};
+
+const copyFiles = (pkgDir: string, copy: string[]): Plugin => {
+  const srcDir = path.join(pkgDir, 'src');
+  return {
+    name: 'discord-mana:copy-files',
+    generateBundle() {
+      for (const target of copy) emitSourceFiles(this, srcDir, path.join(srcDir, target));
     },
   };
 };
@@ -132,6 +192,8 @@ const keepCssFiles = (pkgDir: string, copy: string[]): Plugin => {
 const declarationImports = (srcDir: string, outDir: string) => {
   const cssModules = new Set<string>();
   const beforeWriteFile = (filePath: string, content: string) => {
+    // Declarations of imported JSON files (whole copies of the data) that no declaration refers to.
+    if (filePath.endsWith('.json.d.ts')) return false;
     const dir = path.join(srcDir, path.relative(outDir, path.dirname(filePath)));
     const resolve = (spec: string) => {
       if (spec.endsWith('.module.css')) {
@@ -166,18 +228,24 @@ const declarationImports = (srcDir: string, outDir: string) => {
 
 export const defineLibraryConfig = (
   pkgDir: string,
-  { keepCss = false, copy = [], stylesheet }: LibraryOptions = {},
+  { keepCss = false, copy = [], stylesheet, entries = {}, keepDependencyUrls: keepUrls = false }: LibraryOptions = {},
 ) => {
   const srcDir = path.join(pkgDir, 'src');
   const outDir = path.join(pkgDir, 'dist');
 
   // Declarations of workspace dependencies come from their own (already built) `dist`, so they are imported
-  // by package name instead of being re-emitted here.
+  // by package name (and subpath, e.g. `@discord-mana/markdown/internal`) instead of being re-emitted here.
   const workspacePackages: Record<string, string[]> = {};
   for (const name of fs.readdirSync(PACKAGES_DIR)) {
-    const manifest = path.join(PACKAGES_DIR, name, 'package.json');
-    if (!fs.existsSync(manifest) || path.join(PACKAGES_DIR, name) === pkgDir) continue;
-    workspacePackages[readJson(manifest).name] = [path.join(PACKAGES_DIR, name, 'dist/index.d.ts')];
+    const dir = path.join(PACKAGES_DIR, name);
+    const manifest = path.join(dir, 'package.json');
+    if (!fs.existsSync(manifest) || dir === pkgDir) continue;
+    const { name: packageName, publishConfig } = readJson(manifest);
+    workspacePackages[packageName] = [path.join(dir, 'dist/index.d.ts')];
+    for (const [subpath, target] of Object.entries<string | { types?: string }>(publishConfig?.exports ?? {})) {
+      if (subpath === '.' || typeof target === 'string' || target.types == null) continue;
+      workspacePackages[packageName + subpath.slice(1)] = [path.join(dir, target.types)];
+    }
   }
 
   const config: UserConfig = {
@@ -192,7 +260,14 @@ export const defineLibraryConfig = (
       minify: false,
       cssMinify: false,
       cssCodeSplit: false,
-      lib: { entry: path.join(srcDir, 'index.ts'), formats: ['es'], cssFileName: path.parse(STYLESHEET).name },
+      lib: {
+        entry: {
+          index: path.join(srcDir, 'index.ts'),
+          ...Object.fromEntries(Object.entries(entries).map(([name, file]) => [name, path.join(srcDir, file)])),
+        },
+        formats: ['es'],
+        cssFileName: path.parse(STYLESHEET).name,
+      },
       rolldownOptions: {
         // Every package import stays an import: workspace packages, React and third-party libraries are
         // dependencies of the published package rather than bundled into it.
@@ -202,8 +277,10 @@ export const defineLibraryConfig = (
       },
     },
     plugins: [
+      ...(keepUrls ? [keepDependencyUrls()] : []),
       dependencyAssetUrls(pkgDir),
-      keepCss ? keepCssFiles(pkgDir, copy) : stylesheet != null ? emitStylesheet(stylesheet) : importStylesheet(),
+      ...(copy.length > 0 ? [copyFiles(pkgDir, copy)] : []),
+      keepCss ? keepCssFiles(pkgDir) : stylesheet != null ? emitStylesheet(stylesheet) : importStylesheet(),
       dts({
         tsconfigPath: path.join(REPO_ROOT, 'tsconfig.base.json'),
         include: [path.join(srcDir, '**/*'), path.join(REPO_ROOT, 'types/**/*.d.ts')],
