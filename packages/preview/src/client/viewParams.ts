@@ -31,6 +31,8 @@ export interface ViewParams {
   /** The start-of-channel header above the first message; `null` follows `chrome`. */
   welcome: boolean | null;
   reducedMotion: boolean | null;
+  /** Sends interactions to the embedding page and takes its commands (needs `options.interactions` too). */
+  interactions: boolean;
 }
 
 export const DEFAULT_VIEW_PARAMS: ViewParams = {
@@ -45,6 +47,7 @@ export const DEFAULT_VIEW_PARAMS: ViewParams = {
   dates: true,
   welcome: null,
   reducedMotion: null,
+  interactions: false,
 };
 
 const oneOf = <T extends string | number>(values: readonly T[], raw: string | null, parse: (raw: string) => T) => {
@@ -81,6 +84,7 @@ export const parseViewParams = (search: URLSearchParams): ViewParams => {
     dates: flag(search.get('dates')) ?? d.dates,
     welcome: flag(search.get('welcome')),
     reducedMotion: flag(search.get('reducedMotion')),
+    interactions: flag(search.get('interactions')) ?? d.interactions,
   };
 };
 

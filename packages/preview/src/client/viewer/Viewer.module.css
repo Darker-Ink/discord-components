@@ -107,3 +107,7 @@
 .welcome {
   padding-bottom: 16px;
 }
+
+.modalOpen {
+  min-height: 640px;
+}

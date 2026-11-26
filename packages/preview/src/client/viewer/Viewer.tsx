@@ -1,11 +1,22 @@
-import { useEffect, useLayoutEffect, useMemo, useState, type ReactNode } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type Dispatch,
+  type ReactNode,
+  type SetStateAction,
+} from 'react';
 import clsx from 'clsx';
-import { AppRoot, Heading, HeaderBar, Text, tokens } from '@discord-mana/components';
+import { AppRoot, Heading, HeaderBar, Text, tokens, useHasAnyModalOpen } from '@discord-mana/components';
 import { LockIcon, TextIcon } from '@discord-mana/icons';
 import { MediaViewerProvider, type APIMessage } from '@discord-mana/messages';
-import type { ApiErrorBody, PreviewContent, ResizeMessage } from '../../shared/api';
+import { readOptions, type ApiErrorBody, type PreviewContent, type ResizeMessage } from '../../shared/api';
 import { BootSkeleton } from './BootSkeleton';
 import { MessageList } from './MessageList';
+import { useInteractions } from './useInteractions';
 import { THEME_CLASSES, parseViewParams, type ViewParams } from '../viewParams';
 import styles from './Viewer.module.css';
 import welcomeStyles from './ChannelWelcome.module.css';
@@ -37,7 +48,8 @@ const usePreviewContent = (id: string) => {
     fetch(url, { signal: controller.signal, credentials: 'omit' })
       .then(async (response) => {
         if (response.ok) {
-          setState({ status: 'ready', content: (await response.json()) as PreviewContent });
+          const content = (await response.json()) as PreviewContent;
+          setState({ status: 'ready', content: { ...content, options: readOptions(content.options) } });
           return;
         }
         const body = (await response.json().catch(() => null)) as ApiErrorBody | null;
@@ -54,7 +66,18 @@ const usePreviewContent = (id: string) => {
       });
     return () => controller.abort();
   }, [id]);
-  return state;
+  // Messages the embedding page adds, changes or removes (interactions) live only in this state.
+  const setMessages = useCallback<Dispatch<SetStateAction<APIMessage[]>>>(
+    (update) =>
+      setState((current) => {
+        if (current.status !== 'ready') return current;
+        const messages = current.content.messages as APIMessage[];
+        const next = typeof update === 'function' ? update(messages) : update;
+        return { ...current, content: { ...current.content, messages: next } };
+      }),
+    [],
+  );
+  return [state, setMessages] as const;
 };
 
 // Root-level settings Discord applies to <html>: message group spacing and the chat font size.
@@ -188,10 +211,16 @@ const ViewerFrame = ({
   const id = window.location.pathname.split('/')[2] ?? '';
   useResizeMessages(id, element);
   const showChrome = params.chrome ?? !isFramed;
+  // An open modal needs room even when the transcript is short, so the auto-height iframe grows for it.
+  const modalOpen = useHasAnyModalOpen();
   return (
     <div
       ref={setElement}
-      className={clsx(styles.frame, { [styles.transparent]: params.bg === 'transparent', [styles.framed]: isFramed })}
+      className={clsx(styles.frame, {
+        [styles.transparent]: params.bg === 'transparent',
+        [styles.framed]: isFramed,
+        [styles.modalOpen]: isFramed && modalOpen,
+      })}
       data-testid="preview-frame"
     >
       {showChrome ? header : null}
@@ -206,9 +235,23 @@ ViewerFrame.displayName = 'ViewerFrame';
 
 export const Viewer = ({ id }: { id: string }) => {
   const params = useMemo(() => parseViewParams(new URLSearchParams(window.location.search)), []);
-  const state = usePreviewContent(id);
+  const [state, setMessages] = usePreviewContent(id);
   useDocumentSettings(params);
   const content = state.status === 'ready' ? state.content : null;
+  // Interactions need both opt-ins: the creator's (`options.interactions`) and the embedder's (`interactions=1`).
+  const interactionsEnabled = isFramed && params.interactions && content?.options.interactions === true;
+  const messagesRef = useRef<APIMessage[]>([]);
+  useLayoutEffect(() => {
+    messagesRef.current = (content?.messages ?? []) as APIMessage[];
+  });
+  const getMessages = useCallback(() => messagesRef.current, []);
+  const onInteraction = useInteractions({
+    enabled: interactionsEnabled,
+    previewId: id,
+    allowedOrigins: content?.options.allowedOrigins ?? null,
+    setMessages,
+    getMessages,
+  });
   const theme = params.theme ?? content?.options.theme ?? 'dark';
   const title = content?.options.title ?? 'preview';
 
@@ -238,7 +281,8 @@ export const Viewer = ({ id }: { id: string }) => {
               {(params.welcome ?? showChrome) ? <ChannelWelcome title={title} /> : null}
               <MessageList
                 messages={state.content.messages as APIMessage[]}
-                interactive={state.content.options.interactive}
+                interactive={state.content.options.interactive || interactionsEnabled}
+                onInteraction={interactionsEnabled ? onInteraction : undefined}
                 showDates={params.dates}
               />
             </MediaViewerProvider>

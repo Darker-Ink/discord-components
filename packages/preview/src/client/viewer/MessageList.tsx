@@ -10,6 +10,7 @@ import {
   type APIResolvedUser,
   type MessageActions,
   type MessageResolvers,
+  type OnMessageComponentInteraction,
 } from '@discord-mana/messages';
 import dividerStyles from './Divider.module.css';
 import styles from './Viewer.module.css';
@@ -111,9 +112,10 @@ interface RowsProps {
   resolvers: MessageResolvers;
   interactive: boolean;
   showDates: boolean;
+  onInteraction?: OnMessageComponentInteraction<APIMessage>;
 }
 
-const Rows = memo(({ rows, resolvers, interactive, showDates }: RowsProps) =>
+const Rows = memo(({ rows, resolvers, interactive, showDates, onInteraction = noop }: RowsProps) =>
   rows.map(({ message, index, groupStart, day }) => (
     <Fragment key={`${message.id}-${index}`}>
       {showDates && day != null ? <DateDivider date={day} /> : null}
@@ -125,7 +127,7 @@ const Rows = memo(({ rows, resolvers, interactive, showDates }: RowsProps) =>
             actions={ACTIONS}
             isGroupStart={groupStart}
             shouldDisableInteractiveComponents={!interactive}
-            onInteraction={noop}
+            onInteraction={onInteraction}
           />
         </MessageBoundary>
       </MessageListItem>
@@ -225,12 +227,14 @@ export interface MessageListProps {
   messages: APIMessage[];
   interactive: boolean;
   showDates: boolean;
+  /** Handles interactions; without it they do nothing. */
+  onInteraction?: OnMessageComponentInteraction<APIMessage>;
 }
 
-export const MessageList = ({ messages, interactive, showDates }: MessageListProps) => {
+export const MessageList = ({ messages, interactive, showDates, onInteraction }: MessageListProps) => {
   const resolvers = useResolvers(messages);
   const rows = useMemo(() => toRows(messages), [messages]);
-  const props = { rows, resolvers, interactive, showDates };
+  const props = { rows, resolvers, interactive, showDates, onInteraction };
   return (
     <ol className={styles.list} aria-label="Messages" data-count={messages.length}>
       {rows.length < RENDER_ALL_BELOW ? <Rows {...props} /> : <WindowedRows {...props} />}
