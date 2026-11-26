@@ -7,6 +7,7 @@ import {
   type ComponentType,
   type CSSProperties,
   type ReactNode,
+  type Ref,
   type RefObject,
 } from 'react';
 import clsx from 'clsx';
@@ -14,6 +15,7 @@ import { IconSizes, type IconSize } from '@discord-components/icons';
 import { AccessibilityAnnouncer } from '../AccessibilityAnnouncer';
 import { AccessibilityPreferencesContext } from '../AccessibilityPreferences';
 import { FocusRing, type FocusRingProps } from '../FocusRing';
+import { useMergeRefs } from '../hooks';
 import { useManaContext } from '../ManaContext';
 import type { RiveAnimationHandle } from '../Rive';
 import { Spinner, SpinnerTypes } from '../Spinner';
@@ -264,7 +266,7 @@ export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement
   type?: 'button' | 'submit' | 'reset';
   rel?: string;
   minWidth?: number | string;
-  buttonRef?: RefObject<HTMLButtonElement | null>;
+  buttonRef?: Ref<HTMLButtonElement>;
 }
 
 export const Button = ({
@@ -302,8 +304,9 @@ export const Button = ({
   const resolvedSize = group.size ?? size;
   const resolvedFullWidth = group.fullWidth ?? fullWidth;
   const hasText = text != null;
-  const ownRef = useRef<HTMLButtonElement>(null);
-  const ref = buttonRef ?? ownRef;
+  // Icons and the expressive layers read the element, so keep a ref object even when given a callback ref.
+  const ref = useRef<HTMLButtonElement>(null);
+  const mergedRef = useMergeRefs(ref, buttonRef);
   const iconNode = (
     <ButtonIcon
       icon={icon}
@@ -362,7 +365,7 @@ export const Button = ({
           [styles.fullWidth]: resolvedFullWidth,
           [styles.rounded]: rounded,
         })}
-        ref={ref}
+        ref={mergedRef}
         rel={rel}
         type={type}
         onClick={inactive ? (event) => event.preventDefault() : onClick}

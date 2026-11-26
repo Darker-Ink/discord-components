@@ -1,4 +1,4 @@
-import { useState, type RefObject } from 'react';
+import { useState } from 'react';
 import { Button, FloatingLayer, Text, type FloatingLayerPlacement } from '@discord-components/components';
 import type { StoryGroup } from '../../types';
 import styles from './floating-layer.module.css';
@@ -41,14 +41,7 @@ const FloatingLayerStory = ({
       )}
     >
       {({ ref, props }) => (
-        <Button
-          variant="primary"
-          text="Target Element"
-          onClick={() => setOpen(!open)}
-          {...props}
-          // FloatingLayer hands out a callback ref; Button's type only declares ref objects.
-          buttonRef={ref as unknown as RefObject<HTMLButtonElement | null>}
-        />
+        <Button variant="primary" text="Target Element" onClick={() => setOpen(!open)} {...props} buttonRef={ref} />
       )}
     </FloatingLayer>
   );

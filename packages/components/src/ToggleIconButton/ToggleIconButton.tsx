@@ -1,9 +1,10 @@
-import { useRef, type ButtonHTMLAttributes, type RefObject } from 'react';
+import { useRef, type ButtonHTMLAttributes, type Ref } from 'react';
 import clsx from 'clsx';
 import { ButtonIcon, type ButtonIconSource, type ButtonSize } from '../Button';
 import buttonStyles from '../Button/Button.module.css';
 import toggleStyles from '../Button/ToggleButton.module.css';
 import { FocusRing, type FocusRingProps } from '../FocusRing';
+import { useMergeRefs } from '../hooks';
 import styles from './ToggleIconButton.module.css';
 
 export type ToggleIconButtonVariant = 'default' | 'critical' | 'icon-only';
@@ -25,7 +26,7 @@ export interface ToggleIconButtonProps extends Omit<ButtonHTMLAttributes<HTMLBut
   focusProps?: FocusRingProps;
   pressed?: boolean;
   'aria-label': string;
-  buttonRef?: RefObject<HTMLButtonElement | null>;
+  buttonRef?: Ref<HTMLButtonElement>;
 }
 
 export const ToggleIconButton = ({
@@ -45,8 +46,8 @@ export const ToggleIconButton = ({
   style: _style,
   ...props
 }: ToggleIconButtonProps) => {
-  const ownRef = useRef<HTMLButtonElement>(null);
-  const ref = buttonRef ?? ownRef;
+  const ref = useRef<HTMLButtonElement>(null);
+  const mergedRef = useMergeRefs(ref, buttonRef);
   return (
     <FocusRing {...focusProps}>
       <button
@@ -56,7 +57,7 @@ export const ToggleIconButton = ({
         className={clsx(buttonStyles.button, styles.button, VARIANT_CLASS_NAMES[variant], buttonStyles[size])}
         aria-label={ariaLabel}
         disabled={disabled}
-        ref={ref}
+        ref={mergedRef}
         {...props}
       >
         <div className={buttonStyles.buttonChildrenWrapper}>
