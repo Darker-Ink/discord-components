@@ -1,0 +1,249 @@
+.hamburger {
+  flex: 0 0 auto;
+  margin-inline-end: -4px;
+}
+.container {
+  color: var(--text-default);
+  container-type: inline-size;
+  cursor: default;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  font-size: 16px;
+  justify-content: center;
+  line-height: 20px;
+  min-width: 0;
+  padding: 8px;
+  position: relative;
+  width: 100%;
+  z-index: 2;
+  --__header-bar-background: var(--background-base-lower);
+  border-bottom: 1px solid var(--border-subtle);
+  height: var(--custom-channel-header-height);
+  padding-inline-start: var(--custom-message-margin-horizontal);
+}
+.container,
+.container * {
+  box-sizing: border-box;
+}
+.container.transparent {
+  background: transparent;
+}
+.upperContainer {
+  display: flex;
+  flex: 1;
+}
+.children {
+  align-items: center;
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  position: relative;
+}
+.children:after {
+  content: '';
+  height: 100%;
+  inset-inline-end: 0;
+  position: absolute;
+  top: 0;
+  width: 8px;
+}
+:global(.custom-theme-background) .children:after {
+  content: unset;
+}
+.children.scrollable:after {
+  display: none;
+}
+:global(.theme-dark) .children:after {
+  background: linear-gradient(to right, rgba(54, 57, 63, 0) 0, var(--__header-bar-background) 100%);
+}
+:global(.theme-light) .children:after {
+  background: linear-gradient(to right, hsla(0, 0%, 100%, 0) 0, var(--__header-bar-background) 100%);
+}
+.transparent .children:after {
+  display: none;
+}
+.container.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.toolbar {
+  align-items: center;
+  display: flex;
+  flex: 0 1 auto;
+  gap: var(--space-xs);
+  max-width: 100%;
+  min-width: 0;
+  padding-inline-start: var(--space-xs);
+}
+.toolbar .iconWrapper {
+  margin: 0;
+}
+.title {
+  align-items: center;
+  display: flex;
+  justify-content: flex-start;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.titleWrapper {
+  flex: 0 0 auto;
+  margin-block: 0;
+  margin-inline: 0 8px;
+  min-width: auto;
+}
+.titleClickable {
+  cursor: pointer;
+  min-height: 24px;
+}
+.titleClickable:hover {
+  color: var(--text-strong);
+}
+.clickable {
+  cursor: pointer;
+}
+.iconWrapper {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  height: var(--space-32);
+  justify-content: center;
+  margin: 0;
+  position: relative;
+  width: var(--space-32);
+}
+.icon {
+  display: block;
+  -webkit-app-region: no-drag;
+  height: var(--chat-input-icon-size);
+  width: var(--chat-input-icon-size);
+}
+.channelIcon {
+  margin-inline: -1px calc(var(--custom-message-margin-horizontal) / 2 + 1px);
+  width: auto;
+}
+.icon {
+  color: var(--channel-icon);
+}
+.clickable .icon {
+  color: var(--icon-muted);
+}
+.clickable:hover .icon {
+  color: var(--icon-subtle);
+}
+.selected .icon {
+  color: var(--icon-strong);
+}
+.iconDisabled {
+  opacity: 0.6;
+}
+.iconBadge {
+  --__badgeWidth: 8px;
+  --__badgeHeight: 8px;
+  border-radius: 8px;
+  font-size: 8px;
+  height: var(--__badgeHeight);
+  position: absolute;
+  width: var(--__badgeWidth);
+}
+.iconBadgeWithText {
+  --__badgeHeight: 10px;
+  align-items: center;
+  color: var(--white);
+  display: flex;
+  font-weight: 600;
+  justify-content: center;
+}
+.iconBadgeStyleImportant {
+  background-color: var(--background-feedback-notification);
+}
+.iconBadgeStyleUnread {
+  background-color: var(--background-brand);
+}
+.iconBadgeTop {
+  inset-inline-end: 2px;
+  top: 2px;
+}
+.iconBadgeBottom {
+  margin-inline-end: calc((var(--__badgeWidth) + (var(--__badgeOffset) + 2px)) * -1);
+  margin-bottom: calc(var(--__badgeHeight) * -1 + var(--__badgeOffset) * -1 + -2px);
+}
+.divider {
+  background: var(--border-subtle);
+  flex: 0 0 auto;
+  height: 24px;
+  margin: 0 4px;
+  width: 1px;
+}
+.dot {
+  color: var(--background-mod-strong);
+  height: 4px;
+  margin: 0 4px;
+  min-height: 4px;
+  min-width: 4px;
+  width: 4px;
+}
+.caret,
+.dot {
+  flex-shrink: 0;
+}
+.caret {
+  color: var(--icon-muted);
+  margin-inline: 0 8px;
+  width: 10px;
+}
+.scrollable {
+  overflow: auto;
+  -ms-overflow-style: none;
+}
+:global(.refresh-fast-follow-distinct-borders) .container {
+  border-bottom-color: var(--app-frame-border);
+}
+:global(.refresh-fast-follow-distinct-borders) .divider {
+  background: var(--app-frame-border);
+}
+:global(.no-webkit-scrollbar) .scrollable {
+  scrollbar-width: none;
+}
+.scrollable::-webkit-scrollbar {
+  display: none;
+}
+:global(.high-contrast-mode) .container,
+:global(.theme-midnight) .container {
+  border-bottom: 1px solid var(--border-subtle);
+}
+:global(.high-contrast-mode) .container.transparent,
+:global(.theme-midnight) .container.transparent {
+  border-bottom: none;
+}
+:global(.theme-dark) .themed {
+  background: var(--background-gradient-lower, var(--__header-bar-background));
+}
+:global(.theme-dark) .themedMobile {
+  background: var(--background-gradient-high, var(--__header-bar-background));
+}
+:global(.theme-light) .themed {
+  background: var(--background-gradient-lowest, var(--__header-bar-background));
+}
+:global(.theme-light) .themedMobile {
+  background: var(--background-gradient-low, var(--__header-bar-background));
+}
+:global(.enable-forced-colors) .container {
+  border-bottom: 2px solid CanvasText;
+}
+:global(.enable-forced-colors) .icon {
+  color: CanvasText;
+}
+:global(.enable-forced-colors) .clickable .icon,
+:global(.enable-forced-colors) .clickable:hover .icon {
+  color: ButtonText;
+}
+:global(.enable-forced-colors) .clickable {
+  background-color: ButtonFace;
+  border-radius: 4px;
+  color: ButtonText;
+}
+:global(.enable-forced-colors) .iconBadge {
+  background-color: Highlight;
+}

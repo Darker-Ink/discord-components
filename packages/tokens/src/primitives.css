@@ -238,6 +238,8 @@
   --blue-new-31-hsl: 213.191 calc(var(--saturation-factor, 1) * 85.455%) 67.647%;
   --blue-new-33: hsl(var(--blue-new-33-hsl)/1);
   --blue-new-33-hsl: 213.061 calc(var(--saturation-factor, 1) * 84%) 65.686%;
+  --blue-new-36: hsl(var(--blue-new-36-hsl)/1);
+  --blue-new-36-hsl: 212.866 calc(var(--saturation-factor, 1) * 83.069%) 62.941%;
   --blue-new-37: hsl(var(--blue-new-37-hsl)/1);
   --blue-new-37-hsl: 212.795 calc(var(--saturation-factor, 1) * 82.564%) 61.765%;
   --blue-new-39: hsl(var(--blue-new-39-hsl)/1);
@@ -269,6 +271,8 @@
   --blurple-3-hsl: 230.625 calc(var(--saturation-factor, 1) * 100%) 93.725%;
   --blurple-8: hsl(var(--blurple-8-hsl)/1);
   --blurple-8-hsl: 228 calc(var(--saturation-factor, 1) * 100%) 90.196%;
+  --blurple-10: hsl(var(--blurple-10-hsl)/1);
+  --blurple-10-hsl: 228.214 calc(var(--saturation-factor, 1) * 100%) 89.02%;
   --blurple-13: hsl(var(--blurple-13-hsl)/1);
   --blurple-13-hsl: 227.463 calc(var(--saturation-factor, 1) * 100%) 86.863%;
   --blurple-14: hsl(var(--blurple-14-hsl)/1);
@@ -577,6 +581,10 @@
   --opacity-white-28-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 100%;
   --opacity-white-40: hsl(var(--opacity-white-40-hsl)/0.4);
   --opacity-white-40-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 100%;
+  --opacity-white-48: hsl(var(--opacity-white-48-hsl)/0.47843137254901963);
+  --opacity-white-48-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 100%;
+  --opacity-white-60: hsl(var(--opacity-white-60-hsl)/0.6);
+  --opacity-white-60-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 100%;
   --opacity-black-1-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 0%;
   --opacity-black-4: hsl(var(--opacity-black-4-hsl)/0.0392156862745098);
   --opacity-black-4-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 0%;
@@ -629,6 +637,8 @@
   --green-400-hsl: var(--green-new-45-hsl);
   --green-430: var(--green-new-52);
   --green-430-hsl: var(--green-new-52-hsl);
+  --blue-345: var(--blue-new-36);
+  --blue-345-hsl: var(--blue-new-36-hsl);
   --blue-500: var(--blue-new-62);
   --blue-500-hsl: var(--blue-new-62-hsl);
   --blue-530: var(--blue-new-67);
@@ -637,6 +647,8 @@
   --white-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 100%;
   --black: hsl(var(--black-hsl)/1);
   --black-hsl: 0 calc(var(--saturation-factor, 1) * 0%) 0%;
+  --brand-260: var(--blurple-10);
+  --brand-260-hsl: var(--blurple-10-hsl);
   --brand-360: var(--blurple-29);
   --brand-360-hsl: var(--blurple-29-hsl);
   --brand-400: var(--blurple-38);
@@ -805,6 +817,8 @@
   --badge-border-width: 0px;
   --button-border-radius: 2147483647px;
   --button-border-radius-lg: 2147483647px;
+  --chat-avatar-size: 40px;
+  --chat-input-icon-size: 20px;
   --chat-markup-line-height: 1.375rem;
   --control-input-height-md: 40px;
   --control-input-height-sm: 32px;
@@ -867,10 +881,30 @@
   --legacy-elevation-high: 0 2px 10px 0 var(--opacity-black-8);
   --legacy-elevation-border: 0 0 0 1px hsl(var(--primary-300-hsl)/0.3);
   --custom-embed-spoiler-blur-radius: 44px;
+  --custom-message-avatar-size: 40px;
+  --custom-message-avatar-decoration-size: calc(var(--custom-message-avatar-size) * var(--decoration-to-avatar-ratio));
+  --custom-message-margin-compact-indent: 5rem;
+  --custom-message-spacing-vertical-container-cozy: 0.125rem;
+  --custom-message-padding-vertical-container-compact: 0.125rem;
+  --custom-message-meta-space: 0.25rem;
+  --custom-message-reply-indent: 0.625rem;
+  --custom-message-margin-left-content-cozy: calc(
+    var(--custom-message-avatar-size, 40px) + var(--custom-message-margin-horizontal) +
+      var(--custom-message-margin-horizontal)
+  );
+  --custom-message-reply-message-preview-line-height: 1.125rem;
   --custom-message-attachment-spoiler-blur-radius: 44px;
+  --custom-emoji-size-emoji: 1.375em;
+  --custom-emoji-size-jumbo-emoji: 3rem;
   --custom-scrollbar-scrollbar-width: 14px;
   --custom-scrollbar-scrollbar-margin: 3px;
   --custom-scrollbar-border-radius: calc(var(--custom-scrollbar-scrollbar-width)/2);
+  --custom-premium-colors-premium-gradient-tier-2-tri-color-vertical: linear-gradient(
+    to top,
+    var(--premium-tier-2-purple-for-gradients),
+    var(--premium-tier-2-purple-for-gradients-2),
+    var(--premium-tier-2-pink-for-gradients)
+  );
   --custom-button-button-lg-width: 130px;
   --custom-button-button-lg-height: 44px;
   --custom-button-button-tn-height: 24px;
@@ -881,10 +915,13 @@
     var(--custom-button-link-underline-width) + var(--custom-button-link-underline-offset)
   );
   --custom-button-transition-duration: 170ms;
+  --decoration-to-avatar-ratio: 1.2;
   --font-weight-extrabold: 800;
   --custom-guild-list-padding: var(--space-md);
   --custom-guild-list-width: calc(var(--guildbar-avatar-size) + var(--custom-guild-list-padding) * 2);
   --custom-app-top-bar-height: 32px;
+  --custom-channel-header-height: 49px;
+  --custom-message-margin-horizontal: var(--space-md);
 }
 
 .density-compact {

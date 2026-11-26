@@ -1,0 +1,78 @@
+.btnHamburger {
+  background: transparent;
+  cursor: pointer;
+  height: 45px;
+  margin-right: -20px;
+  padding: 8px;
+  position: relative;
+  transform: scale(0.3);
+  width: 60px;
+}
+.btnHamburger span {
+  background: var(--white);
+  display: block;
+  height: 9px;
+  opacity: 1;
+  position: absolute;
+  transform: rotate(0deg);
+  transition: 0.25s ease-in-out;
+  width: 50%;
+}
+.btnHamburger span:nth-child(2n) {
+  border-radius: 0 9px 9px 0;
+  left: 50%;
+}
+.btnHamburger span:nth-child(odd) {
+  border-radius: 9px 0 0 9px;
+  left: 0;
+}
+.btnHamburger span:first-child,
+.btnHamburger span:nth-child(2) {
+  top: 0;
+}
+.btnHamburger span:nth-child(3),
+.btnHamburger span:nth-child(4) {
+  top: 18px;
+}
+.btnHamburger span:nth-child(5),
+.btnHamburger span:nth-child(6) {
+  top: 36px;
+}
+:global(.theme-dark) .btnHamburger span {
+  background: var(--white);
+}
+:global(.theme-light) .btnHamburger span {
+  background: var(--black);
+}
+.btnHamburgerOpen span:first-child,
+.btnHamburgerOpen span:nth-child(6) {
+  transform: rotate(45deg);
+}
+.btnHamburgerOpen span:nth-child(2),
+.btnHamburgerOpen span:nth-child(5) {
+  transform: rotate(-45deg);
+}
+.btnHamburgerOpen span:first-child {
+  left: 5px;
+  top: 7px;
+}
+.btnHamburgerOpen span:nth-child(2) {
+  left: calc(50% - 5px);
+  top: 7px;
+}
+.btnHamburgerOpen span:nth-child(3) {
+  left: -50%;
+  opacity: 0;
+}
+.btnHamburgerOpen span:nth-child(4) {
+  left: 100%;
+  opacity: 0;
+}
+.btnHamburgerOpen span:nth-child(5) {
+  left: 5px;
+  top: 29px;
+}
+.btnHamburgerOpen span:nth-child(6) {
+  left: calc(50% - 5px);
+  top: 29px;
+}

@@ -1,0 +1,56 @@
+.wrapper {
+  cursor: pointer;
+  transition:
+    background-color 0.1s ease-out,
+    color 0.1s ease-out;
+}
+.childWrapper,
+.wrapper {
+  align-items: center;
+  display: flex;
+  height: var(--guildbar-avatar-size);
+  justify-content: center;
+  width: var(--guildbar-avatar-size);
+}
+.childWrapper {
+  color: var(--text-default);
+  transition:
+    scale 0.15s ease-out,
+    background-color 0.15s ease-out,
+    color 0.15s ease-out;
+}
+.childWrapperNoHoverBg {
+  background-color: var(--background-mod-subtle);
+}
+:global(.custom-theme-background) .childWrapperNoHoverBg {
+  background-color: var(--background-mod-strong);
+}
+.wrapper.selected .childWrapperHoverScale,
+.wrapper:hover .childWrapperHoverScale {
+  scale: 1.1;
+}
+.wrapper.selected .childWrapper,
+.wrapper:hover .childWrapper {
+  background-color: var(--background-brand);
+  color: var(--white);
+}
+.acronym {
+  font-weight: var(--font-weight-medium);
+  line-height: 1.2em;
+  white-space: nowrap;
+}
+.icon {
+  display: block;
+  height: var(--guildbar-avatar-size);
+  -o-object-fit: cover;
+  object-fit: cover;
+  pointer-events: none;
+  width: var(--guildbar-avatar-size);
+}
+.icon:before {
+  background-color: var(--background-mod-subtle);
+  content: '';
+  display: block;
+  height: 100%;
+  width: 100%;
+}

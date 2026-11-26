@@ -1,0 +1,55 @@
+.wrapper {
+  position: relative;
+}
+.svg,
+.wrapper {
+  box-sizing: border-box;
+}
+.svg {
+  contain: paint;
+  position: absolute;
+}
+.shiftSVG {
+  inset-inline-start: -4px;
+  top: -4px;
+}
+.noContain {
+  contain: style;
+}
+.lowerBadge {
+  bottom: 0;
+  inset-inline-end: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 2;
+}
+.isHighlighted {
+  stroke: #000;
+  stroke-width: 8px;
+}
+.upperBadge {
+  inset-inline-end: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+}
+.focusStroke {
+  stroke: transparent;
+  stroke-width: 0;
+}
+.focusFill,
+.focusStroke,
+.highlight {
+  fill: transparent;
+}
+:global(.keyboard-mode) .focusStroke {
+  fill: transparent;
+  stroke: var(--blue-345);
+  stroke-width: 8px;
+}
+:global(.keyboard-mode) .focusFill {
+  fill: var(--background-base-lowest);
+}
+:global(.keyboard-mode) .simpleFocused {
+  box-shadow: 0 0 0 4px var(--blue-345);
+}
