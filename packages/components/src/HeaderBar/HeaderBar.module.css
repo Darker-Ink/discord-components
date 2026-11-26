@@ -197,12 +197,6 @@
   overflow: auto;
   -ms-overflow-style: none;
 }
-:global(.refresh-fast-follow-distinct-borders) .container {
-  border-bottom-color: var(--app-frame-border);
-}
-:global(.refresh-fast-follow-distinct-borders) .divider {
-  background: var(--app-frame-border);
-}
 :global(.no-webkit-scrollbar) .scrollable {
   scrollbar-width: none;
 }

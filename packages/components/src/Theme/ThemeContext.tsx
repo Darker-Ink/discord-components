@@ -18,7 +18,6 @@ export interface ThemeContextState {
   flags: number;
   contrast: number;
   saturation: number;
-  enabledExperiments?: string[];
   density: ThemeDensity;
   disableAdaptiveTheme: boolean;
   reduceAdaptiveTheme: boolean;
@@ -69,7 +68,6 @@ export const ThemeContextProvider = ({
   flags,
   contrast,
   saturation,
-  enabledExperiments,
   density,
   disableAdaptiveTheme,
   reduceAdaptiveTheme,
@@ -85,7 +83,6 @@ export const ThemeContextProvider = ({
         flags: flags ?? parent.flags,
         contrast: contrast ?? parent.contrast,
         saturation: saturation ?? parent.saturation,
-        enabledExperiments: enabledExperiments ?? parent.enabledExperiments,
         density: density ?? parent.density,
         disableAdaptiveTheme: disableAdaptiveTheme ?? parent.disableAdaptiveTheme,
         reduceAdaptiveTheme: reduceAdaptiveTheme ?? parent.reduceAdaptiveTheme,
@@ -98,7 +95,6 @@ export const ThemeContextProvider = ({
       flags,
       contrast,
       saturation,
-      enabledExperiments,
       density,
       disableAdaptiveTheme,
       reduceAdaptiveTheme,

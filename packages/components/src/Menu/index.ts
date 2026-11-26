@@ -28,4 +28,3 @@ export {
   type MenuTextInputItemProps,
   type MenuTrailingIndicator,
 } from './MenuItems';
-export { MENU_EXPERIMENT } from './useMenuExperiment';

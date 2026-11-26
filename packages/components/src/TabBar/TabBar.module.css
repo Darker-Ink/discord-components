@@ -220,6 +220,3 @@
   padding-left: 4px;
   padding-right: 4px;
 }
-:global(.refresh-fast-follow-distinct-borders) .top {
-  border-color: var(--app-frame-border);
-}

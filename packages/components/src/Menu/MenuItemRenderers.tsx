@@ -33,14 +33,11 @@ import type {
   MenuItemColor,
   MenuItemProps,
   MenuLabel,
-  MenuLeadingAccessory,
   MenuRadioItemProps,
   MenuSwitchItemProps,
   MenuTextInputItemProps,
-  MenuTrailingIndicator,
 } from './MenuItems';
 import type { MenuItemDomProps } from './useMenuNavigator';
-import { useMenuExperiment } from './useMenuExperiment';
 import styles from './Menu.module.css';
 
 export const MENU_COLOR_CLASSES: Record<MenuItemColor, string> = {
@@ -75,73 +72,6 @@ const isRenderableNode = (value: unknown): value is ReactNode =>
   typeof value === 'number' ||
   typeof value === 'boolean' ||
   isValidElement(value);
-
-const MenuLabelText = ({ children }: { children: ReactNode }) => {
-  const enabled = useMenuExperiment('MenuLabel');
-  return enabled ? <MarqueeText>{children}</MarqueeText> : children;
-};
-
-MenuLabelText.displayName = 'MenuLabelText';
-
-// The client sizes emoji for the screen's pixel density; 18px is the menu's emoji size.
-const getEmojiURL = (emojiId: string, animated: boolean) => {
-  const size = Math.round(18 * (typeof window === 'undefined' ? 1 : window.devicePixelRatio || 1));
-  return `https://cdn.discordapp.com/emojis/${emojiId}.webp?size=${size}${animated ? '&animated=true' : ''}`;
-};
-
-const MenuLeadingAccessoryView = ({
-  accessory,
-  isFocused,
-}: {
-  accessory: MenuLeadingAccessory;
-  isFocused: boolean;
-}) => {
-  const { reducedMotion } = useContext(AccessibilityPreferencesContext);
-  switch (accessory.type) {
-    case 'icon': {
-      const { type: _type, icon: Icon, color = 'currentColor', className, ...iconProps } = accessory;
-      return (
-        <div className={styles.iconContainerLeft}>
-          <Icon aria-hidden color={color} {...iconProps} className={clsx(styles.icon, className)} />
-        </div>
-      );
-    }
-    case 'emoji': {
-      const { emojiId, src, animated = false } = accessory;
-      const url = emojiId != null ? getEmojiURL(emojiId, animated && (!reducedMotion.enabled || isFocused)) : src;
-      return (
-        <div className={styles.iconContainerLeft}>
-          <img aria-hidden alt="" src={url} className={styles.emojiIcon} />
-        </div>
-      );
-    }
-    case 'image':
-      return <img aria-hidden alt="" src={accessory.src} className={styles.imageAccessory} />;
-    case 'avatar':
-      return <img aria-hidden alt="" src={accessory.src} className={styles.avatarAccessory} />;
-    // Role dots and presence indicators come from Discord's app (role colors, presence store);
-    // only their containers render here.
-    case 'roleDot':
-      return <div className={styles.roleDotAccessory} />;
-    case 'status':
-      return <div className={styles.statusAccessory} />;
-    case 'guildTag':
-      return <div className={styles.guildTagAccessory}>{accessory.element}</div>;
-  }
-};
-
-MenuLeadingAccessoryView.displayName = 'MenuLeadingAccessory';
-
-const MenuTrailingIndicatorView = ({ indicator }: { indicator: MenuTrailingIndicator }) => {
-  const { type: _type, icon: Icon, color = 'currentColor', className, ...iconProps } = indicator;
-  return (
-    <div className={styles.iconContainer}>
-      <Icon aria-hidden color={color} {...iconProps} className={clsx(styles.icon, className)} />
-    </div>
-  );
-};
-
-MenuTrailingIndicatorView.displayName = 'MenuTrailingIndicator';
 
 const renderIcon = (
   icon: MenuIconSource | undefined,
@@ -185,7 +115,6 @@ export const MenuItemRow = (props: MenuItemRowProps) => {
     icon,
     iconLeft,
     leadingAccessory,
-    trailingIndicator,
     shortcut,
     subtext,
     subtextLineClamp,
@@ -206,7 +135,6 @@ export const MenuItemRow = (props: MenuItemRowProps) => {
   } = props;
   const { onSelect, onInteraction } = useContext(MenuContext);
   const ref = useRef<HTMLElement>(null);
-  const accessories = useMenuExperiment('MenuItem');
   const scrollIntoView = useScrollIntoView();
 
   const onClick = useCallback(
@@ -249,11 +177,13 @@ export const MenuItemRow = (props: MenuItemRowProps) => {
       data-menu-item="true"
       data-marquee-active={isFocused}
     >
-      {accessories || leadingAccessory?.type === 'status'
-        ? leadingAccessory != null && <MenuLeadingAccessoryView accessory={leadingAccessory} isFocused={isFocused} />
-        : iconLeft != null && renderIcon(iconLeft, styles.iconContainerLeft, iconProps)}
+      {leadingAccessory?.type === 'status' ? (
+        <div className={styles.statusAccessory} />
+      ) : (
+        iconLeft != null && renderIcon(iconLeft, styles.iconContainerLeft, iconProps)
+      )}
       <div className={styles.label}>
-        <MenuLabelText>{resolveLabel(voidLabel ?? label, { ...props, isFocused })}</MenuLabelText>
+        {resolveLabel(voidLabel ?? label, { ...props, isFocused })}
         {subtext != null && <Subtext lineClamp={subtextLineClamp}>{subtext}</Subtext>}
       </div>
       {shortcut != null && <div className={styles.shortcutContainer}>{shortcut}</div>}
@@ -267,9 +197,7 @@ export const MenuItemRow = (props: MenuItemRowProps) => {
           <Spinner type={SpinnerTypes.PULSING_ELLIPSIS} />
         </div>
       )}
-      {accessories
-        ? trailingIndicator != null && <MenuTrailingIndicatorView indicator={trailingIndicator} />
-        : icon != null && renderIcon(icon, styles.iconContainer, iconProps)}
+      {icon != null && renderIcon(icon, styles.iconContainer, iconProps)}
       {hasSubmenu && (
         <div className={styles.iconContainer}>
           <ChevronSmallRightIcon size="md" color="currentColor" className={styles.caret} />
@@ -350,7 +278,6 @@ export const MenuCheckboxItemRow = ({
   subtext,
   subtextLineClamp,
   leftIcon,
-  leadingAccessory,
   disabled,
   isFocused,
   menuItemProps,
@@ -359,7 +286,6 @@ export const MenuCheckboxItemRow = ({
   focusedClassName,
 }: MenuCheckboxItemRowProps) => {
   const { onInteraction } = useContext(MenuContext);
-  const accessories = useMenuExperiment('MenuCheckboxItem');
   const ref = useRef<HTMLElement>(null);
   const scrollIntoView = useScrollIntoView();
   useEffect(() => {
@@ -390,11 +316,9 @@ export const MenuCheckboxItemRow = ({
       aria-disabled={disabled}
       data-marquee-active={isFocused}
     >
-      {accessories
-        ? leadingAccessory != null && <MenuLeadingAccessoryView accessory={leadingAccessory} isFocused={isFocused} />
-        : leftIcon != null && renderIcon(leftIcon, styles.iconContainerLeft)}
+      {leftIcon != null && renderIcon(leftIcon, styles.iconContainerLeft)}
       <div className={styles.label}>
-        <MenuLabelText>{resolveLabel(voidLabel ?? label, { isFocused, disabled })}</MenuLabelText>
+        {resolveLabel(voidLabel ?? label, { isFocused, disabled })}
         {subtext != null && <Subtext lineClamp={subtextLineClamp}>{subtext}</Subtext>}
       </div>
       <div className={styles.iconContainer}>
@@ -419,14 +343,12 @@ export const MenuRadioItemRow = ({
   subtext,
   subtextLineClamp,
   leftIcon,
-  leadingAccessory,
   disabled,
   isFocused,
   menuItemProps,
   action,
 }: MenuRadioItemRowProps) => {
   const { onInteraction } = useContext(MenuContext);
-  const accessories = useMenuExperiment('MenuRadioItem');
   const ref = useRef<HTMLElement>(null);
   const scrollIntoView = useScrollIntoView();
   useEffect(() => {
@@ -452,11 +374,9 @@ export const MenuRadioItemRow = ({
       aria-disabled={disabled}
       data-marquee-active={isFocused}
     >
-      {accessories
-        ? leadingAccessory != null && <MenuLeadingAccessoryView accessory={leadingAccessory} isFocused={isFocused} />
-        : leftIcon != null && renderIcon(leftIcon, styles.iconContainerLeft)}
+      {leftIcon != null && renderIcon(leftIcon, styles.iconContainerLeft)}
       <div className={styles.label}>
-        <MenuLabelText>{resolveLabel(voidLabel ?? label, { isFocused, disabled })}</MenuLabelText>
+        {resolveLabel(voidLabel ?? label, { isFocused, disabled })}
         {subtext != null && <Subtext lineClamp={subtextLineClamp}>{subtext}</Subtext>}
       </div>
       <div className={styles.iconContainer}>
@@ -510,7 +430,7 @@ export const MenuSwitchItemRow = ({
       {label != null ? (
         <div className={styles.labelContainer}>
           <div className={styles.label}>
-            <MenuLabelText>{label}</MenuLabelText>
+            {label}
             {subtext != null && <Subtext lineClamp={subtextLineClamp}>{subtext}</Subtext>}
           </div>
         </div>

@@ -12,9 +12,6 @@
   text-align: center;
   text-transform: uppercase;
 }
-:global(.mana-badge-refresh) .badge {
-  text-transform: none;
-}
 .badge > :not(.label) {
   flex-shrink: 0;
 }

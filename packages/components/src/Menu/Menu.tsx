@@ -52,7 +52,6 @@ import {
   type MenuSwitchItemProps,
   type MenuTextInputItemProps,
 } from './MenuItems';
-import { useMenuExperiment } from './useMenuExperiment';
 import {
   useMenuNavigator,
   type MenuNavigator,
@@ -206,16 +205,13 @@ const sameNavigatorItems = (a: MenuNavigatorItem[] | undefined, b: MenuNavigator
   );
 };
 
-const MenuSeparatorRow = () => {
-  const mana = useMenuExperiment('MenuSeparator');
-  return (
-    <div
-      role="separator"
-      className={styles.separator}
-      style={{ '--custom-menu-separator-margin': mana ? '8px 0' : '8px' } as CSSProperties}
-    />
-  );
-};
+const MenuSeparatorRow = () => (
+  <div
+    role="separator"
+    className={styles.separator}
+    style={{ '--custom-menu-separator-margin': '8px' } as CSSProperties}
+  />
+);
 
 MenuSeparatorRow.displayName = 'MenuSeparator';
 
@@ -268,7 +264,6 @@ const MenuSubmenu = ({
   const placement = useContext(SubmenuPlacementContext);
   const { focusIndex: _focusIndex, isUsingKeyboardNavigation: _keyboard, ...submenuProps } = menuSubmenuProps;
   const ref = useRef<HTMLDivElement>(null);
-  const mana = useMenuExperiment('MenuSubmenuItem');
   const [hovered, setHovered] = useState(false);
   return (
     <FloatingLayer
@@ -277,7 +272,7 @@ const MenuSubmenu = ({
       shiftPadding={8}
       maxHeight={360}
       onOpenChange={setHovered}
-      spacing={mana ? -4 : 4}
+      spacing={4}
       alignmentSpacing={SUBMENU_ALIGNMENT_SPACING}
       placement={placement}
       portal={false}
@@ -612,7 +607,6 @@ export const Menu = ({
   const itemsRef = useRef<MenuNavigatorItem[]>(navigatorItems);
   // eslint-disable-next-line react-hooks/refs -- keeps a stable item tree between renders, as Discord does.
   if (!sameNavigatorItems(itemsRef.current, navigatorItems)) itemsRef.current = navigatorItems;
-  const mana = useMenuExperiment('Menu');
   const firstKey = entries.find((entry): entry is Extract<MenuEntry, { key: string }> => 'key' in entry)?.key;
   const { keyboardModeEnabled } = useContext(AccessibilityPreferencesContext);
   const navigator = useMenuNavigator({
@@ -642,8 +636,8 @@ export const Menu = ({
         className={clsx(styles.menu, styles[variant], className)}
         style={
           {
-            '--custom-menu-viewport-padding': mana ? '48px' : '16px',
-            '--custom-menu-flexible-min-width': mana ? '144px' : '188px',
+            '--custom-menu-viewport-padding': '16px',
+            '--custom-menu-flexible-min-width': '188px',
           } as CSSProperties
         }
         {...navigator.getContainerProps()}

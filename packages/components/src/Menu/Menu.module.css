@@ -327,12 +327,6 @@ svg.radioIcon {
 :where(:global(.density-compact)) .labelContainer {
   padding: 4px 8px;
 }
-:global(.refresh-fast-follow-distinct-borders) .menu {
-  border-color: var(--app-frame-border);
-}
-:global(.refresh-fast-follow-distinct-borders) .separator {
-  border-bottom-color: var(--app-frame-border);
-}
 :global(.enable-forced-colors) .menu {
   background-color: ButtonFace;
   border: 2px solid CanvasText;

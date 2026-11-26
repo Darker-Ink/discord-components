@@ -88,7 +88,6 @@ export interface ManaContextValue {
   theme: Theme;
   locale: string;
   saturation: number;
-  experiments?: { enabledExperiments: string[] };
   // App-specific hooks into Discord's client (layers, analytics, window state, dynamic graphics).
   defaultLayerContext?: unknown;
   trackImpression?: (impression: ManaImpression) => void;
