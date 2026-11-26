@@ -1,5 +1,5 @@
 import { useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { ThemeTypes, type Theme } from '@discord-components/tokens';
+import { ThemeTypes, type Theme } from '@discord-mana/tokens';
 import {
   AccessibilityPreferencesContext,
   AccessibilityPreferencesProvider,

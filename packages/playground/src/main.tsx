@@ -1,4 +1,4 @@
-import '@discord-components/tokens';
+import '@discord-mana/tokens';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Playground } from './Playground';

@@ -15,8 +15,8 @@ import {
   type SelectOptions,
   type SelectProps,
   type SelectionMode,
-} from '@discord-components/components';
-import { TextIcon } from '@discord-components/icons';
+} from '@discord-mana/components';
+import { TextIcon } from '@discord-mana/icons';
 import type { StoryGroup } from '../../types';
 
 const IMAGE_SRC = '/mana/select-option-image.svg';

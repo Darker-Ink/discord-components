@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import clsx from 'clsx';
-import { Tooltip, tokens } from '@discord-components/components';
-import { CheckmarkSmallBoldIcon } from '@discord-components/icons';
+import { Tooltip, tokens } from '@discord-mana/components';
+import { CheckmarkSmallBoldIcon } from '@discord-mana/icons';
 import { useMessageI18n } from './messageI18n';
 import styles from './BotTag.module.css';
 

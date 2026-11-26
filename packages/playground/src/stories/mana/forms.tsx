@@ -17,8 +17,8 @@ import {
   TextInput,
   type FieldAuxiliaryContentPosition,
   type FieldProps,
-} from '@discord-components/components';
-import { LockIcon } from '@discord-components/icons';
+} from '@discord-mana/components';
+import { LockIcon } from '@discord-mana/icons';
 import type { StoryGroup } from '../../types';
 import styles from './forms.module.css';
 

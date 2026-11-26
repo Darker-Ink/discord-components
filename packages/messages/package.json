@@ -1,5 +1,5 @@
 {
-  "name": "@discord-components/messages",
+  "name": "@discord-mana/messages",
   "version": "0.0.0",
   "type": "module",
   "sideEffects": [
@@ -9,9 +9,9 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@discord-components/components": "workspace:*",
-    "@discord-components/icons": "workspace:*",
-    "@discord-components/tokens": "workspace:*",
+    "@discord-mana/components": "workspace:*",
+    "@discord-mana/icons": "workspace:*",
+    "@discord-mana/tokens": "workspace:*",
     "@react-spring/web": "^10.1.2",
     "clsx": "^2.1.1",
     "react-focus-rings": "^1.3.0"

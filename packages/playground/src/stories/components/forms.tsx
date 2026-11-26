@@ -19,7 +19,7 @@ import {
   type ButtonColor,
   type ButtonLook,
   type CopyInputMode,
-} from '@discord-components/components';
+} from '@discord-mana/components';
 import type { StoryGroup } from '../../types';
 import { keyOptions, valueOptions } from './shared';
 

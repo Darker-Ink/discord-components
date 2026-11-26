@@ -1,4 +1,4 @@
-import { XLargeIcon } from '@discord-components/icons';
+import { XLargeIcon } from '@discord-mana/icons';
 import { Button, type ButtonProps } from '../Button';
 import { useManaContext } from '../ManaContext';
 

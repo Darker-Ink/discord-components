@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Button, CheckboxGroup, Stack, Text, type CheckboxGroupOption } from '@discord-components/components';
-import { CircleInformationIcon } from '@discord-components/icons';
+import { Button, CheckboxGroup, Stack, Text, type CheckboxGroupOption } from '@discord-mana/components';
+import { CircleInformationIcon } from '@discord-mana/icons';
 import type { StoryGroup } from '../../types';
 
 interface CheckboxGroupStoryProps {

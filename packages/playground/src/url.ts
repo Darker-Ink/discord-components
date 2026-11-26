@@ -1,4 +1,4 @@
-import type { Theme } from '@discord-components/tokens';
+import type { Theme } from '@discord-mana/tokens';
 import type { Controls } from './types';
 
 export interface PlaygroundLocation {

@@ -1,4 +1,4 @@
-# discord-components
+# discord-mana
 
 React versions of Discord's UI components. The styles, props and markup come straight from Discord's own web build, and every component is checked pixel by pixel against the real thing in all four themes.
 
@@ -6,11 +6,11 @@ React versions of Discord's UI components. The styles, props and markup come str
 
 | Package                          | What it has                                                                                                                               |
 | -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `@discord-components/tokens`     | Colors, spacing, fonts and the four themes                                                                                                |
-| `@discord-components/icons`      | Every icon in the Discord client, under the same names Discord uses                                                                       |
-| `@discord-components/components` | The Mana design system (buttons, inputs, selects, modals, tooltips, menus, date pickers, toasts and more), plus the older Void components |
-| `@discord-components/messages`   | Message rendering: embeds, attachments, the media gallery and viewer, message components (including Components v2) and interaction modals |
-| `@discord-components/playground` | A playground for browsing and trying out every component                                                                                  |
+| `@discord-mana/tokens`     | Colors, spacing, fonts and the four themes                                                                                                |
+| `@discord-mana/icons`      | Every icon in the Discord client, under the same names Discord uses                                                                       |
+| `@discord-mana/components` | The Mana design system (buttons, inputs, selects, modals, tooltips, menus, date pickers, toasts and more), plus the older Void components |
+| `@discord-mana/messages`   | Message rendering: embeds, attachments, the media gallery and viewer, message components (including Components v2) and interaction modals |
+| `@discord-mana/playground` | A playground for browsing and trying out every component                                                                                  |
 
 Void is Discord's older design system. Discord hardly uses it anymore, so use the Mana components for anything new.
 
@@ -19,8 +19,8 @@ Void is Discord's older design system. Discord hardly uses it anymore, so use th
 Import the tokens once and wrap your app in `AppRoot`. It sets up the theme, accessibility settings, focus rings and the layers that popouts, tooltips and modals render into.
 
 ```tsx
-import '@discord-components/tokens';
-import { AppRoot, Button } from '@discord-components/components';
+import '@discord-mana/tokens';
+import { AppRoot, Button } from '@discord-mana/components';
 
 export const App = () => (
   <AppRoot theme="darker">
@@ -49,7 +49,7 @@ To give part of the page a different theme, wrap it in `ThemeProvider`.
 `Message` takes a message object in the same shape the Discord API returns and renders it like the client does. That includes content, attachments, embeds, buttons, selects and Components v2 layouts. Markdown is not parsed. Content is shown as plain text unless you pass your own `renderMarkdown` function.
 
 ```tsx
-import { Message } from '@discord-components/messages';
+import { Message } from '@discord-mana/messages';
 
 <Message
   message={{

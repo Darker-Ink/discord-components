@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import clsx from 'clsx';
-import { Text, type TextProps, LoadingDots } from '@discord-components/components';
-import { CircleErrorIcon } from '@discord-components/icons';
+import { Text, type TextProps, LoadingDots } from '@discord-mana/components';
+import { CircleErrorIcon } from '@discord-mana/icons';
 import { useComponentError } from './ComponentState';
 import type { MessageComponent } from './types';
 import styles from './ComponentStatus.module.css';

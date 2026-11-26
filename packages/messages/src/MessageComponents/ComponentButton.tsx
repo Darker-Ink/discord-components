@@ -1,6 +1,6 @@
 import clsx from 'clsx';
-import { ButtonColors, ButtonSizes, LegacyButton, LoadingDots } from '@discord-components/components';
-import { ShopIcon, WindowLaunchIcon } from '@discord-components/icons';
+import { ButtonColors, ButtonSizes, LegacyButton, LoadingDots } from '@discord-mana/components';
+import { ShopIcon, WindowLaunchIcon } from '@discord-mana/icons';
 import { Emoji } from '../Emoji/Emoji';
 import { useMessageI18n } from '../Message/messageI18n';
 import { useMessageActions } from './MessageActions';

@@ -1,4 +1,4 @@
-import { Stack, Text } from '@discord-components/components';
+import { Stack, Text } from '@discord-mana/components';
 import {
   BotTag,
   BotTagTypes,
@@ -8,7 +8,7 @@ import {
   MessageTimestamp,
   type BotTagType,
   type EmojiSize,
-} from '@discord-components/messages';
+} from '@discord-mana/messages';
 import type { StoryGroup } from '../../types';
 import { keyOptions, valueOptions } from './shared';
 

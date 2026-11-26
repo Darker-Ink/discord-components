@@ -1,6 +1,6 @@
 import { useEffect, useMemo, type MouseEventHandler, type ReactNode } from 'react';
 import clsx from 'clsx';
-import { FocusRing } from '@discord-components/components';
+import { FocusRing } from '@discord-mana/components';
 import { MessageAttachments } from '../attachments/MessageAttachments';
 import { MessageEmbeds, type RenderEmbedMarkdown } from '../Embed/MessageEmbeds';
 import type { APIEmbed } from '../Embed/types';

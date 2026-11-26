@@ -5,8 +5,8 @@ import {
   openMediaViewer,
   type APIAttachment,
   type MediaViewerItem,
-} from '@discord-components/messages';
-import { closeModal } from '@discord-components/components';
+} from '@discord-mana/messages';
+import { closeModal } from '@discord-mana/components';
 import type { StoryGroup } from '../../types';
 
 interface ViewerFixtureData {

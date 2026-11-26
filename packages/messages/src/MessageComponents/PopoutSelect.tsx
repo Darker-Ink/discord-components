@@ -33,8 +33,8 @@ import {
   type FieldOwnProps,
   type LayerContext,
   type ReferencePosition,
-} from '@discord-components/components';
-import { ChevronSmallDownIcon, ChevronSmallUpIcon, CircleCheckIcon, XSmallIcon } from '@discord-components/icons';
+} from '@discord-mana/components';
+import { ChevronSmallDownIcon, ChevronSmallUpIcon, CircleCheckIcon, XSmallIcon } from '@discord-mana/icons';
 // The client's popout select shares its CSS module with the searchable select.
 import styles from './PopoutSearchableSelect.module.css';
 

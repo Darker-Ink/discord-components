@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, type DragEvent } from 'react';
 import clsx from 'clsx';
-import { Anchor, Clickable, Text, Tooltip, tokens, useManaContext } from '@discord-components/components';
-import { CircleCheckIcon, FileUpIcon, TrashIcon } from '@discord-components/icons';
+import { Anchor, Clickable, Text, Tooltip, tokens, useManaContext } from '@discord-mana/components';
+import { CircleCheckIcon, FileUpIcon, TrashIcon } from '@discord-mana/icons';
 import { FileIcon } from '../attachments/FileAttachment';
 import { useMessageI18n } from '../Message/messageI18n';
 import { useComponentContext, useComponentState } from './ComponentState';

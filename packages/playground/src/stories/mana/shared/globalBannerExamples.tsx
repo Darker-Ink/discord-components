@@ -1,6 +1,6 @@
 import type { ReactNode, Ref } from 'react';
-import { Anchor, GlobalBanner, type GlobalBannerHandle, type GlobalBannerRole } from '@discord-components/components';
-import { NitroWheelIcon } from '@discord-components/icons';
+import { Anchor, GlobalBanner, type GlobalBannerHandle, type GlobalBannerRole } from '@discord-mana/components';
+import { NitroWheelIcon } from '@discord-mana/icons';
 import { useEndsAt } from './countdownExamples';
 
 // Four hours and change: a countdown on its last day.

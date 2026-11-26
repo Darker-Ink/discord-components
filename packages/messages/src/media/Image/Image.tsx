@@ -8,7 +8,7 @@ import {
   type Ref,
 } from 'react';
 import clsx from 'clsx';
-import { Clickable, FocusRing, Text } from '@discord-components/components';
+import { Clickable, FocusRing, Text } from '@discord-mana/components';
 import { ImageReadyState, MediaLayoutType } from '../constants';
 import { useMediaContext } from '../MediaContext';
 import { fit, type Dimensions } from '../sizing';

@@ -16,8 +16,8 @@ import {
   type RefObject,
 } from 'react';
 import clsx from 'clsx';
-import { Clickable, IconButton, Text, tokens } from '@discord-components/components';
-import { EyeIcon, EyeSlashIcon, ImageWarningIcon } from '@discord-components/icons';
+import { Clickable, IconButton, Text, tokens } from '@discord-mana/components';
+import { EyeIcon, EyeSlashIcon, ImageWarningIcon } from '@discord-mana/icons';
 import { ObscureReason, SENSITIVE_OBSCURE_REASONS } from '../constants';
 import { useMediaContext } from '../MediaContext';
 import styles from './ObscuredContent.module.css';

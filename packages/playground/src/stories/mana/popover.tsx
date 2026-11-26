@@ -20,7 +20,7 @@ import {
   type PopoverPosition,
   type PopoverSize,
   type PopoverTextLink,
-} from '@discord-components/components';
+} from '@discord-mana/components';
 import type { StoryGroup } from '../../types';
 import styles from './popover.module.css';
 

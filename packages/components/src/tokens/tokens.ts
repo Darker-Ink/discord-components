@@ -15,7 +15,7 @@ import {
   type ShadowValue,
   type Theme,
   type TokenDensity,
-} from '@discord-components/tokens';
+} from '@discord-mana/tokens';
 import { Color } from './color';
 
 // What a token is resolved against; `useToken` fills it in from the surrounding contexts.

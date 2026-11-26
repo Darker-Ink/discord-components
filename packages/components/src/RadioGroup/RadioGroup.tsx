@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState, type ComponentType } from 'react';
 import clsx from 'clsx';
 import { Radio, RadioGroup as AriaRadioGroup } from 'react-aria-components';
-import type { IconProps } from '@discord-components/icons';
+import type { IconProps } from '@discord-mana/icons';
 import { Field, type FieldProps } from '../Field';
 import { FocusRing } from '../FocusRing';
 import { Text } from '../Text';

@@ -17,7 +17,7 @@ import {
   type FlexDirectionClass,
   type FlexJustifyClass,
   type FlexWrapClass,
-} from '@discord-components/components';
+} from '@discord-mana/components';
 import type { StoryGroup } from '../../types';
 import styles from './components.module.css';
 import { keyOptions, noop } from './shared';

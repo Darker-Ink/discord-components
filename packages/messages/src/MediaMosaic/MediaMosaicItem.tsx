@@ -1,7 +1,7 @@
 import { createContext, useCallback, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import clsx from 'clsx';
-import { Clickable, Tooltip } from '@discord-components/components';
-import { PencilIcon, TrashIcon, XSmallIcon } from '@discord-components/icons';
+import { Clickable, Tooltip } from '@discord-mana/components';
+import { PencilIcon, TrashIcon, XSmallIcon } from '@discord-mana/icons';
 import { ImageReadyState, MediaLayoutType, ObscureReason, SENSITIVE_OBSCURE_REASONS } from '../media/constants';
 import { useMediaContext } from '../media/MediaContext';
 import { Image } from '../media/Image/Image';

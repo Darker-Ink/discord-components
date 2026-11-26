@@ -1,6 +1,6 @@
 import { useMemo, useRef, type MouseEvent, type Ref } from 'react';
 import clsx from 'clsx';
-import { Tooltip } from '@discord-components/components';
+import { Tooltip } from '@discord-mana/components';
 import { MediaMosaic } from '../MediaMosaic/MediaMosaic';
 import type {
   MediaMosaicImageRenderProps,

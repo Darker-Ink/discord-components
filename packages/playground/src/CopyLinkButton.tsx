@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef } from 'react';
-import { IconButton, Menu, MenuItem, Popout, showToast } from '@discord-components/components';
-import { ChevronSmallDownIcon, CopyIcon } from '@discord-components/icons';
+import { IconButton, Menu, MenuItem, Popout, showToast } from '@discord-mana/components';
+import { ChevronSmallDownIcon, CopyIcon } from '@discord-mana/icons';
 import { playgroundStore } from './playgroundStore';
 import styles from './Playground.module.css';
 import { getChangedProps } from './storyProps';

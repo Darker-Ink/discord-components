@@ -1,6 +1,6 @@
 import type { FocusEvent, KeyboardEvent, MouseEvent, Ref } from 'react';
 import type { FocusRingProps } from 'react-focus-rings';
-import { MagnifyingGlassIcon } from '@discord-components/icons';
+import { MagnifyingGlassIcon } from '@discord-mana/icons';
 import { useManaContext } from '../ManaContext';
 import { TextInput, type TextInputProps, type TextInputSize } from '../TextInput';
 

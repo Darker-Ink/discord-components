@@ -11,7 +11,7 @@ import {
   type DateRange,
   type DateValue,
 } from 'react-aria-components';
-import { CalendarIcon } from '@discord-components/icons';
+import { CalendarIcon } from '@discord-mana/icons';
 import type { DatePickerGranularity } from '../DatePicker';
 import styles from '../DatePicker/DatePicker.module.css';
 import { PICKER_POPOVER_TRANSITION } from '../DatePicker/popoverTransition';

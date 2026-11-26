@@ -11,7 +11,7 @@ import {
   type RefObject,
 } from 'react';
 import clsx from 'clsx';
-import { IconSizes, type IconSize } from '@discord-components/icons';
+import { IconSizes, type IconSize } from '@discord-mana/icons';
 import { AccessibilityAnnouncer } from '../AccessibilityAnnouncer';
 import { AccessibilityPreferencesContext } from '../AccessibilityPreferences';
 import { FocusRing, type FocusRingProps } from '../FocusRing';

@@ -5,8 +5,8 @@ import {
   NumberBadge,
   Stack,
   type IconBadgeProps,
-} from '@discord-components/components';
-import { BellIcon, CheckmarkLargeIcon, LockIcon, NitroWheelIcon, StarIcon } from '@discord-components/icons';
+} from '@discord-mana/components';
+import { BellIcon, CheckmarkLargeIcon, LockIcon, NitroWheelIcon, StarIcon } from '@discord-mana/icons';
 import type { Controls, StoryGroup } from '../../types';
 
 type ShapeName = keyof typeof BadgeShapes;

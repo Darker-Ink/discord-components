@@ -6,8 +6,8 @@ import {
   Text,
   type GlobalBannerCountdown,
   type GlobalBannerHandle,
-} from '@discord-components/components';
-import { BellSlashIcon, ClockIcon, NitroWheelIcon, OrbsIcon } from '@discord-components/icons';
+} from '@discord-mana/components';
+import { BellSlashIcon, ClockIcon, NitroWheelIcon, OrbsIcon } from '@discord-mana/icons';
 import type { Controls, SelectOption, StoryGroup } from '../../types';
 import { useEndsAt } from './shared/countdownExamples';
 import {

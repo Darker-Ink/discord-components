@@ -6,7 +6,7 @@ import {
   Stack,
   type InlineNoticeRole,
   type InlineNoticeType,
-} from '@discord-components/components';
+} from '@discord-mana/components';
 import type { Controls, StoryGroup } from '../../types';
 
 // Discord's English copy for its keyboard-navigation string, which the story uses as real copy with a

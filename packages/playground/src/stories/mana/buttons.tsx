@@ -10,8 +10,8 @@ import {
   type ButtonSize,
   type IconButtonProps,
   type ToggleIconButtonProps,
-} from '@discord-components/components';
-import { ClydeIcon, MicrophoneIcon, MicrophoneSlashIcon } from '@discord-components/icons';
+} from '@discord-mana/components';
+import { ClydeIcon, MicrophoneIcon, MicrophoneSlashIcon } from '@discord-mana/icons';
 import type { StoryGroup } from '../../types';
 
 const IconButtonStory = (props: Omit<IconButtonProps, 'icon' | 'aria-label'>) => (

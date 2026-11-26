@@ -1,6 +1,6 @@
 import type { MouseEvent, ReactNode, Ref } from 'react';
 import clsx from 'clsx';
-import { ChevronLargeDownIcon, CircleXIcon } from '@discord-components/icons';
+import { ChevronLargeDownIcon, CircleXIcon } from '@discord-mana/icons';
 import { FocusRing } from '../FocusRing';
 import { InputField } from '../InputField';
 import { useManaContext } from '../ManaContext';

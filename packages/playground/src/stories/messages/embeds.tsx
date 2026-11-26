@@ -4,7 +4,7 @@ import {
   type APIEmbed,
   type EmbedMessage,
   type ObscureReason,
-} from '@discord-components/messages';
+} from '@discord-mana/messages';
 import type { StoryGroup } from '../../types';
 
 // Fixtures shared with scripts/compare-messages.mjs; "{{assets}}" is the playground's /messages folder.

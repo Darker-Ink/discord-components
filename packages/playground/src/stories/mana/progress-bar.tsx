@@ -1,4 +1,4 @@
-import { ProgressBar, type ProgressBarSize } from '@discord-components/components';
+import { ProgressBar, type ProgressBarSize } from '@discord-mana/components';
 import type { StoryGroup } from '../../types';
 
 interface ProgressBarStoryProps {

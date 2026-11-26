@@ -1,7 +1,7 @@
 import { useMemo, type ComponentType } from 'react';
-import { Clickable, showToast, Text, tokens } from '@discord-components/components';
-import * as Icons from '@discord-components/icons';
-import type { IconSize } from '@discord-components/icons';
+import { Clickable, showToast, Text, tokens } from '@discord-mana/components';
+import * as Icons from '@discord-mana/icons';
+import type { IconSize } from '@discord-mana/icons';
 import type { StoryGroup } from '../../types';
 import styles from './components.module.css';
 import { valueOptions } from './shared';

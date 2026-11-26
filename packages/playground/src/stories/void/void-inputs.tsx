@@ -9,7 +9,7 @@ import {
   type DatePickerProps,
   type TimeInputProps,
   type ListboxOption,
-} from '@discord-components/components';
+} from '@discord-mana/components';
 import type { StoryGroup } from '../../types';
 
 type DateValue = NonNullable<DatePickerProps['value']>;

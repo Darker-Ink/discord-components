@@ -1,5 +1,5 @@
 import { useId, useMemo, useState, type ComponentType, type CSSProperties, type ReactNode, type Ref } from 'react';
-import { CircleCheckIcon, CircleErrorIcon, type IconProps } from '@discord-components/icons';
+import { CircleCheckIcon, CircleErrorIcon, type IconProps } from '@discord-mana/icons';
 import { Badge, type BadgeType } from '../Badge';
 import { HiddenVisually } from '../HiddenVisually';
 import { Text } from '../Text';

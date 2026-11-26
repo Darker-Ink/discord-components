@@ -1,6 +1,6 @@
 import { memo, useContext, type ReactNode } from 'react';
 import clsx from 'clsx';
-import { AccessibilityPreferencesContext } from '@discord-components/components';
+import { AccessibilityPreferencesContext } from '@discord-mana/components';
 import { useMediaViewerZoom } from './MediaViewerZoomContext';
 import styles from './Chrome.module.css';
 

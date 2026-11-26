@@ -1,6 +1,6 @@
 import { memo, type MouseEvent } from 'react';
 import clsx from 'clsx';
-import { Clickable } from '@discord-components/components';
+import { Clickable } from '@discord-mana/components';
 import { Emoji } from '../Emoji/Emoji';
 import { useMessageResolvers } from '../MessageComponents/resolvers';
 import { getMessageReactionsId } from './MessageHeader';

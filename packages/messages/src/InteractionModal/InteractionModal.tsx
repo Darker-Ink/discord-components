@@ -9,7 +9,7 @@ import {
   ModalHeader,
   openModal,
   type ModalTransitionStateValue,
-} from '@discord-components/components';
+} from '@discord-mana/components';
 import { useMessageI18n } from '../Message/messageI18n';
 import { ComponentStateProvider, type ComponentState } from '../MessageComponents/ComponentState';
 import { createComponents } from '../MessageComponents/createComponents';

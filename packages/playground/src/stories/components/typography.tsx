@@ -9,7 +9,7 @@ import {
   Text,
   TextVariants,
   type TextVariant,
-} from '@discord-components/components';
+} from '@discord-mana/components';
 import type { StoryGroup } from '../../types';
 import styles from './components.module.css';
 import { valueOptions } from './shared';

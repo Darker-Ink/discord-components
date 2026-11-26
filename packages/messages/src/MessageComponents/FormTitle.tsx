@@ -1,6 +1,6 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import clsx from 'clsx';
-import { H } from '@discord-components/components';
+import { H } from '@discord-mana/components';
 import styles from './FormTitle.module.css';
 
 export type FormTitleTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'label' | 'legend';

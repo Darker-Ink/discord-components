@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
-import { ClockIcon, TimerIcon } from '@discord-components/icons';
+import { ClockIcon, TimerIcon } from '@discord-mana/icons';
 import { HiddenVisually } from '../HiddenVisually';
 import { useStableCallback } from '../hooks';
 import { useManaContext } from '../ManaContext';

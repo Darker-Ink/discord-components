@@ -1,6 +1,6 @@
 import { isValidElement, useMemo, type ComponentType, type ReactNode } from 'react';
 import clsx from 'clsx';
-import { CircleCheckIcon, CircleErrorIcon, type IconColor, type IconSize } from '@discord-components/icons';
+import { CircleCheckIcon, CircleErrorIcon, type IconColor, type IconSize } from '@discord-mana/icons';
 import { Text } from '../Text';
 import { tokens, useToken } from '../tokens';
 import { ToastEntityIcon, isToastEntity, type ToastEntity } from './ToastEntity';

@@ -10,7 +10,7 @@ import {
   type APIMessageComponentInteractionData,
   type APIUser,
   type MessageResolvers,
-} from '@discord-components/messages';
+} from '@discord-mana/messages';
 import type { StoryGroup } from '../../types';
 
 interface MessageFixtureData {

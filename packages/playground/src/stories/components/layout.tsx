@@ -22,7 +22,7 @@ import {
   type StackDirection,
   type StackJustify,
   type StackSpace,
-} from '@discord-components/components';
+} from '@discord-mana/components';
 import type { StoryGroup } from '../../types';
 import styles from './components.module.css';
 import { keyOptions, LOREM, valueOptions } from './shared';

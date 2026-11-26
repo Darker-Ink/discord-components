@@ -8,7 +8,7 @@ import {
   type APIMediaGalleryItem,
   type APIAttachment,
   type APIMessageAttachmentContext,
-} from '@discord-components/messages';
+} from '@discord-mana/messages';
 import type { Controls, Story, StoryGroup } from '../../types';
 
 interface AttachmentFixtureData {

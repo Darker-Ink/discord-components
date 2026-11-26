@@ -1,5 +1,5 @@
-import { Stack, Toast, tokens, type ToastEntity } from '@discord-components/components';
-import { CircleInformationIcon, StarIcon } from '@discord-components/icons';
+import { Stack, Toast, tokens, type ToastEntity } from '@discord-mana/components';
+import { CircleInformationIcon, StarIcon } from '@discord-mana/icons';
 import type { Control, StoryGroup } from '../../types';
 
 const GUILD_NAMES = ['Wumpus', 'Discord Staff', 'Design Systems Team'];

@@ -1,6 +1,6 @@
 import type { ComponentType, CSSProperties, HTMLAttributes } from 'react';
 import clsx from 'clsx';
-import type { IconProps } from '@discord-components/icons';
+import type { IconProps } from '@discord-mana/icons';
 import { Text } from '../Text';
 import { tokens } from '../tokens';
 import styles from './NumberBadge.module.css';

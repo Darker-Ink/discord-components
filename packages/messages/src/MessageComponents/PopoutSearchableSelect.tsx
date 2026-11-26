@@ -39,8 +39,8 @@ import {
   type FieldOwnProps,
   type ListScrollerHandle,
   type ReferencePosition,
-} from '@discord-components/components';
-import { ChevronSmallDownIcon, ChevronSmallUpIcon, CircleCheckIcon, XSmallIcon } from '@discord-components/icons';
+} from '@discord-mana/components';
+import { ChevronSmallDownIcon, ChevronSmallUpIcon, CircleCheckIcon, XSmallIcon } from '@discord-mana/icons';
 import { useMessageI18n } from '../Message/messageI18n';
 import styles from './PopoutSearchableSelect.module.css';
 

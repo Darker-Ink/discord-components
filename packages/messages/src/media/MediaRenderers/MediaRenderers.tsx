@@ -1,6 +1,6 @@
 import { useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode, type RefObject } from 'react';
 import clsx from 'clsx';
-import { FocusRing, Popout, Text } from '@discord-components/components';
+import { FocusRing, Popout, Text } from '@discord-mana/components';
 import { MediaLayoutType } from '../constants';
 import { useMediaContext } from '../MediaContext';
 import { LazyImageZoomable, type LazyImageZoomableProps } from '../LazyImage/LazyImageZoomable';

@@ -12,7 +12,7 @@ import {
 } from 'react';
 import clsx from 'clsx';
 import type { FocusRingProps } from 'react-focus-rings';
-import { CircleXIcon, EyeIcon, EyeSlashIcon, type IconProps } from '@discord-components/icons';
+import { CircleXIcon, EyeIcon, EyeSlashIcon, type IconProps } from '@discord-mana/icons';
 import { AccessibilityAnnouncer } from '../AccessibilityAnnouncer';
 import buttonStyles from '../Button/Button.module.css';
 import { CharacterCount } from '../CharacterCount';

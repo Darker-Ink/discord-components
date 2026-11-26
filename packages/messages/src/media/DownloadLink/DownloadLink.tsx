@@ -1,6 +1,6 @@
 import type { AnchorHTMLAttributes, MouseEvent } from 'react';
-import { Anchor } from '@discord-components/components';
-import { DownloadIcon } from '@discord-components/icons';
+import { Anchor } from '@discord-mana/components';
+import { DownloadIcon } from '@discord-mana/icons';
 import type { FocusRingProps } from 'react-focus-rings';
 import { useMediaContext } from '../MediaContext';
 

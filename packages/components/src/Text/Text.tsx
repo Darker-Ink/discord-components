@@ -1,6 +1,6 @@
 import type { CSSProperties, ElementType, HTMLAttributes, Ref } from 'react';
 import clsx from 'clsx';
-import { SemanticColors, type SemanticColor } from '@discord-components/tokens';
+import { SemanticColors, type SemanticColor } from '@discord-mana/tokens';
 import styles from './Text.module.css';
 import type { TextVariant } from './textVariants';
 import variantStyles from './TextVariants.module.css';

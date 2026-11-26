@@ -1,6 +1,6 @@
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
 import clsx from 'clsx';
-import { Spinner } from '@discord-components/components';
+import { Spinner } from '@discord-mana/components';
 import { ImageReadyState } from '../constants';
 import { placeholderToDataURL } from '../thumbhash';
 import styles from './Image.module.css';

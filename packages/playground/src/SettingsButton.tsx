@@ -9,9 +9,9 @@ import {
   MenuRadioItem,
   MenuSliderControl,
   Popout,
-} from '@discord-components/components';
-import { SettingsIcon } from '@discord-components/icons';
-import { ThemeTypes } from '@discord-components/tokens';
+} from '@discord-mana/components';
+import { SettingsIcon } from '@discord-mana/icons';
+import { ThemeTypes } from '@discord-mana/tokens';
 import { updateAppSettings, useAppSettings, type ThemeSetting } from './appSettings';
 import { ControlsLayout, playgroundStore } from './playgroundStore';
 

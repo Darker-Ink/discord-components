@@ -1,7 +1,7 @@
 import { useEffect, useImperativeHandle, useRef, useState, type KeyboardEvent, type Ref } from 'react';
 import clsx from 'clsx';
-import { Clickable } from '@discord-components/components';
-import { VoiceLowIcon, VoiceNormalIcon, VoiceXIcon } from '@discord-components/icons';
+import { Clickable } from '@discord-mana/components';
+import { VoiceLowIcon, VoiceNormalIcon, VoiceXIcon } from '@discord-mana/icons';
 import type { FocusRingProps } from 'react-focus-rings';
 import { useMediaContext } from '../MediaContext';
 import { MediaBar, MediaBarTypes, type MediaBarHandle } from './MediaBar';

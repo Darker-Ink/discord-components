@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CloseButton, Hamburger, PlayPauseButton, type ButtonSize } from '@discord-components/components';
+import { CloseButton, Hamburger, PlayPauseButton, type ButtonSize } from '@discord-mana/components';
 import type { StoryGroup } from '../../types';
 import { noop, valueOptions } from './shared';
 

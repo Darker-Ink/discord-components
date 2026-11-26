@@ -1,7 +1,7 @@
 import { memo, type ReactNode } from 'react';
 import clsx from 'clsx';
-import { Anchor } from '@discord-components/components';
-import { EyeIcon } from '@discord-components/icons';
+import { Anchor } from '@discord-mana/components';
+import { EyeIcon } from '@discord-mana/icons';
 import { createEmbeds, isInlineMediaEmbed } from '../Embed/createEmbed';
 import { EmbedType } from '../Embed/types';
 import { ComponentStatusLine, errorStatus, loadingStatus } from '../MessageComponents/ComponentStatus';

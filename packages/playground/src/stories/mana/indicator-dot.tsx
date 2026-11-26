@@ -7,8 +7,8 @@ import {
   type IndicatorDotCutout,
   type IndicatorDotSize,
   type IndicatorDotVariant,
-} from '@discord-components/components';
-import { ThemeTypes } from '@discord-components/tokens';
+} from '@discord-mana/components';
+import { ThemeTypes } from '@discord-mana/tokens';
 import type { StoryGroup } from '../../types';
 import styles from './indicator-dot.module.css';
 

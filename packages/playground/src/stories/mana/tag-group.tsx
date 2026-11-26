@@ -6,8 +6,8 @@ import {
   type TagGroupItem,
   type TagGroupLayout,
   type TagGroupSize,
-} from '@discord-components/components';
-import { TextWarningIcon } from '@discord-components/icons';
+} from '@discord-mana/components';
+import { TextWarningIcon } from '@discord-mana/icons';
 import type { StoryGroup } from '../../types';
 
 type Key = string | number;

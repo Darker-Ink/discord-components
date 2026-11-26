@@ -1,4 +1,4 @@
-import { PauseIcon, PlayIcon } from '@discord-components/icons';
+import { PauseIcon, PlayIcon } from '@discord-mana/icons';
 import { Button, type ButtonProps } from '../Button';
 import { useManaContext } from '../ManaContext';
 

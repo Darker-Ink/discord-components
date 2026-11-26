@@ -16,7 +16,7 @@ import {
 } from 'react';
 import clsx from 'clsx';
 import type { ColorResult, HSLColor as ReactColorHSL } from 'react-color';
-import { EyeDropperIcon } from '@discord-components/icons';
+import { EyeDropperIcon } from '@discord-mana/icons';
 import { Clickable } from '../Clickable';
 import { DialogAnnouncerTarget, useFocusLock } from '../Dialog';
 import { FocusRingScope } from '../FocusRing';

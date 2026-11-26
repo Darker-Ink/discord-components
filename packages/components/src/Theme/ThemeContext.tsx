@@ -1,6 +1,6 @@
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
 import clsx from 'clsx';
-import { ThemeTypes, type Theme } from '@discord-components/tokens';
+import { ThemeTypes, type Theme } from '@discord-mana/tokens';
 
 export type ThemeDensity = 'compact' | 'cozy' | 'default';
 

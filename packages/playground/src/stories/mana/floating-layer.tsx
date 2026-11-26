@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, FloatingLayer, Text, type FloatingLayerPlacement } from '@discord-components/components';
+import { Button, FloatingLayer, Text, type FloatingLayerPlacement } from '@discord-mana/components';
 import type { StoryGroup } from '../../types';
 import styles from './floating-layer.module.css';
 

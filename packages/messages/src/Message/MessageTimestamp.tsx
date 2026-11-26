@@ -1,6 +1,6 @@
 import { memo, useMemo, type ReactNode } from 'react';
 import clsx from 'clsx';
-import { Tooltip, useManaContext } from '@discord-components/components';
+import { Tooltip, useManaContext } from '@discord-mana/components';
 import { formatCalendarTimestamp, formatDate } from '../formatTimestamp';
 import { useMessageI18n } from './messageI18n';
 import styles from './Message.module.css';

@@ -53,10 +53,10 @@ importers:
 
   packages/components:
     dependencies:
-      '@discord-components/icons':
+      '@discord-mana/icons':
         specifier: workspace:*
         version: link:../icons
-      '@discord-components/tokens':
+      '@discord-mana/tokens':
         specifier: workspace:*
         version: link:../tokens
       '@floating-ui/react':
@@ -147,13 +147,13 @@ importers:
 
   packages/messages:
     dependencies:
-      '@discord-components/components':
+      '@discord-mana/components':
         specifier: workspace:*
         version: link:../components
-      '@discord-components/icons':
+      '@discord-mana/icons':
         specifier: workspace:*
         version: link:../icons
-      '@discord-components/tokens':
+      '@discord-mana/tokens':
         specifier: workspace:*
         version: link:../tokens
       '@react-spring/web':
@@ -181,16 +181,16 @@ importers:
 
   packages/playground:
     dependencies:
-      '@discord-components/components':
+      '@discord-mana/components':
         specifier: workspace:*
         version: link:../components
-      '@discord-components/icons':
+      '@discord-mana/icons':
         specifier: workspace:*
         version: link:../icons
-      '@discord-components/messages':
+      '@discord-mana/messages':
         specifier: workspace:*
         version: link:../messages
-      '@discord-components/tokens':
+      '@discord-mana/tokens':
         specifier: workspace:*
         version: link:../tokens
       '@internationalized/date':

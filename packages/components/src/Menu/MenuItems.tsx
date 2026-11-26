@@ -1,5 +1,5 @@
 import type { ComponentType, MouseEvent, ReactElement, ReactNode, Ref, UIEvent } from 'react';
-import type { IconProps } from '@discord-components/icons';
+import type { IconProps } from '@discord-mana/icons';
 import type { BadgeProps, BadgeType } from '../Badge';
 import type { MenuInteractionType } from './MenuContext';
 

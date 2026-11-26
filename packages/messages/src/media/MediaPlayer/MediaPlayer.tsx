@@ -17,9 +17,9 @@ import {
 } from 'react';
 import clsx from 'clsx';
 import { animated, useSpringValue } from '@react-spring/web';
-import { Clickable, FocusRingScope, ThemeProvider, createLayer } from '@discord-components/components';
-import { PauseIcon, PlayIcon } from '@discord-components/icons';
-import { ThemeTypes } from '@discord-components/tokens';
+import { Clickable, FocusRingScope, ThemeProvider, createLayer } from '@discord-mana/components';
+import { PauseIcon, PlayIcon } from '@discord-mana/icons';
+import { ThemeTypes } from '@discord-mana/tokens';
 import { MediaLayoutType } from '../constants';
 import { useMediaContext } from '../MediaContext';
 import { MediaInteractionContext } from '../MediaInteractionContext';

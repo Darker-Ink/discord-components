@@ -10,8 +10,8 @@ import {
   tokens,
   type ToastPosition,
   type ToastVariant,
-} from '@discord-components/components';
-import { CircleInformationIcon, CopyIcon, StarIcon } from '@discord-components/icons';
+} from '@discord-mana/components';
+import { CircleInformationIcon, CopyIcon, StarIcon } from '@discord-mana/icons';
 import type { StoryGroup } from '../../types';
 import { keyOptions, valueOptions } from './shared';
 

@@ -11,7 +11,7 @@ import {
   type TagGroupProps as AriaTagGroupProps,
   type TagProps as AriaTagProps,
 } from 'react-aria-components';
-import { XSmallIcon, type IconColor, type IconSize } from '@discord-components/icons';
+import { XSmallIcon, type IconColor, type IconSize } from '@discord-mana/icons';
 import { FieldContext } from '../Field';
 import { Text } from '../Text';
 import type { TextVariant } from '../Text';

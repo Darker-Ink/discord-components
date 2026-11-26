@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { isThemeDark, useManaContext } from '@discord-components/components';
+import { isThemeDark, useManaContext } from '@discord-mana/components';
 import { EmbedType, type MessageEmbed } from './types';
 import styles from './Embed.module.css';
 import playStationStyles from './PlayStationEmbed.module.css';

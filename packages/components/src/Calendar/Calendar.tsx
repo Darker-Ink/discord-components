@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { Calendar as AriaCalendar, Heading, type DateValue } from 'react-aria-components';
-import { ChevronSmallLeftIcon, ChevronSmallRightIcon } from '@discord-components/icons';
+import { ChevronSmallLeftIcon, ChevronSmallRightIcon } from '@discord-mana/icons';
 import { IconButton } from '../IconButton';
 import { useManaContext } from '../ManaContext';
 import { Text } from '../Text';

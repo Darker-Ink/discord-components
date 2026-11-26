@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { RangeCalendar as AriaRangeCalendar, type DateRange, type DateValue } from 'react-aria-components';
-import { ChevronLargeLeftIcon, ChevronLargeRightIcon } from '@discord-components/icons';
+import { ChevronLargeLeftIcon, ChevronLargeRightIcon } from '@discord-mana/icons';
 import { CalendarGrid } from '../Calendar/CalendarGrid';
 import styles from '../Calendar/Calendar.module.css';
 import { IconButton } from '../IconButton';

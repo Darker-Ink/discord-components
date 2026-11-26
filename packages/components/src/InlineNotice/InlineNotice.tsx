@@ -1,6 +1,6 @@
 import { useEffect, useId, type ReactNode } from 'react';
 import clsx from 'clsx';
-import { CircleCheckIcon, CircleErrorIcon, CircleInformationIcon, WarningIcon } from '@discord-components/icons';
+import { CircleCheckIcon, CircleErrorIcon, CircleInformationIcon, WarningIcon } from '@discord-mana/icons';
 import { AccessibilityAnnouncer } from '../AccessibilityAnnouncer';
 import { Button } from '../Button';
 import { CloseButton } from '../CloseButton';

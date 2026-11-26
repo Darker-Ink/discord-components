@@ -1,5 +1,5 @@
 import { memo, useCallback, type MouseEvent, type MouseEventHandler, type ReactNode } from 'react';
-import { Anchor, type AnchorProps } from '@discord-components/components';
+import { Anchor, type AnchorProps } from '@discord-mana/components';
 
 /** Drops script-running urls, like the client's link sanitizer. */
 export const sanitizeUrl = (url: string | undefined) => {

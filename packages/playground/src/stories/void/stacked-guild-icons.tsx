@@ -1,4 +1,4 @@
-import { GuildIconSizes, StackedGuildIcons, type GuildIconGuild } from '@discord-components/components';
+import { GuildIconSizes, StackedGuildIcons, type GuildIconGuild } from '@discord-mana/components';
 import type { StoryGroup } from '../../types';
 
 // Discord's story shows the first servers in the client's guild store; these stand in for them.

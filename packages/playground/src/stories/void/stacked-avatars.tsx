@@ -1,4 +1,4 @@
-import { AvatarSizes, StackedAvatars, type AvatarSize, type StackedAvatarsUser } from '@discord-components/components';
+import { AvatarSizes, StackedAvatars, type AvatarSize, type StackedAvatarsUser } from '@discord-mana/components';
 import type { StoryGroup } from '../../types';
 
 const DEFAULT_AVATARS = [0, 1, 2, 3, 4, 5].map((index) => `/void/default-avatar-${index}.png`);

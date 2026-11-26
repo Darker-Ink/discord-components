@@ -6,7 +6,7 @@ import {
   type CountdownAppearance,
   type CountdownSize,
   type CountdownVariant,
-} from '@discord-components/components';
+} from '@discord-mana/components';
 import type { Controls, StoryGroup } from '../../types';
 import { CountdownExample, useEndsAt } from './shared/countdownExamples';
 import styles from './countdown.module.css';

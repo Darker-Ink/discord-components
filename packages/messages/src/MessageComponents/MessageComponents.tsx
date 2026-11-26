@@ -1,6 +1,6 @@
 import { Fragment, useMemo, type ReactNode } from 'react';
 import clsx from 'clsx';
-import { HiddenVisually } from '@discord-components/components';
+import { HiddenVisually } from '@discord-mana/components';
 import { ComponentButton } from './ComponentButton';
 import { AutoMeasuredNestedContainer, ComponentLayoutRoot, useMeasuredWidth } from './ComponentLayout';
 import { ComponentStateProvider, type OnMessageComponentInteraction } from './ComponentState';

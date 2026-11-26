@@ -11,7 +11,7 @@ import {
   type DatePickerProps as AriaDatePickerProps,
   type DateValue,
 } from 'react-aria-components';
-import { CalendarIcon } from '@discord-components/icons';
+import { CalendarIcon } from '@discord-mana/icons';
 import { Calendar } from '../Calendar';
 import { Field, splitFieldProps, type FieldOwnProps } from '../Field';
 import { useDropdownFloating } from '../hooks';

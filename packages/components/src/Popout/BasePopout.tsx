@@ -1,5 +1,5 @@
 import { Component, createContext, createRef, Fragment, type ReactNode } from 'react';
-import type { Theme } from '@discord-components/tokens';
+import type { Theme } from '@discord-mana/tokens';
 import { HeadingLevel } from '../HeadingLevel';
 import {
   appLayerContext,

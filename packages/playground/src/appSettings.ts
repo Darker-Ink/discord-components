@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react';
-import type { ReducedMotionSetting, UIDensity } from '@discord-components/components';
-import { ThemeTypes, type Theme } from '@discord-components/tokens';
+import type { ReducedMotionSetting, UIDensity } from '@discord-mana/components';
+import { ThemeTypes, type Theme } from '@discord-mana/tokens';
 import { readLocation } from './url';
 
 export type ThemeSetting = Theme | 'system';

@@ -1,6 +1,6 @@
 import { createContext, useContext, type ReactNode } from 'react';
 import { I18nProvider } from 'react-aria-components';
-import { ThemeTypes, type Theme } from '@discord-components/tokens';
+import { ThemeTypes, type Theme } from '@discord-mana/tokens';
 
 // Strings Mana components render on their own. Discord's client fills these from its translations.
 export const DEFAULT_MANA_I18N = {

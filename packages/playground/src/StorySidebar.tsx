@@ -1,5 +1,5 @@
 import { Fragment, useMemo, useState } from 'react';
-import { SearchBar, Stack, Text } from '@discord-components/components';
+import { SearchBar, Stack, Text } from '@discord-mana/components';
 import { StoryTabBar, StoryTabBarHeader, StoryTabBarItem, StoryTabBarSeparator } from './sidebar/StoryTabBar';
 import type { StoryGroup } from './types';
 

@@ -11,7 +11,7 @@ import {
   Popout,
   type MenuItemColor,
   type MenuVariant,
-} from '@discord-components/components';
+} from '@discord-mana/components';
 import {
   CopyIcon,
   LinkExternalSmallIcon,
@@ -19,7 +19,7 @@ import {
   PinIcon,
   SettingsIcon,
   TrashIcon,
-} from '@discord-components/icons';
+} from '@discord-mana/icons';
 import type { StoryGroup } from '../../types';
 import styles from './menu.module.css';
 

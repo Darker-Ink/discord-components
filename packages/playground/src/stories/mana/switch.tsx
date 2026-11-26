@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Switch } from '@discord-components/components';
+import { Switch } from '@discord-mana/components';
 import type { StoryGroup } from '../../types';
 
 interface SwitchStoryProps {

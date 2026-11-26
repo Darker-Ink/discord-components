@@ -14,7 +14,7 @@ import {
   type Ref,
 } from 'react';
 import clsx from 'clsx';
-import { ChevronSmallLeftIcon, ChevronSmallRightIcon, iconA11yProps, type IconColor } from '@discord-components/icons';
+import { ChevronSmallLeftIcon, ChevronSmallRightIcon, iconA11yProps, type IconColor } from '@discord-mana/icons';
 import { Clickable } from '../Clickable';
 import { FocusRingScope } from '../FocusRing';
 import { Heading } from '../Heading';

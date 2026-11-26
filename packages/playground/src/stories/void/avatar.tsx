@@ -1,4 +1,4 @@
-import { Avatar, AvatarSizes, StatusTypes, type AvatarSize, type StatusType } from '@discord-components/components';
+import { Avatar, AvatarSizes, StatusTypes, type AvatarSize, type StatusType } from '@discord-mana/components';
 import type { StoryGroup } from '../../types';
 
 // Discord's story shows the signed-in user's avatar; without an account this is the first default avatar.

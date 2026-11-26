@@ -1,4 +1,4 @@
-import { Card, ScrollerAuto, Text, TextVariants, type TextProps } from '@discord-components/components';
+import { Card, ScrollerAuto, Text, TextVariants, type TextProps } from '@discord-mana/components';
 import type { StoryGroup } from '../../types';
 import styles from './text.module.css';
 

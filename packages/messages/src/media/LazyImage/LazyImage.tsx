@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FocusEvent, type MouseEvent, type ReactNode, type Ref } from 'react';
-import { useMergeRefs } from '@discord-components/components';
+import { useMergeRefs } from '@discord-mana/components';
 import { ImageReadyState, MediaLayoutType } from '../constants';
 import { Image, type ImageProps, type ImageRenderProps } from '../Image/Image';
 import { GifTag } from '../GifTag/GifTag';

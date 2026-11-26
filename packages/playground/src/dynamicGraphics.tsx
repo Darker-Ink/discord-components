@@ -1,5 +1,5 @@
 import { lazy, type ComponentType } from 'react';
-import { Text } from '@discord-components/components';
+import { Text } from '@discord-mana/components';
 import './dynamicGraphics.css';
 
 // The keys of the app components Discord's client registers as ManaContext dynamicGraphicComponents.

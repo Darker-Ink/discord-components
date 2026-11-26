@@ -1,5 +1,5 @@
 import { useCallback, type ReactNode } from 'react';
-import { BackdropStyles, openModal, type ModalContextKey } from '@discord-components/components';
+import { BackdropStyles, openModal, type ModalContextKey } from '@discord-mana/components';
 import { MediaContextProvider } from '../media/MediaContext';
 import type { MediaViewerOpenOptions } from '../media/mediaViewerTypes';
 import { MediaViewerModal, type MediaViewerModalProps } from './MediaViewerModal';

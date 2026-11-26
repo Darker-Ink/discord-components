@@ -10,8 +10,8 @@ import {
   type TabsKeyboardActivation,
   type TabsPanelAnimation,
   type TabsVariant,
-} from '@discord-components/components';
-import { ClydeIcon } from '@discord-components/icons';
+} from '@discord-mana/components';
+import { ClydeIcon } from '@discord-mana/icons';
 import type { StoryGroup } from '../../types';
 
 const AccountPanel = () => (

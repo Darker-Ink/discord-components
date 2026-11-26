@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Button, Checkbox, IconButton, ToggleIconButton, Toolbar, Tooltip } from '@discord-components/components';
-import { ClydeIcon, MicrophoneIcon, MicrophoneSlashIcon } from '@discord-components/icons';
+import { Button, Checkbox, IconButton, ToggleIconButton, Toolbar, Tooltip } from '@discord-mana/components';
+import { ClydeIcon, MicrophoneIcon, MicrophoneSlashIcon } from '@discord-mana/icons';
 import type { StoryGroup } from '../../types';
 
 const ToolbarStory = () => {

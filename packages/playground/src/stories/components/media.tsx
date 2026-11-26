@@ -10,7 +10,7 @@ import {
   type LottieRenderer,
   type RiveAlignment,
   type RiveFit,
-} from '@discord-components/components';
+} from '@discord-mana/components';
 import {
   FileAttachment,
   GifTag,
@@ -27,7 +27,7 @@ import {
   ObscureReason,
   type MediaPlayerType,
   type ObscuredContentType,
-} from '@discord-components/messages';
+} from '@discord-mana/messages';
 import type { CSSProperties, ReactNode } from 'react';
 import { DynamicGraphicComponent } from '../../dynamicGraphics';
 import type { StoryGroup } from '../../types';

@@ -10,7 +10,7 @@ import {
   SparklesIcon,
   StarIcon,
   TagIcon,
-} from '@discord-components/icons';
+} from '@discord-mana/icons';
 import {
   Badge,
   Chip,
@@ -19,7 +19,7 @@ import {
   type BadgeVariant,
   type ChipProps,
   type ChipVariant,
-} from '@discord-components/components';
+} from '@discord-mana/components';
 import type { StoryGroup } from '../../types';
 
 const CHIP_ICONS: Record<string, ChipProps['icon']> = {

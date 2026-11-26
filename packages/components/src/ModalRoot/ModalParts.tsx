@@ -1,6 +1,6 @@
 import { useContext, type ReactNode } from 'react';
 import clsx from 'clsx';
-import { XSmallIcon } from '@discord-components/icons';
+import { XSmallIcon } from '@discord-mana/icons';
 import { ModalContext } from '../Dialog/ModalContext';
 import type { FocusRingProps } from '../FocusRing';
 import {

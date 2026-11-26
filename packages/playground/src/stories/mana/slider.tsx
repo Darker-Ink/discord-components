@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Slider, Stack, Text } from '@discord-components/components';
+import { Slider, Stack, Text } from '@discord-mana/components';
 import type { StoryGroup } from '../../types';
 
 const PLAYBACK_SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 2];

@@ -10,7 +10,7 @@ import {
   Stack,
   type GuildIconSize,
   type NavItemBackgroundStyle,
-} from '@discord-components/components';
+} from '@discord-mana/components';
 import {
   BellIcon,
   CompassIcon,
@@ -20,7 +20,7 @@ import {
   TextIcon,
   ThreadIcon,
   UserIcon,
-} from '@discord-components/icons';
+} from '@discord-mana/icons';
 import type { StoryGroup } from '../../types';
 import styles from './components.module.css';
 import { noop, valueOptions } from './shared';

@@ -8,9 +8,9 @@ import {
   type ReactNode,
 } from 'react';
 import clsx from 'clsx';
-import { Clickable, useManaContext } from '@discord-components/components';
-import { XSmallIcon } from '@discord-components/icons';
-import { textVariantClassNames as textVariants } from '@discord-components/components';
+import { Clickable, useManaContext } from '@discord-mana/components';
+import { XSmallIcon } from '@discord-mana/icons';
+import { textVariantClassNames as textVariants } from '@discord-mana/components';
 import { formatCalendarTimestamp } from '../formatTimestamp';
 import { useEmbedI18n } from './embedI18n';
 import { useMediaContext } from '../media/MediaContext';

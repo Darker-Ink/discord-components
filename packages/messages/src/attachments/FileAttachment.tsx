@@ -1,6 +1,6 @@
 import type { MouseEvent, ReactNode } from 'react';
 import clsx from 'clsx';
-import { Anchor, Text } from '@discord-components/components';
+import { Anchor, Text } from '@discord-mana/components';
 import { useMediaContext } from '../media/MediaContext';
 import { formatFileSize, getFileType } from '../media/utils/filesize';
 import { FILE_ICONS } from './fileIcons';

@@ -1,5 +1,5 @@
 import { useContext, useLayoutEffect, useRef, type Ref, type VideoHTMLAttributes } from 'react';
-import { AccessibilityPreferencesContext } from '@discord-components/components';
+import { AccessibilityPreferencesContext } from '@discord-mana/components';
 import { MediaLayoutType } from '../constants';
 
 export interface VideoProps extends VideoHTMLAttributes<HTMLVideoElement> {

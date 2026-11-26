@@ -1,5 +1,5 @@
 import { useLayoutEffect, useSyncExternalStore } from 'react';
-import { themeClassName, type Theme } from '@discord-components/tokens';
+import { themeClassName, type Theme } from '@discord-mana/tokens';
 
 export type UIDensity = 'compact' | 'default' | 'cozy';
 

@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import type { StatusType } from '@discord-components/components';
+import type { StatusType } from '@discord-mana/components';
 
 // Users, roles and channels the client reads from its stores. Apps pass resolvers (and the message's
 // `resolved` data is used as a fallback) so selects, mentions and headers can show names, avatars and colours.

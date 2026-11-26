@@ -8,7 +8,7 @@ import {
   RadioGroup as ManaRadioGroup,
   TextArea,
   TextInput as ManaTextInput,
-} from '@discord-components/components';
+} from '@discord-mana/components';
 import { useMessageI18n } from '../Message/messageI18n';
 import { useComponentContext, useComponentParents, useComponentState, type ComponentState } from './ComponentState';
 import { FileUpload } from './FileUpload';

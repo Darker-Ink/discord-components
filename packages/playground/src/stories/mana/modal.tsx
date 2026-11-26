@@ -23,8 +23,8 @@ import {
   type ModalNoticeProps,
   type ModalRenderProps,
   type MultiStepModalStep,
-} from '@discord-components/components';
-import { TextIcon } from '@discord-components/icons';
+} from '@discord-mana/components';
+import { TextIcon } from '@discord-mana/icons';
 import { DynamicGraphicComponent } from '../../dynamicGraphics';
 import type { StoryGroup } from '../../types';
 
@@ -440,7 +440,7 @@ const DynamicGraphicModalStory = ({ dynamicText, ...props }: any) => {
         onClick={() =>
           openModalLazy(
             async () => {
-              const { ExpressiveModal: LazyExpressiveModal } = await import('@discord-components/components');
+              const { ExpressiveModal: LazyExpressiveModal } = await import('@discord-mana/components');
               // A render function for the modal stack, not a component.
               // eslint-disable-next-line react/display-name
               return (renderProps) => (

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, closeModal } from '@discord-components/components';
+import { Button, closeModal } from '@discord-mana/components';
 import {
   MediaContextProvider,
   MediaViewerProvider,
@@ -15,7 +15,7 @@ import {
   type MessageResolvers,
   type APIModalInteractionResponseCallbackData,
   type InteractionModalApplication,
-} from '@discord-components/messages';
+} from '@discord-mana/messages';
 import type { StoryGroup } from '../../types';
 import { BASE_MESSAGE, ChatList, InteractionLog } from './message';
 

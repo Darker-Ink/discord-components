@@ -9,7 +9,7 @@ import {
   type TooltipPosition,
   type RichTooltipAssetSize,
   type RichTooltipPadding,
-} from '@discord-components/components';
+} from '@discord-mana/components';
 import type { Controls, StoryGroup } from '../../types';
 
 const richTooltipAsset =

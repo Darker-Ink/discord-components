@@ -1,6 +1,6 @@
 import type { ComponentType, ReactNode } from 'react';
 import clsx from 'clsx';
-import type { IconColor, IconProps } from '@discord-components/icons';
+import type { IconColor, IconProps } from '@discord-mana/icons';
 import { Text } from '../Text';
 import styles from './Chip.module.css';
 

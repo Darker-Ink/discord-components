@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useSyncExternalStore } from 'react';
 import clsx from 'clsx';
-import { AppRoot, BlobMask, HeaderBar, NavItem, ScrollerThin, Tooltip } from '@discord-components/components';
-import { ThemeTypes, type Theme } from '@discord-components/tokens';
+import { AppRoot, BlobMask, HeaderBar, NavItem, ScrollerThin, Tooltip } from '@discord-mana/components';
+import { ThemeTypes, type Theme } from '@discord-mana/tokens';
 import { useAppSettings, type ThemeSetting } from './appSettings';
 import { dynamicGraphicComponents } from './dynamicGraphics';
 import { getDefaultProps } from './ControlsPanel';

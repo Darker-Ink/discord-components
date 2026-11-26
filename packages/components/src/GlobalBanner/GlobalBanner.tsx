@@ -9,7 +9,7 @@ import {
   type TransitionEvent,
 } from 'react';
 import clsx from 'clsx';
-import { ThemeTypes } from '@discord-components/tokens';
+import { ThemeTypes } from '@discord-mana/tokens';
 import {
   CircleErrorIcon,
   CircleInformationIcon,
@@ -17,7 +17,7 @@ import {
   VideoIcon,
   VoiceNormalIcon,
   WarningIcon,
-} from '@discord-components/icons';
+} from '@discord-mana/icons';
 import { AccessibilityAnnouncer } from '../AccessibilityAnnouncer';
 import { Button, type ButtonProps } from '../Button';
 import { CloseButton } from '../CloseButton';

@@ -13,7 +13,7 @@ import {
   type RefObject,
 } from 'react';
 import clsx from 'clsx';
-import { CheckmarkSmallBoldIcon } from '@discord-components/icons';
+import { CheckmarkSmallBoldIcon } from '@discord-mana/icons';
 import { Checkbox } from '../Checkbox';
 import { ListAuto, type ListRowItem, type ListScrollerHandle, type ListSectionItem } from '../ListScroller';
 import {

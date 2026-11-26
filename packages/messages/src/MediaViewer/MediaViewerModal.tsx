@@ -34,7 +34,7 @@ import {
   MenuItem,
   Popout,
   showToast,
-} from '@discord-components/components';
+} from '@discord-mana/components';
 import {
   ArrowLargeLeftIcon,
   ArrowLargeRightIcon,
@@ -49,8 +49,8 @@ import {
   WindowLaunchIcon,
   XSmallIcon,
   type IconProps,
-} from '@discord-components/icons';
-import { ThemeTypes } from '@discord-components/tokens';
+} from '@discord-mana/icons';
+import { ThemeTypes } from '@discord-mana/tokens';
 import { MediaLayoutType } from '../media/constants';
 import { useMediaContext } from '../media/MediaContext';
 import { LazyImage } from '../media/LazyImage/LazyImage';

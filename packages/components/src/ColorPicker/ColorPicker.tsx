@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode, Ref } from 'react';
 import clsx from 'clsx';
-import { CheckmarkLargeIcon, PencilIcon } from '@discord-components/icons';
+import { CheckmarkLargeIcon, PencilIcon } from '@discord-mana/icons';
 import { FocusRing } from '../FocusRing';
 import {
   ListNavigatorContainer,

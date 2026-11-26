@@ -1,4 +1,4 @@
-import { Text } from '@discord-components/components';
+import { Text } from '@discord-mana/components';
 import type { SelectOption, StoryGroup } from '../../types';
 
 // Discord's story lists the components its asset pipeline generates for animated assets. The build has none,

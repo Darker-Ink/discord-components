@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import { Clickable, Text, tokens, useManaContext } from '@discord-components/components';
-import { ArrowAngleRightUpIcon, ChevronSmallRightIcon } from '@discord-components/icons';
+import { Clickable, Text, tokens, useManaContext } from '@discord-mana/components';
+import { ArrowAngleRightUpIcon, ChevronSmallRightIcon } from '@discord-mana/icons';
 import { formatCalendarTimestamp } from '../formatTimestamp';
 import { createResolver, useMessageResolvers } from '../MessageComponents/resolvers';
 import { getSnowflakeTimestamp, MessageContent, useMessageRenderedContent } from './MessageContent';

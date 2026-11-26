@@ -1,6 +1,6 @@
 import { type KeyboardEvent, type ReactNode } from 'react';
 import clsx from 'clsx';
-import { Clickable, Text } from '@discord-components/components';
+import { Clickable, Text } from '@discord-mana/components';
 import styles from './StoryTabBar.module.css';
 
 // Discord's playground lists stories in the client's legacy TabBar: a vertical `side` bar with the grey

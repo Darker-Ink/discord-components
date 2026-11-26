@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState, type ComponentType, type ReactNode } from 'react';
 import clsx from 'clsx';
-import type { IconProps } from '@discord-components/icons';
+import type { IconProps } from '@discord-mana/icons';
 import { Badge, toBadgeProps, type BadgeType } from '../Badge';
 import { CloseButton } from '../CloseButton';
 import { GradientWrapper, type GradientColorName } from '../GradientWrapper';

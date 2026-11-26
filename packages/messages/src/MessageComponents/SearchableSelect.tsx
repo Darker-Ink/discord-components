@@ -9,7 +9,7 @@ import {
   type ReactNode,
 } from 'react';
 import clsx from 'clsx';
-import { Avatar, AvatarSizes, StatusTypes } from '@discord-components/components';
+import { Avatar, AvatarSizes, StatusTypes } from '@discord-mana/components';
 import { BotTag, BotTagTypes } from '../Message/BotTag';
 import {
   AnnouncementsIcon,
@@ -28,7 +28,7 @@ import {
   UserIcon,
   VoiceNormalIcon,
   type IconProps,
-} from '@discord-components/icons';
+} from '@discord-mana/icons';
 import { useMessageI18n } from '../Message/messageI18n';
 import { ComponentStatusLine, errorStatus } from './ComponentStatus';
 import { ComponentVisualState, useComponentContext, useComponentState, type SelectedOption } from './ComponentState';

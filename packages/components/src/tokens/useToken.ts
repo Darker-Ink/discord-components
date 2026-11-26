@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import type { Theme } from '@discord-components/tokens';
+import type { Theme } from '@discord-mana/tokens';
 import { AccessibilityPreferencesContext } from '../AccessibilityPreferences';
 import { useManaContext } from '../ManaContext';
 import type { TokenContext } from './tokens';

@@ -1,7 +1,7 @@
 import { useContext, type MouseEventHandler, type SVGProps } from 'react';
 import clsx from 'clsx';
-import { Clickable } from '@discord-components/components';
-import { PlayIcon } from '@discord-components/icons';
+import { Clickable } from '@discord-mana/components';
+import { PlayIcon } from '@discord-mana/icons';
 import { useEmbedI18n } from './embedI18n';
 import { useMediaContext } from '../media/MediaContext';
 import { MediaInteractionContext } from '../media/MediaInteractionContext';

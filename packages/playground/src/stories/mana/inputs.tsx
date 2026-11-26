@@ -18,8 +18,8 @@ import {
   type TextAreaProps,
   type TextInputAccessory,
   type TextInputProps,
-} from '@discord-components/components';
-import { AtIcon, PaintbrushThinIcon, PlusSmallIcon } from '@discord-components/icons';
+} from '@discord-mana/components';
+import { AtIcon, PaintbrushThinIcon, PlusSmallIcon } from '@discord-mana/icons';
 import type { StoryGroup } from '../../types';
 
 const noop = () => {};

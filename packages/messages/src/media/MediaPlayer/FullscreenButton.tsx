@@ -1,7 +1,7 @@
 import { useSyncExternalStore, type ComponentType, type MouseEvent } from 'react';
 import clsx from 'clsx';
-import { FocusRing, Tooltip } from '@discord-components/components';
-import { FullscreenEnterIcon, FullscreenExitIcon, type IconProps, type IconSize } from '@discord-components/icons';
+import { FocusRing, Tooltip } from '@discord-mana/components';
+import { FullscreenEnterIcon, FullscreenExitIcon, type IconProps, type IconSize } from '@discord-mana/icons';
 import type { FocusRingProps } from 'react-focus-rings';
 import { useMediaContext } from '../MediaContext';
 import { isFullscreen } from './fullscreen';

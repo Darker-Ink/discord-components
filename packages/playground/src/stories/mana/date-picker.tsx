@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { getLocalTimeZone, parseDate, today, type DateValue } from '@internationalized/date';
 import { format } from 'date-fns';
-import { Button, DatePicker, Stack } from '@discord-components/components';
+import { Button, DatePicker, Stack } from '@discord-mana/components';
 import type { StoryGroup } from '../../types';
 
 interface DatePickerStoryProps {

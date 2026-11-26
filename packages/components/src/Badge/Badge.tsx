@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react';
 import clsx from 'clsx';
-import type { IconProps } from '@discord-components/icons';
+import type { IconProps } from '@discord-mana/icons';
 import { useManaContext } from '../ManaContext';
 import { Text } from '../Text';
 import styles from './Badge.module.css';

@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState, type ComponentType } from 'react';
 import clsx from 'clsx';
 import { Checkbox as AriaCheckbox } from 'react-aria-components';
-import { CheckmarkSmallBoldIcon, type IconProps } from '@discord-components/icons';
+import { CheckmarkSmallBoldIcon, type IconProps } from '@discord-mana/icons';
 import { FocusRing } from '../FocusRing';
 import { Text } from '../Text';
 import textVariantStyles from '../Text/TextVariants.module.css';

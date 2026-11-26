@@ -1,6 +1,6 @@
 import type { HTMLAttributes } from 'react';
 import clsx from 'clsx';
-import { Text } from '@discord-components/components';
+import { Text } from '@discord-mana/components';
 import styles from './FormText.module.css';
 
 export const FormTextTypes = {

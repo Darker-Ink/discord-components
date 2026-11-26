@@ -1,7 +1,7 @@
 import { memo, useMemo, type MouseEventHandler, type ReactNode } from 'react';
 import clsx from 'clsx';
-import { Clickable, H, Tooltip } from '@discord-components/components';
-import { BellZIcon } from '@discord-components/icons';
+import { Clickable, H, Tooltip } from '@discord-mana/components';
+import { BellZIcon } from '@discord-mana/icons';
 import {
   createResolver,
   useMessageResolvers,

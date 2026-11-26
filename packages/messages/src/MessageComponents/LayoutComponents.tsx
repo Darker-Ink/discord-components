@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
 import clsx from 'clsx';
-import { Text } from '@discord-components/components';
+import { Text } from '@discord-mana/components';
 import { getEmbedColor } from '../Embed/Embed';
 import { useRenderMarkdown } from '../Message/markdown';
 import { useMessageI18n } from '../Message/messageI18n';

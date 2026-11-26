@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Button, RadioGroup, Stack, Text, type RadioGroupOption } from '@discord-components/components';
-import { CircleInformationIcon } from '@discord-components/icons';
+import { Button, RadioGroup, Stack, Text, type RadioGroupOption } from '@discord-mana/components';
+import { CircleInformationIcon } from '@discord-mana/icons';
 import type { StoryGroup } from '../../types';
 
 interface RadioGroupStoryProps {

@@ -12,7 +12,7 @@ import {
   type RefObject,
 } from 'react';
 import clsx from 'clsx';
-import { ChevronSmallRightIcon } from '@discord-components/icons';
+import { ChevronSmallRightIcon } from '@discord-mana/icons';
 import { AccessibilityPreferencesContext } from '../AccessibilityPreferences';
 import { Badge } from '../Badge';
 import { Checkbox } from '../Checkbox';

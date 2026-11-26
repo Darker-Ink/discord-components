@@ -1,5 +1,5 @@
 {
-  "name": "@discord-components/playground",
+  "name": "@discord-mana/playground",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -9,10 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@discord-components/components": "workspace:*",
-    "@discord-components/icons": "workspace:*",
-    "@discord-components/messages": "workspace:*",
-    "@discord-components/tokens": "workspace:*",
+    "@discord-mana/components": "workspace:*",
+    "@discord-mana/icons": "workspace:*",
+    "@discord-mana/messages": "workspace:*",
+    "@discord-mana/tokens": "workspace:*",
     "@internationalized/date": "3.12.4",
     "chroma-js": "2.4.2",
     "clsx": "^2.1.1",

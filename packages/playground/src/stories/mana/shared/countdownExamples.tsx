@@ -4,7 +4,7 @@ import {
   type CountdownAppearance,
   type CountdownSize,
   type CountdownVariant,
-} from '@discord-components/components';
+} from '@discord-mana/components';
 
 // About two days and four hours, the default end time of the countdown stories.
 export const useEndsAt = (msFromNow = 189958e3) => {

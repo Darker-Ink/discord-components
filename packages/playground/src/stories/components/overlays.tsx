@@ -29,7 +29,7 @@ import {
   type ModalScrollbarType,
   type ModalSizeValue,
   type PopoutAnimationType,
-} from '@discord-components/components';
+} from '@discord-mana/components';
 import type { StoryGroup } from '../../types';
 import styles from './components.module.css';
 import { keyOptions, LOREM, noop, valueOptions } from './shared';

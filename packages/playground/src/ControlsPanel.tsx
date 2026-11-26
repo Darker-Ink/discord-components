@@ -1,6 +1,6 @@
 import { Fragment, type KeyboardEvent } from 'react';
 import chroma from 'chroma-js';
-import { Checkbox, Select, Slider, Stack, Text, TextInput, type ListboxOption } from '@discord-components/components';
+import { Checkbox, Select, Slider, Stack, Text, TextInput, type ListboxOption } from '@discord-mana/components';
 import styles from './Playground.module.css';
 import type { Controls, SelectOption } from './types';
 
