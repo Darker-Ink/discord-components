@@ -1,0 +1,5 @@
+{
+  "sample": true,
+  "data": { "maxCharacterCount": 40 },
+  "steps": [{ "click": true }, { "type": "this message is getting rather long now" }]
+}

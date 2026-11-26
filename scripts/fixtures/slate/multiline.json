@@ -1,0 +1,12 @@
+{
+  "sample": true,
+  "data": {},
+  "steps": [
+    { "click": true },
+    { "type": "line one" },
+    { "press": "Shift+Enter" },
+    { "type": "line two" },
+    { "press": "Shift+Enter" },
+    { "type": "line three" }
+  ]
+}

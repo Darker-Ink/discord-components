@@ -1,0 +1,5 @@
+{
+  "sample": true,
+  "data": {},
+  "steps": [{ "click": true }, { "type": "see https://discord.com and [docs](https://discord.com/developers) " }]
+}

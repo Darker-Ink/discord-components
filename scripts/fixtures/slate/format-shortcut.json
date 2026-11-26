@@ -1,0 +1,5 @@
+{
+  "sample": true,
+  "data": {},
+  "steps": [{ "click": true }, { "type": "make this bold" }, { "press": "Shift+Home" }, { "press": "Control+b" }]
+}

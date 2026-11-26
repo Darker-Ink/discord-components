@@ -2,7 +2,78 @@ import { useMemo, useState } from 'react';
 import { Text } from '@discord-mana/components';
 import { ChannelTextArea, ChatInputTypes, type ChatInputTypeName } from '@discord-mana/slate';
 import type { Controls, StoryGroup } from '../../types';
-import { SAMPLE_EDITOR_DATA, createEditorResolvers } from './text-area-data';
+import { SAMPLE_EDITOR_DATA, createEditorResolvers, type EditorFixtureData } from './text-area-data';
+
+// Fixtures shared with scripts/compare-slate.mjs: the same data renders Discord's chat input there.
+interface SlateFixture {
+  sample?: boolean;
+  data: EditorFixtureData & {
+    type?: ChatInputTypeName;
+    value?: string;
+    placeholder?: string;
+    disabled?: boolean;
+    maxCharacterCount?: number;
+  };
+}
+
+const fixtureFiles = import.meta.glob<SlateFixture>('../../../../../scripts/fixtures/slate/*.json', {
+  eager: true,
+  import: 'default',
+});
+
+const ASSETS = `${window.location.origin}/messages`;
+const withAssets = <T,>(value: T): T => JSON.parse(JSON.stringify(value).replaceAll('{{assets}}', ASSETS));
+const fileName = (file: string) =>
+  file
+    .split('/')
+    .pop()!
+    .replace(/\.json$/, '');
+const sample = Object.entries(fixtureFiles).find(([file]) => fileName(file) === '_sample')?.[1] as unknown as
+  EditorFixtureData | undefined;
+
+const fixtures = Object.fromEntries(
+  Object.entries(fixtureFiles)
+    .filter(([file]) => !fileName(file).startsWith('_'))
+    .map(
+      ([file, fixture]) =>
+        [`slate/${fileName(file)}`, withAssets({ ...(fixture.sample ? sample : null), ...fixture.data })] as const,
+    )
+    .sort(([a], [b]) => a.localeCompare(b)),
+) as Record<string, SlateFixture['data']>;
+
+declare global {
+  interface Window {
+    __slateValue?: string;
+  }
+}
+
+const TextAreaFixture = ({ fixture }: { fixture: string }) => {
+  const data = fixtures[fixture];
+  const resolvers = useMemo(() => createEditorResolvers(data ?? {}), [data]);
+  if (data == null) return null;
+  window.__slateValue ??= data.value ?? '';
+  return (
+    <div style={{ width: 640 }}>
+      <ChannelTextArea
+        type={data.type ?? 'NORMAL'}
+        defaultValue={data.value ?? ''}
+        onChange={(value) => {
+          window.__slateValue = value;
+        }}
+        onSubmit={() => ({ shouldClear: true, shouldRefocus: true })}
+        guildId={data.guild_id}
+        channelId={data.channel_id}
+        resolvers={resolvers}
+        placeholder={data.placeholder ?? 'Message #general'}
+        accessibilityLabel={data.placeholder ?? 'Message #general'}
+        disabled={data.disabled ?? false}
+        maxCharacterCount={data.maxCharacterCount}
+      />
+    </div>
+  );
+};
+
+TextAreaFixture.displayName = 'TextAreaFixture';
 
 const TYPE_OPTIONS = (Object.keys(ChatInputTypes) as ChatInputTypeName[]).map((name) => ({ label: name, value: name }));
 
@@ -78,6 +149,20 @@ const group: StoryGroup = {
       component: ChatInputStory,
       controls,
       docs: 'The chat bar: type markdown, @mentions, #channels and :emoji:. The value is message text (`<@id>`, `<:name:id>`).',
+    },
+    {
+      name: 'Chat Input Fixtures',
+      id: 'text-area-fixtures',
+      component: TextAreaFixture,
+      controls: {
+        fixture: {
+          type: 'select',
+          label: 'Fixture',
+          defaultValue: Object.keys(fixtures)[0],
+          options: Object.keys(fixtures).map((name) => ({ label: name, value: name })),
+        },
+      },
+      docs: "The fixtures scripts/compare-slate.mjs types into, next to Discord's chat input.",
     },
   ],
 };

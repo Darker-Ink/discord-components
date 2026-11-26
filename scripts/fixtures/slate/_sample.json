@@ -1,0 +1,54 @@
+{
+  "guild_id": "1100000000000000000",
+  "channel_id": "1200000000000000000",
+  "users": [
+    {
+      "id": "1000000000000000001",
+      "username": "wumpus",
+      "global_name": "Wumpus",
+      "discriminator": "0",
+      "avatar": null,
+      "avatar_url": "{{assets}}/avatar.png"
+    },
+    {
+      "id": "1000000000000000002",
+      "username": "clyde",
+      "global_name": "Clyde",
+      "discriminator": "0",
+      "avatar": null,
+      "avatar_url": "{{assets}}/icon.png"
+    },
+    {
+      "id": "1000000000000000003",
+      "username": "nelly",
+      "global_name": null,
+      "discriminator": "0",
+      "avatar": null,
+      "avatar_url": "{{assets}}/small.png"
+    }
+  ],
+  "roles": [
+    { "id": "1300000000000000001", "name": "Moderators", "color": 3447003, "position": 3 },
+    { "id": "1300000000000000002", "name": "Artists", "color": 15277667, "position": 2 },
+    { "id": "1300000000000000003", "name": "Members", "color": 0, "position": 1 }
+  ],
+  "channels": [
+    { "id": "1200000000000000000", "name": "general", "type": 0, "guild_id": "1100000000000000000" },
+    { "id": "1200000000000000001", "name": "announcements", "type": 5, "guild_id": "1100000000000000000" },
+    { "id": "1200000000000000002", "name": "Lounge", "type": 2, "guild_id": "1100000000000000000" }
+  ],
+  "guilds": [{ "id": "1100000000000000000", "name": "Wumpus Club" }],
+  "emojis": [
+    { "id": "1400000000000000001", "name": "wumpus_wave", "animated": false, "require_colons": true },
+    { "id": "1400000000000000002", "name": "party_blob", "animated": true, "require_colons": true }
+  ],
+  "emoji_urls": {
+    "1400000000000000001": "{{assets}}/icon.png",
+    "1400000000000000002": "{{assets}}/small.png",
+    "😂": "{{assets}}/emoji/1f602.svg",
+    "🔥": "{{assets}}/emoji/1f525.svg",
+    "🎉": "{{assets}}/emoji/1f389.svg",
+    "✨": "{{assets}}/emoji/2728.svg",
+    "😄": "{{assets}}/emoji/1f604.svg"
+  }
+}

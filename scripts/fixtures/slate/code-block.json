@@ -1,0 +1,12 @@
+{
+  "sample": true,
+  "data": {},
+  "steps": [
+    { "click": true },
+    { "type": "```js" },
+    { "press": "Shift+Enter" },
+    { "type": "const a = 1;" },
+    { "press": "Shift+Enter" },
+    { "type": "```" }
+  ]
+}

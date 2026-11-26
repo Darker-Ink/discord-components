@@ -1,0 +1,11 @@
+{
+  "sample": true,
+  "data": {},
+  "steps": [
+    { "click": true },
+    { "type": "first words " },
+    { "wait": 50 },
+    { "type": "second" },
+    { "press": "Control+z" }
+  ]
+}
