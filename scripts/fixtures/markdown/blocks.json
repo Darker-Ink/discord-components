@@ -26,7 +26,10 @@
       ">no space is not a quote",
       "> # heading in quote\n> - list in quote",
       "> ```js\n> code in quote\n> ```",
-      "# Heading with <@1000000000000000001>"
+      "# Heading with <@1000000000000000001>",
+      "- one\n- two\n  - nested\n1. first\n2. second",
+      "1. first\n2. second",
+      "1. a\n- b"
     ],
     "users": [
       {
