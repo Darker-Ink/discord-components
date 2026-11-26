@@ -2,7 +2,14 @@ import { Component, createRef, type ClipboardEvent, type FocusEvent, type Keyboa
 import clsx from 'clsx';
 import type { Descendant, NodeEntry, Range } from 'slate';
 import { markupStyles, obscuredContentStyles } from '@discord-mana/messages';
-import { Editable, ReactEditor, Slate, type RenderElementProps, type RenderLeafProps } from '../../slate-react';
+import {
+  Editable,
+  ReactEditor,
+  Slate,
+  type RenderElementProps,
+  type RenderLeafProps,
+  type RenderPlaceholderProps,
+} from '../../slate-react';
 import { HistoryUtils } from '../../core/history';
 import { EditorUtils, PathUtils, RangeUtils } from '../../core/slateUtils';
 import { SlateTransforms } from '../../core/transforms';
@@ -61,6 +68,14 @@ export interface RichEditorRenderElementProps extends RenderElementProps {
 
 export interface RichEditorProps {
   editor: DiscordEditor;
+  /**
+   * `inline` renders only the editable element (as `as`), without the chat's markup and editor classes or the
+   * wrapper around it, so it takes the typography of `className` (see `InlineEditor`).
+   */
+  appearance?: 'default' | 'inline';
+  /** The editable element's tag in the inline appearance. */
+  as?: React.ElementType;
+  style?: React.CSSProperties;
   id?: string;
   className?: string;
   containerClassName?: string;
@@ -234,7 +249,7 @@ const renderDefaultLeaf = (editor: DiscordEditor, props: RenderLeafProps) => {
   } else spellCheck = undefined;
   className = clsx(className, { [inlineStyles.emptyText]: text.text === '' });
   return (
-    <span {...attributes} className={className || undefined} style={style} spellCheck={spellCheck}>
+    <span {...attributes} className={className} style={style} spellCheck={spellCheck}>
       {children}
     </span>
   );
@@ -255,6 +270,15 @@ export class RichEditor extends Component<RichEditorProps, RichEditorState> {
   static displayName = 'RichEditor';
 
   containerRef = createRef<HTMLDivElement>();
+
+  getContainer(): HTMLElement | null {
+    if (this.props.appearance !== 'inline') return this.containerRef.current;
+    try {
+      return EditorUtils.toDOMNode(this.props.editor, this.props.editor);
+    } catch {
+      return null;
+    }
+  }
 
   constructor(props: RichEditorProps) {
     super(props);
@@ -449,7 +473,7 @@ export class RichEditor extends Component<RichEditorProps, RichEditorState> {
   };
 
   isSelectionPartiallyInside(selection: Selection) {
-    const container = this.containerRef.current;
+    const container = this.getContainer();
     if (container == null) return false;
     for (let i = selection.rangeCount - 1; i >= 0; i--) {
       const range = selection.getRangeAt(i);
@@ -465,7 +489,7 @@ export class RichEditor extends Component<RichEditorProps, RichEditorState> {
 
   // Whether the DOM selection spans from inside the editor to outside it (it is dropped on blur then).
   isSelectionEscaping(selection: Selection) {
-    const container = this.containerRef.current;
+    const container = this.getContainer();
     let inside = false;
     let outside = false;
     if (container == null) return false;
@@ -523,8 +547,52 @@ export class RichEditor extends Component<RichEditorProps, RichEditorState> {
       renderExtraElement: _renderExtraElement,
       renderExtraLeaf: _renderExtraLeaf,
       editor: _editor,
+      appearance = 'default',
+      as,
+      style,
       ...rest
     } = { ...this.props, editor: this.props.editor };
+    const handlers = {
+      decorate,
+      renderElement: this.renderElement,
+      renderLeaf: this.renderLeaf,
+      onFocusCapture: this.handleFocusCapture,
+      onBlurCapture: this.handleBlurCapture,
+      onContextMenu: this.handleContextMenu,
+      onKeyDown: this.handleKeyDown,
+      onKeyUp: this.handleKeyUp,
+      onDOMBeforeInput: this.handleBeforeInput,
+      onCompositionStart: this.handleCompositionStart,
+      onCompositionEnd: this.handleCompositionEnd,
+      onPasteCapture: this.handlePasteCapture,
+      autoFocus: autoFocus && canFocus !== false,
+      autoComplete: 'off',
+      autoCorrect: 'off',
+      'data-can-focus': canFocus !== false,
+      'aria-label': placeholder,
+      'aria-multiline': ariaMultiline,
+    };
+    if (appearance === 'inline')
+      return (
+        <Slate editor={editor} value={[...this.state.initialValue]}>
+          <Editable
+            {...rest}
+            {...handlers}
+            as={as}
+            className={className}
+            placeholder={placeholder}
+            renderPlaceholder={renderInlinePlaceholder}
+            disableDefaultStyles
+            style={{
+              position: 'relative',
+              outline: 'none',
+              whiteSpace: 'pre-wrap',
+              overflowWrap: 'break-word',
+              ...style,
+            }}
+          />
+        </Slate>
+      );
     return (
       <div ref={this.containerRef} className={containerClassName}>
         {this.state.showPlaceholder ? (
@@ -533,33 +601,24 @@ export class RichEditor extends Component<RichEditorProps, RichEditorState> {
           </div>
         ) : null}
         <Slate editor={editor} value={[...this.state.initialValue]}>
-          <Editable
-            {...rest}
-            className={clsx(markupStyles.markup, styles.editor, className)}
-            decorate={decorate}
-            renderElement={this.renderElement}
-            renderLeaf={this.renderLeaf}
-            onFocusCapture={this.handleFocusCapture}
-            onBlurCapture={this.handleBlurCapture}
-            onContextMenu={this.handleContextMenu}
-            onKeyDown={this.handleKeyDown}
-            onKeyUp={this.handleKeyUp}
-            onDOMBeforeInput={this.handleBeforeInput}
-            onCompositionStart={this.handleCompositionStart}
-            onCompositionEnd={this.handleCompositionEnd}
-            onPasteCapture={this.handlePasteCapture}
-            autoFocus={autoFocus && canFocus !== false}
-            autoComplete="off"
-            autoCorrect="off"
-            data-can-focus={canFocus !== false}
-            aria-label={placeholder}
-            aria-multiline={ariaMultiline}
-          />
+          <Editable {...rest} className={clsx(markupStyles.markup, styles.editor, className)} {...handlers} />
         </Slate>
       </div>
     );
   }
 }
+
+// The placeholder of the inline appearance: Slate's own (inside the first line, so it keeps the host's
+// typography), in the chat input's placeholder colour.
+const renderInlinePlaceholder = ({ attributes, children }: RenderPlaceholderProps) => (
+  <span
+    {...attributes}
+    className={styles.inlinePlaceholder}
+    style={{ ...attributes.style, opacity: 1, width: 'auto', maxWidth: '100%', whiteSpace: 'nowrap' }}
+  >
+    {children}
+  </span>
+);
 
 /** Focuses an editor without moving its selection (the client's `focus`). */
 export const focusEditor = (editor: DiscordEditor) => EditorUtils.focus(editor);

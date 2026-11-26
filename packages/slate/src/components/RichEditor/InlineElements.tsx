@@ -77,7 +77,12 @@ export const UserMentionPill = ({ id }: { id: string }) => {
   const user = resolvers.resolveUser?.(id);
   const name = user != null ? displayName(user, resolvers.resolveMember?.(id)?.nick) : null;
   const pill = (
-    <Mention ref={ref} onKeyDown={stopKeys}>
+    <Mention
+      ref={ref}
+      onKeyDown={stopKeys}
+      aria-expanded={false}
+      onClick={(event) => resolvers.onMentionClick?.({ type: 'user', id }, event)}
+    >
       {name == null ? `<@${id}>` : `@${name}`}
     </Mention>
   );
@@ -91,7 +96,13 @@ export const UserMentionPill = ({ id }: { id: string }) => {
     <Tooltip
       __unsupportedReactNodeAsText={
         <div className={tooltipStyles.userTooltip}>
-          <Avatar src={avatar} size={AvatarSizes.SIZE_16} className={tooltipStyles.avatar} aria-hidden />
+          <Avatar
+            src={avatar}
+            size={AvatarSizes.SIZE_16}
+            className={tooltipStyles.avatar}
+            aria-label={user.username}
+            aria-hidden={false}
+          />
           {user.username}
           <span className={tooltipStyles.discriminator}>{discriminator}</span>
         </div>
@@ -113,7 +124,7 @@ const ENHANCED_ROLE_COLORS = 'ENHANCED_ROLE_COLORS';
 const hex = (color: number | null | undefined) => (color == null ? null : `#${color.toString(16).padStart(6, '0')}`);
 
 export const RoleMentionPill = ({ id }: { id: string }) => {
-  const { resolvers, guildId } = useEditorContext();
+  const { resolvers, guildId, channelId } = useEditorContext();
   const role = guildId != null ? resolvers.resolveRole?.(id) : null;
   if (role == null) return <span>@unknown-role</span>;
   const hasColor = role.color != null && role.color !== 0;
@@ -127,7 +138,17 @@ export const RoleMentionPill = ({ id }: { id: string }) => {
         }
       : null;
   return (
-    <Mention color={hasColor ? role.color : null} roleColors={hasColor ? gradient : null}>
+    <Mention
+      color={hasColor ? role.color : null}
+      roleColors={hasColor ? gradient : null}
+      // The client opens the role's popout from it in server channels.
+      {...(guildId != null && channelId != null
+        ? {
+            'aria-expanded': false,
+            onClick: (event: MouseEvent<HTMLElement>) => resolvers.onMentionClick?.({ type: 'role', id }, event),
+          }
+        : null)}
+    >
       @{role.name}
     </Mention>
   );

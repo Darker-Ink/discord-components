@@ -1,8 +1,67 @@
+import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import clsx from 'clsx';
-import { HiddenVisually, Text, Tooltip } from '@discord-mana/components';
+import { Anchor, Clickable, HiddenVisually, Text, Tooltip } from '@discord-mana/components';
 import { NitroWheelIcon } from '@discord-mana/icons';
 import type { ChatInputType } from '../../chatInputTypes';
 import styles from './CharacterCount.module.css';
+import upsellStyles from './PremiumUpsell.module.css';
+
+// The Nitro gradient the client defines once at its root for icons filled with `url(#…)`.
+let premiumGradientId: string | null = null;
+const PremiumGradient = () => {
+  const [mount] = useState(() => {
+    if (premiumGradientId != null || typeof document === 'undefined') return false;
+    premiumGradientId = crypto.randomUUID();
+    return true;
+  });
+  return mount
+    ? createPortal(
+        <svg
+          viewBox="0 0 1 1"
+          style={{ position: 'absolute', pointerEvents: 'none', top: -1, left: -1, width: 1, height: 1 }}
+          aria-hidden
+        >
+          <linearGradient id={premiumGradientId!}>
+            <stop stopColor="var(--premium-tier-2-purple-for-gradients)" />
+            <stop offset="0.502368" stopColor="var(--premium-tier-2-purple-for-gradients-2)" />
+            <stop offset="1" stopColor="var(--premium-tier-2-pink-for-gradients)" />
+          </linearGradient>
+        </svg>,
+        document.body,
+      )
+    : null;
+};
+
+PremiumGradient.displayName = 'PremiumGradient';
+
+/** "Send longer messages with Discord Nitro!" under the count for users without Nitro. */
+const LongerMessagesUpsell = ({
+  className,
+  iconOnly,
+  onLearnMore,
+}: {
+  className?: string;
+  iconOnly: boolean;
+  onLearnMore?: () => void;
+}) =>
+  iconOnly ? (
+    <Clickable className={upsellStyles.iconOnly} onClick={onLearnMore}>
+      <Tooltip text="Send longer messages with Discord Nitro!" position="top">
+        <NitroWheelIcon size="md" color="currentColor" className={upsellStyles.premium} />
+      </Tooltip>
+    </Clickable>
+  ) : (
+    <div className={clsx(upsellStyles.root, className)}>
+      <PremiumGradient />
+      <NitroWheelIcon size="md" className={upsellStyles.premium} color={`url(#${premiumGradientId ?? ''})`} />
+      <Text className={upsellStyles.text} variant="body-sm/normal">
+        Send longer messages with <Anchor onClick={onLearnMore}>Discord Nitro!</Anchor>
+      </Text>
+    </div>
+  );
+
+LongerMessagesUpsell.displayName = 'LongerMessagesUpsell';
 
 /** Messages longer than this are a Nitro perk (the default limit without it is 2000). */
 export const NON_PREMIUM_MAX_MESSAGE_LENGTH = 2000;
@@ -34,10 +93,12 @@ export const getCharacterCountVisibility = ({
 
 export interface CharacterCountProps extends CharacterCountVisibilityOptions {
   className?: string;
+  /** "Learn more" in the Nitro upsell. */
+  onPremiumUpsellClick?: () => void;
 }
 
 /** The remaining characters in the corner of the chat bar, shown near the limit. */
-export const CharacterCount = ({ className, ...options }: CharacterCountProps) => {
+export const CharacterCount = ({ className, onPremiumUpsellClick, ...options }: CharacterCountProps) => {
   const {
     type,
     textValue,
@@ -82,6 +143,13 @@ export const CharacterCount = ({ className, ...options }: CharacterCountProps) =
         )}
       </div>
       <HiddenVisually aria-live="polite">{`${remaining} characters remaining`}</HiddenVisually>
+      {type.upsellLongMessages != null && !canUseIncreasedMessageLength && !hidden ? (
+        <LongerMessagesUpsell
+          className={styles.upsell}
+          iconOnly={type.upsellLongMessages.iconOnly}
+          onLearnMore={onPremiumUpsellClick}
+        />
+      ) : null}
     </div>
   );
 };

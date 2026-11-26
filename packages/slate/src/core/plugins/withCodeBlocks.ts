@@ -4,11 +4,12 @@ import { serializeNode } from '../serialize';
 import { EditorUtils, PathUtils, RangeUtils, TextUtils } from '../slateUtils';
 import { SlateTransforms } from '../transforms';
 import { FIRST_TEXT_PATH } from '../constants';
+import { highlightCodeLines } from '../codeHighlight';
 import type { BlockElement, CodeBlockState, CodeHighlightSpan } from '../types';
 
 // Lines between ``` fences are marked as code (`codeBlockState`), which the renderer shows as code lines and the
-// markdown pass leaves alone. Syntax highlighting of the code comes from `context.highlightCode` when given (the
-// client highlights with a WebAssembly tree-sitter build).
+// markdown pass leaves alone. Code is highlighted like message code blocks (Arborium), or by
+// `context.highlightCode` when given.
 
 const LINE_TYPES = new Set(['line']);
 const LANGUAGE_RE = /^[a-z0-9_+\-.#]+$/i;
@@ -80,8 +81,9 @@ const lineState = (
   };
 };
 
-const highlight = (editor: Editor, states: LineState[]) => {
-  const highlightCode = editor.context.highlightCode;
+const highlight = (editor: Editor, states: LineState[], onReady: () => void) => {
+  const highlightCode =
+    editor.context.highlightCode ?? ((code: string, lang: string) => highlightCodeLines(code, lang, onReady));
   let lines: LineState[] = [];
   let inside = false;
   for (const state of states) {
@@ -103,7 +105,7 @@ const highlight = (editor: Editor, states: LineState[]) => {
   }
 };
 
-const updateCodeBlocks = (editor: Editor) => {
+const updateCodeBlocks = (editor: Editor, onReady: () => void) => {
   const states: LineState[] = [];
   let previous: LineState | null = null;
   for (const entry of EditorUtils.blocks(editor)) {
@@ -116,7 +118,7 @@ const updateCodeBlocks = (editor: Editor) => {
     );
     states.push(previous);
   }
-  highlight(editor, states);
+  highlight(editor, states, onReady);
   for (const state of states) {
     const [block, path] = state.blockEntry;
     const codeBlockState: CodeBlockState | null =
@@ -138,13 +140,28 @@ const updateCodeBlocks = (editor: Editor) => {
 export const withCodeBlocks = (editor: Editor) => {
   const { onChange } = editor;
   let lastValue: unknown = null;
+  let scheduled = false;
+  const update = () => {
+    HistoryUtils.withoutSaving(editor, () => {
+      EditorUtils.withoutNormalizing(editor, () => updateCodeBlocks(editor, onReady));
+    });
+    lastValue = EditorUtils.richValue(editor);
+  };
+  // A grammar finished loading: highlight again (once, after the current change settles).
+  const onReady = () => {
+    if (scheduled) return;
+    scheduled = true;
+    queueMicrotask(() => {
+      scheduled = false;
+      try {
+        update();
+      } catch (error) {
+        console.warn('error applying highlighting to editor', error);
+      }
+    });
+  };
   editor.onChange = () => {
-    if (EditorUtils.richValue(editor) !== lastValue) {
-      HistoryUtils.withoutSaving(editor, () => {
-        EditorUtils.withoutNormalizing(editor, () => updateCodeBlocks(editor));
-      });
-      lastValue = EditorUtils.richValue(editor);
-    }
+    if (EditorUtils.richValue(editor) !== lastValue) update();
     onChange();
   };
   return editor;

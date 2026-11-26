@@ -44,6 +44,8 @@ export interface EditorResolvers extends MessageResolvers {
   getMentionableUsers?: () => APIResolvedUser[];
   /** Channels for typed `#channel-name` and the `#` autocomplete. */
   getChannels?: () => APIResolvedChannel[];
+  /** Clicking a user or role pill (the client opens the user's or role's popout). */
+  onMentionClick?: (mention: { type: 'user' | 'role'; id: string }, event: React.MouseEvent<HTMLElement>) => void;
 }
 
 export interface EditorContextValue {

@@ -15,6 +15,7 @@ import type { Descendant } from 'slate';
 import { FocusRing } from '@discord-mana/components';
 import type { MarkdownRules } from '@discord-mana/markdown/internal';
 import { ChatInputLayouts, ChatInputTypes, type ChatInputType, type ChatInputTypeName } from '../../chatInputTypes';
+import { MessageResolversContext } from '@discord-mana/messages';
 import { EditorResolversContext, type EditorContextValue, type EditorResolvers } from '../../core/context';
 import { toRichValue, toTextValue } from '../../core/serialize';
 import type { CodeHighlightSpan, RichValue } from '../../core/types';
@@ -235,121 +236,123 @@ export const ChannelTextArea = ({
 
   return (
     <EditorResolversContext.Provider value={context}>
-      <div
-        ref={containerRef}
-        className={clsx(className, styles.channelTextArea, {
-          [styles.charCountShowing]: isVisible && showCharacterCount,
-          [styles.charCountUpsellShowing]: showsUpsell && showCharacterCount,
-          [styles.channelTextAreaDisabled]: showDisabledStyles,
-          [styles.highlighted]: highlighted,
-          [styles.inlineContainer]: inline,
-          [styles.flushContainer]: flush,
-          [styles.error]: error != null,
-        })}
-      >
-        {inline || flush || guildId == null || type !== ChatInputTypes.NORMAL ? null : (
-          // The new member action bar's slot (empty for members).
-          <div className={styles.floatingBars} />
-        )}
+      <MessageResolversContext.Provider value={context.resolvers}>
         <div
-          ref={scrollerRef}
-          className={clsx(innerClassName, styles.scrollableContainer, {
-            [styles.themedBackground]: !disableThemedBackground,
+          ref={containerRef}
+          className={clsx(className, styles.channelTextArea, {
+            [styles.charCountShowing]: isVisible && showCharacterCount,
+            [styles.charCountUpsellShowing]: showsUpsell && showCharacterCount,
+            [styles.channelTextAreaDisabled]: showDisabledStyles,
+            [styles.highlighted]: highlighted,
+            [styles.inlineContainer]: inline,
+            [styles.flushContainer]: flush,
+            [styles.error]: error != null,
           })}
         >
+          {inline || flush || guildId == null || type !== ChatInputTypes.NORMAL ? null : (
+            // The new member action bar's slot (empty for members).
+            <div className={styles.floatingBars} />
+          )}
           <div
-            className={clsx(styles.inner, {
-              [styles.innerDisabled]: showDisabledStyles,
-              [styles.sansAttachButton]: !isEdit && (attachButton != null || showDisabledStyles),
-              [styles.sansAttachButtonCreateThread]: type === ChatInputTypes.THREAD_CREATION,
-              [styles.sansAttachButtonCreatePost]:
-                type === ChatInputTypes.CREATE_FORUM_POST || type === ChatInputTypes.FORWARD_MESSAGE_INPUT,
-              [styles.sansAttachButtonUserProfileReply]: type === ChatInputTypes.USER_PROFILE_REPLY,
+            ref={scrollerRef}
+            className={clsx(innerClassName, styles.scrollableContainer, {
+              [styles.themedBackground]: !disableThemedBackground,
             })}
-            onMouseDown={() => editorRef.current?.focus()}
           >
-            {attachButton}
-            <FocusRing ringTarget={containerRef} ringClassName={styles.focusRing}>
-              <ChannelEditor
-                ref={editorRef}
-                value={disabled && !showValueWhenDisabled ? emptyRichValue : (richValue as RichValue)}
-                type={type}
-                context={context}
-                className={clsx(
-                  {
-                    [styles.textAreaThreadCreation]: type === ChatInputTypes.THREAD_CREATION,
-                    [styles.profileBioInput]: type === ChatInputTypes.PROFILE_BIO_INPUT,
-                    [styles.overlayInlineReply]: type === ChatInputTypes.OVERLAY_INLINE_REPLY,
-                  },
-                  editorClassName,
-                  styles.textArea,
-                  styles.textAreaSlate,
-                  { [styles.textAreaDisabled]: disabled || submitting },
-                )}
-                id={id}
-                placeholder={placeholderText ?? undefined}
-                required={required}
-                disabled={disabled}
-                submitting={submitting}
-                previewMarkdown={previewMarkdown}
-                spellcheckEnabled={spellcheckEnabled}
-                disableAutoFocus={type.disableAutoFocus ?? false}
-                disableEnterToSubmit={type.submit?.disableEnterToSubmit ?? false}
-                allowNewLines={allowNewLines}
-                textAreaPaddingClassName={clsx({
-                  [styles.textAreaForPostCreation]: type === ChatInputTypes.CREATE_FORUM_POST,
-                  [styles.textAreaCustomGift]: type === ChatInputTypes.CUSTOM_GIFT,
-                  [styles.textAreaForUserProfile]: type === ChatInputTypes.USER_PROFILE,
-                  [styles.textAreaForOverlayInlineReply]: type === ChatInputTypes.OVERLAY_INLINE_REPLY,
-                })}
-                onChange={handleChange}
-                onSubmit={handleSubmit}
-                onPaste={onPaste}
-                onResize={handleResize}
-                onFocus={onFocus}
-                onBlur={onBlur}
-                onKeyDown={onKeyDown}
-                onTab={() => autocompleteRef.current?.onTabOrEnter(false) ?? false}
-                onEnter={() => autocompleteRef.current?.onTabOrEnter(true) ?? false}
-                onSpace={() => autocompleteRef.current?.onSpace() ?? false}
-                moveSelection={(delta) => autocompleteRef.current?.onMoveSelection(delta) ?? false}
-                maybeShowAutocomplete={() => autocompleteRef.current?.onMaybeShowAutocomplete()}
-                hideAutocomplete={() => autocompleteRef.current?.onHideAutocomplete()}
-                aria-controls={popup.id ?? undefined}
-                aria-haspopup="listbox"
-                aria-expanded={popup.id !== null || undefined}
-                aria-activedescendant={popup.activeDescendant ?? undefined}
-                aria-invalid={textValue.length > maxCharacterCount}
-                aria-describedby={ariaDescribedBy}
-                aria-labelledby={ariaLabelledBy ?? (accessibilityLabel != null ? undefined : undefined)}
-                aria-autocomplete="list"
-              />
-            </FocusRing>
-            {buttons}
-            <div className={styles.hiddenAppLauncherAnchor} />
+            <div
+              className={clsx(styles.inner, {
+                [styles.innerDisabled]: showDisabledStyles,
+                [styles.sansAttachButton]: !isEdit && (attachButton != null || showDisabledStyles),
+                [styles.sansAttachButtonCreateThread]: type === ChatInputTypes.THREAD_CREATION,
+                [styles.sansAttachButtonCreatePost]:
+                  type === ChatInputTypes.CREATE_FORUM_POST || type === ChatInputTypes.FORWARD_MESSAGE_INPUT,
+                [styles.sansAttachButtonUserProfileReply]: type === ChatInputTypes.USER_PROFILE_REPLY,
+              })}
+              onMouseDown={() => editorRef.current?.focus()}
+            >
+              {attachButton}
+              <FocusRing ringTarget={containerRef} ringClassName={styles.focusRing}>
+                <ChannelEditor
+                  ref={editorRef}
+                  value={disabled && !showValueWhenDisabled ? emptyRichValue : (richValue as RichValue)}
+                  type={type}
+                  context={context}
+                  className={clsx(
+                    {
+                      [styles.textAreaThreadCreation]: type === ChatInputTypes.THREAD_CREATION,
+                      [styles.profileBioInput]: type === ChatInputTypes.PROFILE_BIO_INPUT,
+                      [styles.overlayInlineReply]: type === ChatInputTypes.OVERLAY_INLINE_REPLY,
+                    },
+                    editorClassName,
+                    styles.textArea,
+                    styles.textAreaSlate,
+                    { [styles.textAreaDisabled]: disabled || submitting },
+                  )}
+                  id={id}
+                  placeholder={placeholderText ?? undefined}
+                  required={required}
+                  disabled={disabled}
+                  submitting={submitting}
+                  previewMarkdown={previewMarkdown}
+                  spellcheckEnabled={spellcheckEnabled}
+                  disableAutoFocus={type.disableAutoFocus ?? false}
+                  disableEnterToSubmit={type.submit?.disableEnterToSubmit ?? false}
+                  allowNewLines={allowNewLines}
+                  textAreaPaddingClassName={clsx({
+                    [styles.textAreaForPostCreation]: type === ChatInputTypes.CREATE_FORUM_POST,
+                    [styles.textAreaCustomGift]: type === ChatInputTypes.CUSTOM_GIFT,
+                    [styles.textAreaForUserProfile]: type === ChatInputTypes.USER_PROFILE,
+                    [styles.textAreaForOverlayInlineReply]: type === ChatInputTypes.OVERLAY_INLINE_REPLY,
+                  })}
+                  onChange={handleChange}
+                  onSubmit={handleSubmit}
+                  onPaste={onPaste}
+                  onResize={handleResize}
+                  onFocus={onFocus}
+                  onBlur={onBlur}
+                  onKeyDown={onKeyDown}
+                  onTab={() => autocompleteRef.current?.onTabOrEnter(false) ?? false}
+                  onEnter={() => autocompleteRef.current?.onTabOrEnter(true) ?? false}
+                  onSpace={() => autocompleteRef.current?.onSpace() ?? false}
+                  moveSelection={(delta) => autocompleteRef.current?.onMoveSelection(delta) ?? false}
+                  maybeShowAutocomplete={() => autocompleteRef.current?.onMaybeShowAutocomplete()}
+                  hideAutocomplete={() => autocompleteRef.current?.onHideAutocomplete()}
+                  aria-controls={popup.id ?? undefined}
+                  aria-haspopup="listbox"
+                  aria-expanded={popup.id !== null || undefined}
+                  aria-activedescendant={popup.activeDescendant ?? undefined}
+                  aria-invalid={textValue.length > maxCharacterCount}
+                  aria-describedby={ariaDescribedBy}
+                  aria-labelledby={ariaLabelledBy ?? (accessibilityLabel != null ? undefined : undefined)}
+                  aria-autocomplete="list"
+                />
+              </FocusRing>
+              {buttons}
+              <div className={styles.hiddenAppLauncherAnchor} />
+            </div>
           </div>
-        </div>
-        <Autocomplete
-          ref={autocompleteRef}
-          editorRef={editorRef}
-          type={type}
-          textValue={textValue}
-          targetRef={containerRef}
-          editorHeight={editorHeight}
-          onPopupChange={setPopup}
-        />
-        {showCharacterCount ? (
-          <CharacterCount
+          <Autocomplete
+            ref={autocompleteRef}
+            editorRef={editorRef}
             type={type}
             textValue={textValue}
-            className={characterCountClassName}
-            maxCharacterCount={maxCharacterCount}
-            showRemainingCharsAfterCount={showRemainingCharsAfterCount}
-            canUseIncreasedMessageLength={canUseIncreasedMessageLength}
+            targetRef={containerRef}
+            editorHeight={editorHeight}
+            onPopupChange={setPopup}
           />
-        ) : null}
-        {children}
-      </div>
+          {showCharacterCount ? (
+            <CharacterCount
+              type={type}
+              textValue={textValue}
+              className={characterCountClassName}
+              maxCharacterCount={maxCharacterCount}
+              showRemainingCharsAfterCount={showRemainingCharsAfterCount}
+              canUseIncreasedMessageLength={canUseIncreasedMessageLength}
+            />
+          ) : null}
+          {children}
+        </div>
+      </MessageResolversContext.Provider>
     </EditorResolversContext.Provider>
   );
 };

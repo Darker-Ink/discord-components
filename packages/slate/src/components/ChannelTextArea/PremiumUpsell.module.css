@@ -1,0 +1,21 @@
+.root {
+  background: var(--background-base-lower);
+  background-color: var(--background-surface-highest);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  display: flex;
+  max-width: 100%;
+  padding: var(--space-4) var(--space-8);
+}
+.text {
+  margin-inline-start: 4px;
+}
+.premium {
+  flex-shrink: 0;
+  height: 18px;
+  width: 18px;
+}
+.iconOnly {
+  color: var(--text-default);
+  cursor: pointer;
+}
