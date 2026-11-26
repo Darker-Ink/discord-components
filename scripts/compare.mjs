@@ -1,13 +1,15 @@
 // Renders a playground story in our playground and in Discord's (reference server) and diffs them.
 //
 //   node scripts/compare.mjs <collection>/<story> [--theme light|dark|darker|midnight|all]
-//                            [--prop key=value]... [--dom] [--styles <selector>] [--out dir]
+//                            [--prop key=value]... [--dom] [--styles <selector>] [--out dir] [--clock <time>]
 //
 // Needs both servers running: `pnpm dev` (5173) and `node scripts/reference/server.mjs` (5174).
 // Set CHROMIUM_PATH if playwright-core can't find a browser on its own.
 //
 // Output: ref/ours/diff PNGs per theme and the share of differing pixels. --dom prints both DOM trees
 // with CSS-module hashes stripped; --styles prints computed styles of the first match in each.
+// --clock fixes Date on both pages (any Date-parsable time, e.g. 2026-11-26T12:00) for stories that start
+// from "today".
 import fs from 'node:fs';
 import path from 'node:path';
 import { PNG } from 'pngjs';
@@ -30,6 +32,7 @@ let themes = ['darker'];
 let dom = false;
 let stylesSelector = null;
 let out = path.resolve('.cache/compare');
+let clock = null;
 while (args.length) {
   const flag = args.shift();
   if (flag === '--theme') {
@@ -41,6 +44,7 @@ while (args.length) {
   } else if (flag === '--dom') dom = true;
   else if (flag === '--styles') stylesSelector = args.shift();
   else if (flag === '--out') out = path.resolve(args.shift());
+  else if (flag === '--clock') clock = new Date(args.shift());
 }
 fs.mkdirSync(out, { recursive: true });
 
@@ -96,6 +100,7 @@ const capture = async (url) => {
   const page = await browser.newPage({ viewport: { width: 1000, height: 700 }, deviceScaleFactor: 1, userAgent });
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
+  if (clock) await page.clock.setFixedTime(clock);
   await page.goto(url);
   const root = page.locator('[data-story]');
   await root.waitFor({ timeout: 30000 });

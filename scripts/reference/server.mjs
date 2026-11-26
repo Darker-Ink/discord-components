@@ -258,7 +258,21 @@ window.ref = (() => {
     if (NAV_KEYS.has(e.key)) setKeyboardMode(true);
   }, true);
   window.addEventListener('mousedown', () => setKeyboardMode(false), true);
-  return { boot, render, setTheme, setExperiments, loadTranslations, req, get React() { return React; } };
+  // Stories gated on an Apex experiment (useConfig) read the experiment store, not ManaContext. Force a
+  // session override for each named experiment the loaded modules registered: its first variation whose
+  // config is enabled, or else its first non-default variation.
+  const overrideApexExperiments = (names) => {
+    const store = req('340344').A;
+    const registered = store.getRegisteredExperiments();
+    for (const name of names) {
+      const variations = registered[name]?.variations;
+      if (variations == null) continue;
+      const ids = Object.keys(variations);
+      const id = ids.find((key) => variations[key]?.enabled === true) ?? ids.find((key) => key !== '0') ?? ids[0];
+      if (id != null) store.createSessionOverride(name, Number(id));
+    }
+  };
+  return { boot, render, setTheme, setExperiments, overrideApexExperiments, loadTranslations, req, get React() { return React; } };
 })();
 </script>`;
 
@@ -270,6 +284,7 @@ if (params.experiments) ref.setExperiments(params.experiments.split(','));
 const configModule = ${JSON.stringify(playgroundModules[collection])};
 await ref.boot([configModule]);
 const exports = ref.req(configModule);
+if (params.experiments) ref.overrideApexExperiments(params.experiments.split(','));
 const config = Object.values(exports).find((c) => c?.collections?.some((col) => col.id === ${JSON.stringify(collection)}));
 const col = config.collections.find((c) => c.id === ${JSON.stringify(collection)});
 const story = col.groups.flatMap((g) => g.stories).find((s) => s.id === ${JSON.stringify(storyId)});
