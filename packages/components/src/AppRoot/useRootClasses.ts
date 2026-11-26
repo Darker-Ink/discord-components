@@ -1,12 +1,14 @@
 import { useLayoutEffect } from 'react';
 import { themeClassName, type Theme } from '@discord-components/tokens';
 
-interface RootClassOptions {
+export type UIDensity = 'compact' | 'default' | 'cozy';
+
+export interface RootClassOptions {
   keyboardMode: boolean;
   reducedMotion: boolean;
   highContrastMode?: boolean;
   saturation?: number;
-  density?: 'compact' | 'default' | 'cozy';
+  density?: UIDensity;
 }
 
 // Discord applies these to <html> in its RootElementContextProvider; tokens and component

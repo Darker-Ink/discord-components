@@ -1,20 +1,17 @@
 import { useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { ThemeTypes, type Theme } from '@discord-components/tokens';
 import {
   AccessibilityPreferencesContext,
   AccessibilityPreferencesProvider,
-  AppToastContainer,
-  appLayerContext,
-  DEFAULT_MANA_CONTEXT,
-  FocusRingManager,
-  FocusRingScope,
-  ManaContextProvider,
-  ModalLayerRoot,
-  ThemeContextProvider,
-} from '@discord-components/components';
-import type { Theme } from '@discord-components/tokens';
-import type { ReducedMotionSetting, UIDensity } from './appSettings';
-import { dynamicGraphicComponents } from './dynamicGraphics';
-import { useRootClasses } from './useRootClasses';
+  type ReducedMotionSetting,
+} from '../AccessibilityPreferences';
+import { FocusRingManager, FocusRingScope } from '../FocusRing';
+import { appLayerContext } from '../Layer';
+import { DEFAULT_MANA_CONTEXT, ManaContextProvider, type ManaContextValue } from '../ManaContext';
+import { ModalLayerRoot } from '../ModalStack';
+import { ThemeContextProvider } from '../Theme';
+import { AppToastContainer } from '../Toast';
+import { useRootClasses, type UIDensity } from './useRootClasses';
 
 // Keys that switch Discord into keyboard mode (focus rings on). Outside text fields only Tab does.
 const NAVIGATION_KEYS = new Set(['Tab', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End', 'F6']);
@@ -73,26 +70,35 @@ const RootElement = ({
 
 RootElement.displayName = 'RootElement';
 
+export interface AppRootProps {
+  theme?: Theme;
+  /** Follow the OS ('auto') or force reduced motion on or off. */
+  reducedMotion?: ReducedMotionSetting;
+  highContrastMode?: boolean;
+  /** Color saturation, 0 to 1. */
+  saturation?: number;
+  density?: UIDensity;
+  /** On/off indicators in switches. */
+  switchIconsEnabled?: boolean;
+  /** Merged over the Mana context AppRoot provides (strings, locale, dynamic graphic components…). */
+  manaContext?: Partial<ManaContextValue>;
+  children?: ReactNode;
+}
+
 // The providers Discord's client puts around everything it renders: accessibility settings, the
-// Mana context (strings, theme), the theme context, a focus ring scope over the whole
-// document and the layers overlays render in (with the modal stack).
+// Mana context (strings, theme), the theme context, the <html> classes components style against,
+// a focus ring scope over the whole document and the layers overlays render in (with the modal
+// stack and the app's toasts). Wrap an app in it once, at the root.
 export const AppRoot = ({
-  theme,
+  theme = ThemeTypes.DARK,
   reducedMotion = 'auto',
   highContrastMode = false,
   saturation = 1,
   density = 'default',
   switchIconsEnabled = false,
+  manaContext: manaContextOverrides,
   children,
-}: {
-  theme: Theme;
-  reducedMotion?: ReducedMotionSetting;
-  highContrastMode?: boolean;
-  saturation?: number;
-  density?: UIDensity;
-  switchIconsEnabled?: boolean;
-  children: ReactNode;
-}) => {
+}: AppRootProps) => {
   const keyboardMode = useKeyboardMode();
   const bodyRef = useRef<Element>(document.body);
   const manaContext = useMemo(
@@ -101,9 +107,9 @@ export const AppRoot = ({
       theme,
       saturation,
       defaultLayerContext: appLayerContext,
-      dynamicGraphicComponents,
+      ...manaContextOverrides,
     }),
-    [theme, saturation],
+    [theme, saturation, manaContextOverrides],
   );
   return (
     <AccessibilityPreferencesProvider

@@ -1,10 +1,9 @@
 import { useSyncExternalStore } from 'react';
+import type { ReducedMotionSetting, UIDensity } from '@discord-components/components';
 import { ThemeTypes, type Theme } from '@discord-components/tokens';
 import { readLocation } from './url';
 
 export type ThemeSetting = Theme | 'system';
-export type UIDensity = 'compact' | 'default' | 'cozy';
-export type ReducedMotionSetting = 'auto' | 'reduce' | 'no-preference';
 export type RoleStyle = 'username' | 'dot' | 'hidden';
 export type DynamicRange = 'no-limit' | 'standard';
 

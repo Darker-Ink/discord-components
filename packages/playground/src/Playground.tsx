@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useSyncExternalStore } from 'react';
 import {
+  AppRoot,
   BlobMask,
   HeaderBar,
   IconButton,
@@ -12,7 +13,7 @@ import {
 import { XSmallIcon } from '@discord-components/icons';
 import { ThemeTypes, type Theme } from '@discord-components/tokens';
 import { useAppSettings, type ThemeSetting } from './appSettings';
-import { AppRoot } from './AppRoot';
+import { dynamicGraphicComponents } from './dynamicGraphics';
 import { getDefaultProps } from './ControlsPanel';
 import { CopyLinkButton } from './CopyLinkButton';
 import { playgroundStore } from './playgroundStore';
@@ -38,6 +39,9 @@ const EmbeddedStory = ({ story, overrides }: { story: Story; overrides: Record<s
 EmbeddedStory.displayName = 'EmbeddedStory';
 
 const initialLocation = readLocation();
+
+// The app components Discord's client registers for dynamic graphics (only its demo one exists here).
+const MANA_CONTEXT = { dynamicGraphicComponents };
 
 playgroundStore.setState({
   selectedCollection: initialLocation.collection,
@@ -103,7 +107,11 @@ export const Playground = ({ collections }: { collections: Collection[] }) => {
   if (initialLocation.embed) {
     if (story == null) return null;
     const embedded = <EmbeddedStory story={story} overrides={initialLocation.overrides} />;
-    return <AppRoot theme={theme}>{Provider != null ? <Provider>{embedded}</Provider> : embedded}</AppRoot>;
+    return (
+      <AppRoot theme={theme} manaContext={MANA_CONTEXT}>
+        {Provider != null ? <Provider>{embedded}</Provider> : embedded}
+      </AppRoot>
+    );
   }
 
   const collectionName = collection?.name ?? 'Design System';
@@ -115,6 +123,7 @@ export const Playground = ({ collections }: { collections: Collection[] }) => {
   return (
     <AppRoot
       theme={theme}
+      manaContext={MANA_CONTEXT}
       reducedMotion={settings.reducedMotion}
       highContrastMode={settings.highContrastMode}
       saturation={settings.saturation}
