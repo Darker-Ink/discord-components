@@ -125,6 +125,10 @@ export interface MessageProps {
   className?: string;
   /** Replaces the content (e.g. an inline editor). */
   children?: ReactNode;
+  /** Replaces the embeds and components (e.g. editable ones); attachments, reactions and notices still render. */
+  accessories?: ReactNode;
+  onClickUsername?: MouseEventHandler<HTMLElement>;
+  onClickAvatar?: MouseEventHandler<HTMLImageElement>;
 }
 
 const isMentioned = (message: APIMessage, currentUserId: string | undefined) =>
@@ -139,6 +143,7 @@ type AccessoriesProps = Pick<
   | 'onSuppressEmbeds'
   | 'shouldDisableInteractiveComponents'
   | 'onReactionClick'
+  | 'accessories'
 > & { isMessageSnapshot?: boolean };
 
 const MessageAccessories = (props: AccessoriesProps) => {
@@ -149,6 +154,7 @@ const MessageAccessories = (props: AccessoriesProps) => {
     onSuppressEmbeds,
     shouldDisableInteractiveComponents,
     onReactionClick,
+    accessories,
   } = props;
   const actions = useMessageActions();
   const isComponentsV2 = hasFlag(message.flags, MessageFlags.IsComponentsV2);
@@ -163,13 +169,16 @@ const MessageAccessories = (props: AccessoriesProps) => {
       {isForwardedMessage(message) ? (
         <ForwardedMessage
           message={message}
-          renderAccessories={(snapshot) => <MessageAccessories {...props} message={snapshot} isMessageSnapshot />}
+          renderAccessories={(snapshot) => (
+            <MessageAccessories {...props} accessories={undefined} message={snapshot} isMessageSnapshot />
+          )}
         />
       ) : null}
       {attachments.length > 0 && message.poll == null && !isComponentsV2 ? (
         <MessageAttachments attachments={attachments} message={message} />
       ) : null}
-      {embeds.length > 0 && renderEmbeds ? (
+      {accessories !== undefined ? accessories : null}
+      {accessories === undefined && embeds.length > 0 && renderEmbeds ? (
         <MessageEmbeds
           embeds={embeds}
           message={message}
@@ -177,7 +186,7 @@ const MessageAccessories = (props: AccessoriesProps) => {
           onSuppressEmbeds={isEphemeral ? undefined : onSuppressEmbeds}
         />
       ) : null}
-      {components.length > 0 ? (
+      {accessories === undefined && components.length > 0 ? (
         <MessageComponents
           components={components}
           message={message}
@@ -207,6 +216,9 @@ const MessageBody = ({
   now,
   className,
   children,
+  accessories,
+  onClickUsername,
+  onClickAvatar,
 }: Omit<MessageProps, 'renderMarkdown' | 'resolvers' | 'actions'>) => {
   const i18n = useMessageI18n();
   useAriaLabels(i18n.REACTIONS);
@@ -250,6 +262,8 @@ const MessageBody = ({
             <MessageHeader
               message={message}
               author={author}
+              onClickUsername={onClickUsername}
+              onClickAvatar={onClickAvatar}
               ariaDescribedBy={
                 isReply && message.referenced_message != null ? getMessageReplyContextId(message) : undefined
               }
@@ -266,6 +280,7 @@ const MessageBody = ({
           onSuppressEmbeds={onSuppressEmbeds}
           shouldDisableInteractiveComponents={shouldDisableInteractiveComponents}
           onReactionClick={onReactionClick}
+          accessories={accessories}
         />
       </div>
     </FocusRing>

@@ -69,3 +69,4 @@ export {
   type ModalFormItemProps,
 } from './ModalComponents';
 export { FileUpload as ComponentFileUpload, DEFAULT_MAX_UPLOAD_SIZE } from './FileUpload';
+export { AutoMeasuredNestedContainer, ComponentLayoutRoot, useMeasuredWidth } from './ComponentLayout';

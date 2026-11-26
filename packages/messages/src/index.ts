@@ -13,3 +13,6 @@ export * from './Message';
 export * from './MessageComponents';
 export { Emoji, EMOJI_SIZES, type EmojiProps, type EmojiSize } from './Emoji/Emoji';
 export * from './InteractionModal';
+export { default as embedStyles } from './Embed/Embed.module.css';
+export { default as componentButtonStyles } from './MessageComponents/ComponentButton.module.css';
+export { default as messageComponentsStyles } from './MessageComponents/MessageComponents.module.css';
