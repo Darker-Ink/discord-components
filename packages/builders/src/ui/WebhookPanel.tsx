@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { Button, InlineNotice, Switch, Text, TextInput } from '@discord-mana/components';
 import { SendMessageIcon } from '@discord-mana/icons';
@@ -14,6 +14,7 @@ import {
 } from '../core';
 import { NodeTextInput } from './popouts';
 import { useBuilderContext } from './useBuilderContext';
+import { useBuilderUI, useBuilderUIStore, type WebhookDraft } from './uiStore';
 import { useRevealIssue } from './ValidationPanel';
 import styles from './WebhookPanel.module.css';
 
@@ -36,6 +37,21 @@ const writeStored = (key: string | undefined, value: string | null) => {
   }
 };
 
+/** What Discord says about a webhook (Get Webhook with Token): who it posts as, and where. */
+export interface WebhookInfo {
+  id: string;
+  name: string | null;
+  avatar: string | null;
+  channel_id: string;
+  guild_id?: string;
+  /** Set for webhooks an app created; only those can send interactive components. */
+  application_id: string | null;
+}
+
+/** The webhook's avatar on Discord's CDN, or null when it has none. */
+export const getWebhookAvatarURL = (info: Pick<WebhookInfo, 'id' | 'avatar'>, size = 128) =>
+  info.avatar != null ? `https://cdn.discordapp.com/avatars/${info.id}/${info.avatar}.png?size=${size}` : null;
+
 export interface WebhookPanelProps {
   className?: string;
   /**
@@ -47,6 +63,12 @@ export interface WebhookPanelProps {
   fetch?: typeof fetch;
   /** Called with every result. */
   onResult?: (result: WebhookResult) => void;
+  /**
+   * Called with the webhook's name, avatar and owner once a valid URL is entered (looked up from Discord), and
+   * with null when the URL is cleared or isn't valid. Use it to preview the real author, and to tell validation
+   * whether interactive components are allowed (`applicationOwnedWebhook`).
+   */
+  onWebhookChange?: (info: WebhookInfo | null) => void;
 }
 
 type SendState = { status: 'idle' } | { status: 'sending' } | { status: 'done'; result: WebhookResult; at: number };
@@ -56,14 +78,48 @@ type SendState = { status: 'idle' } | { status: 'sending' } | { status: 'done'; 
  * Thread and identity overrides are optional; Discord's answer is shown as it came, with its field errors
  * linked to the parts of the message they are about.
  */
-export const WebhookPanel = ({ className, storageKey, fetch: fetchImpl, onResult }: WebhookPanelProps) => {
+export const WebhookPanel = ({
+  className,
+  storageKey,
+  fetch: fetchImpl,
+  onResult,
+  onWebhookChange,
+}: WebhookPanelProps) => {
   const { store } = useBuilderContext();
   const issues = useBuilderIssues();
   const reveal = useRevealIssue();
-  const [url, setUrl] = useState(() => readStored(storageKey) ?? '');
-  const [remember, setRemember] = useState(() => readStored(storageKey) != null);
-  const [threadId, setThreadId] = useState('');
-  const [state, setState] = useState<SendState>({ status: 'idle' });
+  // Kept in the editor's state, so switching tabs doesn't lose what was typed or the last result.
+  const ui = useBuilderUIStore();
+  const saved = useBuilderUI((current) => current.webhook);
+  const [initial] = useState(
+    () =>
+      saved ?? {
+        url: readStored(storageKey) ?? '',
+        threadId: '',
+        remember: readStored(storageKey) != null,
+        result: null,
+      },
+  );
+  const draft = saved ?? initial;
+  const { url, threadId, remember } = draft;
+  const state: SendState = draft.sending
+    ? { status: 'sending' }
+    : draft.result != null
+      ? { status: 'done', result: draft.result, at: 0 }
+      : { status: 'idle' };
+  const patch = useCallback(
+    (next: Partial<WebhookDraft>) => ui.set({ webhook: { ...(ui.getState().webhook ?? initial), ...next } }),
+    [initial, ui],
+  );
+  const setUrl = (value: string) => patch({ url: value });
+  const setThreadId = (value: string) => patch({ threadId: value });
+  const setRemember = (value: boolean) => patch({ remember: value });
+  const setState = (next: SendState) =>
+    patch(
+      next.status === 'sending'
+        ? { sending: true }
+        : { sending: false, result: next.status === 'done' ? next.result : null },
+    );
 
   useEffect(() => {
     writeStored(storageKey, remember && url !== '' ? url : null);
@@ -75,6 +131,33 @@ export const WebhookPanel = ({ className, storageKey, fetch: fetchImpl, onResult
       ? 'This isn’t a webhook URL. Copy it from Server Settings → Integrations → Webhooks.'
       : undefined;
   const errors = issues.filter((issue) => issue.severity === 'error');
+  const [fetched, setFetched] = useState<{ url: string; info: WebhookInfo | null } | null>(null);
+  const webhookUrl = parsed?.url ?? null;
+  const info = fetched != null && fetched.url === webhookUrl ? fetched.info : null;
+
+  // Who the webhook posts as (and whether an app owns it), so the preview and the checks match it.
+  useEffect(() => {
+    if (webhookUrl == null) return;
+    const controller = new AbortController();
+    const timer = setTimeout(() => {
+      (fetchImpl ?? fetch)(webhookUrl, { signal: controller.signal })
+        .then(async (response) => (response.ok ? ((await response.json()) as WebhookInfo) : null))
+        .then((next) => setFetched({ url: webhookUrl, info: next }))
+        .catch(() => {
+          if (!controller.signal.aborted) setFetched({ url: webhookUrl, info: null });
+        });
+    }, 300);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [fetchImpl, webhookUrl]);
+
+  const onWebhookChangeRef = useRef(onWebhookChange);
+  useLayoutEffect(() => {
+    onWebhookChangeRef.current = onWebhookChange;
+  });
+  useEffect(() => onWebhookChangeRef.current?.(info), [info]);
 
   const send = useCallback(async () => {
     if (parsed == null) return;
@@ -85,7 +168,8 @@ export const WebhookPanel = ({ className, storageKey, fetch: fetchImpl, onResult
     const result = await sendWebhookMessage(parsed.url, store.toJSON(), options);
     setState({ status: 'done', result, at: Date.now() });
     onResult?.(result);
-  }, [fetchImpl, onResult, parsed, store, threadId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetchImpl, onResult, parsed, store, threadId, patch]);
 
   const issueTarget = (issue: ValidationIssue): ValidationIssue => {
     const { uid, rest } = nodeAtPath(store.getState().doc, issue.path);
@@ -112,6 +196,25 @@ export const WebhookPanel = ({ className, storageKey, fetch: fetchImpl, onResult
           autoComplete="off"
           spellCheck={false}
         />
+        {info != null ? (
+          <div className={styles.identity}>
+            {getWebhookAvatarURL(info) != null ? (
+              <img className={styles.identityAvatar} src={getWebhookAvatarURL(info)!} alt="" />
+            ) : (
+              <span className={styles.identityAvatar} />
+            )}
+            <div className={styles.identityText}>
+              <Text variant="body-sm/semibold" color="text-strong">
+                {info.name ?? 'Unnamed webhook'}
+              </Text>
+              <Text variant="body-xs/normal" color="text-muted">
+                {info.application_id != null
+                  ? 'An app’s webhook: buttons and selects work'
+                  : 'A channel webhook: link buttons only'}
+              </Text>
+            </div>
+          </div>
+        ) : null}
         {storageKey != null ? (
           <div className={styles.remember}>
             <Switch

@@ -139,6 +139,8 @@ export interface ComponentPaletteProps {
   className?: string;
   /** Icons only (a narrow rail). */
   compact?: boolean;
+  /** A row that scrolls sideways (small screens), instead of grouped columns. */
+  orientation?: 'vertical' | 'horizontal';
   /** Which items to offer (defaults to everything the current mode can use). */
   items?: readonly PaletteItem[];
 }
@@ -147,7 +149,12 @@ export interface ComponentPaletteProps {
  * What can be added to the message: drag an item onto the canvas (only places that take it light up), or click
  * it to add it next to the selection. Items the message can't take anywhere right now are dimmed.
  */
-export const ComponentPalette = ({ className, compact = false, items = PALETTE_ITEMS }: ComponentPaletteProps) => {
+export const ComponentPalette = ({
+  className,
+  compact = false,
+  orientation = 'vertical',
+  items = PALETTE_ITEMS,
+}: ComponentPaletteProps) => {
   const mode = useBuilderSelector((state) => state.doc.mode);
   const available = useBuilderSelector(
     useCallback(
@@ -164,7 +171,15 @@ export const ComponentPalette = ({ className, compact = false, items = PALETTE_I
   const availableSet = useMemo(() => new Set(available.split(',')), [available]);
   const scope = useBuilderScope();
   return (
-    <nav className={clsx(styles.palette, { [styles.compact]: compact }, className)} aria-label="Components" {...scope}>
+    <nav
+      className={clsx(
+        styles.palette,
+        { [styles.compact]: compact, [styles.horizontal]: orientation === 'horizontal' },
+        className,
+      )}
+      aria-label="Components"
+      {...scope}
+    >
       {GROUPS.map((group) => {
         const entries = group.templates
           .map((template) => items.find((item) => item.template === template))
@@ -172,7 +187,7 @@ export const ComponentPalette = ({ className, compact = false, items = PALETTE_I
         if (entries.length === 0) return null;
         return (
           <section key={group.title} className={styles.group} aria-label={group.title}>
-            {!compact ? <h3 className={styles.title}>{group.title}</h3> : null}
+            {!compact && orientation === 'vertical' ? <h3 className={styles.title}>{group.title}</h3> : null}
             <ul className={styles.list}>
               {entries.map((item) => (
                 <PaletteButton

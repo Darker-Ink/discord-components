@@ -89,3 +89,23 @@
   padding: 0;
   width: 40px;
 }
+
+.horizontal {
+  flex-direction: row;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.horizontal .group,
+.horizontal .list {
+  flex-direction: row;
+  flex: none;
+}
+.horizontal .item {
+  background: var(--background-mod-subtle);
+  border-radius: 16px;
+  font-size: 14px;
+  height: 32px;
+  padding: 0 12px 0 10px;
+  width: auto;
+}

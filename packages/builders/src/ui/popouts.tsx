@@ -1,6 +1,15 @@
 import { useMemo, useRef, type ReactNode } from 'react';
 import clsx from 'clsx';
-import { Button, Popout, Switch, Text, TextInput, type PopoutRenderProps } from '@discord-mana/components';
+import {
+  Button,
+  Popout,
+  Switch,
+  Text,
+  TextInput,
+  type PopoutRenderProps,
+  type PopoutTriggerProps,
+  type PopoutTriggerState,
+} from '@discord-mana/components';
 import { useNodeIssues } from '../core';
 import { patchField, readField, useEditableNode } from './fields';
 import { useBuilderContext } from './useBuilderContext';
@@ -146,39 +155,50 @@ export const RemoveButton = ({ label, onClick }: { label: string; onClick: () =>
 
 RemoveButton.displayName = 'RemoveButton';
 
+export type AnchoredTriggerProps = PopoutTriggerProps & { ref: (element: HTMLElement | null) => void };
+
 /**
- * A popout opened by clicking something on the canvas (an "add image" placeholder, a colour bar), rather than a
- * toolbar button.
+ * A `Popout` whose trigger gets a `ref` with its other props, so it is positioned against whatever element the
+ * trigger renders (a toolbar button, a placeholder on the canvas).
  */
-export const SlotPopout = ({
+export const AnchoredPopout = ({
   renderPopout,
   children,
   position = 'bottom',
   align = 'left',
+  spacing = 8,
 }: {
   renderPopout: (props: PopoutRenderProps) => ReactNode;
-  children: (props: {
-    onClick: () => void;
-    'aria-expanded': boolean;
-    ref: (element: HTMLElement | null) => void;
-  }) => ReactNode;
+  children: (props: AnchoredTriggerProps, state: PopoutTriggerState) => ReactNode;
   position?: 'top' | 'bottom' | 'left' | 'right';
   align?: 'left' | 'right' | 'center' | 'top' | 'bottom';
+  spacing?: number;
 }) => {
   const targetRef = useRef<HTMLElement | null>(null);
   return (
-    <Popout renderPopout={renderPopout} position={position} align={align} targetElementRef={targetRef} spacing={8}>
-      {(props, { isShown }) =>
-        children({
-          onClick: () => props.onClick(),
-          'aria-expanded': isShown,
-          ref: (element) => {
-            targetRef.current = element;
+    <Popout
+      renderPopout={renderPopout}
+      position={position}
+      align={align}
+      targetElementRef={targetRef}
+      spacing={spacing}
+    >
+      {(props, state) =>
+        children(
+          {
+            ...props,
+            ref: (element) => {
+              targetRef.current = element;
+            },
           },
-        })
+          state,
+        )
       }
     </Popout>
   );
 };
 
-SlotPopout.displayName = 'SlotPopout';
+AnchoredPopout.displayName = 'AnchoredPopout';
+
+/** A popout opened by clicking something on the canvas (an "add image" placeholder, a colour bar). */
+export const SlotPopout = AnchoredPopout;

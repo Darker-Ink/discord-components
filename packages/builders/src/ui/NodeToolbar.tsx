@@ -1,7 +1,8 @@
 import { useLayoutEffect, type ComponentType, type MouseEvent, type ReactNode } from 'react';
 import clsx from 'clsx';
 import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react-dom';
-import { Popout, Tooltip, type PopoutRenderProps } from '@discord-mana/components';
+import { Tooltip, type PopoutRenderProps } from '@discord-mana/components';
+import { AnchoredPopout } from './popouts';
 import { CopyIcon, DragIcon, MoreHorizontalIcon, TrashIcon, type IconProps } from '@discord-mana/icons';
 import type { NodeKind } from '../core';
 import { isMac } from './NodeFrame';
@@ -62,7 +63,7 @@ export const NodeToolbarPopoutButton = ({
   children,
   active,
 }: NodeToolbarPopoutButtonProps) => (
-  <Popout renderPopout={renderPopout} position="bottom" align="center" spacing={8}>
+  <AnchoredPopout renderPopout={renderPopout} position="bottom" align="center">
     {(props, { isShown }) => (
       <Tooltip text={isShown ? null : label} position="top">
         <button
@@ -77,7 +78,7 @@ export const NodeToolbarPopoutButton = ({
         </button>
       </Tooltip>
     )}
-  </Popout>
+  </AnchoredPopout>
 );
 
 NodeToolbarPopoutButton.displayName = 'NodeToolbarPopoutButton';
@@ -94,9 +95,11 @@ export const NodeToolbar = ({ uid, kind, tools }: { uid: string; kind: NodeKind;
     refs: { setReference, setFloating },
     floatingStyles,
   } = useFloating({
-    placement: 'top-end',
+    // Over the node's end, like the client's message toolbar; from its start when the node is narrower than
+    // the toolbar, so it doesn't reach back over what's beside it.
+    placement: (ui.frames.get(uid)?.offsetWidth ?? 0) >= 420 ? 'top-end' : 'top-start',
     strategy: 'fixed',
-    middleware: [offset(8), flip({ fallbackPlacements: ['bottom-end', 'top-start'] }), shift({ padding: 8 })],
+    middleware: [offset(8), flip(), shift({ padding: 8 })],
     whileElementsMounted: autoUpdate,
   });
   useLayoutEffect(() => {

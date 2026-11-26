@@ -42,8 +42,13 @@ class NodePointerSensor extends PointerSensor {
   static override activators = [
     {
       eventName: 'onPointerDown' as const,
-      handler: ({ nativeEvent }: { nativeEvent: PointerEvent }, { onActivation }: PointerSensorOptions) => {
+      handler: (
+        { nativeEvent, currentTarget }: { nativeEvent: PointerEvent; currentTarget: EventTarget | null },
+        { onActivation }: PointerSensorOptions,
+      ) => {
         if (!nativeEvent.isPrimary || nativeEvent.button !== 0 || !startsDrag(nativeEvent.target)) return false;
+        // Presses in a popout opened from the node reach it through React's tree; they aren't on the node.
+        if (currentTarget instanceof Node && !currentTarget.contains(nativeEvent.target as Node)) return false;
         onActivation?.({ event: nativeEvent });
         return true;
       },

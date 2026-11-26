@@ -12,21 +12,13 @@
   outline: 0 solid transparent;
   outline-offset: 3px;
 }
-[data-builder-node]:focus {
-  outline-style: solid;
-}
-[data-builder-node]:focus:not(:focus-visible) {
-  outline-color: transparent;
-}
 
-/* Only the innermost node under the pointer lights up. */
-[data-builder-canvas]:not([data-dragging]) [data-builder-node]:hover:not(:has([data-builder-node]:hover)) {
+/* Only the innermost node under the pointer lights up (kept weak, so selection and errors win). */
+:where([data-builder-canvas]:not([data-dragging]))
+  [data-builder-node]:hover:where(:not(:has([data-builder-node]:hover))) {
   outline: 1px solid var(--border-strong);
 }
 
-[data-builder-node][data-issue='warning'] {
-  outline: 1px dashed var(--status-warning);
-}
 [data-builder-node][data-issue='error'] {
   outline: 1px solid var(--status-danger);
 }
@@ -37,7 +29,7 @@
 [data-builder-node][data-selected][data-issue='error'] {
   outline-color: var(--status-danger);
 }
-[data-builder-node]:focus-visible {
+[data-builder-canvas][data-keyboard] [data-builder-node]:focus {
   outline: 2px solid var(--focus-primary, #00b0f4);
 }
 

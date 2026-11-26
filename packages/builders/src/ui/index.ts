@@ -25,7 +25,7 @@ export {
 export { ComponentPalette, findInsertTarget, type ComponentPaletteProps } from './ComponentPalette';
 export { ValidationPanel, useRevealIssue, type ValidationPanelProps } from './ValidationPanel';
 export { JsonPanel, highlightJSON, downloadJSON, type JsonPanelProps } from './JsonPanel';
-export { WebhookPanel, type WebhookPanelProps } from './WebhookPanel';
+export { WebhookPanel, getWebhookAvatarURL, type WebhookPanelProps, type WebhookInfo } from './WebhookPanel';
 export { BuilderModeSwitch, BuilderHistoryButtons, type BuilderModeSwitchProps } from './BuilderControls';
 export {
   BuilderTextField,
@@ -43,7 +43,15 @@ export {
 } from './NodeToolbar';
 export { BuilderDndProvider } from './dnd/BuilderDnd';
 export { useBuilderUI, useBuilderUIStore, type BuilderUIState, type DropSlot } from './uiStore';
-export { prepareEmbed, prepareMedia, prepareComponents, probeMedia, setMediaSize, type MediaSize } from './mediaSize';
+export {
+  prepareEmbed,
+  prepareMedia,
+  prepareComponents,
+  probeMedia,
+  setMediaSize,
+  useMediaSizes,
+  type MediaSize,
+} from './mediaSize';
 export { parseEmoji, formatEmoji } from './componentTools';
 export { KIND_LABELS, KIND_ICONS, PALETTE_ITEMS, type PaletteItem } from './meta';
 export { describeNode } from './describe';

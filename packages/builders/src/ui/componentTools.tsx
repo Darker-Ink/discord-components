@@ -25,7 +25,6 @@ import {
   LegacyButton,
   Menu,
   MenuItem,
-  Popout,
   TextInput,
   Tooltip,
 } from '@discord-mana/components';
@@ -60,7 +59,7 @@ import {
 } from '../core';
 import { NodeToolbarButton, NodeToolbarPopoutButton } from './NodeToolbar';
 import { getMediaSize, isMediaBroken, useMediaSizes } from './mediaSize';
-import { NodeSwitch, NodeTextInput, PopoutPanel, RemoveButton } from './popouts';
+import { AnchoredPopout, NodeSwitch, NodeTextInput, PopoutPanel, RemoveButton } from './popouts';
 import { useBuilderContext } from './useBuilderContext';
 import { useBuilderUIStore } from './uiStore';
 import styles from './componentTools.module.css';
@@ -470,7 +469,7 @@ const GalleryTile = ({ uid, index }: { uid: string; index: number }) => {
   const broken = isMediaBroken(url);
   return (
     <li ref={setNodeRef} style={style} className={clsx(styles.tile, { [styles.dragging]: isDragging })}>
-      <Popout
+      <AnchoredPopout
         position="bottom"
         align="center"
         renderPopout={() => (
@@ -509,7 +508,7 @@ const GalleryTile = ({ uid, index }: { uid: string; index: number }) => {
             ) : null}
           </button>
         )}
-      </Popout>
+      </AnchoredPopout>
     </li>
   );
 };
@@ -592,7 +591,7 @@ export const SectionTools = ({ uid }: { uid: string }) => {
     if (accessory != null) ui.set({ selectedId: accessory });
   };
   return (
-    <Popout
+    <AnchoredPopout
       position="bottom"
       align="center"
       renderPopout={({ closePopout }) => (
@@ -637,7 +636,7 @@ export const SectionTools = ({ uid }: { uid: string }) => {
           </button>
         </Tooltip>
       )}
-    </Popout>
+    </AnchoredPopout>
   );
 };
 

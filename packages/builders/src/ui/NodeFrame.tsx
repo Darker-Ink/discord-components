@@ -16,7 +16,7 @@ import { describeNode } from './describe';
 import { IssueBadge } from './IssueBadge';
 import { NodeToolbar } from './NodeToolbar';
 import { useBuilderContext } from './useBuilderContext';
-import { useBuilderUIStore, useIsSelected, type BuilderUIStore } from './uiStore';
+import { useBuilderUI, useBuilderUIStore, useIsSelected, type BuilderUIStore } from './uiStore';
 import { useMergeRefs } from '@discord-mana/components';
 import styles from './NodeFrame.module.css';
 
@@ -151,7 +151,8 @@ export const useNodeFrame = ({ uid, kind, disabled = false }: NodeFrameOptions) 
 
   const onFocus = useCallback(
     (event: FocusEvent<HTMLElement>) => {
-      if (event.target === event.currentTarget) ui.set({ selectedId: uid });
+      // A click selects on release (see BuilderCanvas); focus from the keyboard selects right away.
+      if (event.target === event.currentTarget && ui.modality === 'keyboard') ui.set({ selectedId: uid });
     },
     [ui, uid],
   );
@@ -229,11 +230,14 @@ export const FrameChrome = ({
   selected: boolean;
   tools?: ReactNode;
   issues: ReturnType<typeof useNodeIssues>;
-}) => (
-  <>
-    <IssueBadge issues={issues.filter((issue) => issue.field == null)} />
-    {selected ? <NodeToolbar uid={uid} kind={kind} tools={tools} /> : null}
-  </>
-);
+}) => {
+  const dragging = useBuilderUI((state) => state.drag != null);
+  return (
+    <>
+      <IssueBadge issues={issues.filter((issue) => issue.field == null)} />
+      {selected && !dragging ? <NodeToolbar uid={uid} kind={kind} tools={tools} /> : null}
+    </>
+  );
+};
 
 FrameChrome.displayName = 'FrameChrome';

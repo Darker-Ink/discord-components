@@ -89,7 +89,7 @@ export const ButtonLabelEditor = ({ uid }: { uid: string }) => {
   useLayoutEffect(() => {
     const element = ref.current;
     if (element != null && !editing && element.textContent !== label) element.textContent = label;
-  }, [editing, label]);
+  }, [editing, label, box]);
 
   if (premium || box == null) return null;
   return (

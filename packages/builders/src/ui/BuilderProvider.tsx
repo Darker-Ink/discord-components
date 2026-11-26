@@ -105,6 +105,21 @@ const Inner = ({
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [globalShortcuts, readOnly, scope, store]);
 
+  useEffect(() => {
+    const keyboard = () => {
+      ui.modality = 'keyboard';
+    };
+    const pointer = () => {
+      ui.modality = 'pointer';
+    };
+    document.addEventListener('keydown', keyboard, true);
+    document.addEventListener('pointerdown', pointer, true);
+    return () => {
+      document.removeEventListener('keydown', keyboard, true);
+      document.removeEventListener('pointerdown', pointer, true);
+    };
+  }, [ui]);
+
   // A node that no longer exists (undone, deleted elsewhere) can't stay selected.
   useEffect(
     () =>

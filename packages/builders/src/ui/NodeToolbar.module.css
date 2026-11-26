@@ -3,9 +3,9 @@
 .toolbar {
   align-items: center;
   background: var(--background-surface-high);
-  border: 1px solid var(--border-muted);
+  border: 1px solid var(--border-subtle);
   border-radius: 8px;
-  box-shadow: var(--shadow-low);
+  box-shadow: var(--shadow-medium);
   box-sizing: border-box;
   color: var(--interactive-text-default);
   cursor: default;
@@ -18,8 +18,7 @@
   z-index: 100;
 }
 .toolbar:hover {
-  border-color: var(--border-subtle);
-  box-shadow: var(--shadow-medium);
+  border-color: var(--border-normal);
 }
 
 .button {

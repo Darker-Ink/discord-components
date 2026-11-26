@@ -69,3 +69,23 @@
     grid-template-columns: 1fr;
   }
 }
+
+.identity {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  margin-top: -4px;
+}
+.identityAvatar {
+  background: var(--background-mod-normal);
+  border-radius: 50%;
+  flex: none;
+  height: 32px;
+  object-fit: cover;
+  width: 32px;
+}
+.identityText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}

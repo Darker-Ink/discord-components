@@ -1,6 +1,6 @@
 import { createContext, Fragment, useContext, useMemo, type ReactNode } from 'react';
 import clsx from 'clsx';
-import { HiddenVisually, Menu, MenuItem, Popout } from '@discord-mana/components';
+import { HiddenVisually, Menu, MenuItem } from '@discord-mana/components';
 import { PlusSmallIcon } from '@discord-mana/icons';
 import {
   ActionRow,
@@ -54,6 +54,7 @@ import {
 } from './componentTools';
 import { KIND_ICONS, PALETTE_ITEMS } from './meta';
 import { NodeFrame } from './NodeFrame';
+import { AnchoredPopout } from './popouts';
 import { NodeToolbarSeparator } from './NodeToolbar';
 import { prepareMedia, useMediaSizes } from './mediaSize';
 import { useBuilderRender } from './renderContext';
@@ -267,7 +268,7 @@ export const AddChildButton = ({
     if (uid != null) ui.set({ selectedId: uid, pendingFocus: { uid } });
   };
   return (
-    <Popout
+    <AnchoredPopout
       position="bottom"
       align="left"
       renderPopout={({ closePopout }) => (
@@ -302,7 +303,7 @@ export const AddChildButton = ({
           {variant === 'inline' ? <span>{label}</span> : null}
         </button>
       )}
-    </Popout>
+    </AnchoredPopout>
   );
 };
 

@@ -1,5 +1,5 @@
 import { createContext, useContext, useSyncExternalStore } from 'react';
-import type { SlotName } from '../core';
+import type { SlotName, WebhookResult } from '../core';
 import type { SlotGeometry } from './dnd/geometry';
 
 /** A place a node can be dropped: the list (`parentId` + `slot`) and the index in it, before the drop. */
@@ -17,6 +17,15 @@ export interface DragState {
   label: string;
 }
 
+/** What the Send tab holds between visits. */
+export interface WebhookDraft {
+  url: string;
+  threadId: string;
+  remember: boolean;
+  sending?: boolean;
+  result: WebhookResult | null;
+}
+
 export interface BuilderUIState {
   selectedId: string | null;
   /** A text field to focus once its node renders (after selecting it from the issues list, or adding it). */
@@ -27,6 +36,7 @@ export interface BuilderUIState {
   dropShape: SlotGeometry['shape'] | null;
   /** The node whose menu is open, and where. */
   contextMenu: { uid: string; x: number; y: number } | null;
+  webhook: WebhookDraft | null;
 }
 
 type Listener = () => void;
@@ -44,11 +54,14 @@ export const createBuilderUIStore = () => {
     dropTarget: null,
     dropShape: null,
     contextMenu: null,
+    webhook: null,
   };
   const listeners = new Set<Listener>();
   const frames = new Map<string, HTMLElement>();
   const lists = new Map<string, HTMLElement>();
   return {
+    /** How the user last interacted (focus selects a node only when it comes from the keyboard). */
+    modality: 'pointer' as 'pointer' | 'keyboard',
     getState: () => state,
     set(patch: Partial<BuilderUIState>) {
       const next = { ...state, ...patch };

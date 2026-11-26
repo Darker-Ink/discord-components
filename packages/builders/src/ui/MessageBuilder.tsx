@@ -10,7 +10,7 @@ import { ComponentPalette } from './ComponentPalette';
 import { JsonPanel } from './JsonPanel';
 import { useBuilderContext } from './useBuilderContext';
 import { ValidationPanel } from './ValidationPanel';
-import { WebhookPanel } from './WebhookPanel';
+import { WebhookPanel, type WebhookPanelProps } from './WebhookPanel';
 import styles from './MessageBuilder.module.css';
 
 export type BuilderPanelId = 'issues' | 'json' | 'send';
@@ -26,6 +26,8 @@ export interface BuilderPanelsProps {
   fetch?: typeof fetch;
   /** Extra actions in the JSON tab's bar. */
   jsonActions?: ReactNode;
+  /** Passed to the Send tab. */
+  onWebhookChange?: WebhookPanelProps['onWebhookChange'];
 }
 
 /** The side panel: Issues (with a count), JSON and Send, as tabs. */
@@ -37,6 +39,7 @@ export const BuilderPanels = ({
   webhookStorageKey,
   fetch: fetchImpl,
   jsonActions,
+  onWebhookChange,
 }: BuilderPanelsProps) => {
   const issues = useBuilderIssues();
   const [own, setOwn] = useState<BuilderPanelId>(panels[0] ?? 'issues');
@@ -54,7 +57,14 @@ export const BuilderPanels = ({
     send: {
       id: 'send',
       label: 'Send',
-      panel: () => <WebhookPanel className={styles.panelBody} storageKey={webhookStorageKey} fetch={fetchImpl} />,
+      panel: () => (
+        <WebhookPanel
+          className={styles.panelBody}
+          storageKey={webhookStorageKey}
+          fetch={fetchImpl}
+          onWebhookChange={onWebhookChange}
+        />
+      ),
     },
   };
   return (
@@ -81,6 +91,7 @@ export const BuilderChannel = ({
   children,
   className,
   actions,
+  footer,
 }: {
   name?: string;
   topic?: string;
@@ -88,6 +99,8 @@ export const BuilderChannel = ({
   className?: string;
   /** Rendered at the end of the header bar. */
   actions?: ReactNode;
+  /** Under the messages, where the client has its chat input. */
+  footer?: ReactNode;
 }) => (
   <section className={clsx(styles.channel, className)} aria-label={`#${name}`}>
     <HeaderBar className={styles.channelHeader} aria-label={`#${name}`}>
@@ -102,6 +115,7 @@ export const BuilderChannel = ({
       {actions != null ? <div className={styles.channelActions}>{actions}</div> : null}
     </HeaderBar>
     <div className={styles.channelScroller}>{children}</div>
+    {footer}
   </section>
 );
 

@@ -187,7 +187,12 @@ export const BuilderTextField = ({
     [actions, field, uid],
   );
 
-  const focus = useCallback(() => editorRef.current?.focus(), []);
+  // In its rendered state the editor is a focusable element that starts editing when focused.
+  const focus = useCallback(() => {
+    const textbox = wrapperRef.current?.querySelector<HTMLElement>('[role="textbox"]');
+    if (textbox != null) textbox.focus();
+    else editorRef.current?.focus();
+  }, []);
   usePendingFocus(uid, field, focus, isFirstField);
 
   const invalid = issues.some((issue) => issue.severity === 'error');

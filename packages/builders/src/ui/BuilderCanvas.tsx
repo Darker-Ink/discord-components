@@ -112,9 +112,22 @@ export const BuilderCanvas = ({ author = DEFAULT_AUTHOR, timestamp, className, e
   const rootIssues = useNodeIssues(ROOT_UID);
   const scope = useBuilderScope();
 
-  const onPointerDownCapture = useCallback(
+  // Selection happens on release, not on press: selecting shows a node's empty parts, and the layout must not
+  // move under a press that turns into a drag.
+  const pressRef = useRef<{ x: number; y: number } | null>(null);
+  const onPointerDownCapture = useCallback((event: PointerEvent<HTMLDivElement>) => {
+    // Popouts opened from the canvas are portals: their events arrive here through React, not the DOM.
+    if (!event.currentTarget.contains(event.target as Node)) return;
+    event.currentTarget.removeAttribute('data-keyboard');
+    pressRef.current = event.button === 0 ? { x: event.clientX, y: event.clientY } : null;
+  }, []);
+
+  const onPointerUpCapture = useCallback(
     (event: PointerEvent<HTMLDivElement>) => {
-      if (readOnly || event.button !== 0) return;
+      const press = pressRef.current;
+      pressRef.current = null;
+      if (readOnly || press == null || !event.currentTarget.contains(event.target as Node)) return;
+      if (ui.getState().drag != null || Math.hypot(event.clientX - press.x, event.clientY - press.y) > 6) return;
       const target = event.target as Element;
       if (target.closest('[data-builder-ui]') != null && nodeOf(target) == null) return;
       const frame = nodeOf(target);
@@ -129,7 +142,7 @@ export const BuilderCanvas = ({ author = DEFAULT_AUTHOR, timestamp, className, e
   // A builder's buttons, links, selects and images do nothing but get selected.
   const swallow = useCallback(
     (event: MouseEvent<HTMLDivElement>) => {
-      if (readOnly || isEditorUI(event.target)) return;
+      if (readOnly || isEditorUI(event.target) || !event.currentTarget.contains(event.target as Node)) return;
       if (nodeOf(event.target) == null && !(event.target as Element).closest('a, button')) return;
       event.preventDefault();
       event.stopPropagation();
@@ -139,7 +152,7 @@ export const BuilderCanvas = ({ author = DEFAULT_AUTHOR, timestamp, className, e
 
   const onContextMenu = useCallback(
     (event: MouseEvent<HTMLDivElement>) => {
-      if (readOnly) return;
+      if (readOnly || !event.currentTarget.contains(event.target as Node)) return;
       const frame = nodeOf(event.target);
       if (frame == null || isEditorUI(event.target)) return;
       event.preventDefault();
@@ -189,14 +202,20 @@ export const BuilderCanvas = ({ author = DEFAULT_AUTHOR, timestamp, className, e
       data-dragging={dragging || undefined}
       data-readonly={readOnly || undefined}
       onPointerDownCapture={onPointerDownCapture}
+      onPointerUpCapture={onPointerUpCapture}
       onClickCapture={swallow}
       onMouseDownCapture={(event) => {
         // Text selection and focus still work in editable text; elsewhere, nothing should react to a press.
         if (readOnly || isEditorUI(event.target) || nodeOf(event.target) == null) return;
+        if (!event.currentTarget.contains(event.target as Node)) return;
         if ((event.target as Element).closest('a, button, img, video, [role="button"], [role="combobox"]') != null)
           event.preventDefault();
       }}
       onContextMenu={onContextMenu}
+      // Focus rings are for keyboard users; a click selects without one.
+      onKeyDownCapture={(event) => {
+        if (event.currentTarget.contains(event.target as Node)) event.currentTarget.setAttribute('data-keyboard', '');
+      }}
     >
       <ol className={styles.list} aria-label="Message preview">
         <MessageListItem message={message}>
