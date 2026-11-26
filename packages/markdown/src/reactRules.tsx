@@ -161,7 +161,7 @@ const isStaticRoute = (id: string) =>
 
 // Links inside a hidden spoiler aren't tab stops.
 const renderSpoilerElement = (element: ReactElement, visible: boolean) =>
-  element == null || element.type !== MaskedLink || visible
+  element == null || element.type !== MarkdownLink || visible
     ? element
     : cloneElement(element as ReactElement<{ tabIndex?: number }>, { tabIndex: -1 });
 
@@ -396,11 +396,13 @@ const MarkdownLink = ({
   output,
   state,
   options,
+  tabIndex,
 }: {
   node: ASTNode;
   output: ReactOutput;
   state: MarkdownState;
   options: ReactRuleOptions;
+  tabIndex?: number;
 }) => {
   const actions = useMessageActions();
   const children = output(node.content, state);
@@ -420,6 +422,7 @@ const MarkdownLink = ({
   if (state.noStyleAndInteraction) return <span title={title}>{children}</span>;
   return (
     <MaskedLink
+      {...(tabIndex != null ? { tabIndex } : null)}
       title={title}
       href={node.target}
       trusted={trusted}

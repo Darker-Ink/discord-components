@@ -442,26 +442,6 @@ const channelMention = (
 };
 
 const DISCORD_HOSTS = '(?:(?:canary\\.|ptb\\.)?discord(?:app)?.com|staging\\.discord\\.co)';
-const STATIC_CHANNEL_ROUTES = [
-  'conjuring',
-  'conjure',
-  'role-subscriptions',
-  'server-monetization-onboarding',
-  'game-shop',
-  'shop',
-  'member-applications',
-  '@home',
-  'channel-browser',
-  'onboarding',
-  'customize-community',
-  'member-safety',
-  'boosts',
-  'game-servers',
-  'report-to-mod',
-  'official-messages',
-  'guild-space',
-];
-void STATIC_CHANNEL_ROUTES;
 const CHANNEL_URL_BASE = `^https://${DISCORD_HOSTS}/channels/(\\d+|@me)(?:/(\\d+|[a-zA-Z-]+))?(?:/(\\d+|[a-zA-Z-]+))?`;
 const CHANNEL_URL_RE = new RegExp(`${CHANNEL_URL_BASE}(?:\\?([\\w%=&+-]+))?`);
 const THREAD_MESSAGE_URL_RE = new RegExp(

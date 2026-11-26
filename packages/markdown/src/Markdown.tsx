@@ -65,7 +65,7 @@ export const renderMessageMarkdown: RenderMessageMarkdown = (text, { kind, messa
 );
 
 /** `<Message renderEmbedMarkdown={renderEmbedMarkdown}>`: rich embed titles, descriptions and fields. */
-export const renderEmbedMarkdown: RenderEmbedMarkdown = (text, { embed, kind }) => {
+export const renderEmbedMarkdown: RenderEmbedMarkdown = (text, { embed, kind, channelId }) => {
   const preset =
     kind === 'title'
       ? embed.url != null && embed.url !== ''
@@ -74,5 +74,5 @@ export const renderEmbedMarkdown: RenderEmbedMarkdown = (text, { embed, kind }) 
       : kind === 'description'
         ? 'embedDescription'
         : 'embedFieldValue';
-  return <Markdown content={text} preset={preset} />;
+  return <Markdown content={text} preset={preset} context={{ channelId }} />;
 };
