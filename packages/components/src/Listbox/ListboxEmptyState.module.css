@@ -1,0 +1,12 @@
+.emptyStateText {
+  color: var(--text-muted);
+  font-style: italic;
+  word-break: break-word;
+}
+.emptyState {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: 40px;
+  padding: var(--space-8);
+}

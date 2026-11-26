@@ -1,0 +1,100 @@
+.listBox {
+  box-sizing: border-box;
+  padding: var(--space-4);
+}
+.listBox:not(.scrollable) ::-webkit-scrollbar {
+  height: 0;
+  width: 0;
+}
+.listBox:not(.scrollable) * {
+  scrollbar-width: none;
+}
+.listBoxInner,
+.listBoxItem {
+  box-sizing: border-box;
+}
+.listBoxItem {
+  align-items: stretch;
+  background-color: transparent;
+  border-radius: var(--radius-xs);
+  color: var(--text-strong);
+  cursor: pointer;
+  display: flex;
+  justify-content: flex-start;
+  transition: background-color 50ms ease-in;
+}
+.listBoxItem:hover {
+  transition: background-color 0.15s ease-out;
+}
+.listBoxItem:focus:not([aria-disabled='true']),
+:global(.mouse-mode) .listBoxItem:hover:not([aria-disabled='true']) {
+  background-color: var(--background-mod-normal);
+}
+.listBoxItem[aria-disabled='true'] {
+  background-color: transparent;
+  opacity: 0.5;
+}
+.listBox:not(:focus-within) .listBoxItem[data-focus-visible='true'] {
+  background-color: var(--background-mod-normal);
+}
+:global(.mouse-mode) .listBox:not(:focus-within) .listBoxItem[data-focus-visible='true']:not(:hover) {
+  background-color: transparent;
+}
+:global(.keyboard-mode) .listBox:not(:focus-within) .listBoxItem[data-focus-visible='true'],
+:global(.keyboard-mode) .listBoxItem:focus {
+  outline: 2px solid var(--border-focus);
+  outline-offset: -2px;
+}
+.listBoxItemContent {
+  align-items: center;
+  box-sizing: border-box;
+  color: var(--text-strong);
+  display: flex;
+  flex-grow: 1;
+  justify-content: flex-start;
+  min-height: var(--select-option-height);
+  padding: calc(var(--space-xxs) - 1px) var(--space-4) calc(var(--space-xxs) - 1px) var(--space-8);
+}
+.listBoxItemContent.inInput {
+  min-height: calc(var(--select-option-height) - 2px);
+}
+.listBoxItemContent[data-has-description='true'] {
+  align-items: flex-start;
+  flex-direction: column;
+}
+.listBoxItemLabel {
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+.listBoxItemDescription {
+  flex-shrink: 1;
+}
+.listBoxSectionHeader {
+  padding: var(--space-4) var(--space-4) var(--space-4) var(--space-8);
+}
+.listBoxSectionHeader,
+.selectedIcon {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+}
+.selectedIcon {
+  flex-shrink: 0;
+  justify-content: center;
+  min-width: 24px;
+  padding: var(--space-xxs) var(--space-4) var(--space-xxs) var(--space-4);
+}
+.loadingSpinnerWrapper {
+  align-items: center;
+  display: flex;
+  height: var(--select-option-height);
+  justify-content: center;
+}
+.loadingSpinner {
+  width: 32px;
+}
+.loadingSpinnerInner {
+  border-radius: 50%;
+  height: 8px;
+  width: 8px;
+}
