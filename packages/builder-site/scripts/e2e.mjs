@@ -200,6 +200,16 @@ await step('shows an error when a limit is exceeded, and undo clears it', async 
   assert.match(await page.getByRole('tab', { name: /^Issues/ }).innerText(), /\(1\)/);
   const issue = page.locator('button', { hasText: /256/ }).first();
   assert.ok(await issue.isVisible(), 'the issue is listed');
+  // Clicking the issue goes to the text at fault.
+  await deselect();
+  await issue.click();
+  await settle(500);
+  assert.equal(
+    await page.evaluate(() =>
+      document.activeElement?.closest('[data-builder-field]')?.getAttribute('data-builder-field'),
+    ),
+    'title',
+  );
   await page.keyboard.press('Control+z');
   await settle(400);
   await deselect();
@@ -410,6 +420,9 @@ await step('keyboard drag: Space picks up, arrows move, Space drops', async () =
   await page.keyboard.press('ArrowUp');
   await settle();
   await shot('09-keyboard-drag');
+  const announced = await page.locator('[data-live-announcer]').innerText();
+  assert.match(announced, /Picked up Field “Checked as you type”/);
+  assert.match(announced, /goes first in Embed/);
   await page.keyboard.press('Space');
   await settle(400);
   const names = await fields(embeds().nth(0)).locator('[aria-label="Field name"]').allInnerTexts();
