@@ -103,7 +103,8 @@ export const buildSizedSrc = ({
   animated = false,
   srcIsAnimated = false,
 }: SizedSrcOptions) => {
-  if (src.startsWith('data:image') || isDiscordCdnUrl(src)) return src;
+  // Local files (data: and blob: URLs) can't take query parameters.
+  if (src.startsWith('data:image') || src.startsWith('blob:') || isDiscordCdnUrl(src)) return src;
   const [base, search] = src.split('?');
   const query: Record<string, string> = {};
   for (const [key, value] of new URLSearchParams(search ?? '')) if (key !== '') query[key] = value;

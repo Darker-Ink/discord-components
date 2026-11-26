@@ -70,7 +70,9 @@ export const renderAttachmentVideo = (
   const attachment = props.item.originalItem;
   const poster = toURLSafe(attachment.proxy_url, typeof window !== 'undefined' ? window.location.href : undefined);
   if (poster == null) return null;
-  poster.searchParams.append('format', 'webp');
+  // The media proxy's first frame (a local file's blob: URL takes no parameters).
+  const local = poster.protocol === 'blob:';
+  if (!local) poster.searchParams.append('format', 'webp');
   const {
     item: _item,
     message,
