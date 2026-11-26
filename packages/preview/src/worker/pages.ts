@@ -1,4 +1,4 @@
-import { DEMO_PREVIEW_ID, THEMES, type PreviewOptions, type PreviewTheme } from '../shared/api';
+import { DEMO_PREVIEW_ID, readOptions, THEMES, type PreviewTheme } from '../shared/api';
 import { SKELETON_HTML } from '../shared/skeleton';
 import { checkAccess, findPreview } from './previews';
 
@@ -45,6 +45,11 @@ export const servePage = async (request: Request, env: Env) => {
   if (!isHtml) {
     const response = new Response(asset.body, asset);
     response.headers.set('x-content-type-options', 'nosniff');
+    if (url.pathname.startsWith('/sdk/')) {
+      // The SDK is imported as a module by other sites.
+      response.headers.set('access-control-allow-origin', '*');
+      if (url.pathname.endsWith('.d.ts')) response.headers.set('content-type', 'text/plain; charset=utf-8');
+    }
     return response;
   }
 
@@ -68,7 +73,7 @@ export const servePage = async (request: Request, env: Env) => {
   if (id !== DEMO_PREVIEW_ID) {
     const row = await findPreview(env, id);
     status = row == null ? 404 : (await checkAccess(env, row, url)) === 'ok' ? 200 : 403;
-    if (status === 200 && row != null) theme = (JSON.parse(row.options) as PreviewOptions).theme;
+    if (status === 200 && row != null) theme = readOptions(row.options).theme;
   }
   const param = url.searchParams.get('theme')?.toLowerCase();
   const bootTheme = THEMES.find((name) => name === param) ?? theme ?? 'dark';

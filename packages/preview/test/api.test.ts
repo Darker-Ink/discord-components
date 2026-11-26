@@ -252,6 +252,73 @@ describe('creating previews', () => {
   });
 });
 
+describe('interaction options', () => {
+  it('stores interactions and allowed origins and serves them with the content', async () => {
+    const key = await newKey();
+    const { id } = await createPreview(key, {
+      options: { interactions: true, allowedOrigins: ['https://app.example.com', 'http://localhost:3000'] },
+    });
+    const content = (await (await call(`/api/previews/${id}/content`)).json()) as { options: Record<string, unknown> };
+    expect(content.options).toMatchObject({
+      interactive: false,
+      interactions: true,
+      allowedOrigins: ['https://app.example.com', 'http://localhost:3000'],
+    });
+    const summary = (await (await call(`/api/previews/${id}`, { key })).json()) as { options: Record<string, unknown> };
+    expect(summary.options.interactions).toBe(true);
+  });
+
+  it('rejects anything but bare http(s) origins', async () => {
+    const key = await newKey();
+    for (const origin of [
+      'https://app.example.com/',
+      'https://app.example.com/path',
+      'javascript:alert(1)',
+      'ftp://x.test',
+      '*',
+    ]) {
+      const response = await post(
+        '/api/previews',
+        { data: [message()], options: { allowedOrigins: [origin] } },
+        { key },
+      );
+      expect(response.status, origin).toBe(400);
+      const body = (await response.json()) as { error: { details: { path: string }[] } };
+      expect(body.error.details[0].path).toBe('options.allowedOrigins.0');
+    }
+    const empty = await post('/api/previews', { data: [message()], options: { allowedOrigins: [] } }, { key });
+    expect(empty.status).toBe(400);
+    const tooMany = Array.from({ length: 11 }, (_, i) => `https://app${i}.example.com`);
+    expect(
+      (await post('/api/previews', { data: [message()], options: { allowedOrigins: tooMany } }, { key })).status,
+    ).toBe(400);
+    expect((await post('/api/previews', { data: [message()], options: { interactions: 'yes' } }, { key })).status).toBe(
+      400,
+    );
+  });
+
+  it('defaults the new options for previews stored before they existed', async () => {
+    const key = await newKey();
+    const { id } = await createPreview(key);
+    await env.DB.prepare('UPDATE previews SET options = ? WHERE id = ?')
+      .bind(JSON.stringify({ interactive: true, title: 'old', theme: null }), id)
+      .run();
+    const content = (await (await call(`/api/previews/${id}/content`)).json()) as { options: Record<string, unknown> };
+    expect(content.options).toEqual({
+      interactive: true,
+      interactions: false,
+      allowedOrigins: null,
+      title: 'old',
+      theme: null,
+    });
+  });
+
+  it('lets the demo be tried with the SDK', async () => {
+    const demo = (await (await call('/api/previews/demo/content')).json()) as { options: Record<string, unknown> };
+    expect(demo.options.interactions).toBe(true);
+  });
+});
+
 describe('listing and deleting', () => {
   it('lists only your own previews, paginated', async () => {
     const key = await newKey();

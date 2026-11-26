@@ -1,10 +1,4 @@
-import {
-  DEMO_PREVIEW_ID,
-  type Limits,
-  type PreviewContent,
-  type PreviewOptions,
-  type PreviewSummary,
-} from '../shared/api';
+import { DEMO_PREVIEW_ID, readOptions, type Limits, type PreviewContent, type PreviewSummary } from '../shared/api';
 import { EXAMPLE_MESSAGES, withOrigin } from '../shared/example';
 import { gzipText, hmacSign, hmacVerify, randomBase62 } from './crypto';
 import { HttpError, notFound } from './http';
@@ -40,7 +34,7 @@ const toSummary = (row: PreviewRow, origin: string): PreviewSummary => ({
   secret: row.secret === 1,
   messageCount: row.message_count,
   size: row.size,
-  options: JSON.parse(row.options) as PreviewOptions,
+  options: readOptions(row.options),
   createdAt: new Date(row.created_at).toISOString(),
   expiresAt: new Date(row.expires_at).toISOString(),
   url: row.secret === 1 ? null : origin + previewPath(row.id),
@@ -242,7 +236,8 @@ export const getPreviewContent = async (
     return {
       id,
       messages: demo.messages,
-      options: { interactive: false, title: 'support-tickets', theme: null },
+      // The demo can be tried with the interactions SDK (`/p/demo?interactions=1`).
+      options: readOptions({ interactions: true, title: 'support-tickets' }),
       createdAt: '2026-11-26T09:20:10.000Z',
       expiresAt: null,
     };
@@ -256,7 +251,7 @@ export const getPreviewContent = async (
 
   const head: Omit<PreviewContent, 'messages'> = {
     id: row.id,
-    options: JSON.parse(row.options) as PreviewOptions,
+    options: readOptions(row.options),
     createdAt: new Date(row.created_at).toISOString(),
     expiresAt: new Date(row.expires_at).toISOString(),
   };
