@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* global process, console, document, window, navigator, localStorage, fetch, URL, getComputedStyle */
+/* global process, console, document, window, navigator, localStorage, fetch, URL, getComputedStyle, Buffer, FormData, Blob, atob, DataTransfer, File */
 // End-to-end checks of the builder site in a real browser, against a running server:
 //   pnpm --filter @discord-mana/builder-site dev
 //   CHROMIUM_PATH=/opt/pw-browsers/chromium node scripts/e2e.mjs http://localhost:5175
@@ -20,7 +20,10 @@ const WEBHOOK = 'https://discord.com/api/webhooks/123456789012345678/e2e-token_a
 fs.mkdirSync(OUT, { recursive: true });
 
 let failures = 0;
+// E2E_ONLY=<regex> runs just the matching steps (for iterating on one part).
+const ONLY = process.env.E2E_ONLY != null ? new RegExp(process.env.E2E_ONLY) : null;
 const step = async (name, fn) => {
+  if (ONLY != null && !ONLY.test(name)) return;
   try {
     await fn();
     console.log(`  ok   ${name}`);
@@ -95,6 +98,55 @@ const typeInto = async (locator, text) => {
   await settle(150);
   await page.keyboard.type(text, { delay: 5 });
   await settle(150);
+};
+
+// Files: fixtures written once, attached through the browser's file chooser.
+const FIXTURES = path.join(OUT, 'fixtures');
+fs.mkdirSync(FIXTURES, { recursive: true });
+// Two small PNGs and a text file.
+fs.writeFileSync(
+  path.join(FIXTURES, 'harbor map.png'),
+  Buffer.from(
+    'iVBORw0KGgoAAAANSUhEUgAAAKAAAABaCAIAAACwpMoFAAAA7ElEQVR4nO3RAQkAIQDAwPdTWsD+YAJTiDDuEgw25tofXf/rAO4yOM7gOIPjDI4zOM7gOIPjDI4zOM7gOIPjDI4zOM7gOIPjDI4zOM7gOIPjDI4zOM7gOIPjDI4zOM7gOIPjDI4zOM7gOIPjDI4zOM7gOIPjDI4zOM7gOIPjDI4zOM7gOIPjDI4zOM7gOIPjDI4zOM7gOIPjDI4zOM7gOIPjDI4zOM7gOIPjDI4zOM7gOIPjDI4zOM7gOIPjDI4zOM7gOIPjDI4zOM7gOIPjDI4zOM7gOIPjDI4zOM7gOIPjDI4zOM7gOIPjDI4zOM7gOIPjDI473zQCYyX+CQgAAAAASUVORK5CYII=',
+    'base64',
+  ),
+);
+fs.writeFileSync(path.join(FIXTURES, 'patch-notes.txt'), 'Update 2.4\n- Harbor map\n');
+fs.writeFileSync(
+  path.join(FIXTURES, 'icon.png'),
+  Buffer.from(
+    'iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAAY0lEQVR4nO3PQQ3AIADAQMAKrvCHz4ngcVnSU9DOfc/4s6UDXjWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgNaA1oDWgfeojAaJiNktnAAAAAElFTkSuQmCC',
+    'base64',
+  ),
+);
+const fixture = (name) => path.join(FIXTURES, name);
+
+/** Clicks something that opens the file chooser, and picks these files. */
+const chooseFiles = async (target, trigger, names) => {
+  const chooser = target.waitForEvent('filechooser');
+  await trigger();
+  await (await chooser).setFiles(names.map(fixture));
+  await target.waitForTimeout(500);
+};
+
+/** The parts of a multipart/form-data body: `{ name, filename, body }`. */
+const parseMultipart = (request) => {
+  const type = request.headers()['content-type'] ?? '';
+  const boundary = /boundary=(.+)$/.exec(type)?.[1];
+  if (boundary == null) return null;
+  const raw = request.postDataBuffer().toString('latin1');
+  return raw
+    .split(`--${boundary}`)
+    .slice(1, -1)
+    .map((part) => {
+      const [head, ...rest] = part.replace(/^\r\n/, '').split('\r\n\r\n');
+      const body = rest.join('\r\n\r\n').replace(/\r\n$/, '');
+      return {
+        name: /name="([^"]+)"/.exec(head)?.[1],
+        filename: /filename="([^"]+)"/.exec(head)?.[1],
+        body,
+      };
+    });
 };
 
 // ---------------------------------------------------------------------------------------------------------
@@ -287,6 +339,7 @@ await step('converts to Components v2 and builds a container with a section, gal
   const row = container.locator('[data-builder-kind="actionRow"]');
   // A new node's first text is focused: here, the button's label.
   await dragFromPalette('Link button', await center(row));
+  await page.waitForFunction(() => document.activeElement?.closest('[data-builder-kind="button"]') != null);
   await settle(150);
   await page.keyboard.press('End');
   await page.keyboard.type(' here', { delay: 5 });
@@ -441,7 +494,247 @@ await step('context menu: right-click a node', async () => {
   await page.keyboard.press('Escape');
 });
 
+await step('files: attach, show in the message and use one as an embed image', async () => {
+  await startFrom('^Example$');
+  await deselect();
+  await chooseFiles(page, () => paletteItem('File').click(), ['harbor map.png', 'patch-notes.txt']);
+  const canvas = page.locator('[data-builder-canvas]');
+  assert.match(await canvas.innerText(), /patch-notes\.txt/, 'the text file shows as a file card');
+  assert.ok((await canvas.locator('img[src^="blob:"]').count()) >= 1, 'the image shows in the mosaic');
+  let json = await readJSON();
+  assert.deepEqual(json.attachments, [
+    { id: 0, filename: 'harbor_map.png' },
+    { id: 1, filename: 'patch-notes.txt' },
+  ]);
+  // The embed's image, picked from the attached files.
+  await embeds()
+    .nth(0)
+    .click({ position: { x: 6, y: 4 } });
+  await page.getByRole('toolbar').getByRole('button', { name: 'Image', exact: true }).click();
+  await settle(300);
+  await page
+    .getByRole('group', { name: 'Attached files' })
+    .getByRole('button', { name: /harbor_map\.png/ })
+    .click();
+  await settle(400);
+  await shot('20-embed-image-attachment');
+  await page.keyboard.press('Escape');
+  json = await readJSON();
+  assert.equal(json.embeds[0].image.url, 'attachment://harbor_map.png');
+  assert.ok((await embeds().nth(0).locator('img[src^="blob:"]').count()) >= 1, 'the embed shows the attached image');
+});
+
+await step('files: rename, spoiler and alt text update the message and its references', async () => {
+  await deselect();
+  await openTab('Send');
+  const files = page.getByRole('region', { name: 'Files' });
+  await files.getByRole('button', { name: /harbor_map\.png/ }).click();
+  await settle(300);
+  const editor = page.getByRole('dialog', { name: 'File' });
+  await editor.getByLabel('Name').fill('harbor.png');
+  await editor.getByLabel('Name').press('Enter');
+  await editor.getByLabel('Alt text').fill('The new harbor map');
+  await editor.getByText('Spoiler').click();
+  await settle(300);
+  await shot('21-attachment-editor');
+  await page.keyboard.press('Escape');
+  const json = await readJSON();
+  assert.deepEqual(json.attachments[0], {
+    id: 0,
+    filename: 'SPOILER_harbor.png',
+    description: 'The new harbor map',
+  });
+  assert.equal(json.embeds[0].image.url, 'attachment://SPOILER_harbor.png', 'the embed follows the rename');
+  // Undo puts the name (and the reference) back, and the bytes are still there.
+  await deselect();
+  await page.keyboard.press('Control+z');
+  await settle(200);
+  const undone = await readJSON();
+  assert.equal(undone.attachments[0].filename, 'harbor.png');
+  assert.equal(undone.embeds[0].image.url, 'attachment://harbor.png');
+  await page.keyboard.press('Control+Shift+z');
+  await settle(200);
+});
+
+await step('message options: silent, no link previews, text-to-speech and allowed mentions', async () => {
+  await openTab('Send');
+  const options = page.getByRole('region', { name: 'Message options' });
+  await options.getByText('Silent', { exact: true }).click();
+  await options.getByText('Hide link previews', { exact: true }).click();
+  await options.getByText('Text-to-speech', { exact: true }).click();
+  await options.getByText('Limit mentions', { exact: true }).click();
+  await settle(200);
+  await options.getByText('Users', { exact: true }).click();
+  await options.getByLabel('Only these roles').fill('123456789012345678, <@&223456789012345678>');
+  await settle(300);
+  await shot('22-message-options');
+  const json = await readJSON();
+  assert.equal(json.flags, 4 | 4096);
+  assert.equal(json.tts, true);
+  assert.deepEqual(json.allowed_mentions, { parse: ['users'], roles: ['123456789012345678', '223456789012345678'] });
+  // Listing users while parsing all users is a conflict the core reports.
+  await openTab('Send');
+  await options.getByText('Users', { exact: true }).click();
+  await options.getByLabel('Only these users').fill('323456789012345678');
+  await settle(200);
+  const conflict = await readJSON();
+  assert.deepEqual(conflict.allowed_mentions.users, ['323456789012345678']);
+});
+
+await step('a poll: question, answers with emoji, duration and multiple answers', async () => {
+  await deselect();
+  await paletteItem('Poll').click();
+  await settle(400);
+  await page.keyboard.type('Which map next?', { delay: 5 });
+  const poll = page.getByRole('group', { name: 'Poll' });
+  await typeInto(poll.getByRole('textbox', { name: 'Answer 1' }), 'Harbor');
+  await typeInto(poll.getByRole('textbox', { name: 'Answer 2' }), 'Desert');
+  await poll.getByRole('button', { name: 'Add answer' }).click();
+  await settle(300);
+  await page.keyboard.type('Glacier', { delay: 5 });
+  await poll.getByRole('button', { name: 'Answer 1 emoji' }).click();
+  await settle(300);
+  await page.getByRole('group', { name: 'Common emoji' }).getByRole('button', { name: '🔥' }).click();
+  await page.keyboard.press('Escape');
+  await poll.getByRole('button', { name: '24 hours' }).click();
+  await page.getByRole('radio', { name: '3 days' }).click();
+  await poll.getByRole('button', { name: 'Multiple answers' }).click();
+  await settle(300);
+  await shot('23-poll-editing');
+  await deselect();
+  await settle(300);
+  await shot('24-poll');
+  const json = await readJSON();
+  assert.deepEqual(json.poll, {
+    question: { text: 'Which map next?' },
+    answers: [
+      { poll_media: { text: 'Harbor', emoji: { name: '🔥' } } },
+      { poll_media: { text: 'Desert' } },
+      { poll_media: { text: 'Glacier' } },
+    ],
+    duration: 72,
+    allow_multiselect: true,
+  });
+});
+
+await step('sends files as multipart: payload_json plus files[n]', async () => {
+  const requests = [];
+  await page.route('https://discord.com/api/webhooks/**', async (route) => {
+    const request = route.request();
+    if (request.method() === 'GET') {
+      await route.fulfill({
+        json: { id: '123456789012345678', name: 'E2E Hook', avatar: null, channel_id: '2', application_id: null },
+      });
+      return;
+    }
+    requests.push({ url: request.url(), parts: parseMultipart(request) });
+    await route.fulfill({ json: { id: '423456789012345678', channel_id: '223456789012345678', content: '' } });
+  });
+  // Clear the users list again (it conflicts with parsing users).
+  await openTab('Send');
+  await page.getByRole('region', { name: 'Message options' }).getByText('Users', { exact: true }).click();
+  await settle(200);
+  await page.locator('input[type="password"]').first().fill(WEBHOOK);
+  await settle(600);
+  // The route sees the multipart structure; the files' bytes (blobs) are read from the FormData itself.
+  await page.evaluate(() => {
+    const original = window.fetch;
+    window.__forms = [];
+    window.fetch = async (input, init) => {
+      if (init?.body instanceof FormData) {
+        const entries = [];
+        for (const [name, value] of init.body) {
+          entries.push(
+            value instanceof Blob
+              ? {
+                  name,
+                  filename: value.name,
+                  size: value.size,
+                  text: value.name.endsWith('.txt') ? await value.text() : null,
+                }
+              : { name },
+          );
+        }
+        window.__forms.push(entries);
+      }
+      return original(input, init);
+    };
+  });
+  await page.getByRole('button', { name: 'Send', exact: true }).click();
+  await page.getByText('Message 423456789012345678').waitFor();
+  assert.equal(requests.length, 1);
+  const parts = requests[0].parts;
+  assert.ok(parts != null, 'a multipart body');
+  const payload = JSON.parse(parts.find((part) => part.name === 'payload_json').body);
+  assert.deepEqual(payload.attachments, [
+    { id: 0, filename: 'SPOILER_harbor.png', description: 'The new harbor map' },
+    { id: 1, filename: 'patch-notes.txt' },
+  ]);
+  assert.equal(payload.embeds[0].image.url, 'attachment://SPOILER_harbor.png');
+  assert.equal(payload.flags, 4 | 4096);
+  assert.equal(payload.tts, true);
+  assert.deepEqual(payload.allowed_mentions.parse, ['users']);
+  assert.equal(payload.poll.question.text, 'Which map next?');
+  const files = parts.filter((part) => part.name?.startsWith('files['));
+  assert.deepEqual(
+    files.map((part) => [part.name, part.filename]),
+    [
+      ['files[0]', 'SPOILER_harbor.png'],
+      ['files[1]', 'patch-notes.txt'],
+    ],
+  );
+  const [form] = await page.evaluate(() => window.__forms);
+  const sent = form.filter((entry) => entry.name.startsWith('files['));
+  assert.equal(sent[0].size, fs.statSync(fixture('harbor map.png')).size);
+  assert.equal(sent[1].text, 'Update 2.4\n- Harbor map\n');
+  await shot('25-sent-with-files');
+  await page.unroute('https://discord.com/api/webhooks/**');
+});
+
+await step('Components v2: a File component and a gallery item pick attached files', async () => {
+  await startFrom('Blank Components v2');
+  await deselect();
+  await chooseFiles(page, () => paletteItem('File').click(), ['patch-notes.txt']);
+  let json = await readJSON();
+  assert.deepEqual(json.attachments, [{ id: 0, filename: 'patch-notes.txt' }]);
+  assert.equal(json.components.at(-1).type, 13);
+  assert.equal(json.components.at(-1).file.url, 'attachment://patch-notes.txt');
+  assert.match(await page.locator('[data-builder-canvas]').innerText(), /patch-notes\.txt/);
+  // Dropping an image attaches it and shows it in a gallery.
+  await deselect();
+  const data = fs.readFileSync(fixture('icon.png')).toString('base64');
+  const transfer = await page.evaluateHandle((base64) => {
+    const bytes = Uint8Array.from(atob(base64), (char) => char.charCodeAt(0));
+    const dt = new DataTransfer();
+    dt.items.add(new File([bytes], 'icon.png', { type: 'image/png' }));
+    return dt;
+  }, data);
+  const canvas = page.locator('[data-builder-canvas]');
+  await canvas.dispatchEvent('dragenter', { dataTransfer: transfer });
+  await canvas.dispatchEvent('dragover', { dataTransfer: transfer });
+  await settle(100);
+  await shot('26-file-drag');
+  await canvas.dispatchEvent('drop', { dataTransfer: transfer });
+  await settle(600);
+  json = await readJSON();
+  assert.deepEqual(
+    json.attachments.map((attachment) => attachment.filename),
+    ['patch-notes.txt', 'icon.png'],
+  );
+  const gallery = json.components.find((component) => component.type === 12);
+  assert.equal(gallery?.items[0].media.url, 'attachment://icon.png');
+  assert.ok((await canvas.locator('img[src^="blob:"]').count()) >= 1, 'the gallery shows the dropped image');
+  await shot('27-cv2-files');
+  // An attachment nothing shows gets the core's warning: delete the gallery that showed the image.
+  await page.locator('[data-builder-canvas] [data-builder-kind="mediaGallery"]').click({ position: { x: 4, y: 4 } });
+  await page.keyboard.press('Delete');
+  await settle(300);
+  await openTab('Issues');
+  assert.match(await page.getByRole('tabpanel').innerText(), /icon\.png isn't shown/);
+});
+
 await step('every theme renders on desktop', async () => {
+  await startFrom('^Example$');
   for (const theme of THEMES) {
     await page.evaluate((value) => localStorage.setItem('discord-mana:theme', value), theme);
     await page.setViewportSize({ width: 1440, height: 900 });
@@ -639,6 +932,64 @@ for (const phone of PHONES) {
     await mshot('10-sent');
     assert.equal(requests.length, 1);
     assert.equal(requests[0].embeds[0].title, 'Update 2.4 hotfix');
+    await closeSheet();
+  });
+
+  await step(`${phone.name}: attach a file from the Add sheet and edit it`, async () => {
+    await m.unroute('https://discord.com/api/webhooks/**');
+    await openSheet('Add');
+    await chooseFiles(m, () => m.getByRole('dialog').getByRole('button', { name: 'File', exact: true }).tap(), [
+      'harbor map.png',
+      'patch-notes.txt',
+    ]);
+    await m.waitForTimeout(400);
+    if (await m.getByRole('dialog', { name: 'Add' }).isVisible()) await closeSheet();
+    const canvas = m.locator('[data-builder-canvas]');
+    assert.match(await canvas.innerText(), /patch-notes\.txt/);
+    await mshot('11-attached');
+    // Tapping the file opens its editor, inside the screen.
+    await canvas.getByText('patch-notes.txt').tap();
+    await m.waitForTimeout(400);
+    const editor = m.getByRole('dialog', { name: 'File' });
+    const box = await editor.boundingBox();
+    const viewport = m.viewportSize();
+    assert.ok(box.x >= 0 && box.x + box.width <= viewport.width + 1, 'the editor fits the screen');
+    await mshot('12-attachment-editor');
+    await editor.getByText('Spoiler').tap();
+    await m.waitForTimeout(300);
+    await m.keyboard.press('Escape');
+    await m.waitForTimeout(200);
+  });
+
+  await step(`${phone.name}: add a poll from the Add sheet`, async () => {
+    await openSheet('Add');
+    await m.getByRole('dialog').getByRole('button', { name: 'Poll', exact: true }).tap();
+    await m.waitForTimeout(500);
+    await m.keyboard.type('Which map next?', { delay: 10 });
+    const poll = m.getByRole('group', { name: 'Poll' });
+    await poll.getByRole('textbox', { name: 'Answer 1' }).tap();
+    await m.keyboard.type('Harbor', { delay: 10 });
+    await poll.getByRole('textbox', { name: 'Answer 2' }).tap();
+    await m.keyboard.type('Desert', { delay: 10 });
+    await m.waitForTimeout(300);
+    await mshot('13-poll');
+    const json = await m.evaluate(() => JSON.parse(localStorage.getItem('discord-mana-builder:draft') ?? '{}'));
+    assert.equal(json.poll?.question?.text, 'Which map next?');
+    // Poll and files can't be shown together: remove the poll again.
+    await poll.getByRole('button', { name: 'Remove poll' }).tap();
+    await m.waitForTimeout(300);
+  });
+
+  await step(`${phone.name}: the Send sheet lists files, options and mentions`, async () => {
+    await openSheet('Send');
+    const sheet = m.getByRole('dialog');
+    assert.match(await sheet.getByRole('region', { name: 'Files' }).innerText(), /SPOILER|patch-notes/);
+    await sheet.getByText('Limit mentions', { exact: true }).tap();
+    await m.waitForTimeout(300);
+    await sheet.getByRole('region', { name: 'Files' }).scrollIntoViewIfNeeded();
+    await mshot('14-send-files');
+    await sheet.getByRole('region', { name: 'Message options' }).scrollIntoViewIfNeeded();
+    await mshot('15-send-options');
     await closeSheet();
   });
 
