@@ -9,7 +9,7 @@ import {
   ModalBody,
   MultiStepModal,
   RiveAnimation,
-  Select,
+  SearchableSelect,
   RiveAssetStatus,
   SearchBar,
   Stack,
@@ -292,9 +292,7 @@ const ModalStory = ({ showPreview, showInput, subtitleIcon, ...props }: any) => 
                 ]}
               >
                 <Stack gap={16}>
-                  {/* Discord's story leaves the multiple selection uncontrolled (no value). */}
-                  <Select
-                    value={undefined as unknown as string[]}
+                  <SearchableSelect
                     maxOptionsVisible={10}
                     label="Example Select"
                     selectionMode="multiple"
