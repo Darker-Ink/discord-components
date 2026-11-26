@@ -1,0 +1,23 @@
+.allChips {
+  gap: var(--space-32);
+  padding: var(--space-24);
+}
+.allChips,
+.section {
+  display: flex;
+  flex-direction: column;
+}
+.section {
+  gap: var(--space-16);
+}
+.sectionTitle {
+  color: var(--text-strong);
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
+}
+.chipGrid {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-12);
+}
