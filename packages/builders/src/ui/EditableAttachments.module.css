@@ -1,0 +1,185 @@
+/* Attached files: the editor's own controls around the client's attachments. */
+.attachments {
+  display: contents;
+}
+.ellipsis {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.previewImage,
+.previewIcon {
+  border-radius: 4px;
+  box-sizing: border-box;
+  flex: none;
+  height: 40px;
+  width: 40px;
+}
+.previewImage {
+  background: var(--background-mod-subtle);
+  object-fit: cover;
+}
+.previewIcon {
+  align-items: center;
+  background: var(--background-mod-subtle);
+  color: var(--interactive-text-default);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+.previewExtension {
+  color: var(--text-muted);
+  font-size: 9px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 10px;
+  max-width: 36px;
+  overflow: hidden;
+  text-transform: uppercase;
+}
+
+/* The editor */
+.editorHead {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  min-width: 0;
+}
+.editorMeta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.missing {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Choosing a file for a URL */
+.chooser {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.choice {
+  align-items: center;
+  appearance: none;
+  background: var(--background-mod-subtle);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  box-sizing: border-box;
+  color: var(--interactive-text-default);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-primary);
+  gap: 4px;
+  padding: 4px;
+  position: relative;
+  width: 64px;
+}
+.choice:hover {
+  background: var(--background-mod-normal, var(--background-mod-subtle));
+  color: var(--interactive-text-hover);
+}
+.choice[aria-pressed='true'] {
+  border-color: var(--control-brand-foreground-new, var(--brand-500));
+  color: var(--text-strong);
+}
+.choice .previewImage,
+.choice .previewIcon {
+  height: 54px;
+  width: 54px;
+}
+.choiceName {
+  font-size: 11px;
+  line-height: 14px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.choiceWarning {
+  color: var(--status-warning);
+  position: absolute;
+  right: 4px;
+  top: 4px;
+}
+.upload {
+  background: none;
+  border: 1px dashed var(--border-strong);
+}
+.upload .previewIcon {
+  background: none;
+}
+
+/* The files list (Send) */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sectionHead {
+  align-items: baseline;
+  display: flex;
+  justify-content: space-between;
+}
+.total {
+  font-variant-numeric: tabular-nums;
+}
+.fileList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.fileRow {
+  align-items: center;
+  appearance: none;
+  background: var(--background-mod-subtle);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  box-sizing: border-box;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  font-family: var(--font-primary);
+  gap: 10px;
+  padding: 6px 8px;
+  text-align: start;
+  width: 100%;
+}
+.fileRow:hover {
+  background: var(--background-mod-normal, var(--background-mod-subtle));
+}
+.fileRow[data-invalid] {
+  border-color: var(--status-danger);
+}
+.fileText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.section > button {
+  align-self: flex-start;
+}
+@media (pointer: coarse) {
+  .fileRow {
+    min-height: 52px;
+  }
+}
+.missingNotice {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.missingNotice > :first-child {
+  flex: 1 1 200px;
+}

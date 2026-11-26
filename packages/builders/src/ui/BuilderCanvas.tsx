@@ -13,7 +13,9 @@ import {
 } from '../core';
 import { BuilderTextField } from './BuilderTextField';
 import { EditableComponents } from './EditableComponents';
+import { EditableAttachments } from './EditableAttachments';
 import { EditableEmbed } from './EditableEmbed';
+import { EditablePoll } from './EditablePoll';
 import { NodeContextMenu } from './NodeContextMenu';
 import { focusFirstText, nodeOf } from './NodeFrame';
 import { NodeTextInput, PopoutPanel } from './popouts';
@@ -74,17 +76,23 @@ const usePendingFocus = () => {
   const pending = useBuilderUI((state) => state.pendingFocus);
   useEffect(() => {
     if (pending == null) return;
-    const frame = requestAnimationFrame(() => {
+    // Some texts appear a frame or two after their node (a button's label is placed over the drawn one once
+    // that is measured): try for a few frames before settling for the node itself.
+    let tries = 0;
+    let frame = 0;
+    const attempt = () => {
       const element =
         pending.uid === ROOT_UID
           ? document.querySelector<HTMLElement>('[data-builder-canvas]')
           : ui.frames.get(pending.uid);
       if (focusFirstText(element, pending.field)) ui.set({ pendingFocus: null });
+      else if (tries++ < 5) frame = requestAnimationFrame(attempt);
       else if (pending.field == null) {
         element?.focus();
         ui.set({ pendingFocus: null });
       }
-    });
+    };
+    frame = requestAnimationFrame(attempt);
     return () => cancelAnimationFrame(frame);
   }, [pending, ui]);
 };
@@ -122,6 +130,7 @@ export const BuilderCanvas = ({ author = DEFAULT_AUTHOR, timestamp, className, e
   const { readOnly, channelId, renderMessageMarkdown: renderMessage } = useBuilderRender();
   const doc = useBuilderSelector((state) => state.doc);
   const dragging = useBuilderUI((state) => state.drag != null);
+  const fileDrag = useBuilderUI((state) => state.fileDrag);
   const [sentAt] = useState(() => timestamp ?? new Date().toISOString());
   const message = useMemo(
     () => toPreviewMessage(doc, { author, timestamp: timestamp ?? sentAt, channelId }),
@@ -182,6 +191,9 @@ export const BuilderCanvas = ({ author = DEFAULT_AUTHOR, timestamp, className, e
 
   const accessories = (
     <>
+      {/* The client's order: attachments (none beside a poll), the poll, embeds, components. */}
+      {doc.mode === 'classic' && doc.poll == null ? <EditableAttachments message={message} /> : null}
+      {doc.mode === 'classic' ? <EditablePoll /> : null}
       {doc.mode === 'classic'
         ? doc.embeds.map((embed, index) => (
             <EditableEmbed key={embed.uid} uid={embed.uid} embedIndex={index} message={message} />
@@ -218,6 +230,7 @@ export const BuilderCanvas = ({ author = DEFAULT_AUTHOR, timestamp, className, e
       {...scope}
       data-builder-canvas
       data-dragging={dragging || undefined}
+      data-file-drag={(fileDrag && !readOnly) || undefined}
       data-readonly={readOnly || undefined}
       onPointerDownCapture={onPointerDownCapture}
       onPointerUpCapture={onPointerUpCapture}

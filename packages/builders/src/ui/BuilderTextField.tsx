@@ -13,7 +13,14 @@ import clsx from 'clsx';
 import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react-dom';
 import { Tooltip } from '@discord-mana/components';
 import { InlineEditor, type InlineEditorHandle, type InlineEditorRuleSet } from '@discord-mana/slate';
-import { getLimit, useBuilderRestrictions, useNodeIssues, type NodeKind, type ValidationIssue } from '../core';
+import {
+  getLimit,
+  useBuilderRestrictions,
+  useNodeIssues,
+  type BuilderNode,
+  type NodeKind,
+  type ValidationIssue,
+} from '../core';
 import { patchField, readText, useEditableNode } from './fields';
 import { isMod } from './NodeFrame';
 import { useBuilderUI } from './uiStore';
@@ -125,6 +132,10 @@ export interface BuilderTextFieldProps {
   /** The first text of its node: Enter on the node and "add" focus it. */
   isFirstField?: boolean;
   disabled?: boolean;
+  /** The length limit, when the core's `getLimit` doesn't know the field. */
+  limit?: number;
+  /** Turns typed text into the node's patch, for fields `patchField` can't set (inside lists). */
+  write?: (node: BuilderNode, value: string) => Record<string, unknown>;
   'aria-label': string;
 }
 
@@ -145,6 +156,8 @@ export const BuilderTextField = ({
   className,
   isFirstField = false,
   disabled = false,
+  limit: limitProp,
+  write,
   'aria-label': ariaLabel,
 }: BuilderTextFieldProps) => {
   const { actions } = useBuilderContext();
@@ -152,7 +165,7 @@ export const BuilderTextField = ({
   const value = readText(node, field);
   const issues = useFieldIssues(uid, field);
   const selected = useBuilderUI((state) => state.selectedId === uid);
-  const limit = getLimit(kind, field, useBuilderRestrictions());
+  const limit = getLimit(kind, field, useBuilderRestrictions()) ?? limitProp;
   const editorRef = useRef<InlineEditorHandle>(null);
   const wrapperRef = useRef<HTMLSpanElement>(null);
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
@@ -174,9 +187,11 @@ export const BuilderTextField = ({
       setDraftLength(lengthOf(next));
       const current = nodeRef.current;
       if (current == null) return;
-      actions.update(uid, patchField(current, field, next), { coalesce: `${uid}:${field}` });
+      actions.update(uid, write != null ? write(current, next) : patchField(current, field, next), {
+        coalesce: `${uid}:${field}`,
+      });
     },
-    [actions, field, uid],
+    [actions, field, uid, write],
   );
 
   const invalid = issues.some((issue) => issue.severity === 'error');

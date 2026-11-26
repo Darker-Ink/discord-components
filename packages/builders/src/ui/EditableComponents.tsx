@@ -57,6 +57,8 @@ import { NodeFrame } from './NodeFrame';
 import { AnchoredPopout } from './popouts';
 import { NodeToolbarSeparator } from './NodeToolbar';
 import { prepareMedia, useMediaSizes } from './mediaSize';
+import type { AttachmentResolver } from './attachments';
+import { useAttachmentResolver } from './files';
 import { useBuilderRender } from './renderContext';
 import { useBuilderContext } from './useBuilderContext';
 import { listKey, useBuilderUI, useBuilderUIStore } from './uiStore';
@@ -78,12 +80,19 @@ RecordsContext.displayName = 'RecordsContext';
 
 const kindOf = (doc: BuilderDocument, node: BuilderNode) => findNode(doc, node.uid)?.kind ?? 'unknown';
 
-const prepare = (api: Record<string, unknown>): APIMessageComponent => {
+const prepare = (api: Record<string, unknown>, resolve: AttachmentResolver): APIMessageComponent => {
   const result = { ...api };
-  if (result.media != null) result.media = prepareMedia(result.media as never);
-  if (result.file != null) result.file = prepareMedia(result.file as never);
+  if (result.media != null) result.media = prepareMedia(result.media as never, resolve);
+  if (result.file != null) {
+    const file = resolve(String((result.file as { url?: string }).url ?? ''));
+    result.file = prepareMedia(result.file as never, resolve);
+    if (file != null) Object.assign(result, { name: result.name ?? file.filename, size: result.size ?? file.size });
+  }
   if (Array.isArray(result.items))
-    result.items = (result.items as { media: never }[]).map((item) => ({ ...item, media: prepareMedia(item.media) }));
+    result.items = (result.items as { media: never }[]).map((item) => ({
+      ...item,
+      media: prepareMedia(item.media, resolve),
+    }));
   return result as unknown as APIMessageComponent;
 };
 
@@ -94,7 +103,7 @@ const PLACEHOLDER_ACCESSORY = 'placeholder-accessory';
  * The client's component records for the document, keyed by node. Lists are rebuilt from the nodes, so an empty
  * row or container (invalid, but a step on the way) still has a record to draw.
  */
-const buildRecords = (doc: BuilderDocument): Records => {
+const buildRecords = (doc: BuilderDocument, resolve: AttachmentResolver): Records => {
   const byUid = new Map<string, MessageComponent>();
   const uidOf = new WeakMap<MessageComponent, string>();
   const build = (node: BuilderNode, kind: NodeKind, path: number[]): MessageComponent | null => {
@@ -136,7 +145,7 @@ const buildRecords = (doc: BuilderDocument): Records => {
         record = { type: (node as { type: number }).type, id } as unknown as MessageComponent;
         break;
       default:
-        record = createComponent(prepare(nodeToJSON(node, kind)), path);
+        record = createComponent(prepare(nodeToJSON(node, kind), resolve), path);
     }
     if (record != null) {
       byUid.set(node.uid, record);
@@ -185,9 +194,10 @@ export interface EditableComponentsProps {
 export const EditableComponents = ({ message }: EditableComponentsProps) => {
   const doc = useBuilderSelector((state) => state.doc);
   const sizes = useMediaSizes();
+  const resolve = useAttachmentResolver();
   // `sizes` changes when media sizes arrive.
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const records = useMemo(() => buildRecords(doc), [doc, sizes]);
+  const records = useMemo(() => buildRecords(doc, resolve), [doc, sizes, resolve]);
   if (records.top.length === 0) return null;
   return <ComponentsLayout records={records} message={message} isComponentsV2={doc.mode === 'cv2'} />;
 };

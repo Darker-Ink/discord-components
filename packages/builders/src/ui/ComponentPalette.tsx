@@ -1,21 +1,27 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, type ReactNode } from 'react';
 import clsx from 'clsx';
 import { useDraggable } from '@dnd-kit/core';
 import { AccessibilityAnnouncer, ScrollerNone, Tooltip } from '@discord-mana/components';
+import { AttachmentIcon, PollsIcon } from '@discord-mana/icons';
 import {
   findNode,
+  isMessageFieldAllowed,
   isTemplateAllowed,
   useBuilderRestrictions,
   type BuilderRestrictions,
   type BuilderStore,
   NODE_SLOTS,
+  ROOT_UID,
   useBuilderSelector,
   type BuilderDocument,
   type BuilderMode,
   type NodeTarget,
   type TemplateType,
 } from '../core';
+import { pickFiles, useAttachFiles } from './attach';
+import { attachmentUrl } from './attachments';
 import { useBuilderScope } from './BuilderProvider';
+import { createPoll } from './EditablePoll';
 import { listSlots } from './dnd/geometry';
 import { canPlace, placeTemplate } from './placeTemplate';
 import { PALETTE_ITEMS, type PaletteItem } from './meta';
@@ -24,6 +30,7 @@ import { useBuilderUIStore } from './uiStore';
 import styles from './ComponentPalette.module.css';
 
 const GROUPS: { title: string; templates: readonly string[] }[] = [
+  { title: 'Message', templates: [] },
   { title: 'Embeds', templates: ['embed', 'field'] },
   {
     title: 'Layout',
@@ -97,6 +104,7 @@ const PaletteButton = ({
 }) => {
   const { store, actions } = useBuilderContext();
   const ui = useBuilderUIStore();
+  const attach = useAttachFiles();
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `palette:${item.template}`,
     data: { template: item.template, label: item.label },
@@ -111,13 +119,20 @@ const PaletteButton = ({
       return;
     }
     const uid = placeTemplate(actions, doc, item.template as TemplateType, target, restrictions);
+    // A File component shows an attached file: ask for one right away (the click allows opening the picker).
+    if (uid != null && item.template === 'file' && isMessageFieldAllowed(restrictions, 'attachments')) {
+      void pickFiles({ multiple: false }).then((picked) => {
+        const [name] = attach(picked, { show: false });
+        if (name != null) actions.update(uid, { file: { url: attachmentUrl(name) } });
+      });
+    }
     if (uid != null) {
       ui.set({ selectedId: uid, pendingFocus: { uid } });
       onAdd?.(uid);
       AccessibilityAnnouncer.announce(`Added ${item.label}.`, 'polite');
       requestAnimationFrame(() => ui.frames.get(uid)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }));
     }
-  }, [actions, item, onAdd, store, ui]);
+  }, [actions, attach, item, onAdd, store, ui]);
   const Icon = item.icon;
   const button = (
     <button
@@ -148,6 +163,96 @@ const PaletteButton = ({
 };
 
 PaletteButton.displayName = 'PaletteButton';
+
+/** A palette entry that does something to the message rather than adding a component (attach, poll). */
+const PaletteAction = ({
+  label,
+  description,
+  icon: Icon,
+  available,
+  compact,
+  onActivate,
+}: {
+  label: string;
+  description: string;
+  icon: PaletteItem['icon'];
+  available: boolean;
+  compact: boolean;
+  onActivate: () => void;
+}) => (
+  <li>
+    <Tooltip text={description} position="right">
+      <button
+        type="button"
+        className={styles.item}
+        aria-disabled={!available}
+        aria-label={label}
+        onClick={available ? onActivate : undefined}
+      >
+        <span className={styles.icon}>
+          <Icon size="sm" color="currentColor" />
+        </span>
+        {!compact ? <span className={styles.label}>{label}</span> : null}
+      </button>
+    </Tooltip>
+  </li>
+);
+
+PaletteAction.displayName = 'PaletteAction';
+
+/** File and Poll: the classic message's own parts. */
+const MessageActions = ({ compact, onAdd }: { compact: boolean; onAdd?: (uid: string) => void }) => {
+  const { store, actions } = useBuilderContext();
+  const ui = useBuilderUIStore();
+  const attach = useAttachFiles();
+  const restrictions = useBuilderRestrictions();
+  const hasPoll = useBuilderSelector((state) => state.doc.poll != null);
+  const entries = [
+    isMessageFieldAllowed(restrictions, 'attachments') ? (
+      <PaletteAction
+        key="file"
+        label="File"
+        description="Attach images, videos or other files"
+        icon={AttachmentIcon}
+        available
+        compact={compact}
+        onActivate={async () => {
+          const names = attach(await pickFiles());
+          if (names.length > 0) onAdd?.(ROOT_UID);
+        }}
+      />
+    ) : null,
+    isMessageFieldAllowed(restrictions, 'poll') ? (
+      <PaletteAction
+        key="poll"
+        label="Poll"
+        description="A question with up to 10 answers"
+        icon={PollsIcon}
+        available={!hasPoll}
+        compact={compact}
+        onActivate={() => {
+          if (store.getState().doc.poll != null) return;
+          actions.updateMessage({ poll: createPoll() });
+          ui.set({ selectedId: null, pendingFocus: { uid: ROOT_UID, field: 'poll.question.text' } });
+          AccessibilityAnnouncer.announce('Added a poll.', 'polite');
+          onAdd?.(ROOT_UID);
+        }}
+      />
+    ) : null,
+  ].filter((entry) => entry != null);
+  return entries.length > 0 ? entries : null;
+};
+
+MessageActions.displayName = 'MessageActions';
+
+const MessageGroup = ({ title, showTitle, children }: { title: string; showTitle: boolean; children: ReactNode }) => (
+  <section className={styles.group} aria-label={title}>
+    {showTitle ? <h3 className={styles.title}>{title}</h3> : null}
+    <ul className={styles.list}>{children}</ul>
+  </section>
+);
+
+MessageGroup.displayName = 'MessageGroup';
 
 export interface ComponentPaletteProps {
   className?: string;
@@ -196,6 +301,16 @@ export const ComponentPalette = ({
   const restrictions = useBuilderRestrictions();
   const scope = useBuilderScope();
   const groups = GROUPS.map((group) => {
+    if (group.title === 'Message') {
+      const offered = isMessageFieldAllowed(restrictions, 'attachments') || isMessageFieldAllowed(restrictions, 'poll');
+      if (mode !== 'classic' || !offered) return null;
+      const actions = <MessageActions compact={compact} onAdd={onAdd} />;
+      return (
+        <MessageGroup key={group.title} title={group.title} showTitle={!compact && orientation !== 'horizontal'}>
+          {actions}
+        </MessageGroup>
+      );
+    }
     const entries = group.templates
       .map((template) => items.find((item) => item.template === template))
       .filter(

@@ -10,10 +10,15 @@ import {
   ROOT_UID,
   sendWebhookMessage,
   useBuilderIssues,
+  useBuilderSelector,
   type SendWebhookOptions,
   type ValidationIssue,
   type WebhookResult,
 } from '../core';
+import { collectUploads } from './attachments';
+import { FilesSection, useAttachmentSummary } from './EditableAttachments';
+import { useBuilderFiles } from './files';
+import { AppliedTagsInput, MessageOptions } from './MessageOptions';
 import { NodeTextInput } from './popouts';
 import { useBuilderContext } from './useBuilderContext';
 import { useBuilderUI, useBuilderUIStore, type WebhookDraft } from './uiStore';
@@ -88,6 +93,10 @@ export const WebhookPanel = ({
   onWebhookChange,
 }: WebhookPanelProps) => {
   const { store } = useBuilderContext();
+  const files = useBuilderFiles();
+  const attachments = useAttachmentSummary();
+  const threadName = useBuilderSelector((state) => state.doc.thread_name ?? '');
+  const hasTags = useBuilderSelector((state) => (state.doc.applied_tags?.length ?? 0) > 0);
   const issues = useBuilderIssues();
   const restrictions = useBuilderRestrictions();
   const reveal = useRevealIssue();
@@ -165,11 +174,14 @@ export const WebhookPanel = ({
     const options: SendWebhookOptions = { fetch: fetchImpl };
     const thread = threadId.trim() || parsed.threadId;
     if (thread) options.threadId = thread;
+    // The files go as files[n], n being each one's place in the message's attachments.
+    const { uploads } = collectUploads(store.getState().doc, files);
+    if (uploads.length > 0) options.files = uploads;
     const result = await sendWebhookMessage(parsed.url, store.toJSON(), options);
     setState({ status: 'done', result, at: Date.now() });
     onResult?.(result);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchImpl, onResult, parsed, store, threadId, patch]);
+  }, [fetchImpl, files, onResult, parsed, store, threadId, patch]);
 
   const issueTarget = (issue: ValidationIssue): ValidationIssue => {
     const { uid, rest } = nodeAtPath(store.getState().doc, issue.path);
@@ -234,6 +246,10 @@ export const WebhookPanel = ({
             <NodeTextInput uid={ROOT_UID} field="thread_name" label="Thread name" placeholder="Optional" />
           ) : null}
         </div>
+        {/* Tags are for forum posts, which a thread name starts. */}
+        {isMessageFieldAllowed(restrictions, 'applied_tags') && (threadName !== '' || hasTags) ? (
+          <AppliedTagsInput />
+        ) : null}
         {isMessageFieldAllowed(restrictions, 'username') || isMessageFieldAllowed(restrictions, 'avatar_url') ? (
           <div className={styles.row}>
             {isMessageFieldAllowed(restrictions, 'username') ? (
@@ -243,6 +259,14 @@ export const WebhookPanel = ({
               <NodeTextInput uid={ROOT_UID} field="avatar_url" label="Avatar URL" placeholder="Default" />
             ) : null}
           </div>
+        ) : null}
+        <FilesSection />
+        <MessageOptions />
+        {attachments.missing.length > 0 ? (
+          <InlineNotice
+            type="critical"
+            message={`${attachments.missing.length === 1 ? '1 file is' : `${attachments.missing.length} files are`} missing: ${attachments.missing.join(', ')}`}
+          />
         ) : null}
         {errors.length > 0 ? (
           <InlineNotice
@@ -257,7 +281,7 @@ export const WebhookPanel = ({
             icon={{ type: 'icon', asset: SendMessageIcon }}
             text={state.status === 'sending' ? 'Sending…' : 'Send'}
             loading={state.status === 'sending' ? true : undefined}
-            disabled={parsed == null || state.status === 'sending'}
+            disabled={parsed == null || state.status === 'sending' || attachments.missing.length > 0}
           />
         </div>
       </form>

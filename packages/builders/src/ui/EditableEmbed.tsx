@@ -49,6 +49,8 @@ import { FrameChrome, useNodeFrame } from './NodeFrame';
 import { NodeToolbarButton, NodeToolbarPopoutButton } from './NodeToolbar';
 import { NodeTextInput, PopoutPanel, RemoveButton, SlotPopout } from './popouts';
 import { prepareEmbed, useMediaSizes } from './mediaSize';
+import { useAttachmentResolver } from './files';
+import { AttachmentChooser } from './EditableAttachments';
 import { useBuilderRender } from './renderContext';
 import { useBuilderContext } from './useBuilderContext';
 import { useBuilderUI, useBuilderUIStore } from './uiStore';
@@ -138,6 +140,7 @@ const MediaPopout = ({ uid, field, title }: { uid: string; field: 'image' | 'thu
         placeholder="https://… or attachment://name.png"
         autoFocus
       />
+      <AttachmentChooser uid={uid} field={`${field}.url`} accept="image" />
     </PopoutPanel>
   );
 };
@@ -151,10 +154,14 @@ const LinksPopout = ({ uid }: { uid: string }) => {
         <>
           <NodeTextInput uid={uid} field="author.url" label="Author link" placeholder="https://…" />
           <NodeTextInput uid={uid} field="author.icon_url" label="Author icon" placeholder="https://…" />
+          <AttachmentChooser uid={uid} field="author.icon_url" accept="image" />
         </>
       ) : null}
       {allows('footer') ? (
-        <NodeTextInput uid={uid} field="footer.icon_url" label="Footer icon" placeholder="https://…" />
+        <>
+          <NodeTextInput uid={uid} field="footer.icon_url" label="Footer icon" placeholder="https://…" />
+          <AttachmentChooser uid={uid} field="footer.icon_url" accept="image" />
+        </>
       ) : null}
     </PopoutPanel>
   );
@@ -300,6 +307,7 @@ export const EditableEmbed = ({ uid, embedIndex = 0, message, className }: Edita
   const { actions } = useBuilderContext();
   const uiStore = useBuilderUIStore();
   const sizes = useMediaSizes();
+  const resolve = useAttachmentResolver();
   const i18n = useEmbedI18n();
   const media = useMediaContext();
   const { locale } = useManaContext();
@@ -328,10 +336,10 @@ export const EditableEmbed = ({ uid, embedIndex = 0, message, className }: Edita
     setRevealed(startRevealed);
   }
   const embed: MessageEmbed | null = useMemo(
-    () => (node != null ? createEmbed(channelId, message?.id, prepareEmbed(nodeToJSON(node, 'embed'))) : null),
+    () => (node != null ? createEmbed(channelId, message?.id, prepareEmbed(nodeToJSON(node, 'embed'), resolve)) : null),
     // `sizes` changes when an image's size becomes known.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [node, sizes, channelId, message?.id],
+    [node, sizes, resolve, channelId, message?.id],
   );
   const sourceMetadata = useMemo<EmbedSourceMetadata>(
     () => ({ message, identifier: { type: 'embed', embedIndex } }),

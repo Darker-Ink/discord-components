@@ -37,6 +37,8 @@ export interface BuilderUIState {
   /** The node whose menu is open, and where. */
   contextMenu: { uid: string; x: number; y: number } | null;
   webhook: WebhookDraft | null;
+  /** Files are being dragged over the builder (from outside the page). */
+  fileDrag: boolean;
 }
 
 type Listener = () => void;
@@ -55,6 +57,7 @@ export const createBuilderUIStore = () => {
     dropShape: null,
     contextMenu: null,
     webhook: null,
+    fileDrag: false,
   };
   const listeners = new Set<Listener>();
   const frames = new Map<string, HTMLElement>();

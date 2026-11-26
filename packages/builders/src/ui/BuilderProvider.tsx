@@ -15,7 +15,9 @@ import {
   type MessageBuilderApi,
   type MessageBuilderOptions,
 } from '../core';
+import { attachToMessage, hasFiles } from './attach';
 import { BuilderDndProvider } from './dnd/BuilderDnd';
+import { BuilderFilesContext, createBuilderFiles, useBuilderFiles, type BuilderFiles } from './files';
 import { isMod } from './NodeFrame';
 import { BuilderRenderContext, DEFAULT_RENDER_OPTIONS, type BuilderRenderOptions } from './renderContext';
 import { BuilderUIContext, createBuilderUIStore } from './uiStore';
@@ -48,6 +50,11 @@ export interface BuilderProviderProps extends MessageBuilderOptions {
   guildId?: string | null;
   /** Undo/redo also when nothing in the builder has focus (the page's only editor). Default true. */
   globalShortcuts?: boolean;
+  /**
+   * Where attached files are kept (in memory); pass one to read or add files from outside. Without it the
+   * builder keeps its own.
+   */
+  files?: BuilderFiles;
   children: ReactNode;
 }
 
@@ -62,7 +69,7 @@ const Inner = ({
   guildId = DEFAULT_RENDER_OPTIONS.guildId,
   globalShortcuts = true,
   children,
-}: Omit<BuilderProviderProps, keyof MessageBuilderOptions | 'builder'>) => {
+}: Omit<BuilderProviderProps, keyof MessageBuilderOptions | 'builder' | 'files'>) => {
   const store = useBuilderStore();
   const [ui] = useState(createBuilderUIStore);
   const scope = useId();
@@ -148,6 +155,59 @@ const Inner = ({
     };
   }, [scope]);
 
+  // Files pasted or dropped anywhere in the builder are attached to the message.
+  const files = useBuilderFiles();
+  useEffect(() => {
+    const attach = (list: File[]) => attachToMessage(store, ui, files, list);
+    if (readOnly) return;
+    const inScope = (target: EventTarget | null) =>
+      target instanceof Element && target.closest(`[data-builder-scope="${CSS.escape(scope)}"]`) != null;
+    const onPaste = (event: ClipboardEvent) => {
+      const list = Array.from(event.clipboardData?.files ?? []);
+      if (list.length === 0 || !inScope(event.target)) return;
+      // Text inputs in popouts (a URL) keep pasting text.
+      if ((event.target as Element).closest('input, textarea') != null) return;
+      event.preventDefault();
+      attach(list);
+    };
+    let depth = 0;
+    const onDragEnter = (event: DragEvent) => {
+      if (!hasFiles(event.dataTransfer)) return;
+      depth++;
+      if (inScope(event.target)) ui.set({ fileDrag: true });
+    };
+    const onDragOver = (event: DragEvent) => {
+      if (!hasFiles(event.dataTransfer) || !inScope(event.target)) return;
+      event.preventDefault();
+      if (event.dataTransfer != null) event.dataTransfer.dropEffect = 'copy';
+      ui.set({ fileDrag: true });
+    };
+    const onDragLeave = (event: DragEvent) => {
+      if (!hasFiles(event.dataTransfer)) return;
+      depth = Math.max(0, depth - 1);
+      if (depth === 0) ui.set({ fileDrag: false });
+    };
+    const onDrop = (event: DragEvent) => {
+      depth = 0;
+      ui.set({ fileDrag: false });
+      if (!hasFiles(event.dataTransfer) || !inScope(event.target)) return;
+      event.preventDefault();
+      attach(Array.from(event.dataTransfer?.files ?? []));
+    };
+    document.addEventListener('paste', onPaste, true);
+    document.addEventListener('dragenter', onDragEnter);
+    document.addEventListener('dragover', onDragOver);
+    document.addEventListener('dragleave', onDragLeave);
+    document.addEventListener('drop', onDrop);
+    return () => {
+      document.removeEventListener('paste', onPaste, true);
+      document.removeEventListener('dragenter', onDragEnter);
+      document.removeEventListener('dragover', onDragOver);
+      document.removeEventListener('dragleave', onDragLeave);
+      document.removeEventListener('drop', onDrop);
+    };
+  }, [files, readOnly, scope, store, ui]);
+
   // A node that no longer exists (undone, deleted elsewhere) can't stay selected.
   useEffect(
     () =>
@@ -190,20 +250,28 @@ export const BuilderProvider = ({
   coalesceMs,
   validation,
   restrictions,
+  files,
   ...props
-}: BuilderProviderProps) => (
-  <MessageBuilderProvider
-    builder={builder}
-    value={value}
-    defaultValue={defaultValue}
-    onChange={onChange}
-    limit={limit}
-    coalesceMs={coalesceMs}
-    validation={validation}
-    restrictions={restrictions}
-  >
-    <Inner {...props} />
-  </MessageBuilderProvider>
-);
+}: BuilderProviderProps) => {
+  const [ownFiles] = useState(createBuilderFiles);
+  // attachment:// references are checked against the message's attachments.
+  const checked = useMemo(() => ({ files: [], ...validation }), [validation]);
+  return (
+    <MessageBuilderProvider
+      builder={builder}
+      value={value}
+      defaultValue={defaultValue}
+      onChange={onChange}
+      limit={limit}
+      coalesceMs={coalesceMs}
+      validation={checked}
+      restrictions={restrictions}
+    >
+      <BuilderFilesContext.Provider value={files ?? ownFiles}>
+        <Inner {...props} />
+      </BuilderFilesContext.Provider>
+    </MessageBuilderProvider>
+  );
+};
 
 BuilderProvider.displayName = 'BuilderProvider';

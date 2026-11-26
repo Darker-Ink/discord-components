@@ -230,7 +230,7 @@ PaletteStory.displayName = 'PaletteStory';
 // What Discord returns for a sent payload: sized media and proxied icons (the builder does the same to draw).
 const preparePreview = (message: APIMessage): APIMessage => ({
   ...message,
-  embeds: (message.embeds ?? []).map(prepareEmbed),
+  embeds: (message.embeds ?? []).map((embed) => prepareEmbed(embed)),
   components: prepareComponents(message.components ?? []),
 });
 

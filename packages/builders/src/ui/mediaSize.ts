@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react';
+import type { AttachmentResolver } from './attachments';
 import type {
   APIEmbed,
   APIMediaGalleryItem,
@@ -109,21 +110,60 @@ const withSize = <T extends Sized>(media: T | undefined): T | undefined => {
   return size != null ? { ...media, width: size.width, height: size.height } : media;
 };
 
-/** An embed as Discord would return it: sized images and proxy URLs for the author and footer icons. */
-export const prepareEmbed = (embed: APIEmbed): APIEmbed => {
+/** An image field of an embed pointing at an attached file: the local file, sized. */
+const resolveImage = <T extends Sized>(media: T, resolve: AttachmentResolver | undefined): T | undefined => {
+  const file = media.url != null ? resolve?.(media.url) : undefined;
+  if (file == null) return undefined;
+  return {
+    ...media,
+    url: file.url,
+    proxy_url: file.url,
+    ...(file.width != null ? { width: file.width, height: file.height } : {}),
+  };
+};
+
+/** The local file behind an attachment:// icon URL, else the URL itself. */
+const resolveIcon = (url: string | undefined, resolve: AttachmentResolver | undefined) =>
+  url != null ? (resolve?.(url)?.url ?? url) : url;
+
+/**
+ * An embed as Discord would return it: sized images and proxy URLs for the author and footer icons. With a
+ * resolver, attachment:// URLs show the attached files.
+ */
+export const prepareEmbed = (embed: APIEmbed, resolve?: AttachmentResolver): APIEmbed => {
   const result: APIEmbed = { type: 'rich', ...embed };
-  if (embed.image != null) result.image = withSize(embed.image);
-  if (embed.thumbnail != null) result.thumbnail = withSize(embed.thumbnail);
-  if (embed.author?.icon_url != null && embed.author.proxy_icon_url == null)
-    result.author = { ...embed.author, proxy_icon_url: embed.author.icon_url };
-  if (embed.footer?.icon_url != null && embed.footer.proxy_icon_url == null)
-    result.footer = { ...embed.footer, proxy_icon_url: embed.footer.icon_url };
+  if (embed.image != null) result.image = resolveImage(embed.image, resolve) ?? withSize(embed.image);
+  if (embed.thumbnail != null) result.thumbnail = resolveImage(embed.thumbnail, resolve) ?? withSize(embed.thumbnail);
+  if (embed.author?.icon_url != null && embed.author.proxy_icon_url == null) {
+    const icon = resolveIcon(embed.author.icon_url, resolve);
+    result.author = { ...embed.author, proxy_icon_url: icon };
+  }
+  if (embed.footer?.icon_url != null && embed.footer.proxy_icon_url == null) {
+    const icon = resolveIcon(embed.footer.icon_url, resolve);
+    result.footer = { ...embed.footer, proxy_icon_url: icon };
+  }
   return result;
 };
 
-/** Unfurled media as Discord would return it (size, proxy URL, content type, loaded). */
-export const prepareMedia = (media: APIUnfurledMediaItem): APIUnfurledMediaItem => {
-  if (media.url == null || media.url.startsWith('attachment://')) return media;
+/**
+ * Unfurled media as Discord would return it (size, proxy URL, content type, loaded). With a resolver, an
+ * attachment:// URL shows the attached file.
+ */
+export const prepareMedia = (media: APIUnfurledMediaItem, resolve?: AttachmentResolver): APIUnfurledMediaItem => {
+  if (media.url == null) return media;
+  if (media.url.startsWith('attachment://')) {
+    const file = resolve?.(media.url);
+    if (file == null) return media;
+    return {
+      ...media,
+      url: file.url,
+      proxy_url: file.url,
+      width: file.width,
+      height: file.height,
+      content_type: file.content_type,
+      loading_state: 2,
+    };
+  }
   probeMedia(media.url);
   const size = getMediaSize(media.url);
   return {
@@ -136,23 +176,35 @@ export const prepareMedia = (media: APIUnfurledMediaItem): APIUnfurledMediaItem 
   };
 };
 
-const prepareComponent = (component: Record<string, unknown>): Record<string, unknown> => {
+const prepareComponent = (
+  component: Record<string, unknown>,
+  resolve: AttachmentResolver | undefined,
+): Record<string, unknown> => {
   const result = { ...component };
   if (Array.isArray(result.components))
-    result.components = (result.components as Record<string, unknown>[]).map(prepareComponent);
-  if (result.accessory != null) result.accessory = prepareComponent(result.accessory as Record<string, unknown>);
-  if (result.media != null) result.media = prepareMedia(result.media as APIUnfurledMediaItem);
-  if (result.file != null) result.file = prepareMedia(result.file as APIUnfurledMediaItem);
+    result.components = (result.components as Record<string, unknown>[]).map((child) =>
+      prepareComponent(child, resolve),
+    );
+  if (result.accessory != null)
+    result.accessory = prepareComponent(result.accessory as Record<string, unknown>, resolve);
+  if (result.media != null) result.media = prepareMedia(result.media as APIUnfurledMediaItem, resolve);
+  if (result.file != null) {
+    const url = (result.file as APIUnfurledMediaItem).url;
+    const file = url != null ? resolve?.(url) : undefined;
+    result.file = prepareMedia(result.file as APIUnfurledMediaItem, resolve);
+    // A received File component carries the file's name and size.
+    if (file != null) Object.assign(result, { name: result.name ?? file.filename, size: result.size ?? file.size });
+  }
   if (Array.isArray(result.items))
     result.items = (result.items as APIMediaGalleryItem[]).map((item) => ({
       ...item,
-      media: prepareMedia(item.media),
+      media: prepareMedia(item.media, resolve),
     }));
   return result;
 };
 
 /** Components with their media prepared like `prepareMedia`. */
-export const prepareComponents = (components: readonly APIMessageTopLevelComponent[]) =>
+export const prepareComponents = (components: readonly APIMessageTopLevelComponent[], resolve?: AttachmentResolver) =>
   components.map((component) =>
-    prepareComponent(component as unknown as Record<string, unknown>),
+    prepareComponent(component as unknown as Record<string, unknown>, resolve),
   ) as unknown as APIMessageTopLevelComponent[];

@@ -61,3 +61,14 @@
     opacity: 1;
   }
 }
+
+/* Files dragged over the builder: the message shows it will take them. */
+.canvas[data-file-drag]::after {
+  background: color-mix(in srgb, var(--brand-500) 8%, transparent);
+  border: 2px dashed var(--control-brand-foreground-new, var(--brand-500));
+  border-radius: 8px;
+  content: '';
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}

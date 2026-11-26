@@ -61,6 +61,8 @@ import {
 } from '../core';
 import { NodeToolbarButton, NodeToolbarPopoutButton } from './NodeToolbar';
 import { getMediaSize, isMediaBroken, useMediaSizes } from './mediaSize';
+import { AttachmentChooser } from './EditableAttachments';
+import { useAttachmentResolver } from './files';
 import { AnchoredPopout, NodeSwitch, NodeTextInput, PopoutPanel, RemoveButton } from './popouts';
 import { useBuilderContext } from './useBuilderContext';
 import { useBuilderUIStore } from './uiStore';
@@ -101,14 +103,20 @@ export const formatEmoji = (emoji: APIMessageComponentEmoji | undefined) => {
   return emoji.name ?? '';
 };
 
-const EmojiEditor = ({ uid, field = 'emoji' }: { uid: string; field?: string }) => {
-  const { actions } = useBuilderContext();
-  const node = useBuilderNode(uid) as { emoji?: APIMessageComponentEmoji } | null;
-  const [text, setText] = useState(() => formatEmoji(node?.emoji));
-  const issues = useNodeIssues(uid).filter((issue) => issue.field?.startsWith(field));
-  const set = (value: string) => {
-    setText(value);
-    actions.update(uid, { [field]: parseEmoji(value) }, { coalesce: `${uid}:${field}` });
+/** An emoji, typed (unicode or a custom emoji's markdown) or picked from common ones. */
+export const EmojiPicker = ({
+  value,
+  onChange,
+  error,
+}: {
+  value: APIMessageComponentEmoji | undefined;
+  onChange: (emoji: APIMessageComponentEmoji | undefined) => void;
+  error?: string;
+}) => {
+  const [text, setText] = useState(() => formatEmoji(value));
+  const set = (next: string) => {
+    setText(next);
+    onChange(parseEmoji(next));
   };
   return (
     <>
@@ -117,7 +125,7 @@ const EmojiEditor = ({ uid, field = 'emoji' }: { uid: string; field?: string }) 
         value={text}
         placeholder="😀 or <:name:123456789012345678>"
         onChange={set}
-        errorMessage={issues.map((issue) => issue.message).join(' ') || undefined}
+        errorMessage={error}
         autoFocus
       />
       <div className={styles.emojiGrid} role="group" aria-label="Common emoji">
@@ -127,7 +135,7 @@ const EmojiEditor = ({ uid, field = 'emoji' }: { uid: string; field?: string }) 
             type="button"
             className={styles.emojiButton}
             aria-label={emoji}
-            aria-pressed={node?.emoji?.name === emoji && node.emoji.id == null}
+            aria-pressed={value?.name === emoji && value.id == null}
             onClick={() => set(emoji)}
           >
             <Emoji emojiName={emoji} />
@@ -135,6 +143,19 @@ const EmojiEditor = ({ uid, field = 'emoji' }: { uid: string; field?: string }) 
         ))}
       </div>
     </>
+  );
+};
+
+const EmojiEditor = ({ uid, field = 'emoji' }: { uid: string; field?: string }) => {
+  const { actions } = useBuilderContext();
+  const node = useBuilderNode(uid) as { emoji?: APIMessageComponentEmoji } | null;
+  const issues = useNodeIssues(uid).filter((issue) => issue.field?.startsWith(field));
+  return (
+    <EmojiPicker
+      value={node?.emoji}
+      onChange={(emoji) => actions.update(uid, { [field]: emoji }, { coalesce: `${uid}:${field}` })}
+      error={issues.map((issue) => issue.message).join(' ') || undefined}
+    />
   );
 };
 
@@ -420,7 +441,17 @@ SelectTools.displayName = 'SelectTools';
 // ---------------------------------------------------------------------------------------------------------
 // Media: thumbnails, files and gallery items
 
-const MediaFields = ({ uid, field, label }: { uid: string; field: 'media' | 'file'; label: string }) => (
+const MediaFields = ({
+  uid,
+  field,
+  label,
+  accept,
+}: {
+  uid: string;
+  field: 'media' | 'file';
+  label: string;
+  accept: 'image' | 'media' | 'any';
+}) => (
   <>
     <NodeTextInput
       uid={uid}
@@ -429,6 +460,7 @@ const MediaFields = ({ uid, field, label }: { uid: string; field: 'media' | 'fil
       placeholder={field === 'file' ? 'attachment://report.pdf' : 'https://… or attachment://name.png'}
       autoFocus
     />
+    <AttachmentChooser uid={uid} field={`${field}.url`} accept={accept} />
     {field === 'media' ? (
       <NodeTextInput uid={uid} field="description" label="Alt text" placeholder="Describe the image" />
     ) : null}
@@ -442,7 +474,7 @@ export const ThumbnailTools = ({ uid }: { uid: string }) => (
     label="Image"
     renderPopout={() => (
       <PopoutPanel title="Thumbnail">
-        <MediaFields uid={uid} field="media" label="Image URL" />
+        <MediaFields uid={uid} field="media" label="Image URL" accept="image" />
       </PopoutPanel>
     )}
   />
@@ -456,7 +488,7 @@ export const FileTools = ({ uid }: { uid: string }) => (
     label="File"
     renderPopout={() => (
       <PopoutPanel title="File">
-        <MediaFields uid={uid} field="file" label="File" />
+        <MediaFields uid={uid} field="file" label="File" accept="any" />
       </PopoutPanel>
     )}
   />
@@ -468,11 +500,14 @@ const GalleryTile = ({ uid, index }: { uid: string; index: number }) => {
   const { actions } = useBuilderContext();
   const node = useBuilderNode<MediaGalleryItemNode>(uid);
   useMediaSizes();
+  const resolve = useAttachmentResolver();
   const { setNodeRef, attributes, listeners, style, isDragging } = useSortableItem(uid);
   if (node == null) return null;
   const url = node.media?.url ?? '';
-  const size = getMediaSize(url);
-  const broken = isMediaBroken(url);
+  const file = resolve(url);
+  const src = file?.url ?? url;
+  const size = file != null ? { kind: file.content_type?.startsWith('video/') ? 'video' : 'image' } : getMediaSize(url);
+  const broken = file == null && isMediaBroken(url);
   return (
     <li ref={setNodeRef} style={style} className={clsx(styles.tile, { [styles.dragging]: isDragging })}>
       <AnchoredPopout
@@ -483,7 +518,7 @@ const GalleryTile = ({ uid, index }: { uid: string; index: number }) => {
             title={`Item ${index + 1}`}
             footer={<RemoveButton label="Remove" onClick={() => actions.remove(uid)} />}
           >
-            <MediaFields uid={uid} field="media" label="Image or video URL" />
+            <MediaFields uid={uid} field="media" label="Image or video URL" accept="media" />
           </PopoutPanel>
         )}
       >
@@ -497,7 +532,7 @@ const GalleryTile = ({ uid, index }: { uid: string; index: number }) => {
             {...props}
           >
             {size?.kind === 'image' && !broken ? (
-              <img src={url} alt="" className={styles.tileImage} draggable={false} />
+              <img src={src} alt="" className={styles.tileImage} draggable={false} />
             ) : (
               <span className={styles.tileIcon}>
                 {size?.kind === 'video' ? (
