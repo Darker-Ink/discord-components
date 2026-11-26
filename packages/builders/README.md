@@ -249,6 +249,77 @@ aren't in the docs.
 | Poll                                                              | question 300, 1–10 answers of 55, 32 days                                       | resources/poll.mdx                                                   |
 | Non-app webhooks                                                  | no interactive components; `with_components=true` needed                        | resources/webhook.mdx, Execute Webhook                               |
 
+## Restrictions
+
+A builder can allow less than Discord does. Pass `restrictions` to `useMessageBuilder`, `createBuilderStore`
+or `MessageBuilderProvider` (and `<MessageBuilder>`), or to the pure functions as `{ restrictions }`. They
+can turn things off and lower limits, never loosen Discord's.
+
+A tag builder, for example, allows text in Components v2 messages only, with no files or custom
+username:
+
+```tsx
+import { MessageBuilder, mergeRestrictions, restrictionPresets } from '@discord-mana/builders';
+
+const tagRules = mergeRestrictions(restrictionPresets.textOnly, {
+  modes: ['cv2'],
+  counts: { container: 1 },
+  message: { username: false, avatar_url: false },
+  limits: { textDisplay: 1000, components: 10 },
+});
+
+<MessageBuilder restrictions={tagRules} defaultValue={tag} onChange={save} />;
+```
+
+```ts
+interface BuilderRestrictions {
+  modes?: ('classic' | 'cv2')[]; // default: both
+  components?: { [name in ComponentName | 'default']?: boolean }; // { file: false } or { default: false, textDisplay: true }
+  embeds?: boolean | { [part in EmbedPart]?: boolean }; // false, or { image: false, fields: false }
+  message?: { [field in MessageField]?: boolean }; // content, username, avatar_url, tts, thread_name, applied_tags, allowed_mentions, poll, attachments, flags
+  counts?: { [name in ComponentName]?: number }; // { container: 1, button: 3 }
+  limits?: RestrictionLimits; // content, embeds, embedTitle, embedDescription, embedFields, fieldName, fieldValue, footerText,
+  //                             authorName, embedTotal, components, textDisplay, textDisplayTotal, buttonLabel,
+  //                             actionRowButtons, sectionComponents, galleryItems, selectOptions, username, threadName
+}
+```
+
+The names for components are:
+
+- **Layout and content:** `actionRow`, `section`, `textDisplay`, `thumbnail`, `mediaGallery`, `file`, `separator`, `container`.
+- **Each button style:** `primaryButton`, `secondaryButton`, `successButton`, `dangerButton`, `linkButton`, `premiumButton`, with `button` for all of them.
+- **Each select:** `stringSelect`, `userSelect`, `roleSelect`, `mentionableSelect`, `channelSelect`, with `select` for all of them.
+
+A specific name wins over its group, and a group over `default`. So `{ button: false, linkButton: true }`
+allows only link buttons. Embed parts are `title`, `description`, `url`, `color`, `timestamp`, `author`,
+`footer`, `image`, `thumbnail` and `fields`.
+
+How restrictions are applied:
+
+- **Editing:**
+  - `canInsert`, `canMove`, `allowedTemplates`, `insertNode`, `duplicateNode` and the store's actions refuse what isn't allowed, with a reason such as "Files aren't allowed in this builder".
+  - `setMode` doesn't switch to a mode that isn't allowed, and cleans up the converted result.
+  - Templates adapt: a new section gets a thumbnail when buttons are off.
+  - An empty document starts in an allowed mode.
+- **Validation:**
+  - `fromJSON` keeps everything. `validateMessage(payload, { restrictions })` and `validateDocument` then report each disallowed piece as an error with `restricted: true`.
+  - The codes are `MODE_NOT_ALLOWED`, `FIELD_NOT_ALLOWED`, `EMBEDS_NOT_ALLOWED`, `EMBED_FIELD_NOT_ALLOWED`, `COMPONENT_NOT_ALLOWED` and `MAX_COUNT`, plus the usual `MAX_LENGTH`/`MAX_ITEMS`/… with the lower limit, which replace Discord's issue for the same field.
+- **Cleanup:** `sanitize(doc, restrictions)` (or `store.sanitize()`, one undo step) removes what isn't allowed:
+  - a disallowed mode is converted;
+  - disallowed fields, embed parts and components are dropped, and the text of a disallowed container or section is moved up;
+  - counts and list limits drop the extra items;
+  - text isn't shortened.
+- **Questions the UI can ask cheaply:**
+  - About the restrictions alone: `isComponentAllowed(r, nameOrComponent)`, `isTemplateAllowed(type, r)` (to hide palette items), `isModeAllowed`, `allowedModes`, `areEmbedsAllowed`, `isEmbedPartAllowed` and `isMessageFieldAllowed`.
+  - About limits: `effectiveLimit(r, key)`, `getLimit(kind, field, r)` and `getDocumentStats(doc, r)`.
+  - About a place in the current document, from the store: `store.checkInsert`, `store.checkMove` and `store.allowedTemplates`.
+  - React hooks: `useAllowedTemplates(target)` and `useBuilderRestrictions()`.
+
+Presets: `restrictionPresets.textOnly` allows text displays, containers, separators and embeds without images
+or thumbnails, and no files or polls. `restrictionPresets.nonInteractive` allows what webhooks not owned by an
+application can send: link buttons and no selects. Combine presets with `mergeRestrictions(...)`; the strictest
+rule wins.
+
 ## Webhooks
 
 ```ts
