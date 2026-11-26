@@ -3,7 +3,6 @@ import { getLocalTimeZone, today, type DateValue } from '@internationalized/date
 import { format } from 'date-fns';
 import { Button, DateRangePicker, Stack } from '@discord-components/components';
 import type { StoryGroup } from '../../types';
-import { DateInputsExperimentNotice, useDateInputsExperiment } from './date-inputs-experiment';
 
 type DateRange = { start: DateValue; end: DateValue };
 
@@ -41,8 +40,6 @@ const DateRangePickerStory = ({
   const now = today(getLocalTimeZone());
   const minValue = showMinMax ? now.subtract({ weeks: 1 }) : undefined;
   const maxValue = showMinMax ? now.add({ weeks: 2 }) : undefined;
-  const enabled = useDateInputsExperiment();
-  if (!enabled) return <DateInputsExperimentNotice />;
   const helperText = () => {
     if (value == null) return '';
     const start = format(value.start.toDate(getLocalTimeZone()), 'MMMM d, yyyy');

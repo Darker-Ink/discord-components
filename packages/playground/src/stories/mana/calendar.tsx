@@ -3,7 +3,6 @@ import { getLocalTimeZone, parseDate, today, type DateValue } from '@internation
 import { format } from 'date-fns';
 import { Button, Calendar, Stack, Text } from '@discord-components/components';
 import type { StoryGroup } from '../../types';
-import { DateInputsExperimentNotice, useDateInputsExperiment } from './date-inputs-experiment';
 
 interface CalendarStoryProps {
   disabled: boolean;
@@ -25,8 +24,6 @@ const CalendarStory = ({ disabled, readOnly, showMinMax }: CalendarStoryProps) =
   const setChristmas = useCallback(() => {
     setValue(parseDate('2024-12-25'));
   }, []);
-  const enabled = useDateInputsExperiment();
-  if (!enabled) return <DateInputsExperimentNotice />;
   return (
     <Stack direction="vertical" gap="md">
       <Calendar

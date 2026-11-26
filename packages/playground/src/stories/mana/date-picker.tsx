@@ -3,7 +3,6 @@ import { getLocalTimeZone, parseDate, today, type DateValue } from '@internation
 import { format } from 'date-fns';
 import { Button, DatePicker, Stack } from '@discord-components/components';
 import type { StoryGroup } from '../../types';
-import { DateInputsExperimentNotice, useDateInputsExperiment } from './date-inputs-experiment';
 
 interface DatePickerStoryProps {
   label: string;
@@ -35,8 +34,6 @@ const DatePickerStory = ({
   const setChristmas = useCallback(() => {
     setValue(parseDate('2024-12-25'));
   }, []);
-  const enabled = useDateInputsExperiment();
-  if (!enabled) return <DateInputsExperimentNotice />;
   return (
     <Stack direction="vertical" gap="md">
       <DatePicker

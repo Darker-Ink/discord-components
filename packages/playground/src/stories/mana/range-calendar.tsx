@@ -3,7 +3,6 @@ import { getLocalTimeZone, parseDate, today, type DateValue } from '@internation
 import { format } from 'date-fns';
 import { Button, RangeCalendar, Stack, Text } from '@discord-components/components';
 import type { StoryGroup } from '../../types';
-import { DateInputsExperimentNotice, useDateInputsExperiment } from './date-inputs-experiment';
 
 type DateRange = { start: DateValue; end: DateValue };
 
@@ -34,8 +33,6 @@ const RangeCalendarStory = ({ disabled, readOnly, showMinMax }: RangeCalendarSto
   const setDecember = useCallback(() => {
     setValue({ start: parseDate('2024-12-01'), end: parseDate('2024-12-31') });
   }, []);
-  const enabled = useDateInputsExperiment();
-  if (!enabled) return <DateInputsExperimentNotice />;
   return (
     <Stack direction="vertical" gap="md">
       <RangeCalendar
