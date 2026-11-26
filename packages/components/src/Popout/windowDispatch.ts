@@ -5,6 +5,8 @@ export const ComponentActions = {
   POPOUT_CLOSE_AFTER_MODALS: 'POPOUT_CLOSE_AFTER_MODALS',
   POPOUT_SHOW: 'POPOUT_SHOW',
   POPOUT_HIDE: 'POPOUT_HIDE',
+  MODAL_CLOSE: 'MODAL_CLOSE',
+  MEDIA_MODAL_CLOSE: 'MEDIA_MODAL_CLOSE',
 } as const;
 
 export type ComponentAction = (typeof ComponentActions)[keyof typeof ComponentActions];
@@ -43,14 +45,25 @@ export class ComponentDispatcher {
 
 export const windowDispatch = new ComponentDispatcher();
 
-// Discord's client closes the open popouts when Escape isn't handled by anything else (modals go
-// first). Without the client, the dispatcher does it itself.
+// Discord's client handles Escape with a global keybind that asks, in order, the media viewer, the
+// popouts opened last (including ones inside a modal), the modal stack and then popouts that were
+// open below the modals to close. Without the client, the dispatcher does it itself.
+const ESCAPE_ACTIONS = [
+  ComponentActions.MEDIA_MODAL_CLOSE,
+  ComponentActions.POPOUT_CLOSE,
+  ComponentActions.MODAL_CLOSE,
+  ComponentActions.POPOUT_CLOSE_AFTER_MODALS,
+] as const;
+
 if (typeof document !== 'undefined') {
   document.addEventListener('keydown', (event) => {
     if (event.key !== 'Escape' || event.defaultPrevented) return;
-    if (windowDispatch.hasSubscribers(ComponentActions.POPOUT_CLOSE)) {
-      windowDispatch.dispatch(ComponentActions.POPOUT_CLOSE, event);
-    }
+    const action = ESCAPE_ACTIONS.find((name) => windowDispatch.hasSubscribers(name));
+    if (action == null) return;
+    windowDispatch.dispatch(action, event);
+    // Like a keybind handler returning false in the client's key binding library.
+    event.preventDefault();
+    event.stopPropagation();
   });
 }
 

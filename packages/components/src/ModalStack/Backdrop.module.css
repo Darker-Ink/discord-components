@@ -1,0 +1,20 @@
+.scrim {
+  background-color: var(--background-scrim);
+  bottom: 0;
+  left: 0;
+  pointer-events: auto;
+  position: fixed;
+  right: var(--devtools-sidebar-width, 0);
+  top: 0;
+  transform: translateZ(0);
+}
+.blur {
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.lightbox {
+  background-color: var(--background-scrim-lightbox);
+}
+.pointerEventsNone {
+  pointer-events: none;
+}

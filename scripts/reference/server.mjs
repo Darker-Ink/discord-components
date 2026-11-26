@@ -40,9 +40,23 @@ const chunkJsUrl = extractFn('p.u=e=>{if(');
 const chunkCssUrl = extractFn('p.k=e=>{if(');
 
 // Modules the app root wrapper needs (accessibility, Mana and theme contexts, focus rings, and the
-// app's layers: the App layer provider/container, the #popover-portal target and the class that
-// makes their wrappers display: contents).
-const APP_ROOT_MODULES = ['844222', '116711', '86182', '559106', '750506', '337836', '638274'];
+// app's layers: the App and Verification layer providers/containers, the modal stack, the
+// #popover-portal target and the class that makes their wrappers display: contents), plus the
+// app's dynamic graphic components and the dispatchers the Escape keybind talks to.
+const APP_ROOT_MODULES = [
+  '844222',
+  '116711',
+  '86182',
+  '559106',
+  '750506',
+  '80556',
+  '638495',
+  '337836',
+  '638274',
+  '116833',
+  '188567',
+  '267102',
+];
 
 // Playground configs and the webpack module that exposes them.
 const playgroundModules = { mana: '352611', void: '352611', payments: '582695', nitro: '582695', identity: '582695' };
@@ -193,10 +207,12 @@ window.ref = (() => {
     ReactDOM = req('379800');
     root = ReactDOM.createRoot(document.getElementById('root'));
   };
-  // Mirrors the client's root: accessibility settings (844222), the Mana context (116711) and the
-  // theme context (86182) for the current theme, a focus ring scope (559106) over document.body, and
-  // the App layer (750506) whose container the client renders after the app content together with
-  // the #popover-portal target (337836), inside two display: contents wrappers (638274).
+  // Mirrors the client's root: accessibility settings (844222), the Mana context (116711, with the
+  // app's dynamic graphic components from 116833) and the theme context (86182) for the current
+  // theme, a focus ring scope (559106) over document.body, and the App and Verification layers
+  // (750506, 80556) with the modal stack (638495) after the app content, followed by the
+  // #popover-portal target (337836) and the layer containers inside two display: contents wrappers
+  // (638274).
   const appRoot = (element) => {
     const h = React.createElement;
     const theme = document.documentElement.className.match(/theme-(\\w+)/)?.[1] ?? 'darker';
@@ -204,16 +220,19 @@ window.ref = (() => {
     const mana = req('116711');
     const a11yValue = { ...a11y._currentValue, reducedMotion: { enabled: matchMedia('(prefers-reduced-motion: reduce)').matches, rawValue: 'auto' }, keyboardModeEnabled: keyboardMode, minToastDurationMs: 3000 };
     const layers = req('750506');
+    const verification = req('80556');
     const contents = req('638274').P;
-    const manaValue = { ...mana.VO._currentValue, theme, saturation: 1, experiments: { enabledExperiments: experiments }, defaultLayerContext: layers.uY };
+    const manaValue = { ...mana.VO._currentValue, theme, saturation: 1, experiments: { enabledExperiments: experiments }, defaultLayerContext: layers.uY, dynamicGraphicComponents: req('116833').Q };
     return h(a11y.Provider, { value: a11yValue },
       h(mana.GE, { value: manaValue },
         h(req('86182').w, { theme },
           h(req('559106').xp, { containerRef: { current: document.body } },
             h(layers.Yf, null,
-              element,
-              h('div', { className: contents },
-                h('div', { className: contents }, h(req('337836').P), h(layers.C8))))))));
+              h(verification.ks, null,
+                element,
+                h(req('638495').b),
+                h('div', { className: contents },
+                  h('div', { className: contents }, h(req('337836').P), h(layers.C8), h(verification.ok)))))))));
   };
   const rerender = () => root.render(appRoot(lastElement));
   const render = (element) => new Promise((resolve) => { lastElement = element; rerender(); setTimeout(resolve, 50); });
@@ -258,6 +277,19 @@ window.ref = (() => {
     if (NAV_KEYS.has(e.key)) setKeyboardMode(true);
   }, true);
   window.addEventListener('mousedown', () => setKeyboardMode(false), true);
+  // The client's global Escape keybind (92960): the media viewer first, then popouts, the modal
+  // stack and popouts that were open below modals. Popouts use the default window dispatcher here.
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape' || !root) return;
+    const global = req('188567')._;
+    const popouts = req('267102').Uw;
+    const steps = [[global, 'MEDIA_MODAL_CLOSE'], [popouts, 'POPOUT_CLOSE'], [global, 'MODAL_CLOSE'], [popouts, 'POPOUT_CLOSE_AFTER_MODALS']];
+    const step = steps.find(([dispatcher, action]) => dispatcher.hasSubscribers(action));
+    if (step == null) return;
+    step[0].dispatch(step[1]);
+    e.preventDefault();
+    e.stopPropagation();
+  });
   // Stories gated on an Apex experiment (useConfig) read the experiment store, not ManaContext. Force a
   // session override for each named experiment the loaded modules registered: its first variation whose
   // config is enabled, or else its first non-default variation.

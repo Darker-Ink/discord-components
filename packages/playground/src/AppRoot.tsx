@@ -2,17 +2,16 @@ import { useContext, useEffect, useMemo, useRef, useState, type ReactNode } from
 import {
   AccessibilityPreferencesContext,
   AccessibilityPreferencesProvider,
-  AppLayerContainer,
-  AppLayerProvider,
   appLayerContext,
   DEFAULT_MANA_CONTEXT,
   FocusRingManager,
   FocusRingScope,
   ManaContextProvider,
-  PopoverPortalTarget,
+  ModalLayerRoot,
   ThemeContextProvider,
 } from '@discord-components/components';
 import type { Theme } from '@discord-components/tokens';
+import { dynamicGraphicComponents } from './dynamicGraphics';
 import { useRootClasses } from './useRootClasses';
 
 // Keys that switch Discord into keyboard mode (focus rings on). Outside text fields only Tab does.
@@ -66,24 +65,9 @@ const RootElement = ({
 
 RootElement.displayName = 'RootElement';
 
-const CONTENTS = { display: 'contents' } as const;
-
-// The containers the client renders after the app's content for things that float above it:
-// floating layers (tooltips, FloatingLayer) portal into #popover-portal, popouts into the app layer.
-const LayerContainers = () => (
-  <div style={CONTENTS}>
-    <div style={CONTENTS}>
-      <PopoverPortalTarget />
-      <AppLayerContainer />
-    </div>
-  </div>
-);
-
-LayerContainers.displayName = 'LayerContainers';
-
 // The providers Discord's client puts around everything it renders: accessibility settings, the
-// Mana context (strings, theme, experiments), the theme context and a focus ring scope over the whole
-// document.
+// Mana context (strings, theme, experiments), the theme context, a focus ring scope over the whole
+// document and the layers overlays render in (with the modal stack).
 export const AppRoot = ({
   theme,
   experiments = NO_EXPERIMENTS,
@@ -102,6 +86,7 @@ export const AppRoot = ({
       saturation: 1,
       experiments: { enabledExperiments: [...experiments] },
       defaultLayerContext: appLayerContext,
+      dynamicGraphicComponents,
     }),
     [theme, experiments],
   );
@@ -111,10 +96,7 @@ export const AppRoot = ({
         <ThemeContextProvider theme={theme}>
           <RootElement theme={theme} experiments={experiments}>
             <FocusRingScope containerRef={bodyRef}>
-              <AppLayerProvider>
-                {children}
-                <LayerContainers />
-              </AppLayerProvider>
+              <ModalLayerRoot>{children}</ModalLayerRoot>
             </FocusRingScope>
           </RootElement>
         </ThemeContextProvider>

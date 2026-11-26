@@ -59,3 +59,5 @@ export * from './VideoPopover';
 export * from './EditableText';
 export * from './Slider';
 export * from './Toolbar';
+export * from './ModalStack';
+export * from './ModalRoot';

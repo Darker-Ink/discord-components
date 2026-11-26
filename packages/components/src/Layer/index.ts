@@ -19,3 +19,9 @@ export {
   type ReferenceRect,
 } from './ReferencePositionLayer';
 export { AppLayer, AppLayerContainer, AppLayerProvider, AppReferencePositionLayer, appLayerContext } from './AppLayer';
+export {
+  VerificationLayer,
+  VerificationLayerContainer,
+  VerificationLayerProvider,
+  verificationLayerContext,
+} from './VerificationLayer';

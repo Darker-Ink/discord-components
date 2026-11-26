@@ -47,8 +47,8 @@ export interface VideoGraphic {
 
 export interface DynamicGraphic {
   type: 'dynamic';
-  // A key of ManaContext's dynamicGraphicComponents.
-  component: string;
+  // A key of ManaContext's dynamicGraphicComponents (Discord's client uses a numeric enum).
+  component: string | number;
   props?: Record<string, unknown>;
 }
 
