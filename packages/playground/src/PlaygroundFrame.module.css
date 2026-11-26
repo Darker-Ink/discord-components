@@ -1,0 +1,18 @@
+/*
+ * Discord's playground sits inside the client's app frame, under its top bar. Its root is 100vh tall
+ * plus the top-bar offset, and its page is 100% tall below the header, so the bottom of the sidebar,
+ * canvas and controls runs past the window. Standalone there's nothing to absorb that, so fit the root
+ * to the window and give the page the height left under the header.
+ */
+.root {
+  box-sizing: border-box;
+}
+.column {
+  display: flex;
+  flex-direction: column;
+}
+.page {
+  flex: 1;
+  height: auto;
+  padding-bottom: 0;
+}

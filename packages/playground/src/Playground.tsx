@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useSyncExternalStore } from 'react';
+import clsx from 'clsx';
 import {
   AppRoot,
   BlobMask,
@@ -17,6 +18,7 @@ import { dynamicGraphicComponents } from './dynamicGraphics';
 import { getDefaultProps } from './ControlsPanel';
 import { CopyLinkButton } from './CopyLinkButton';
 import { playgroundStore } from './playgroundStore';
+import frameStyles from './PlaygroundFrame.module.css';
 import styles from './Playground.module.css';
 import { SettingsButton } from './SettingsButton';
 import { StorySidebar } from './StorySidebar';
@@ -130,7 +132,7 @@ export const Playground = ({ collections }: { collections: Collection[] }) => {
       density={settings.uiDensity}
       switchIconsEnabled={settings.switchIconsEnabled}
     >
-      <div className={styles.root} data-testid="component-playground">
+      <div className={clsx(styles.root, frameStyles.root)} data-testid="component-playground">
         <div className={styles.group}>
           {collections.map((c) => (
             <BlobMask key={c.id}>
@@ -144,7 +146,7 @@ export const Playground = ({ collections }: { collections: Collection[] }) => {
             </BlobMask>
           ))}
         </div>
-        <div className={styles.content}>
+        <div className={clsx(styles.content, frameStyles.column)}>
           <HeaderBar className={styles.header}>
             {collectionName != null ? <HeaderBar.Title>{collectionName}</HeaderBar.Title> : null}
             {storyName != null ? (
@@ -171,7 +173,7 @@ export const Playground = ({ collections }: { collections: Collection[] }) => {
               {collection.deprecationNotice}
             </Notice>
           )}
-          <div className={styles.page}>
+          <div className={clsx(styles.page, frameStyles.page)}>
             <ScrollerThin fade className={styles.sidebar}>
               {collection != null ? (
                 <StorySidebar groups={collection.groups} selectedStory={selectedStory} onStorySelect={selectStory} />
