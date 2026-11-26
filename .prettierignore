@@ -1,3 +1,5 @@
 pnpm-lock.yaml
 dist/
 .cache/
+# Data copied verbatim from Discord (animation files, fixtures)
+packages/playground/src/**/assets/*.json
