@@ -145,6 +145,11 @@ type RiveInternals = {
   artboard: { advance: (seconds: number) => void } | null;
   riveFile: { getInstance: () => RuntimeFile | undefined } | null;
   frameRequestId: number | null;
+  lastRenderTime: number;
+  loaded: boolean;
+  destroyed: boolean;
+  _explicitlyStoppedRendering: boolean;
+  runtime: { cancelAnimationFrame: (id: number) => void } | null;
   setupRiveListeners: Rive['setupRiveListeners'];
 };
 
@@ -312,19 +317,37 @@ export const RiveAnimation = ({
     });
   }, [rive, resetIdle]);
 
-  // Discord's runtime redraws a color change in the frame it happened in, without waking the
-  // animation; the published runtime can only draw a new frame.
-  const colorRedrawScheduled = useRef(false);
-  const showColorChange = useCallback(() => {
-    if (rive == null || colorRedrawScheduled.current) return;
-    colorRedrawScheduled.current = true;
-    queueMicrotask(() => {
-      colorRedrawScheduled.current = false;
-      if (currentRive.current !== rive || rive.isPlaying) return;
-      (rive as unknown as RiveInternals).artboard?.advance(0);
-      rive.drawFrame();
-    });
-  }, [rive]);
+  // Draws a color change right away (in the frame it was read in), like `redrawNow` in Discord's build of
+  // the runtime: nothing happens once rendering was stopped, and a playing animation only redraws when
+  // its frame for `frameTime` already ran.
+  const pendingColorChange = useRef<{ frameTime: number | undefined } | null>(null);
+  const showColorChange = useCallback(
+    (frameTime?: number) => {
+      if (rive == null) return;
+      if (pendingColorChange.current != null) {
+        pendingColorChange.current.frameTime ??= frameTime;
+        return;
+      }
+      pendingColorChange.current = { frameTime };
+      queueMicrotask(() => {
+        const pending = pendingColorChange.current;
+        pendingColorChange.current = null;
+        if (pending == null || currentRive.current !== rive) return;
+        const internals = rive as unknown as RiveInternals;
+        if (!internals.loaded || internals.artboard == null || internals.destroyed) return;
+        if (internals._explicitlyStoppedRendering) return;
+        const isSameFrame = pending.frameTime != null && internals.lastRenderTime === pending.frameTime;
+        if (rive.isPlaying && internals.frameRequestId != null && !isSameFrame) return;
+        if (internals.frameRequestId != null) {
+          internals.runtime?.cancelAnimationFrame(internals.frameRequestId);
+          internals.frameRequestId = null;
+        }
+        if (!rive.isPlaying) internals.artboard.advance(0);
+        rive.drawFrame();
+      });
+    },
+    [rive],
+  );
 
   useEffect(() => {
     if (rive == null || withReducedMotion !== 'short-loop' || !reducedMotion.enabled) return;
