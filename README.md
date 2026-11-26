@@ -10,6 +10,7 @@ React versions of Discord's UI components. The styles, props and markup come str
 | `@discord-mana/icons`      | Every icon in the Discord client, under the same names Discord uses                                                                       |
 | `@discord-mana/components` | The Mana design system (buttons, inputs, selects, modals, tooltips, menus, date pickers, toasts and more), plus the older Void components |
 | `@discord-mana/messages`   | Message rendering: embeds, attachments, the media gallery and viewer, message components (including Components v2) and interaction modals |
+| `@discord-mana/markdown`   | Discord's markdown renderer: its fork of simple-markdown with every rule the client uses, mentions, emoji, timestamps and code blocks     |
 | `@discord-mana/playground` | A playground for browsing and trying out every component                                                                                  |
 
 Void is Discord's older design system. Discord hardly uses it anymore, so use the Mana components for anything new.
@@ -46,12 +47,15 @@ To give part of the page a different theme, wrap it in `ThemeProvider`.
 
 ## Rendering messages
 
-`Message` takes a message object in the same shape the Discord API returns and renders it like the client does. That includes content, attachments, embeds, buttons, selects and Components v2 layouts. Markdown is not parsed. Content is shown as plain text unless you pass your own `renderMarkdown` function.
+`Message` takes a message object in the same shape the Discord API returns and renders it like the client does. That includes content, attachments, embeds, buttons, selects and Components v2 layouts. Content is shown as plain text unless you pass `renderMarkdown` (and `renderEmbedMarkdown` for embeds); `@discord-mana/markdown` has both.
 
 ```tsx
 import { Message } from '@discord-mana/messages';
+import { renderEmbedMarkdown, renderMessageMarkdown } from '@discord-mana/markdown';
 
 <Message
+  renderMarkdown={renderMessageMarkdown}
+  renderEmbedMarkdown={renderEmbedMarkdown}
   message={{
     id: '1',
     channel_id: '1',
@@ -72,6 +76,22 @@ Interaction modals work the same way. Pass the modal payload your bot would send
 Clicking an image or video opens Discord's media viewer, with zoom, panning and a carousel through the message's media.
 
 The pieces are also exported on their own: `MessageEmbeds`, `MessageAttachments`, `MediaMosaic`, `MediaGallery`, `openMediaViewer` and the individual message components.
+
+## Markdown
+
+`@discord-mana/markdown` is a port of the client's markdown: Discord's patched simple-markdown, the same rules with the same regexes and order, the same parse state per context, and the same React output. Contexts are presets named after where the client parses text (`message`, `reply`, `textDisplay`, `embedTitle`, `embedTitleWithoutLinks`, `embedDescription`, `embedFieldValue`, `channelTopic`, `poll`…). Rules can be turned off (or on) by name; there's no API for custom rules.
+
+```tsx
+import { Markdown, parse } from '@discord-mana/markdown';
+
+<div className="your-markup-container">
+  <Markdown content="**Hi** <@1234> ||spoiler|| <t:1764158400:R>" rules={{ codeBlock: false }} />
+</div>;
+
+parse('`code` and :tada:', { preset: 'embedDescription', rules: ['inlineCode', 'emoji'] }); // the AST
+```
+
+Mentions, channels, roles, servers, slash commands and emoji images come from the same `resolvers` as `Message` (`MessageResolversContext`); unknown ones show what Discord shows (`@unknown-user`, `#unknown-channel`…). Clicks on mentions and links go to `onMarkdownInteraction` in `MessageActionsContext`. Code blocks are highlighted with Arborium like the client; the grammars load from jsDelivr when a language is first used (`setCodeHighlighter` swaps the engine).
 
 ## Playground
 
