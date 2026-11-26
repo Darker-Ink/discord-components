@@ -61,11 +61,27 @@ class NodePointerSensor extends PointerSensor {
   ];
 }
 
+/** Elements a long press doesn't drag from: text being edited (it selects instead) and the editor's own controls. */
+const NO_TOUCH_DRAG_SELECTOR =
+  '[contenteditable="true"], [contenteditable="plaintext-only"], input, textarea, select, [data-builder-nodrag]';
+
 /**
- * Elements a long press doesn't drag from: text (a tap there starts editing and swaps the element, which would
- * lose the touch's end) and the editor's own controls.
+ * The sensor listens for the touch's end on the element it started on, but a tap on a text preview swaps that
+ * element for the editor on `pointerup`, before `touchend` arrives, so the pending press would never end. Ending
+ * it on `pointerup` (which comes first, and isn't lost) keeps taps taps.
  */
-const NO_TOUCH_DRAG_SELECTOR = NO_DRAG_SELECTOR;
+const endWithPointer = (target: Element) => {
+  const end = () => {
+    stop();
+    target.dispatchEvent(new Event('touchend'));
+  };
+  const stop = () => {
+    window.removeEventListener('pointerup', end, true);
+    window.removeEventListener('pointercancel', stop, true);
+  };
+  window.addEventListener('pointerup', end, true);
+  window.addEventListener('pointercancel', stop, true);
+};
 
 /** Long-press to drag on touch screens; a quick swipe scrolls as usual. */
 class NodeTouchSensor extends TouchSensor {
@@ -77,9 +93,10 @@ class NodeTouchSensor extends TouchSensor {
         { onActivation }: TouchSensorOptions,
       ) => {
         const target = nativeEvent.target;
-        if (nativeEvent.touches.length > 1) return false;
-        if (target instanceof Element && target.closest(NO_TOUCH_DRAG_SELECTOR) != null) return false;
-        if (currentTarget instanceof Node && !currentTarget.contains(target as Node)) return false;
+        if (nativeEvent.touches.length > 1 || !(target instanceof Element)) return false;
+        if (target.closest(NO_TOUCH_DRAG_SELECTOR) != null) return false;
+        if (currentTarget instanceof Node && !currentTarget.contains(target)) return false;
+        endWithPointer(target);
         onActivation?.({ event: nativeEvent });
         return true;
       },

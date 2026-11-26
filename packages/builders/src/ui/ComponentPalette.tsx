@@ -80,7 +80,7 @@ export const findInsertTarget = (
   for (const slot of ['embeds', 'components'] as const) {
     if (fits({ parentId: null, slot })) return { parentId: null, slot };
   }
-  const first = listSlots(doc).find((slot) => fits(slot));
+  const first = listSlots(doc, { endsOnly: true }).find((slot) => fits(slot));
   return first ?? null;
 };
 

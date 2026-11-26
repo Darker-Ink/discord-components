@@ -9,6 +9,7 @@ import {
   type MouseEvent,
   type PointerEvent,
   type PointerEventHandler,
+  type TouchEventHandler,
   type ReactNode,
   type Ref,
 } from 'react';
@@ -233,6 +234,8 @@ export const useNodeFrame = ({ uid, kind, disabled = false }: NodeFrameOptions) 
     onFocus,
     onPointerDown,
     onPointerUp,
+    // A long press drags on touch screens (the pointer sensor leaves touch alone).
+    onTouchStart: listeners?.onTouchStart as TouchEventHandler<HTMLElement> | undefined,
     onClickCapture,
     onMouseDownCapture,
     onContextMenu,

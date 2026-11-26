@@ -96,28 +96,37 @@ export const NodeToolbarSeparator = () => <div className={styles.separator} role
 
 NodeToolbarSeparator.displayName = 'NodeToolbarSeparator';
 
-/** The bar above a selected node: drag handle, its own tools, duplicate, more and delete. */
-/** Whether text is being typed somewhere (a phone's keyboard is then up: the docked bar steps aside). */
-const useEditingText = () => {
-  const [editing, setEditing] = useState(false);
+/**
+ * Whether an on-screen keyboard is up for text being typed: the docked bar would sit behind it (or crowd the
+ * line being typed), so it steps aside. With a hardware keyboard, or once the keyboard is dismissed without
+ * leaving the text (Android's back button), the bar stays.
+ */
+const useSoftKeyboard = () => {
+  const [open, setOpen] = useState(false);
   useEffect(() => {
+    const viewport = window.visualViewport;
     const update = () => {
       const element = document.activeElement;
-      setEditing(
+      const typing =
         element instanceof HTMLElement &&
-          (element.isContentEditable || element.tagName === 'INPUT' || element.tagName === 'TEXTAREA'),
-      );
+        (element.isContentEditable || element.tagName === 'INPUT' || element.tagName === 'TEXTAREA');
+      const covered = viewport != null && window.innerHeight - viewport.height > 120;
+      setOpen(typing && covered);
     };
+    update();
     document.addEventListener('focusin', update);
     document.addEventListener('focusout', update);
+    viewport?.addEventListener('resize', update);
     return () => {
       document.removeEventListener('focusin', update);
       document.removeEventListener('focusout', update);
+      viewport?.removeEventListener('resize', update);
     };
   }, []);
-  return editing;
+  return open;
 };
 
+/** The bar above a selected node: drag handle, its own tools, duplicate, more and delete. */
 export const NodeToolbar = ({ uid, kind, tools }: { uid: string; kind: NodeKind; tools?: ReactNode }) => {
   const ui = useBuilderUIStore();
   const { actions, store } = useBuilderContext();
@@ -143,7 +152,7 @@ export const NodeToolbar = ({ uid, kind, tools }: { uid: string; kind: NodeKind;
   }, [setReference, ui, uid]);
   const KindIcon = KIND_ICONS[kind];
   const { toolbar } = useBuilderRender();
-  const editingText = useEditingText();
+  const keyboard = useSoftKeyboard();
   if (toolbar === 'docked') {
     const move = (offset: number) => {
       const doc = store.getState().doc;
@@ -155,7 +164,7 @@ export const NodeToolbar = ({ uid, kind, tools }: { uid: string; kind: NodeKind;
       <div
         className={styles.dock}
         data-builder-ui
-        data-hidden={editingText || undefined}
+        data-hidden={keyboard || undefined}
         role="toolbar"
         aria-label={`${KIND_LABELS[kind]} tools`}
       >

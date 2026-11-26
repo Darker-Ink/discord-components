@@ -110,7 +110,8 @@
   align-items: center;
   background: var(--background-surface-high);
   border-top: 1px solid var(--border-subtle);
-  bottom: 0;
+  /* An app can keep its own bottom bar visible under the dock. */
+  bottom: var(--builder-dock-offset, 0px);
   box-shadow: var(--shadow-high);
   box-sizing: border-box;
   color: var(--interactive-text-default);
@@ -118,7 +119,8 @@
   font-family: var(--font-primary);
   gap: 4px;
   left: 0;
-  padding: 6px max(8px, env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom))
+  padding: 6px max(8px, env(safe-area-inset-right))
+    calc(6px + max(0px, env(safe-area-inset-bottom) - var(--builder-dock-offset, 0px)))
     max(12px, env(safe-area-inset-left));
   position: fixed;
   right: 0;
