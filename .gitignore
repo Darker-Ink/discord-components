@@ -1,7 +1,7 @@
 node_modules/
 dist/
 *.tsbuildinfo
-.cache/
+.cache
 .vite/
 .DS_Store
 *.log
