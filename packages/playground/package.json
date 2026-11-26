@@ -11,6 +11,7 @@
   "dependencies": {
     "@discord-mana/components": "workspace:*",
     "@discord-mana/icons": "workspace:*",
+    "@discord-mana/markdown": "workspace:*",
     "@discord-mana/messages": "workspace:*",
     "@discord-mana/tokens": "workspace:*",
     "@internationalized/date": "3.12.4",

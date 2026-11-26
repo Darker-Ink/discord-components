@@ -1,0 +1,11 @@
+.arboriumHighlightReveal {
+  animation: arborium-highlight-saturate 0.4s ease-out;
+}
+@keyframes arborium-highlight-saturate {
+  0% {
+    filter: saturate(0);
+  }
+  to {
+    filter: saturate(1);
+  }
+}

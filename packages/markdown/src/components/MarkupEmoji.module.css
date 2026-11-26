@@ -1,0 +1,9 @@
+.emojiContainer {
+  display: inline-block;
+}
+.emojiContainerClickable {
+  cursor: pointer;
+}
+.emojiJumbo {
+  vertical-align: middle;
+}

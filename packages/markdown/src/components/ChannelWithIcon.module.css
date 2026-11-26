@@ -1,0 +1,14 @@
+.icon {
+  height: 1em;
+  margin-bottom: 0.2rem;
+  margin-inline-end: var(--space-4);
+  vertical-align: middle;
+  width: 1em;
+}
+.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.channelWithIcon .iconMentionText {
+  gap: 0 !important;
+}
