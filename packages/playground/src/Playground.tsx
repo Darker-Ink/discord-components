@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
-import { TabBar } from '@discord-components/components';
+import { IconButton, Menu, MenuGroup, MenuItem, MenuRadioItem, Popout, TabBar } from '@discord-components/components';
+import { SettingsIcon } from '@discord-components/icons';
 import { ThemeTypes, type Theme } from '@discord-components/tokens';
 import { AppRoot } from './AppRoot';
 import { ControlsPanel, getDefaultProps } from './ControlsPanel';
@@ -22,6 +23,88 @@ export const ControlsLayout = {
 } as const;
 
 type ControlsLayoutType = (typeof ControlsLayout)[keyof typeof ControlsLayout];
+
+const noop = () => {};
+
+interface SettingsProps {
+  theme: Theme;
+  onThemeChange: (theme: Theme) => void;
+  controlsLayout: ControlsLayoutType;
+  onControlsLayoutChange: (layout: ControlsLayoutType) => void;
+}
+
+const CONTROLS_LAYOUT_OPTIONS: { id: string; label: string; value: ControlsLayoutType }[] = [
+  { id: 'controls-right', label: 'Right Side', value: ControlsLayout.RIGHT },
+  { id: 'controls-bottom', label: 'Bottom', value: ControlsLayout.BOTTOM },
+  { id: 'controls-hidden', label: 'Hidden', value: ControlsLayout.HIDDEN },
+];
+
+// Like Discord's playground settings menu: picking an item keeps the menu open.
+const SettingsMenu = ({ theme, onThemeChange, controlsLayout, onControlsLayoutChange }: SettingsProps) => (
+  <Menu
+    data-menu-migrated
+    onSelect={noop}
+    navId="playground-settings-menu"
+    onClose={noop}
+    aria-label="Playground Settings"
+  >
+    <MenuItem id="appearance" label="Appearance">
+      <MenuGroup key="theme-items">
+        {THEME_OPTIONS.map((option) => (
+          <MenuRadioItem
+            key={option.value}
+            id={option.value}
+            group="input-modes"
+            label={option.label}
+            checked={option.value === theme}
+            action={() => onThemeChange(option.value)}
+          />
+        ))}
+      </MenuGroup>
+      <MenuGroup key="controls-layout" label="Controls">
+        {CONTROLS_LAYOUT_OPTIONS.map((option) => (
+          <MenuRadioItem
+            key={option.id}
+            id={option.id}
+            group="controls-layout"
+            label={option.label}
+            action={() => onControlsLayoutChange(option.value)}
+            checked={controlsLayout === option.value}
+          />
+        ))}
+      </MenuGroup>
+    </MenuItem>
+  </Menu>
+);
+
+SettingsMenu.displayName = 'SettingsMenu';
+
+const SettingsButton = (props: SettingsProps) => {
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  return (
+    <Popout
+      targetElementRef={buttonRef}
+      renderPopout={() => <SettingsMenu {...props} />}
+      position="bottom"
+      align="center"
+      animation={Popout.Animation.SCALE}
+      onRequestClose={noop}
+    >
+      {(triggerProps) => (
+        <IconButton
+          size="sm"
+          icon={SettingsIcon}
+          aria-label="Settings"
+          variant="icon-only"
+          {...triggerProps}
+          buttonRef={buttonRef}
+        />
+      )}
+    </Popout>
+  );
+};
+
+SettingsButton.displayName = 'SettingsButton';
 
 interface StoryViewProps {
   story: Story;
@@ -149,22 +232,12 @@ export const Playground = ({ collections }: { collections: Collection[] }) => {
             <span>{collection?.name ?? 'Design System'}</span>
             {story != null && <span> › {story.name}</span>}
             <div className={styles.headerRight}>
-              <select value={theme} aria-label="Theme" onChange={(e) => setTheme(e.target.value as Theme)}>
-                {THEME_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={controlsLayout}
-                aria-label="Controls layout"
-                onChange={(e) => setControlsLayout(e.target.value as ControlsLayoutType)}
-              >
-                <option value={ControlsLayout.RIGHT}>Right Side</option>
-                <option value={ControlsLayout.BOTTOM}>Bottom</option>
-                <option value={ControlsLayout.HIDDEN}>Hidden</option>
-              </select>
+              <SettingsButton
+                theme={theme}
+                onThemeChange={setTheme}
+                controlsLayout={controlsLayout}
+                onControlsLayoutChange={setControlsLayout}
+              />
             </div>
           </div>
           <div className={styles.page}>
