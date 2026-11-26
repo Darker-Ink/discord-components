@@ -57,6 +57,7 @@ const APP_ROOT_MODULES = [
   '188567',
   '267102',
   '616667',
+  '573435',
 ];
 
 // Playground configs and the webpack module that exposes them.
@@ -218,7 +219,7 @@ window.ref = (() => {
   };
   // Mirrors the client's root: accessibility settings (844222), the Mana context (116711, with the
   // app's dynamic graphic components from 116833) and the theme context (86182) for the current
-  // theme, a focus ring scope (559106) over document.body, and the App and Verification layers
+  // theme, a focus ring scope (559106) over document.body holding the SVG mask library (573435), the App and Verification layers
   // (750506, 80556) with the modal stack (638495) after the app content, followed by the
   // #popover-portal target (337836) and the layer containers inside two display: contents wrappers
   // (638274), then the app's toast container (616667).
@@ -236,6 +237,7 @@ window.ref = (() => {
       h(mana.GE, { value: manaValue },
         h(req('86182').w, { theme },
           h(req('559106').xp, { containerRef: { current: document.body } },
+            h(req('573435').Al),
             h(layers.Yf, null,
               h(verification.ks, null,
                 element,

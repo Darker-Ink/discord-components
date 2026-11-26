@@ -8,6 +8,7 @@ import {
 import { FocusRingManager, FocusRingScope } from '../FocusRing';
 import { appLayerContext } from '../Layer';
 import { DEFAULT_MANA_CONTEXT, ManaContextProvider, type ManaContextValue } from '../ManaContext';
+import { MaskLibrary } from '../Mask';
 import { ModalLayerRoot } from '../ModalStack';
 import { ThemeContextProvider } from '../Theme';
 import { AppToastContainer } from '../Toast';
@@ -122,6 +123,7 @@ export const AppRoot = ({
         <ThemeContextProvider theme={theme}>
           <RootElement theme={theme} saturation={saturation} density={density}>
             <FocusRingScope containerRef={bodyRef}>
+              <MaskLibrary />
               <ModalLayerRoot>{children}</ModalLayerRoot>
               <AppToastContainer appContext="APP" />
             </FocusRingScope>

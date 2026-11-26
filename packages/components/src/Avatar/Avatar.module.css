@@ -1,0 +1,74 @@
+.wrapper {
+  border-radius: 50%;
+  position: relative;
+}
+.pointer {
+  cursor: pointer;
+}
+.mask {
+  display: block;
+  pointer-events: none;
+  position: relative;
+  width: auto;
+}
+.svg {
+  contain: paint;
+}
+.status,
+.svg {
+  position: absolute;
+}
+.status {
+  bottom: 0;
+  height: auto;
+  inset-inline-end: 0;
+}
+.cursorDefault {
+  cursor: default;
+}
+.avatarStack {
+  display: grid;
+  height: 100%;
+  width: 100%;
+}
+.avatar,
+.avatarBorder {
+  grid-area: 1/1;
+  height: 100%;
+  width: 100%;
+}
+.avatar,
+.avatarBorder {
+  border-radius: 50%;
+}
+.avatar {
+  display: block;
+  -o-object-fit: cover;
+  object-fit: cover;
+  pointer-events: none;
+}
+.avatar:before {
+  background-color: var(--background-mod-subtle);
+  content: '';
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+.pointerEvents {
+  pointer-events: auto;
+}
+.avatarDecorationContainer {
+  contain: paint;
+  inset-inline-start: var(--custom-avatar-avatar-decoration-border-position);
+  pointer-events: none;
+  position: absolute;
+  top: var(--custom-avatar-avatar-decoration-border-position);
+}
+.avatarDecoration {
+  display: block;
+  height: 100%;
+  -o-object-fit: cover;
+  object-fit: cover;
+  pointer-events: none;
+  width: 100%;
+}
