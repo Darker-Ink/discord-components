@@ -172,7 +172,304 @@ importers:
 
   packages/markdown:
     dependencies:
+      '@arborium/ada':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/agda':
+        specifier: 2.18.2
+        version: 2.18.2
       '@arborium/arborium':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/asciidoc':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/asm':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/awk':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/bash':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/batch':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/c':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/c-sharp':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/caddy':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/capnp':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/cedar':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/cedarschema':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/clojure':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/cmake':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/commonlisp':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/cpp':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/css':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/d':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/dart':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/devicetree':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/diff':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/dockerfile':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/dot':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/elisp':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/elixir':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/elm':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/erlang':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/fish':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/fsharp':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/gleam':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/glsl':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/go':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/graphql':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/groovy':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/haskell':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/hcl':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/hlsl':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/html':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/idris':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/ini':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/java':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/javascript':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/jinja2':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/jq':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/json':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/julia':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/kotlin':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/lean':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/lua':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/markdown':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/matlab':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/meson':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/ninja':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/nix':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/objc':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/ocaml':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/perl':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/php':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/postscript':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/powershell':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/prolog':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/python':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/query':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/r':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/rego':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/rescript':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/ron':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/ruby':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/rust':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/scala':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/scheme':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/scss':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/solidity':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/sparql':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/sql':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/ssh-config':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/starlark':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/styx':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/svelte':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/swift':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/textproto':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/thrift':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/tlaplus':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/toml':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/tsx':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/typescript':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/typst':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/verilog':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/vhdl':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/vim':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/vue':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/wit':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/x86asm':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/xml':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/yaml':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/yuri':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/zig':
+        specifier: 2.18.2
+        version: 2.18.2
+      '@arborium/zsh':
         specifier: 2.18.2
         version: 2.18.2
       '@discord-mana/components':
@@ -364,8 +661,404 @@ importers:
 
 packages:
 
+  '@arborium/ada@2.18.2':
+    resolution: {integrity: sha512-PbKs2uTH7aYaTeqVxCFzIYxKg1+UEYAcQZB53ulnzA+BLANfVKsnZJJWgcTghctCdprDQmw6Ocw5PZE7598nxw==}
+    engines: {node: '>=18'}
+
+  '@arborium/agda@2.18.2':
+    resolution: {integrity: sha512-nY4ttgKWzMykOAq8cN188RrBxou7CU24HQ0W9pkG+ZtoNOj4uVs7Ux4lY3xp72O874OyqrYHMs9zV8jMnBL8Yw==}
+    engines: {node: '>=18'}
+
   '@arborium/arborium@2.18.2':
     resolution: {integrity: sha512-Kgbbb28jfcucpTLaWOYrz4miVNYgE1HL7w3Bpvc/ylk05wduzXwMoPDwfUZqX+PHNhcWPL9KYkK69MIr2a1CvQ==}
+
+  '@arborium/asciidoc@2.18.2':
+    resolution: {integrity: sha512-mJp/ojAJKp69quFlNgh/8HCfeMtK9SiJGD1O9wq3o8U49eM0hV5CHY0C/o4AjZsGux567j8Yi1p5RxvRWwkfuw==}
+    engines: {node: '>=18'}
+
+  '@arborium/asm@2.18.2':
+    resolution: {integrity: sha512-JeP4rBEhG6G8tDjs+Nxdtu6yw3/NGq5rlzoBN6hZkr7AlXITZVwTsdTqTfwslVKjddY7uTMpGQiqeYEpvenpJw==}
+    engines: {node: '>=18'}
+
+  '@arborium/awk@2.18.2':
+    resolution: {integrity: sha512-YKJnlZ9Aeab2PaES8lYWx3UI6jukAcx/EWr5jnt5tkgI3N30Rqwbm4yhvtqvL4xx5RnEb8db8/kNcRUwhzFSBg==}
+    engines: {node: '>=18'}
+
+  '@arborium/bash@2.18.2':
+    resolution: {integrity: sha512-bwJVQTlRNZzdGg69ot6USqvX7pJO304KGuXERzhQwNRAS8Nf21VXsHKVoShXWz6gpAX3+hndoAA/YuwITPvMCQ==}
+    engines: {node: '>=18'}
+
+  '@arborium/batch@2.18.2':
+    resolution: {integrity: sha512-JYr28+epR+NlMbzjI07OZmNdqykz2QQcyOxY9alU2DJeErmYezw3ue/51XGNhpPT7Vyp81PglHpdH0Q/5ye2RQ==}
+    engines: {node: '>=18'}
+
+  '@arborium/c-sharp@2.18.2':
+    resolution: {integrity: sha512-Bwntj9uQh/aJzT2m+UbvkSphTFGzRMIXshoKomgXs/jkD6S2U+0Wrn6aBlnfCBpkcnEIIwQib396a7vvC4BXhg==}
+    engines: {node: '>=18'}
+
+  '@arborium/c@2.18.2':
+    resolution: {integrity: sha512-JZlfWeNRhWCuofnu1qIRsTDp/Ywv65rvq5viVPpvqbFPTr8sImPXKGp36DRBV56MvUZVwAGBFc4yU6Misz57MQ==}
+    engines: {node: '>=18'}
+
+  '@arborium/caddy@2.18.2':
+    resolution: {integrity: sha512-SFXZ4NfRuZ0xac+VrAf3bMmP5GYEBqXJC+cSXumugUy9OkjfMBXsklf+FsLbL75CbXTPUG5DGJUCaMoWG8jvlQ==}
+    engines: {node: '>=18'}
+
+  '@arborium/capnp@2.18.2':
+    resolution: {integrity: sha512-uZXv7+5V1Jlf9VmnBgkykn1vSf0FoJ7Dy5/kmDuq7xfvKMIghEA1PePCd/cxwcfIpU1BDHs4titK8z9LopPq4A==}
+    engines: {node: '>=18'}
+
+  '@arborium/cedar@2.18.2':
+    resolution: {integrity: sha512-3sLoDyqh1QihwVric07G/fm9AMpFBAP/8CFZkyQZv/zIz4DVWiz2PXhRWKBOWeQKzBQ3pSb2GrBgopHAnz6C1g==}
+    engines: {node: '>=18'}
+
+  '@arborium/cedarschema@2.18.2':
+    resolution: {integrity: sha512-vexTmrsCwv+6Jpli4p0yk8irsFe65+0MIFNko2CxZoxQkrRTEACVZaLR4f2t0YKYACcXpOvBZvydX6oku7UcYA==}
+    engines: {node: '>=18'}
+
+  '@arborium/clojure@2.18.2':
+    resolution: {integrity: sha512-4sHYDRDZO9gARZVfrMs/49cIEbWUkgsXI/N0OdEG9PbDYMyfXe74qs+a4S4e2CbUfFNeXokijCvUSOBjulaXNQ==}
+    engines: {node: '>=18'}
+
+  '@arborium/cmake@2.18.2':
+    resolution: {integrity: sha512-4m02JY8k1bfp9g145jC6NMmYisXcKzviATmM0fTr3TjFy+XfWeDZwxzeR3W06aBbJbLARrzbSxtC8h7ZCfbGNA==}
+    engines: {node: '>=18'}
+
+  '@arborium/commonlisp@2.18.2':
+    resolution: {integrity: sha512-UYwggSQd71pFG0nIU41MmY3xk7cv8hXWeVs4Oq2qhUp0JfkQwnhSvnO4ovzZbBOf5kiZz8uwbw9bwxxCNH1oKQ==}
+    engines: {node: '>=18'}
+
+  '@arborium/cpp@2.18.2':
+    resolution: {integrity: sha512-tjw5B/yWFJ02OqFCyph5Y3XF2Is7tMs8LVje/FySF5uagWoLuakWBlG0EYtctpbAO8FQHYDJ6d7eOEZpJw/wEQ==}
+    engines: {node: '>=18'}
+
+  '@arborium/css@2.18.2':
+    resolution: {integrity: sha512-oBLGef6oPWLD7sDZdo+1HmsQ9pjvDjQ5UKi20sdy5Yl7/vzD37v9I/0u/AjSc1Ss0pRJIkIttMIAe5lW8KDRvQ==}
+    engines: {node: '>=18'}
+
+  '@arborium/d@2.18.2':
+    resolution: {integrity: sha512-V1S69H9Y/isDtbMUJtvEjWF7KNYosAucCz9bv5Jt1hl6+GxwYLhPanmZaG8LQM6v49/27UsljjsRHokyP/BGqg==}
+    engines: {node: '>=18'}
+
+  '@arborium/dart@2.18.2':
+    resolution: {integrity: sha512-NLE2ROB+3EIjPjif3hOu+oiHPEG5VpANP6QQHoVvDLl2V+goMmuD2HZlk/e0iznbFSYlK1HVLYyTg3INKe7VUw==}
+    engines: {node: '>=18'}
+
+  '@arborium/devicetree@2.18.2':
+    resolution: {integrity: sha512-hCngHcI4fGY/JDR46t8RQnXQPWusQ3xZCqzFdoGi+9gsjynSVWgXTCxvf2f0k0c2b0JR5Dt06ejzaCqfBHrexA==}
+    engines: {node: '>=18'}
+
+  '@arborium/diff@2.18.2':
+    resolution: {integrity: sha512-VoXrUVJsgq75g3O9iCawPFtK/PYoSKQdWYzKo73EZGK3aQE3M0Ii7EX0c0mJTK5EjiLpuWC7EIjLvl5nAiATNA==}
+    engines: {node: '>=18'}
+
+  '@arborium/dockerfile@2.18.2':
+    resolution: {integrity: sha512-pNWghx+X+17DmBHsE5nij2qEeCGEqWR5kEbBBi/IU3xJ2rz0lm9JvDqSJeMWOAlg2dl9XsEz3rhqKIELkjf11w==}
+    engines: {node: '>=18'}
+
+  '@arborium/dot@2.18.2':
+    resolution: {integrity: sha512-83EvyR9DSbvgPoXEAQe9O93YvLM9bgS99ll8I76Rk5g4pbsHFCQO68tll4RSAOj577ZY3zu7vTbrUvoApGVUYA==}
+    engines: {node: '>=18'}
+
+  '@arborium/elisp@2.18.2':
+    resolution: {integrity: sha512-oBl8gX++CGCyLJnvk7aCxjxSsf4E4t3QZJPg0A9z38/kQw53n2vSNwLh4zn29YcA9sYpNWs19blkjeoWQuL9yg==}
+    engines: {node: '>=18'}
+
+  '@arborium/elixir@2.18.2':
+    resolution: {integrity: sha512-7ubtGZpkVGd5Q2Tiwn9D2r5WXR1FzfwWjFYqy5pDXxJAkJW4sXYBShUNQRL5SNX+RDQhA2SvzJ4y2lEfvvKHKA==}
+    engines: {node: '>=18'}
+
+  '@arborium/elm@2.18.2':
+    resolution: {integrity: sha512-vmBtxTVnBlu35r3L2tQ8pfm70okhx+vUFEGe3VBO0AKw8HTW1CrHc5ABWD0cmLE9atvxw/n5D8Ir7Gd9fm48iQ==}
+    engines: {node: '>=18'}
+
+  '@arborium/erlang@2.18.2':
+    resolution: {integrity: sha512-7fwk22I4Bv4uo7M3uiWDRoyLXiMZm3gHxxGCHk4VFSnwFXMjeBkBqF9hnTbM6KM8+vZv/r1MgI+Aw2q3Jw643g==}
+    engines: {node: '>=18'}
+
+  '@arborium/fish@2.18.2':
+    resolution: {integrity: sha512-6VnXmyJBqxoSkEM6us24FaY2cCUkZpqRJ3eJtLwjwKsf+gSmBti4qcltiOSmB3JLHV0v1gjIThSQzZAW5HhQzw==}
+    engines: {node: '>=18'}
+
+  '@arborium/fsharp@2.18.2':
+    resolution: {integrity: sha512-E64yJ+ay/vpFabE0GRZAgPgw0zSwJBh7WlECHwx+fjNZc+LRbbI+y5ttYRZH5pXF2guB9YO2ciJ9vvEBYBCfjg==}
+    engines: {node: '>=18'}
+
+  '@arborium/gleam@2.18.2':
+    resolution: {integrity: sha512-tl5Oq2VQX027ol7CSJVM4ueyWIee9b4y6iWAHyr5Muyefmo3GjTW6rFwMNTOeVlAfvbhnmWnYKRaFAxIDb1DOw==}
+    engines: {node: '>=18'}
+
+  '@arborium/glsl@2.18.2':
+    resolution: {integrity: sha512-If5Cd0Y+TAb9WkHqz8sQQ7Y9V05IowTV3Aoxp0PSBB3qHClGKbX+KLWw6fEsh43bqBO8q0jruLDqkgyvJd0d4w==}
+    engines: {node: '>=18'}
+
+  '@arborium/go@2.18.2':
+    resolution: {integrity: sha512-u7r0zMSySHs8X3HMGPfAmZ1J/O98HM3W1A8ocTvk3KsGoKU/o+PJb6KxtdEH810enCABPXg2g1lRFDKQkiM1Jw==}
+    engines: {node: '>=18'}
+
+  '@arborium/graphql@2.18.2':
+    resolution: {integrity: sha512-fWuXBIYzi6CAf6m9oBT9FsPQzPUQnAu0kWKNKOuHwHOF/hIwTg6/sAh6n6k4DSse/361xTaFpodu8PcPsdWAOQ==}
+    engines: {node: '>=18'}
+
+  '@arborium/groovy@2.18.2':
+    resolution: {integrity: sha512-yS2DO1xsWR78tay2gRdBCQ294lQxGB9qRdcaPSDA1fb6uNko0zL+KkVY9JVmNoTF335ef73qHxV5ZGPWtJ9WWQ==}
+    engines: {node: '>=18'}
+
+  '@arborium/haskell@2.18.2':
+    resolution: {integrity: sha512-Xdz1uTmsehmb8wKScy7a6VTcePGa6dAW+GpNFvndYyQRilUKX6oypvOplGIjI3V1hKZ+ZDzsKdX/AiZRukixUQ==}
+    engines: {node: '>=18'}
+
+  '@arborium/hcl@2.18.2':
+    resolution: {integrity: sha512-6tbY7ExFmUy/k2FBSeOWIav4m8SpuUJSWGWqZA7PeFiXacxcFbDrwfugRIU0tGJ8Tyakf/ByJhZZ1H/YY/OtJg==}
+    engines: {node: '>=18'}
+
+  '@arborium/hlsl@2.18.2':
+    resolution: {integrity: sha512-htWZrhUed97C4Z7M0PTPic5C+BCslgXdt67K5gjGvItbncjPGtZeHHdVd014p3iUgYXruQpzbJvOLr6071YGtA==}
+    engines: {node: '>=18'}
+
+  '@arborium/html@2.18.2':
+    resolution: {integrity: sha512-DI39HZ3kkeiD8B+xqpPMkalTeJxMOfM5KYPqrX1jvG2DQ6DBjKmICdaPVz/Wz3kwd6mknKYToPKEs+D41ZeMpQ==}
+    engines: {node: '>=18'}
+
+  '@arborium/idris@2.18.2':
+    resolution: {integrity: sha512-IhjD5AQWULd5ZLls5PvIhP6KRtvtyaZEBNsnDK4si4ZXWWCKsLG7wUQheSjWj5WaMv5OPxRNQ+j2waIJcBmcuA==}
+    engines: {node: '>=18'}
+
+  '@arborium/ini@2.18.2':
+    resolution: {integrity: sha512-B2I9hyA+mupGufvql3qgqsUrtYH9fZ7/C0WGXqQL4j5RWbw2ftaMeGHqkZS3OHaaKdl/9P/k/eb9PKhG7INedA==}
+    engines: {node: '>=18'}
+
+  '@arborium/java@2.18.2':
+    resolution: {integrity: sha512-2TclxEFYvOyokjK57L/a5rN/lEljwlaR81spjZv8Hs0ujND+2kM4IlA7cLKf5L8jgnyIoq+rtsqgotMcg3JsZg==}
+    engines: {node: '>=18'}
+
+  '@arborium/javascript@2.18.2':
+    resolution: {integrity: sha512-qJc0nWbzP3UXSe7SFap+9MHGh41gK/ehQtoGPOkFgIhEkrlVez924dLYZhRnDM5Zz4mqjQ2ugaA3CWUkMy7JgQ==}
+    engines: {node: '>=18'}
+
+  '@arborium/jinja2@2.18.2':
+    resolution: {integrity: sha512-L/r5dJb9eQtwkVl+5h1/I5EFQd1fbewEDrUn/93nX84M/dtV4uZ55XbIlTs/ryerSL3FZILy9oVTbNTaBcJ4Og==}
+    engines: {node: '>=18'}
+
+  '@arborium/jq@2.18.2':
+    resolution: {integrity: sha512-ElcRFolzj8rjZfZgSIv6t4eQPtmyw1PvhcOvL8sU8O6eC7I6m5wkyIp8IvR5ZlpMaP0LljPDIze5Fkv3OarCsA==}
+    engines: {node: '>=18'}
+
+  '@arborium/json@2.18.2':
+    resolution: {integrity: sha512-hW83hK5R+D6zLODismMLYnrva57upr+EvZj6acaftivKJOHTqZMZi/SXK1bdR3+V6bT5R8/2xdv9eUSTLBP5kQ==}
+    engines: {node: '>=18'}
+
+  '@arborium/julia@2.18.2':
+    resolution: {integrity: sha512-lluye9SzrPMLT8qgysTH6rcKTo3u4JMSOO7QgZPY+CUMWnWpoMcE0trZqXaFWi4fwf6VL/98jeX+H5PNxOqFCQ==}
+    engines: {node: '>=18'}
+
+  '@arborium/kotlin@2.18.2':
+    resolution: {integrity: sha512-/yNM7Ymx9YCvkYYsB66aFZks+If6zGmNaq1wfSNVLKgBDtZi4sasn5/RGFgHEGPGNQvlwfGdBHO0zbQKnxL/cg==}
+    engines: {node: '>=18'}
+
+  '@arborium/lean@2.18.2':
+    resolution: {integrity: sha512-qROl42H6wyPW19YLKp8jm20myhTsgTdCSJAWIjgQsfvGVw0Tf0EGopfABWQKjcO+d/iDD3g9+USO1SHlJ+46Lw==}
+    engines: {node: '>=18'}
+
+  '@arborium/lua@2.18.2':
+    resolution: {integrity: sha512-VObZtDXKPIDd1hFrvjo7CM5jDD+8iQb1/dnMjnf+PCgJpBNLW6tJEKB2fhR+4wbPIxGDx5UdvPo4sQY3kCUHIA==}
+    engines: {node: '>=18'}
+
+  '@arborium/markdown@2.18.2':
+    resolution: {integrity: sha512-Z9HN3mkC8E4ugNrOE4M+w94R4bYZnldvqqoxA+k4uQp8CiVNj4PkTwFpxc9sROxKubWJT+EG6r3917Xu97xGIA==}
+    engines: {node: '>=18'}
+
+  '@arborium/matlab@2.18.2':
+    resolution: {integrity: sha512-5Egm+XmrcpaDkq4rNJZl4S7BaPae2X10tuZmRKyV0Hg9CuvONHde06R/+KWw3wFi5q3yKwzjnP0iTUfx5PdmZQ==}
+    engines: {node: '>=18'}
+
+  '@arborium/meson@2.18.2':
+    resolution: {integrity: sha512-t8w9mpn6Wol2M9ueoKiXZXsCdAghcM+ZzcWsLLA8sdKR/6BuwkDINdUiVjK2hI5MM4uAHIBlArbWIB9ayGBfCA==}
+    engines: {node: '>=18'}
+
+  '@arborium/ninja@2.18.2':
+    resolution: {integrity: sha512-j44cqVGYk92ivunRcCqX9pGMpce5IjDNP6IsmLXRyTm3V4nnxw7pUmgbOyM1OMyW20E8Bo/ImPzeMHgt82DFeA==}
+    engines: {node: '>=18'}
+
+  '@arborium/nix@2.18.2':
+    resolution: {integrity: sha512-EdQAEQKJ5uwTwNQZbU0zaiRMFzGtvHVNkkIdSSiPpjIXp1tb3N5e0YaCFDqTLXCVByFrGRA2na4CYJo8LEzvUA==}
+    engines: {node: '>=18'}
+
+  '@arborium/objc@2.18.2':
+    resolution: {integrity: sha512-3tSD1ULOTm3iqMMyChvu8/GcpSaNvbaV0P/UhGBEaGlbomnBUrta7mg8VwXBU9e1ilfHAZeREzeT9gjDlOTYnw==}
+    engines: {node: '>=18'}
+
+  '@arborium/ocaml@2.18.2':
+    resolution: {integrity: sha512-DgofJ5zcftTQ/PdZA6aokHTJh2Wun5LhGuykwp6vFRRUSG9BJ3HRR88v5PSDv8Go5ltRU19mv97JJwPNWsrrOQ==}
+    engines: {node: '>=18'}
+
+  '@arborium/perl@2.18.2':
+    resolution: {integrity: sha512-wdo/ou7vV7OgIahqtP7/bBXMYBDI4yGX3X+FToDNWtuHxMF6nveK4S0akDb7pwGkKNM2sdWAt8lug4THWkgBMw==}
+    engines: {node: '>=18'}
+
+  '@arborium/php@2.18.2':
+    resolution: {integrity: sha512-jsuzbsMtqyZU2/dE57XcTG5LEIgavO1pi9kVeTUNZ2JFS4/b7NHazXpTNDZ0UNldN7ELCwVKcavYM2//aB2LAw==}
+    engines: {node: '>=18'}
+
+  '@arborium/postscript@2.18.2':
+    resolution: {integrity: sha512-/hILDZv4gjIBSuhWE4eF0aMlnXYxmfB1Bn/rEXzHAhzzroXPtmf7Tt5Decbka+0zP/YMS2gv2fdrWsjHxuAEYw==}
+    engines: {node: '>=18'}
+
+  '@arborium/powershell@2.18.2':
+    resolution: {integrity: sha512-w+t0u7yV8T3s+XI4kVF4Ty3mla6HwINbN0O0ud/tZEH/aL6eEm2foa93F0f9APz4nGuDFhMBOz8sEtw0PbnMhA==}
+    engines: {node: '>=18'}
+
+  '@arborium/prolog@2.18.2':
+    resolution: {integrity: sha512-55RK/GU0a9TH7MYqDocJIhbanP0kMobQAbMSM5/5nV2xcZZDVECaTOurxzIW3AJnHZ7xL3XXMG1kzyjmnxaDoA==}
+    engines: {node: '>=18'}
+
+  '@arborium/python@2.18.2':
+    resolution: {integrity: sha512-szEpYm83qqeUF9UaNEgagYKiGtsFg5rhQUnPPi0QRgcvrDOOO7QfsVvRFopwSr0IFuVlI0REswDeGYAA/jU34Q==}
+    engines: {node: '>=18'}
+
+  '@arborium/query@2.18.2':
+    resolution: {integrity: sha512-SFGBT8M+UDOQCax4jHQGicUPAOvJkZYI5zGVc7dBcHbhQqfp7FxysiILFtOeT8A0UEvGt/e28AQbTf/V+UbgGg==}
+    engines: {node: '>=18'}
+
+  '@arborium/r@2.18.2':
+    resolution: {integrity: sha512-b+K5lBnZvKvWFQfOOlTDc3FX1sAwl7if63GYK54+RTO0PK5QO9MTZ85iZ81H+Z9+yA3wQt4fipIqD/0idR4Zdw==}
+    engines: {node: '>=18'}
+
+  '@arborium/rego@2.18.2':
+    resolution: {integrity: sha512-FzJ29ct5v8MvlkjPVaCi7xaNfqQIKzunl7l08becQP3hhZZulVcL77lLP80wU0NCopYMS9zEe9qbw0nBm9weXg==}
+    engines: {node: '>=18'}
+
+  '@arborium/rescript@2.18.2':
+    resolution: {integrity: sha512-iuaOykArAvwE4hvizxjSW435eKkrvgyOs3KeMXmPOwwdACjj4XnhiPCDsJo1sFa7xBCGV+y3XFphxQWkWzmeIw==}
+    engines: {node: '>=18'}
+
+  '@arborium/ron@2.18.2':
+    resolution: {integrity: sha512-Gp/FOPQswfw9pVUQtuU8lTtmUFkNksLddteBTWGw6srRpxIlEcYGzyq5NQbi+CIqmMZwvyUjbpLwiFOjm+XPog==}
+    engines: {node: '>=18'}
+
+  '@arborium/ruby@2.18.2':
+    resolution: {integrity: sha512-7tcm+KgfSxYEO9LW6+XvrK2jBcEnF5g0t7X46lWs0lJssSOkXKm853wWMjQ9dMObXsaiszuK3FW75fohhOA3ag==}
+    engines: {node: '>=18'}
+
+  '@arborium/rust@2.18.2':
+    resolution: {integrity: sha512-8OViqqd+u+Vlb/viKbrmyBHc9b3tpkdTAemdsw0A9es78LMTs+n21hJTcvXXQYQIUE/0KDsuYRAlzKKzbzEVxg==}
+    engines: {node: '>=18'}
+
+  '@arborium/scala@2.18.2':
+    resolution: {integrity: sha512-QTgBqQ7f0b41gOQirvdZsL+tyahQxwlJzCScyZPhjQypfL4MsimSUjHUsEXgbPa17TpHvAt8FjGxm29gVJ+6pw==}
+    engines: {node: '>=18'}
+
+  '@arborium/scheme@2.18.2':
+    resolution: {integrity: sha512-D9vd+zYajEV2s0xEgX2ysjXNw1Tdw0wyScgxTAqbfW3+0pnPMgujzM4Qj+YJooArSCVQULsDJm01qIPn/CIiDw==}
+    engines: {node: '>=18'}
+
+  '@arborium/scss@2.18.2':
+    resolution: {integrity: sha512-pqZBVUTFZTnexWJ37rAgrERY280MoUnTU3yhd/kfoOX31Eu85AdVgW9cih5I3fsR5coHfzSSQDhRMCiPFUwcsA==}
+    engines: {node: '>=18'}
+
+  '@arborium/solidity@2.18.2':
+    resolution: {integrity: sha512-kXIN6eZDgmOP5I+ZzRPpWLDnyF8Cmq26E7USZj7iDTL2htItdD1rOiXRlvh1/UbILz2WRrVNR/UkXx0XjUwk6A==}
+    engines: {node: '>=18'}
+
+  '@arborium/sparql@2.18.2':
+    resolution: {integrity: sha512-Fvq3eulebr0aIFKBLYGRKWHV7+av1nEioToEINkNLoI2mmZAX+1hoPuXQjq4sJ9bs7+PkzgYLUQj8WNlw8Tdmw==}
+    engines: {node: '>=18'}
+
+  '@arborium/sql@2.18.2':
+    resolution: {integrity: sha512-3M3TNq6/dvXEC0IC0dfEQcWPMKjaPyrfXaJjTT7TlOXe56jCmpyJCetSVt2ZIo52PJpB6RAfMtYlphFt8IHh+A==}
+    engines: {node: '>=18'}
+
+  '@arborium/ssh-config@2.18.2':
+    resolution: {integrity: sha512-ooNPyhOQIRDaFn2z0l3s0yQcXqs3klRKGAhPTwJI86ljUkyt0PigsLL13gMc89NMmZGlMzIAhOb83zE0A02xRA==}
+    engines: {node: '>=18'}
+
+  '@arborium/starlark@2.18.2':
+    resolution: {integrity: sha512-6Ufvytx61JmlKU/2x3Xidddo0VOMuSu3nDZQLO/x1Ua6NpfKgrVBtmgu9aL5EJ86OLyj6wHiWTmeMydLsYBlyg==}
+    engines: {node: '>=18'}
+
+  '@arborium/styx@2.18.2':
+    resolution: {integrity: sha512-xVXtsVcxdpvU0YqjwMFLWONOAlSeAYK7fwvh4Hrbwn0RPq6oYntUtfLz0Wi8mxmdWZlWCgR3vBrCEWeNMREnJQ==}
+    engines: {node: '>=18'}
+
+  '@arborium/svelte@2.18.2':
+    resolution: {integrity: sha512-aSbCZi9/Z0YFcUSHCmDuI0GqV3mnf3VzWmXXRZZJ4JjuTszdw2QfksXNwvkC9rqqY/TkYrhzLynCMxnjSmTHBw==}
+    engines: {node: '>=18'}
+
+  '@arborium/swift@2.18.2':
+    resolution: {integrity: sha512-PR+1nvtCy5xafJKy4hyQ6FKt7qM25DnD17NNHfNxNGgF+IuRN2p3RaNvequG3DhKMGVhKlIRPZc//SzLUHIB3Q==}
+    engines: {node: '>=18'}
+
+  '@arborium/textproto@2.18.2':
+    resolution: {integrity: sha512-nmMRo8B6VWQJJtRBiBK2utvQK0OaHn8ZJ6VIYk16q/yKdtPplV+QayZI0KUiU/uyRWumnR5blulrotQG7VH+uA==}
+    engines: {node: '>=18'}
+
+  '@arborium/thrift@2.18.2':
+    resolution: {integrity: sha512-/xnZYwY2gZIBGdAcApyq3W4kS59YBMSdbYniD7xlA61B3Tt6MDkRSw5IEdDVg3fZ6L2ZhWrv+K28YFHF1DBYBA==}
+    engines: {node: '>=18'}
+
+  '@arborium/tlaplus@2.18.2':
+    resolution: {integrity: sha512-BvhM2ZgsqGVH1rbacATMGW7zJZsRoDZShurbZaZAQxgl6djO3guYUZFOWzTXEfipwWIvWstaAFf+F42MBqcq9Q==}
+    engines: {node: '>=18'}
+
+  '@arborium/toml@2.18.2':
+    resolution: {integrity: sha512-j4z79So0FVc9qsmSEU4gzb1LimKDuA20HHYJtfV4jfMJcjDXKwgx4HWW3gF0SRY6UVqlYJslC5ckioG/4xWs1A==}
+    engines: {node: '>=18'}
+
+  '@arborium/tsx@2.18.2':
+    resolution: {integrity: sha512-2ESPXgOfw5FpEV12+ooAp5Vs5qZ8giSLbLxpbxKWansaIW+AXqZTpmu1KHXFVBvMzI8KOPtzvJYPtrAZhlXe0A==}
+    engines: {node: '>=18'}
+
+  '@arborium/typescript@2.18.2':
+    resolution: {integrity: sha512-zttEB32bqAFvrzJ6byuFfh93MQ43Uv3WqgFdh5iYkrPl7nnjGH0G7+L5SugYKrtYVk6sin/01f4EusncnJV3WA==}
+    engines: {node: '>=18'}
+
+  '@arborium/typst@2.18.2':
+    resolution: {integrity: sha512-islW4xVDJIzFlJ6O8dPvscHg4xstUD9pFZTfzbesqjsDJ6+tCPQOaUPGQJjG6oynv5HkGkoR4VCkaHZgVq1cKg==}
+    engines: {node: '>=18'}
+
+  '@arborium/verilog@2.18.2':
+    resolution: {integrity: sha512-q4IBczSmzSdwKtHmCuy4GiU3djbyQpmttkVDsBig4iin041JS92aTGKPhhBb4fr5iE8ERaLdUZbEBmwjMCHs8w==}
+    engines: {node: '>=18'}
+
+  '@arborium/vhdl@2.18.2':
+    resolution: {integrity: sha512-NMMhmnsfY8WxWDZunKOTe/dyd3gQ93pCwjTMctXRWe4FZIISHMHqqCf5N/kfgXU/uCQKJlNUH1yIrLAR2aTjfA==}
+    engines: {node: '>=18'}
+
+  '@arborium/vim@2.18.2':
+    resolution: {integrity: sha512-U937v7vY+lft/6Xr19olIv3dgcyd7zoOaCrYBd46b9Ci0yOp0PD2fnvM9+TWpRWfhPV/C8ddcypym0T5J0JiXw==}
+    engines: {node: '>=18'}
+
+  '@arborium/vue@2.18.2':
+    resolution: {integrity: sha512-vR+pnWf8skAHb1jaJ1oQ/RUyjBsmoFkWfO8mbZ+mHVR9++DkM64wQ7qlvzBjzGI5ZkT7u6Q6V0oKqcL1c/uxQg==}
+    engines: {node: '>=18'}
+
+  '@arborium/wit@2.18.2':
+    resolution: {integrity: sha512-81c6Vq4GBPzUEn1yneyOXWxRYfNfe384e2QjG1XCUb6XckBEg4mp7r3hVD3MOOjrabl9o35qmVXmjM/x2mqQuQ==}
+    engines: {node: '>=18'}
+
+  '@arborium/x86asm@2.18.2':
+    resolution: {integrity: sha512-npWETVgItXBRYekJ9dUEaf2EJQeRkz1zOqMtO3NuQuEfjREYsOLQFudgmus8KHdIx56Kz8NqxRLIac37kfbI5g==}
+    engines: {node: '>=18'}
+
+  '@arborium/xml@2.18.2':
+    resolution: {integrity: sha512-LqwkNxj6rvU+mqaiusXfOlZ67gRts+CUaZ4O2L4qyCKvTEASzkmd5wDObAh7dW9rASsQahiR7MrGC84XyGOq8w==}
+    engines: {node: '>=18'}
+
+  '@arborium/yaml@2.18.2':
+    resolution: {integrity: sha512-GtfBbjc66Ep/x3kece1tTiFZ47GBNczfaK0T/fDQ+/06XEOxR0gR1ss1Xh5L9zgro6IftbT39qxoQq1rML7n2A==}
+    engines: {node: '>=18'}
+
+  '@arborium/yuri@2.18.2':
+    resolution: {integrity: sha512-lcu1Z01CZuNFbeFcqEJ1RnNAL5Uw2aEX/YMDE/o8LO7nGG+qMvfR7PqYroN2NPqIJGewUd7VY0zGYKsQ4OP/Yg==}
+    engines: {node: '>=18'}
+
+  '@arborium/zig@2.18.2':
+    resolution: {integrity: sha512-998rW9J0aQOFxQPueMGSBaWkEA62SJvUm6ZjNwKc8wwBLqDwKQWk0xG0hkGG3N4Y6P2+RvE2kI+X9OGM8DE2VQ==}
+    engines: {node: '>=18'}
+
+  '@arborium/zsh@2.18.2':
+    resolution: {integrity: sha512-paqDOoW3ctxXkiyhI/zXZA4TOmIRBqC01Dts6Z6Yp0SmsDAYcOu3o7qu8TuWKSG1CPxS5BhUP/kkr+N1BKICbA==}
+    engines: {node: '>=18'}
 
   '@babel/code-frame@7.29.7':
     resolution: {integrity: sha512-Aup7aUOfpbAUg2ROOJN6Iw5f9DMBlzu0mIkm/malLQFN/YQgO48wCj0Kxa3sEHJvPVFg7siR+qRInwXd2qhQKw==}
@@ -2038,7 +2731,205 @@ packages:
 
 snapshots:
 
+  '@arborium/ada@2.18.2': {}
+
+  '@arborium/agda@2.18.2': {}
+
   '@arborium/arborium@2.18.2': {}
+
+  '@arborium/asciidoc@2.18.2': {}
+
+  '@arborium/asm@2.18.2': {}
+
+  '@arborium/awk@2.18.2': {}
+
+  '@arborium/bash@2.18.2': {}
+
+  '@arborium/batch@2.18.2': {}
+
+  '@arborium/c-sharp@2.18.2': {}
+
+  '@arborium/c@2.18.2': {}
+
+  '@arborium/caddy@2.18.2': {}
+
+  '@arborium/capnp@2.18.2': {}
+
+  '@arborium/cedar@2.18.2': {}
+
+  '@arborium/cedarschema@2.18.2': {}
+
+  '@arborium/clojure@2.18.2': {}
+
+  '@arborium/cmake@2.18.2': {}
+
+  '@arborium/commonlisp@2.18.2': {}
+
+  '@arborium/cpp@2.18.2': {}
+
+  '@arborium/css@2.18.2': {}
+
+  '@arborium/d@2.18.2': {}
+
+  '@arborium/dart@2.18.2': {}
+
+  '@arborium/devicetree@2.18.2': {}
+
+  '@arborium/diff@2.18.2': {}
+
+  '@arborium/dockerfile@2.18.2': {}
+
+  '@arborium/dot@2.18.2': {}
+
+  '@arborium/elisp@2.18.2': {}
+
+  '@arborium/elixir@2.18.2': {}
+
+  '@arborium/elm@2.18.2': {}
+
+  '@arborium/erlang@2.18.2': {}
+
+  '@arborium/fish@2.18.2': {}
+
+  '@arborium/fsharp@2.18.2': {}
+
+  '@arborium/gleam@2.18.2': {}
+
+  '@arborium/glsl@2.18.2': {}
+
+  '@arborium/go@2.18.2': {}
+
+  '@arborium/graphql@2.18.2': {}
+
+  '@arborium/groovy@2.18.2': {}
+
+  '@arborium/haskell@2.18.2': {}
+
+  '@arborium/hcl@2.18.2': {}
+
+  '@arborium/hlsl@2.18.2': {}
+
+  '@arborium/html@2.18.2': {}
+
+  '@arborium/idris@2.18.2': {}
+
+  '@arborium/ini@2.18.2': {}
+
+  '@arborium/java@2.18.2': {}
+
+  '@arborium/javascript@2.18.2': {}
+
+  '@arborium/jinja2@2.18.2': {}
+
+  '@arborium/jq@2.18.2': {}
+
+  '@arborium/json@2.18.2': {}
+
+  '@arborium/julia@2.18.2': {}
+
+  '@arborium/kotlin@2.18.2': {}
+
+  '@arborium/lean@2.18.2': {}
+
+  '@arborium/lua@2.18.2': {}
+
+  '@arborium/markdown@2.18.2': {}
+
+  '@arborium/matlab@2.18.2': {}
+
+  '@arborium/meson@2.18.2': {}
+
+  '@arborium/ninja@2.18.2': {}
+
+  '@arborium/nix@2.18.2': {}
+
+  '@arborium/objc@2.18.2': {}
+
+  '@arborium/ocaml@2.18.2': {}
+
+  '@arborium/perl@2.18.2': {}
+
+  '@arborium/php@2.18.2': {}
+
+  '@arborium/postscript@2.18.2': {}
+
+  '@arborium/powershell@2.18.2': {}
+
+  '@arborium/prolog@2.18.2': {}
+
+  '@arborium/python@2.18.2': {}
+
+  '@arborium/query@2.18.2': {}
+
+  '@arborium/r@2.18.2': {}
+
+  '@arborium/rego@2.18.2': {}
+
+  '@arborium/rescript@2.18.2': {}
+
+  '@arborium/ron@2.18.2': {}
+
+  '@arborium/ruby@2.18.2': {}
+
+  '@arborium/rust@2.18.2': {}
+
+  '@arborium/scala@2.18.2': {}
+
+  '@arborium/scheme@2.18.2': {}
+
+  '@arborium/scss@2.18.2': {}
+
+  '@arborium/solidity@2.18.2': {}
+
+  '@arborium/sparql@2.18.2': {}
+
+  '@arborium/sql@2.18.2': {}
+
+  '@arborium/ssh-config@2.18.2': {}
+
+  '@arborium/starlark@2.18.2': {}
+
+  '@arborium/styx@2.18.2': {}
+
+  '@arborium/svelte@2.18.2': {}
+
+  '@arborium/swift@2.18.2': {}
+
+  '@arborium/textproto@2.18.2': {}
+
+  '@arborium/thrift@2.18.2': {}
+
+  '@arborium/tlaplus@2.18.2': {}
+
+  '@arborium/toml@2.18.2': {}
+
+  '@arborium/tsx@2.18.2': {}
+
+  '@arborium/typescript@2.18.2': {}
+
+  '@arborium/typst@2.18.2': {}
+
+  '@arborium/verilog@2.18.2': {}
+
+  '@arborium/vhdl@2.18.2': {}
+
+  '@arborium/vim@2.18.2': {}
+
+  '@arborium/vue@2.18.2': {}
+
+  '@arborium/wit@2.18.2': {}
+
+  '@arborium/x86asm@2.18.2': {}
+
+  '@arborium/xml@2.18.2': {}
+
+  '@arborium/yaml@2.18.2': {}
+
+  '@arborium/yuri@2.18.2': {}
+
+  '@arborium/zig@2.18.2': {}
+
+  '@arborium/zsh@2.18.2': {}
 
   '@babel/code-frame@7.29.7':
     dependencies:

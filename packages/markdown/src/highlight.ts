@@ -1,6 +1,9 @@
+import { GRAMMAR_PACKAGES } from './grammars';
+
 // Code block syntax highlighting. The client highlights with Arborium (tree-sitter grammars compiled to
-// WebAssembly), loading each language's grammar the first time a code block uses it. The same library is on npm
-// (`@arborium/arborium`, grammars fetched from a CDN); apps can plug in another engine with `setCodeHighlighter`.
+// WebAssembly), loading each language's grammar the first time a code block uses it. The same library and its
+// grammars are npm packages (`@arborium/arborium`, `@arborium/<language>`) this package depends on; each grammar
+// is a lazy chunk of the app's bundle. Apps can plug in another engine with `setCodeHighlighter`.
 
 export const HIGHLIGHT_LANGUAGES = new Set([
   'ada',
@@ -269,15 +272,41 @@ export interface CodeHighlighter {
 }
 
 interface ArboriumModule {
+  setConfig: (config: Record<string, unknown>) => void;
   loadGrammar: (language: string) => Promise<{ highlight: (source: string) => string | Promise<string> } | null>;
-  isLanguageAvailable?: (language: string) => Promise<boolean>;
 }
 
-/** Highlights with `@arborium/arborium`, which fetches its host and grammars from jsDelivr on first use. */
+const NO_CDN_ERROR = 'grammars only load from the installed @arborium packages';
+
+let arboriumModule: Promise<ArboriumModule> | null = null;
+
+// Arborium's loader fetches its host and grammars from a CDN by default; every resolver points it at the
+// installed packages instead.
+const loadArborium = () =>
+  (arboriumModule ??= import('@arborium/arborium').then((module) => {
+    const arborium = module as unknown as ArboriumModule;
+    arborium.setConfig({
+      logger: { debug: () => {}, info: () => {}, warn: () => {}, error: () => {} },
+      resolveHostJs: () => import('@arborium/arborium/arborium_host.js'),
+      resolveHostWasm: () => fetch(new URL('@arborium/arborium/arborium_host_bg.wasm', import.meta.url)),
+      resolveJs: ({ language }: { language: string }) => {
+        const grammar = GRAMMAR_PACKAGES[language];
+        return grammar != null ? grammar.js() : Promise.reject(new Error(NO_CDN_ERROR));
+      },
+      resolveWasm: ({ language }: { language: string }) => {
+        const grammar = GRAMMAR_PACKAGES[language];
+        return grammar != null ? fetch(grammar.wasm()) : Promise.reject(new Error(NO_CDN_ERROR));
+      },
+    });
+    return arborium;
+  }));
+
+/** Highlights with `@arborium/arborium` and the grammar packages installed with this package. */
 export const arboriumHighlighter: CodeHighlighter = {
   loadGrammar: async (language) => {
+    if (GRAMMAR_PACKAGES[language] == null) return null;
     try {
-      const arborium = (await import('@arborium/arborium')) as unknown as ArboriumModule;
+      const arborium = await loadArborium();
       const grammar = await arborium.loadGrammar(language);
       return grammar == null ? null : { highlightToHtml: (code) => grammar.highlight(code) };
     } catch {

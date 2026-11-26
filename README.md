@@ -91,7 +91,7 @@ import { Markdown, parse } from '@discord-mana/markdown';
 parse('`code` and :tada:', { preset: 'embedDescription', rules: ['inlineCode', 'emoji'] }); // the AST
 ```
 
-Mentions, channels, roles, servers, slash commands and emoji images come from the same `resolvers` as `Message` (`MessageResolversContext`); unknown ones show what Discord shows (`@unknown-user`, `#unknown-channel`…). Clicks on mentions and links go to `onMarkdownInteraction` in `MessageActionsContext`. Code blocks are highlighted with Arborium like the client; the grammars load from jsDelivr when a language is first used (`setCodeHighlighter` swaps the engine).
+Mentions, channels, roles, servers, slash commands and emoji images come from the same `resolvers` as `Message` (`MessageResolversContext`); unknown ones show what Discord shows (`@unknown-user`, `#unknown-channel`…). Clicks on mentions and links go to `onMarkdownInteraction` in `MessageActionsContext`. Code blocks are highlighted with Arborium like the client. Each language's grammar is an npm dependency (`@arborium/<language>`) that your bundler splits into its own chunk and loads the first time a code block uses it; nothing is fetched from a CDN (`setCodeHighlighter` swaps the engine).
 
 ## Playground
 
