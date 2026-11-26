@@ -1,0 +1,42 @@
+.base {
+  box-sizing: border-box;
+  color: var(--white);
+  flex: 0 0 auto;
+  height: 16px;
+  min-height: 16px;
+  min-width: 16px;
+  text-align: center;
+  text-transform: uppercase;
+}
+.baseShapeRound {
+  border-radius: var(--radius-round);
+}
+.baseShapeRoundLeft {
+  border-radius: var(--radius-xs) 0 0 var(--radius-xs);
+}
+.baseShapeRoundRight {
+  border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
+}
+.iconBadge,
+.numberBadge {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+.iconBadge {
+  width: 16px;
+}
+.icon {
+  height: 100%;
+  padding: 2px;
+  width: 100%;
+}
+.limitedTimeText {
+  text-transform: uppercase;
+}
+:global(.enable-forced-colors) .base {
+  background-color: Highlight !important;
+  color: HighlightText;
+  forced-color-adjust: none;
+  outline: 2px solid Canvas;
+}
