@@ -104,3 +104,5 @@ export * from './MenuSearchControl';
 export * from './AppRoot';
 export * from './Mask';
 export * from './Avatar';
+export * from './GuildIcon';
+export * from './StackedGuildIcons';

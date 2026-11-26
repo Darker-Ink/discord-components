@@ -1,0 +1,41 @@
+.avatars {
+  align-items: center;
+  display: flex;
+  flex-grow: 0;
+  position: relative;
+}
+.avatars > li:not(:last-child).size16 {
+  margin-inline-end: -3px;
+}
+.avatars > li:not(:last-child).size20 {
+  margin-inline-end: -4px;
+}
+.avatars > li:not(:last-child).size24 {
+  margin-inline-end: -5px;
+}
+.squircleIcon {
+  overflow: hidden;
+}
+.overflow,
+.squircleIcon {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
+}
+.overflow {
+  background: var(--background-base-lowest);
+  box-sizing: border-box;
+}
+.overflowButton {
+  color: var(--interactive-text-default);
+  cursor: pointer;
+}
+.overflowButton:hover,
+:global(.keyboard-mode) .overflowButton:focus {
+  color: var(--interactive-text-hover);
+}
+.overflowButton.overflow {
+  border-radius: 0;
+}

@@ -1,0 +1,110 @@
+.icon {
+  background-clip: padding-box;
+  background-color: none;
+  background-position: 50%;
+  background-size: 100% 100%;
+  position: relative;
+}
+.icon .guildIconBadge {
+  bottom: -2px;
+  height: 14px;
+  inset-inline-end: -2px;
+  position: absolute;
+  width: 14px;
+}
+.iconInactive {
+  border-radius: 50%;
+}
+.iconActiveSmol {
+  border-radius: 4px;
+}
+.iconActiveMini {
+  border-radius: 6px;
+}
+.iconActiveSmaller {
+  border-radius: 7px;
+}
+.iconActiveSmall {
+  border-radius: 9px;
+}
+.iconActiveMedium {
+  border-radius: 12px;
+}
+.iconActiveLarge {
+  border-radius: 15px;
+}
+.iconActiveLarger {
+  border-radius: 16px;
+}
+.iconActiveXLarge {
+  border-radius: 30px;
+}
+.iconSizeSmol {
+  height: 16px;
+  width: 16px;
+}
+.iconSizeMini {
+  height: 20px;
+  width: 20px;
+}
+.iconSizeSmaller {
+  height: 24px;
+  width: 24px;
+}
+.iconSizeSmall {
+  height: 30px;
+  width: 30px;
+}
+.iconSizeMedium {
+  height: 40px;
+  width: 40px;
+}
+.iconSizeLarge {
+  height: 50px;
+  width: 50px;
+}
+.iconSizeLarger {
+  height: 64px;
+  width: 64px;
+}
+.iconSizeXLarge {
+  height: 100px;
+  width: 100px;
+}
+.acronym {
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+}
+.noIcon {
+  background-color: var(--background-base-lower);
+  color: var(--text-default);
+  text-align: center;
+}
+.noIcon.iconSizeSmol {
+  line-height: 16px;
+}
+.noIcon.iconSizeMini {
+  line-height: 20px;
+}
+.noIcon.iconSizeSmaller {
+  line-height: 24px;
+}
+.noIcon.iconSizeSmall {
+  line-height: 30px;
+}
+.noIcon.iconSizeMedium {
+  line-height: 40px;
+}
+.noIcon.iconSizeLarge {
+  line-height: 50px;
+}
+.noIcon.iconSizeLarger {
+  line-height: 64px;
+}
+.noIcon.iconSizeXLarge {
+  line-height: 100px;
+}
+.noAcronym {
+  background-color: var(--background-mod-subtle);
+}
