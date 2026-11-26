@@ -54,3 +54,9 @@
   border-color: var(--status-danger);
   color: var(--text-feedback-critical);
 }
+/* No hover details on touch screens: let taps reach what the pill hangs over. */
+@media (pointer: coarse) {
+  .status {
+    pointer-events: none;
+  }
+}

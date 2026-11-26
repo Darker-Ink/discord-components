@@ -16,6 +16,7 @@ import { InlineEditor, type InlineEditorHandle, type InlineEditorRuleSet } from 
 import { getLimit, useBuilderRestrictions, useNodeIssues, type NodeKind, type ValidationIssue } from '../core';
 import { patchField, readText, useEditableNode } from './fields';
 import { isMod } from './NodeFrame';
+import { useBuilderUI } from './uiStore';
 import { useBuilderContext } from './useBuilderContext';
 import styles from './BuilderTextField.module.css';
 
@@ -53,13 +54,16 @@ export interface FieldStatusProps {
   limit: number | undefined;
   issues: readonly ValidationIssue[];
   focused: boolean;
+  /** Whether the text's node is selected. Otherwise its problem shows only while it is focused. */
+  selected?: boolean;
 }
 
 /**
  * A small counter by a text that is close to its limit (while typing), and the problem with a text that is
- * invalid (always), with the details on hover.
+ * invalid (while it, or its node, is being worked on: it hangs below the text, over what follows), with the
+ * details on hover.
  */
-export const FieldStatus = ({ anchor, length, limit, issues, focused }: FieldStatusProps) => {
+export const FieldStatus = ({ anchor, length, limit, issues, focused, selected = true }: FieldStatusProps) => {
   const {
     refs: { setReference, setFloating },
     floatingStyles,
@@ -75,7 +79,7 @@ export const FieldStatus = ({ anchor, length, limit, issues, focused }: FieldSta
   const error = issues.find((issue) => issue.severity === 'error');
   const warning = issues.find((issue) => issue.severity === 'warning');
   const near = limit != null && length >= limit * 0.8;
-  const show = anchor != null && (issues.length > 0 || (focused && near));
+  const show = anchor != null && ((issues.length > 0 && (focused || selected)) || (focused && near));
   if (!show) return null;
   const over = limit != null && length > limit;
   const counter = limit != null && (near || over) ? `${length}/${limit}` : null;
@@ -147,6 +151,7 @@ export const BuilderTextField = ({
   const node = useEditableNode(uid);
   const value = readText(node, field);
   const issues = useFieldIssues(uid, field);
+  const selected = useBuilderUI((state) => state.selectedId === uid);
   const limit = getLimit(kind, field, useBuilderRestrictions());
   const editorRef = useRef<InlineEditorHandle>(null);
   const wrapperRef = useRef<HTMLSpanElement>(null);
@@ -213,6 +218,7 @@ export const BuilderTextField = ({
         limit={limit}
         issues={issues}
         focused={focused}
+        selected={selected}
       />
     </span>
   );
@@ -252,6 +258,7 @@ export const BuilderPlainTextField = ({
   const node = useEditableNode(uid);
   const value = readText(node, field);
   const issues = useFieldIssues(uid, field);
+  const selected = useBuilderUI((state) => state.selectedId === uid);
   const limit = getLimit(kind, field, useBuilderRestrictions());
   const elementRef = useRef<HTMLElement>(null);
   const [focused, setFocused] = useState(false);
@@ -324,7 +331,14 @@ export const BuilderPlainTextField = ({
           document.execCommand('insertText', false, text);
         }}
       />
-      <FieldStatus anchor={anchor} length={value.length} limit={limit} issues={issues} focused={focused} />
+      <FieldStatus
+        anchor={anchor}
+        length={value.length}
+        limit={limit}
+        issues={issues}
+        focused={focused}
+        selected={selected}
+      />
     </>
   );
 };

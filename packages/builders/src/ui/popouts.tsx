@@ -23,16 +23,19 @@ export const PopoutPanel = ({
   footer,
   className,
   width = 300,
+  height,
 }: {
   title: ReactNode;
   children: ReactNode;
   footer?: ReactNode;
   className?: string;
   width?: number;
+  /** A fixed height (the body scrolls), for editors whose content grows: the popout then never moves. */
+  height?: number | string;
 }) => (
   <div
     className={clsx(styles.panel, className)}
-    style={{ width }}
+    style={{ width, height }}
     role="dialog"
     aria-label={typeof title === 'string' ? title : undefined}
     data-builder-ui

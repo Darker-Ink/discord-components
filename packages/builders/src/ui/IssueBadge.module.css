@@ -18,3 +18,8 @@
 .badge[data-severity='warning'] {
   color: var(--status-warning);
 }
+
+/* Warnings are quieter than errors: their marker shows on the node being pointed at or selected. */
+:global([data-builder-node]:not([data-selected]):not(:hover)) > .badge[data-severity='warning'] {
+  display: none;
+}

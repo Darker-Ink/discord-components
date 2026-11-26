@@ -340,19 +340,15 @@ const OptionRow = ({ uid }: { uid: string }) => {
           <NodeTextInput uid={uid} field="value" label="Value" />
         </div>
         <NodeTextInput uid={uid} field="description" label="Description" placeholder="Optional" />
-        <div className={styles.row}>
-          <NodeTextInput
-            uid={uid}
-            field="emoji"
-            label="Emoji"
-            placeholder="Optional"
-            format={(value) => formatEmoji(value as APIMessageComponentEmoji | undefined)}
-            parse={parseEmoji}
-          />
-          <div className={styles.optionDefault}>
-            <NodeSwitch uid={uid} field="default" label="Default" />
-          </div>
-        </div>
+        <NodeTextInput
+          uid={uid}
+          field="emoji"
+          label="Emoji"
+          placeholder="Optional"
+          format={(value) => formatEmoji(value as APIMessageComponentEmoji | undefined)}
+          parse={parseEmoji}
+        />
+        <NodeSwitch uid={uid} field="default" label="Selected by default" />
       </div>
       <Tooltip text="Remove option">
         <button
@@ -378,6 +374,7 @@ const SelectPopout = ({ uid }: { uid: string }) => {
     <PopoutPanel
       title={options != null ? 'Select menu' : 'Select'}
       width={380}
+      height={options != null ? 'min(560px, calc(100vh - 32px))' : undefined}
       footer={
         options != null ? (
           <Button
