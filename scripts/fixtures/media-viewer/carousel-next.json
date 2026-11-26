@@ -4,10 +4,10 @@
   "dom": "[class*=\"layerContainer\"]",
   "actions": [
     {
-      "key": "ArrowRight"
+      "click": "[class*=\"layerContainer\"] [aria-label=\"Next\"]"
     },
     {
-      "wait": 800
+      "wait": 1500
     }
   ],
   "data": {

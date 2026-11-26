@@ -3,6 +3,7 @@ import {
   AttachmentFlags,
   MediaContextProvider,
   MediaGallery,
+  MediaViewerProvider,
   MessageAttachments,
   type APIMediaGalleryItem,
   type APIAttachment,
@@ -212,11 +213,13 @@ const MediaMosaicStory = ({
       gifAutoPlay={gifAutoPlay}
       inlineAttachmentMedia={inlineAttachmentMedia}
     >
-      <MessageAttachments
-        attachments={attachments}
-        message={{ ...DEFAULT_MESSAGE, content: messageContent }}
-        canDeleteAttachments={canDeleteAttachments}
-      />
+      <MediaViewerProvider>
+        <MessageAttachments
+          attachments={attachments}
+          message={{ ...DEFAULT_MESSAGE, content: messageContent }}
+          canDeleteAttachments={canDeleteAttachments}
+        />
+      </MediaViewerProvider>
     </MediaContextProvider>
   );
 };
@@ -328,7 +331,9 @@ const MediaGalleryStory = ({ count, kind, spoiler, altText, viewImageDescription
   );
   return (
     <MediaContextProvider viewImageDescriptions={viewImageDescriptions}>
-      <MediaGallery items={items} />
+      <MediaViewerProvider>
+        <MediaGallery items={items} />
+      </MediaViewerProvider>
     </MediaContextProvider>
   );
 };

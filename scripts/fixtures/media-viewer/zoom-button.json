@@ -1,0 +1,27 @@
+{
+  "story": "media-viewer-fixtures",
+  "capture": "viewport",
+  "dom": "[class*=\"layerContainer\"]",
+  "actions": [
+    {
+      "click": "[class*=\"layerContainer\"] [aria-label=\"Zoom In\"]"
+    },
+    {
+      "wait": 1200
+    }
+  ],
+  "data": {
+    "items": [
+      {
+        "type": "IMAGE",
+        "url": "{{assets}}/attachments/photo-1.jpg",
+        "proxyUrl": "{{assets}}/attachments/photo-1.jpg",
+        "width": 1600,
+        "height": 900,
+        "contentType": "image/jpeg",
+        "original": "{{assets}}/attachments/photo-1.jpg",
+        "srcIsAnimated": false
+      }
+    ]
+  }
+}

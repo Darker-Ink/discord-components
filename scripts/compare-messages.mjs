@@ -155,7 +155,8 @@ const settle = async (page, fixture) => {
         },
       )
       .catch(() => {});
-    await page.waitForTimeout(600);
+    // Modals spring in and swap their thumbnail for the full image once it loads.
+    await page.waitForTimeout(1500);
   }
   await runActions(page, fixture.actions);
   return root;
