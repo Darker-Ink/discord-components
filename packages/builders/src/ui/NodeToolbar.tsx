@@ -91,6 +91,8 @@ NodeToolbarSeparator.displayName = 'NodeToolbarSeparator';
 export const NodeToolbar = ({ uid, kind, tools }: { uid: string; kind: NodeKind; tools?: ReactNode }) => {
   const ui = useBuilderUIStore();
   const { actions } = useBuilderContext();
+  // Stay on the canvas (a fixed toolbar would otherwise only be kept in the window).
+  const boundary = ui.frames.get(uid)?.closest('[data-builder-canvas]') ?? 'clippingAncestors';
   const {
     refs: { setReference, setFloating },
     floatingStyles,
@@ -101,8 +103,8 @@ export const NodeToolbar = ({ uid, kind, tools }: { uid: string; kind: NodeKind;
     strategy: 'fixed',
     middleware: [
       offset(8),
-      flip({ fallbackPlacements: ['top-end', 'top-start', 'bottom-start'] }),
-      shift({ padding: 8 }),
+      flip({ fallbackPlacements: ['top-end', 'top-start', 'bottom-start'], boundary }),
+      shift({ padding: 8, boundary }),
     ],
     whileElementsMounted: autoUpdate,
   });
