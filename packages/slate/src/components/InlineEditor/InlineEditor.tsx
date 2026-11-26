@@ -1,6 +1,7 @@
 import {
   useCallback,
   useContext,
+  useState,
   useEffect,
   useImperativeHandle,
   useLayoutEffect,
@@ -24,6 +25,7 @@ import { EditorUtils, SelectionUtils } from '../../core/slateUtils';
 import type { CodeHighlightSpan, DiscordEditor } from '../../core/types';
 import { ReactEditor } from '../../slate-react';
 import { RichEditor } from '../RichEditor/RichEditor';
+import richEditorStyles from '../RichEditor/RichEditor.module.css';
 
 // Not in the client: editing text in place, inside an element that already looks like the rendered result
 // (an embed title, a field value). It is the chat input's editor core (markdown styling while typing, pills,
@@ -64,6 +66,11 @@ export interface InlineEditorProps {
   as?: ElementType;
   /** Classes of the rendered element the text should look like. */
   className?: string;
+  /**
+   * The text as it renders when not being edited (e.g. parsed markdown). Clicking or focusing it starts editing
+   * with the caret at the end; without it the editor always shows (with its markdown syntax styled).
+   */
+  renderPreview?: (value: string) => React.ReactNode;
   style?: React.CSSProperties;
   disabled?: boolean;
   autoFocus?: boolean;
@@ -97,15 +104,18 @@ const resolveRules = (rules: InlineEditorProps['rules']) =>
 const textLength = (editor: Editor) => toTextValue(EditorUtils.richValue(editor), { mode: 'raw' }).length;
 
 // Single-line fields join pasted lines with spaces; `maxLength` cuts what doesn't fit.
-const withFieldLimits = (editor: DiscordEditor, multiline: () => boolean, maxLength: () => number | undefined) => {
+const FIELD_OPTIONS = new WeakMap<Editor, { multiline: boolean; maxLength?: number }>();
+const multilineOf = (editor: Editor) => FIELD_OPTIONS.get(editor)?.multiline ?? false;
+
+const withFieldLimits = (editor: DiscordEditor) => {
   const { insertText, insertBreak } = editor;
   editor.insertBreak = () => {
-    if (multiline()) insertBreak();
+    if (multilineOf(editor)) insertBreak();
   };
   editor.insertSoftBreak = () => editor.insertBreak();
   editor.insertText = (text) => {
-    if (!multiline()) text = text.replace(/\r\n|\r|\n/g, ' ');
-    const limit = maxLength();
+    if (!multilineOf(editor)) text = text.replace(/\r\n|\r|\n/g, ' ');
+    const limit = FIELD_OPTIONS.get(editor)?.maxLength;
     if (limit != null) {
       const selected = editor.selection != null ? EditorUtils.getTextFromRange(editor, editor.selection).length : 0;
       const room = limit - (textLength(editor) - selected);
@@ -130,6 +140,7 @@ export const InlineEditor = ({
   maxLength,
   as = 'div',
   className,
+  renderPreview,
   style,
   disabled = false,
   autoFocus = false,
@@ -155,43 +166,41 @@ export const InlineEditor = ({
     [guildId, channelId, resolvers, rules, highlightCode, parent],
   );
   const multilineRef = useRef(multiline);
-  multilineRef.current = multiline;
-  const maxLengthRef = useRef(maxLength);
-  maxLengthRef.current = maxLength;
-
   const lastTextRef = useRef(value);
   const savedTextRef = useRef(value);
   const emitRef = useRef(true);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const onSaveRef = useRef(onSave);
-  onSaveRef.current = onSave;
+  useLayoutEffect(() => {
+    multilineRef.current = multiline;
+    onSaveRef.current = onSave;
+  });
 
   const editorRef = useRef<DiscordEditor | null>(null);
-  if (editorRef.current == null) {
-    const editor = createEditor({
-      chatInputType: multiline ? INLINE_TYPE : SINGLE_LINE_TYPE,
-      context,
-      previewMarkdown,
-      updateState: (target, _source, state) => {
-        if (state.value !== undefined) target.children = state.value;
-        if (state.selection != null && SelectionUtils.isValid(target, state.selection))
-          target.selection = state.selection;
-        else {
-          const end = EditorUtils.end(target, []);
-          target.selection = { anchor: end, focus: end };
-        }
-        target.onChange();
-      },
-    });
-    editor.children = toRichValue(value);
+  if (editorRef.current == null)
     editorRef.current = withFieldLimits(
-      editor,
-      () => multilineRef.current,
-      () => maxLengthRef.current,
+      createEditor({
+        chatInputType: multiline ? INLINE_TYPE : SINGLE_LINE_TYPE,
+        context,
+        previewMarkdown,
+        value,
+        updateState: (target, _source, state) => {
+          if (state.value !== undefined) target.children = state.value;
+          if (state.selection != null && SelectionUtils.isValid(target, state.selection))
+            target.selection = state.selection;
+          else {
+            const end = EditorUtils.end(target, []);
+            target.selection = { anchor: end, focus: end };
+          }
+          target.onChange();
+        },
+      }),
     );
-  }
+  // Slate's editor is one mutable object for the component's lifetime, created on the first render.
+  // eslint-disable-next-line react-hooks/refs
   const editor = editorRef.current;
   editor.context = context;
+  FIELD_OPTIONS.set(editor, { multiline, maxLength });
 
   useEffect(() => {
     if (editor.previewMarkdown !== previewMarkdown) {
@@ -212,6 +221,16 @@ export const InlineEditor = ({
   }, []);
 
   useEffect(() => () => save(), [save]);
+
+  // Turn the initial text's mentions, emoji and quotes into pills and blocks.
+  useLayoutEffect(() => {
+    try {
+      emitRef.current = false;
+      editor.onChange();
+    } finally {
+      emitRef.current = true;
+    }
+  }, [editor]);
 
   // A new value from outside replaces the text (and becomes what's saved), unless it is what we just emitted.
   useLayoutEffect(() => {
@@ -265,12 +284,21 @@ export const InlineEditor = ({
     [editor, multiline, onKeyDown, save],
   );
 
+  const [editing, setEditing] = useState(renderPreview == null);
+  const startEditing = useCallback(() => {
+    if (disabled) return;
+    const end = EditorUtils.end(editor, []);
+    editor.selection = { anchor: end, focus: end };
+    setEditing(true);
+  }, [disabled, editor]);
+
   const handleBlur = useCallback(
     (event: FocusEvent<HTMLDivElement>) => {
       save();
       onBlur?.(event);
+      if (renderPreview != null) setEditing(false);
     },
-    [onBlur, save],
+    [onBlur, renderPreview, save],
   );
 
   useImperativeHandle(
@@ -288,6 +316,33 @@ export const InlineEditor = ({
     [editor],
   );
 
+  if (renderPreview != null && !editing) {
+    const Tag = as;
+    return (
+      <Tag
+        className={className}
+        style={{ cursor: disabled ? undefined : 'text', ...style }}
+        tabIndex={disabled ? undefined : 0}
+        role="textbox"
+        aria-multiline={multiline}
+        aria-readonly={disabled || undefined}
+        {...aria}
+        onFocus={startEditing}
+        onMouseDown={(event: React.MouseEvent) => {
+          // Keep the click from moving focus elsewhere first; editing starts with the caret at the end.
+          event.preventDefault();
+          startEditing();
+        }}
+      >
+        {value === '' && placeholder != null ? (
+          <span className={richEditorStyles.inlinePlaceholder}>{placeholder}</span>
+        ) : (
+          renderPreview(value)
+        )}
+      </Tag>
+    );
+  }
+
   return (
     <EditorResolversContext.Provider value={context}>
       <MessageResolversContext.Provider value={context.resolvers}>
@@ -301,7 +356,7 @@ export const InlineEditor = ({
           readOnly={disabled}
           canFocus={!disabled}
           spellCheck={spellCheck}
-          autoFocus={autoFocus}
+          autoFocus={autoFocus || renderPreview != null}
           decorate={decorate}
           onChange={handleChange}
           onFocus={onFocus}

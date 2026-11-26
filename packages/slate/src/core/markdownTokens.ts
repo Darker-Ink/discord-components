@@ -190,10 +190,14 @@ const getParsers = (rules: MarkdownRules): Parsers => {
   const full: MarkdownRules = {};
   const styles: MarkdownRules = {};
   for (const name in rules) {
-    if (!(name in RULE_TYPES))
+    if (!(name in RULE_TYPES)) {
+      // Custom rule sets may carry rules the chat input doesn't know (they aren't styled while typing).
+      if (rules !== RULES) continue;
       throw Error(
         `Slate: Unknown markdown rule: ${name}.  If you have just added a new markdown rule then you probably need to add it to this file so that the rich chat box understands it.`,
       );
+    }
+    if (rules !== RULES && rules[name].parse == null) continue;
     const { type } = RULE_TYPES[name];
     if (type !== 'skip') full[name] = withOriginalMatch(rules[name]);
     if (type !== 'skip' && type !== 'inlineObject')

@@ -34,6 +34,8 @@ export interface CreateEditorOptions {
   chatInputType: ChatInputType;
   context: EditorContextValue;
   previewMarkdown?: boolean;
+  /** The initial text (message format). */
+  value?: string;
   /** Runs before/after each settle pass of `onChange` (the editor component pauses value sync meanwhile). */
   onChangeStart?: () => void;
   onChangeEnd?: () => void;
@@ -50,12 +52,13 @@ export const createEditor = ({
   chatInputType,
   context,
   previewMarkdown = true,
+  value = '',
   onChangeStart,
   onChangeEnd,
   updateState,
 }: CreateEditorOptions): DiscordEditor => {
   let editor = createSlateEditor() as Editor;
-  editor.children = toRichValue('');
+  editor.children = toRichValue(value);
   editor.selection = { anchor: EDITOR_START_POINT, focus: EDITOR_START_POINT };
   const { onChange } = editor;
   editor.chatInputType = chatInputType;
