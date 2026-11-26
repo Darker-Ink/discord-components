@@ -1,10 +1,13 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import {
   MediaContextProvider,
   MediaViewerProvider,
   Message,
   MessageListItem,
+  MessageFlags,
+  MessageType,
   type APIMessage,
+  type APIMessageComponentInteractionData,
   type APIUser,
   type MessageResolvers,
 } from '@discord-components/messages';
@@ -101,9 +104,132 @@ const MessageFixture = ({ fixture }: { fixture: string }) => {
 
 MessageFixture.displayName = 'MessageFixture';
 
+const AUTHOR = {
+  id: '1000000000000000001',
+  username: 'wumpus',
+  global_name: 'Wumpus',
+  avatar: null,
+  discriminator: '0',
+};
+const APP = {
+  id: '1000000000000000002',
+  username: 'helper',
+  global_name: null,
+  avatar: null,
+  discriminator: '0',
+  bot: true,
+};
+
+/** The last interaction the message sent, shown under it (what your bot would receive). */
+export const InteractionLog = ({ data }: { data: APIMessageComponentInteractionData | null }) =>
+  data == null ? null : (
+    <pre style={{ marginTop: 16, color: 'var(--text-muted)', fontSize: 12, whiteSpace: 'pre-wrap' }}>
+      {JSON.stringify(data, null, 2)}
+    </pre>
+  );
+
+InteractionLog.displayName = 'InteractionLog';
+
+interface MessageStoryProps {
+  content: string;
+  bot: boolean;
+  edited: boolean;
+  ephemeral: boolean;
+  loading: boolean;
+  silent: boolean;
+  withButtons: boolean;
+  reply: boolean;
+  reactions: boolean;
+}
+
+const MessageStory = ({
+  content,
+  bot,
+  edited,
+  ephemeral,
+  loading,
+  silent,
+  withButtons,
+  reply,
+  reactions,
+}: MessageStoryProps) => {
+  const [interaction, setInteraction] = useState<APIMessageComponentInteractionData | null>(null);
+  const message: APIMessage = {
+    ...BASE_MESSAGE,
+    id: loading ? `${(BigInt(Date.now() - 1420070400000) << 22n).toString()}` : BASE_MESSAGE.id,
+    type: reply ? MessageType.Reply : loading ? MessageType.ChatInputCommand : MessageType.Default,
+    content: loading ? '' : content,
+    timestamp: new Date().toISOString(),
+    edited_timestamp: edited ? new Date().toISOString() : null,
+    author: bot || loading ? APP : AUTHOR,
+    flags:
+      (ephemeral ? MessageFlags.Ephemeral : 0) |
+      (loading ? MessageFlags.Loading : 0) |
+      (silent ? MessageFlags.SuppressNotifications : 0),
+    interaction: loading || ephemeral ? { id: '1', type: 2, name: 'ping', user: AUTHOR } : undefined,
+    message_reference: reply ? { message_id: '1299999999999999999', channel_id: BASE_MESSAGE.channel_id } : undefined,
+    referenced_message: reply
+      ? { ...BASE_MESSAGE, id: '1299999999999999999', content: 'The message being replied to', author: APP }
+      : undefined,
+    reactions: reactions
+      ? [
+          { emoji: { id: null, name: '👍' }, count: 3, count_details: { burst: 0, normal: 3 }, me: true },
+          { emoji: { id: null, name: '🎉' }, count: 1, count_details: { burst: 0, normal: 1 }, me: false },
+        ]
+      : [],
+    components: withButtons
+      ? [
+          {
+            type: 1,
+            components: [
+              { type: 2, style: 1, label: 'Accept', custom_id: 'accept' },
+              { type: 2, style: 2, label: 'Later', custom_id: 'later' },
+              { type: 2, style: 5, label: 'Docs', url: 'https://discord.com/developers/docs' },
+            ],
+          },
+        ]
+      : [],
+  };
+  return (
+    <div style={{ width: 640 }}>
+      <ChatList>
+        <MessageListItem message={message}>
+          <Message
+            message={message}
+            onInteraction={({ data }) => {
+              setInteraction(data);
+              return new Promise((resolve) => setTimeout(resolve, 1000));
+            }}
+          />
+        </MessageListItem>
+      </ChatList>
+      <InteractionLog data={interaction} />
+    </div>
+  );
+};
+
+MessageStory.displayName = 'MessageStory';
+
 const message: StoryGroup = {
   title: 'Message',
   stories: [
+    {
+      name: 'Message',
+      id: 'message',
+      component: MessageStory,
+      docs: 'A message from its API object. Clicking a button calls onInteraction; returning a promise shows the loading state until it settles.',
+      controls: {
+        content: { label: 'Content', type: 'text', defaultValue: 'Hello from the message renderer!' },
+        bot: { label: 'Sent by an app', type: 'boolean', defaultValue: true },
+        edited: { label: 'Edited', type: 'boolean', defaultValue: false },
+        reply: { label: 'Reply', type: 'boolean', defaultValue: false },
+        withButtons: { label: 'Buttons', type: 'boolean', defaultValue: true },
+        reactions: { label: 'Reactions', type: 'boolean', defaultValue: false },
+        ephemeral: { label: 'Ephemeral', type: 'boolean', defaultValue: false },
+        loading: { label: 'Loading (thinking)', type: 'boolean', defaultValue: false },
+        silent: { label: 'Silent (@silent)', type: 'boolean', defaultValue: false },
+      },
+    },
     {
       name: 'Fixtures',
       id: 'message-fixtures',
