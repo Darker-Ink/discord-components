@@ -43,6 +43,9 @@ jobs:
       - name: Check formatting
         run: pnpm format:check
 
+      - name: Test builders
+        run: pnpm --filter @discord-mana/builders test
+
       - name: Build packages
         run: pnpm build
 

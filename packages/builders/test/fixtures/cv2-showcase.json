@@ -1,0 +1,75 @@
+{
+  "flags": 32768,
+  "username": "Shop",
+  "components": [
+    { "type": 10, "content": "# Weekly shop\nFresh items every Monday." },
+    {
+      "type": 17,
+      "accent_color": 16426522,
+      "components": [
+        {
+          "type": 9,
+          "components": [
+            { "type": 10, "content": "### Golden Sword" },
+            { "type": 10, "content": "Deals **+20** damage.\n-# Limited stock" }
+          ],
+          "accessory": {
+            "type": 11,
+            "media": { "url": "https://cdn.example.com/items/sword.png" },
+            "description": "A golden sword"
+          }
+        },
+        { "type": 14, "divider": true, "spacing": 2 },
+        {
+          "type": 9,
+          "components": [{ "type": 10, "content": "### Shield of Light" }],
+          "accessory": { "type": 2, "style": 3, "label": "Buy", "custom_id": "buy:shield" }
+        },
+        {
+          "type": 12,
+          "items": [
+            { "media": { "url": "https://cdn.example.com/items/shield-1.png" }, "description": "Front" },
+            { "media": { "url": "https://cdn.example.com/items/shield-2.png" }, "spoiler": true },
+            { "media": { "url": "attachment://shield-3.png" } }
+          ]
+        },
+        {
+          "type": 1,
+          "components": [
+            { "type": 2, "style": 2, "label": "Previous", "custom_id": "page:prev", "disabled": true },
+            { "type": 2, "style": 2, "label": "Next", "custom_id": "page:next" }
+          ]
+        }
+      ]
+    },
+    {
+      "type": 17,
+      "spoiler": true,
+      "components": [
+        { "type": 10, "content": "Mystery box contents" },
+        { "type": 13, "file": { "url": "attachment://contents.txt" }, "spoiler": true }
+      ]
+    },
+    { "type": 14 },
+    {
+      "type": 1,
+      "id": 100,
+      "components": [
+        {
+          "type": 5,
+          "custom_id": "gift",
+          "placeholder": "Gift an item to…",
+          "default_values": [{ "type": "user", "id": "123456789012345678" }]
+        }
+      ]
+    },
+    {
+      "type": 1,
+      "components": [{ "type": 8, "custom_id": "channel", "channel_types": [0, 5], "min_values": 0, "max_values": 3 }]
+    }
+  ],
+  "attachments": [
+    { "id": 0, "filename": "shield-3.png" },
+    { "id": 1, "filename": "contents.txt" }
+  ]
+}

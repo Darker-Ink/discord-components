@@ -1,14 +1,6 @@
 // The editing state (document, selection, undo/redo history) as a pure reducer, and a small framework-agnostic
 // store around it that the React bindings subscribe to.
-import {
-  duplicateNode,
-  insertNode,
-  moveNode,
-  removeNode,
-  setMode,
-  updateNode,
-  type SetModeOptions,
-} from './actions';
+import { duplicateNode, insertNode, moveNode, removeNode, setMode, updateNode, type SetModeOptions } from './actions';
 import { fromJSON, toJSON } from './json';
 import type { TemplateType } from './templates';
 import { findNode } from './tree';

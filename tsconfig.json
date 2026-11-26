@@ -3,7 +3,14 @@
   "compilerOptions": {
     "allowImportingTsExtensions": true
   },
-  "include": ["types", "build", "packages/*/src", "packages/*/vite.config.ts"],
+  "include": [
+    "types",
+    "build",
+    "packages/*/src",
+    "packages/*/vite.config.ts",
+    "packages/builders/test",
+    "packages/builders/vitest.config.ts"
+  ],
   // The preview Worker mixes DOM and Workers types; it has its own tsconfigs (run by `typecheck`).
   "exclude": ["packages/preview"]
 }

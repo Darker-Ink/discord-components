@@ -1,0 +1,5 @@
+{
+  "content": "Hello, World!",
+  "tts": false,
+  "embeds": [{ "title": "Hello, Embed!", "description": "This is an embedded message." }]
+}
