@@ -48,3 +48,6 @@ jobs:
 
       - name: Check built packages
         run: node scripts/check-dist.mjs
+
+      - name: Build sites
+        run: pnpm build:sites

@@ -45,12 +45,12 @@ npx wrangler d1 create discord-mana-preview        # put the printed database_id
 npx wrangler r2 bucket create discord-mana-preview-payloads
 pnpm db:migrate:remote
 openssl rand -base64 32 | npx wrangler secret put SIGNING_SECRET
-pnpm deploy                                         # vite build && wrangler deploy
+pnpm run deploy                                     # vite build && wrangler deploy
 ```
 
 `wrangler.jsonc` routes the Worker to `preview.discord-mana.dev` as a Custom Domain. The `discord-mana.dev` zone has
 to be on the same Cloudflare account; the first deploy creates the DNS record and certificate (don't add a record for
-`preview` yourself). From the repo root, `pnpm deploy:preview` does the same as `pnpm deploy` here.
+`preview` yourself). From the repo root, `pnpm deploy:preview` does the same as `pnpm run deploy` here.
 
 Creating a 10 MiB preview parses and validates every message, which takes well over the 10 ms of CPU time the
 Workers Free plan allows; use Workers Paid (or lower `MAX_BODY_BYTES`). A 5,000-message, 2 MB transcript takes

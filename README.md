@@ -2,6 +2,8 @@
 
 React versions of Discord's UI components. The styles, props and markup come straight from Discord's own web build, and every component is checked pixel by pixel against the real thing in all four themes.
 
+Links: [Home](https://discord-mana.dev), [Playground](https://play.discord-mana.dev), [Preview](https://preview.discord-mana.dev)
+
 ## What's included
 
 | Package                    | What it has                                                                                                                               |
@@ -137,7 +139,7 @@ pnpm install
 pnpm dev
 ```
 
-This opens the playground at http://localhost:5173. Pick a collection on the left, then a story. The controls panel changes the story's props, and the settings menu switches the theme.
+This opens the playground at http://localhost:5173 (the hosted one is at https://play.discord-mana.dev). Pick a collection on the left, then a story. The controls panel changes the story's props, and the settings menu switches the theme.
 
 ## How it's built
 
@@ -165,10 +167,12 @@ The reference server runs Discord's own components from the downloaded build. `c
 
 ## Scripts
 
-| Command          | What it does                    |
-| ---------------- | ------------------------------- |
-| `pnpm dev`       | Start the playground            |
-| `pnpm build`     | Build every package             |
-| `pnpm typecheck` | Type check the whole repo       |
-| `pnpm lint`      | Run ESLint                      |
-| `pnpm format`    | Format everything with Prettier |
+| Command              | What it does                                                                       |
+| -------------------- | ---------------------------------------------------------------------------------- |
+| `pnpm dev`           | Start the playground                                                               |
+| `pnpm build`         | Build every package                                                                |
+| `pnpm build:sites`   | Build the playground, the preview site and the home page                           |
+| `pnpm deploy:<name>` | Deploy `playground`, `preview` or `site` to Cloudflare (see each package's README) |
+| `pnpm typecheck`     | Type check the whole repo                                                          |
+| `pnpm lint`          | Run ESLint                                                                         |
+| `pnpm format`        | Format everything with Prettier                                                    |

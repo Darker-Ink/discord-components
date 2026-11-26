@@ -27,7 +27,7 @@ The playground is static assets on Cloudflare Workers, with no Worker script. `w
 
 ```sh
 npx wrangler login
-pnpm deploy     # vite build && wrangler deploy
+pnpm run deploy # vite build && wrangler deploy
 ```
 
-The `discord-mana.dev` zone has to be on the same Cloudflare account. The first deploy creates the DNS record and certificate for `play`. From the repo root, `pnpm deploy:playground` does the same.
+The `discord-mana.dev` zone has to be on the same Cloudflare account. The first deploy creates the DNS record and certificate for `play`. From the repo root, `pnpm deploy:playground` does the same as `pnpm run deploy` here.
