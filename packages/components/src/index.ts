@@ -65,3 +65,4 @@ export * from './InlineNotice';
 export * from './LegacyButton';
 export * from './Flex';
 export * from './CopyInput';
+export * from './ColorPicker';
