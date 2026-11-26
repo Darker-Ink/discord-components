@@ -108,3 +108,16 @@ export {
   type MessageBuilderOptions,
   type MessageBuilderProviderProps,
 } from './react';
+export {
+  buildWebhookRequest,
+  editWebhookMessage,
+  isWebhookUrl,
+  parseDiscordErrors,
+  parseWebhookUrl,
+  sendWebhookMessage,
+  type ParsedWebhookUrl,
+  type SendWebhookOptions,
+  type WebhookFile,
+  type WebhookRequest,
+  type WebhookResult,
+} from './webhook';
