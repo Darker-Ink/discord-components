@@ -319,7 +319,6 @@ export const Autocomplete = ({ ref, editorRef, type, textValue, onPopupChange }:
   const rows = useMemo(() => {
     if (query == null) return null;
     const rowProps = (index: number) => ({
-      key: index,
       index,
       selected: selectedIndex === index,
       onClick: select,
@@ -334,7 +333,7 @@ export const Autocomplete = ({ ref, editorRef, type, textValue, onPopupChange }:
         <Fragment key="mentions">
           <Title id={id} title={heading} />
           {users.map((user, i) => (
-            <Row {...rowProps(i)}>
+            <Row key={i} {...rowProps(i)}>
               <RowContent>
                 <RowIcon>
                   <Avatar
@@ -355,7 +354,7 @@ export const Autocomplete = ({ ref, editorRef, type, textValue, onPopupChange }:
           ))}
           {globals.length > 0 && users.length > 0 ? <Divider /> : null}
           {globals.map((global, i) => (
-            <Row {...rowProps(users.length + i)}>
+            <Row key={users.length + i} {...rowProps(users.length + i)}>
               <RowContent>
                 <RowPrimary>
                   <RowHeading>{global.text}</RowHeading>
@@ -366,7 +365,7 @@ export const Autocomplete = ({ ref, editorRef, type, textValue, onPopupChange }:
           ))}
           {roles.length > 0 && (users.length > 0 || globals.length > 0) ? <Divider /> : null}
           {roles.map((role, i) => (
-            <Row {...rowProps(users.length + globals.length + i)}>
+            <Row key={users.length + globals.length + i} {...rowProps(users.length + globals.length + i)}>
               <RowContent>
                 <RowPrimary>
                   <RowHeading>
@@ -390,7 +389,7 @@ export const Autocomplete = ({ ref, editorRef, type, textValue, onPopupChange }:
             const Icon = CHANNEL_ICONS[channel.type] ?? ChatIcon;
             const category = channel.parent_id != null ? resolvers.resolveChannel?.(channel.parent_id) : null;
             return (
-              <Row {...rowProps(i)}>
+              <Row key={i} {...rowProps(i)}>
                 <RowContent>
                   <RowIcon>
                     <Icon className={rowStyles.icon} />
@@ -414,7 +413,7 @@ export const Autocomplete = ({ ref, editorRef, type, textValue, onPopupChange }:
               ? resolvers.getEmojiURL?.({ id: emoji.id, name: emoji.name, animated: emoji.animated, size: 48 })
               : resolvers.getEmojiURL?.({ name: emoji.surrogates, size: 48 });
           return (
-            <Row {...rowProps(i)} small>
+            <Row key={i} {...rowProps(i)} small>
               <RowContent>
                 <RowIcon>
                   {url != null ? (
