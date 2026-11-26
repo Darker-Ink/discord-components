@@ -94,6 +94,7 @@
 /* Palette rail */
 .palette {
   box-sizing: border-box;
+  min-width: 0;
   grid-area: palette;
   min-height: 0;
   overflow-y: auto;
@@ -103,6 +104,7 @@
 /* The channel: the client's chat panel, with its rounded corner against the rail. */
 .channel {
   background: var(--background-base-lower);
+  min-width: 0;
   border: 1px solid var(--border-subtle);
   border-bottom: 0;
   border-right: 0;
@@ -147,6 +149,7 @@
 /* Tools */
 .side {
   background: var(--background-base-lower);
+  min-width: 0;
   border-left: 1px solid var(--border-subtle);
   border-top: 1px solid var(--border-subtle);
   box-sizing: border-box;
@@ -212,7 +215,8 @@
     margin-inline-start: auto;
   }
   .palette {
-    overflow: visible;
+    min-width: 0;
+    overflow: hidden;
     padding: 4px 16px 12px;
   }
   .channel {
