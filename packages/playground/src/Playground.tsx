@@ -45,6 +45,9 @@ playgroundStore.setState({
   controlOverrides: Object.keys(initialLocation.overrides).length > 0 ? initialLocation.overrides : null,
 });
 
+// Like the client's body, the page itself never scrolls; the root's top offset would otherwise let it.
+if (!initialLocation.embed) document.body.style.overflow = 'hidden';
+
 const DARK_SCHEME_QUERY = '(prefers-color-scheme: dark)';
 
 const subscribeToColorScheme = (onChange: () => void) => {
@@ -86,20 +89,21 @@ export const Playground = ({ collections }: { collections: Collection[] }) => {
     };
   }, [selectedCollection, selectedStory, collections]);
 
+  // The client puts the HDR setting on the root element's style.
   useEffect(() => {
-    if (!initialLocation.embed) writeLocation(collection?.id, story?.id ?? null, theme, settings.experiments);
-  }, [collection, story, theme, settings.experiments]);
+    document.documentElement.style.setProperty('dynamic-range-limit', settings.hdrDynamicRange);
+  }, [settings.hdrDynamicRange]);
+
+  useEffect(() => {
+    if (!initialLocation.embed) writeLocation(collection?.id, story?.id ?? null, theme);
+  }, [collection, story, theme]);
 
   const Provider = collection?.Provider;
 
   if (initialLocation.embed) {
     if (story == null) return null;
     const embedded = <EmbeddedStory story={story} overrides={initialLocation.overrides} />;
-    return (
-      <AppRoot theme={theme} experiments={initialLocation.experiments}>
-        {Provider != null ? <Provider>{embedded}</Provider> : embedded}
-      </AppRoot>
-    );
+    return <AppRoot theme={theme}>{Provider != null ? <Provider>{embedded}</Provider> : embedded}</AppRoot>;
   }
 
   const collectionName = collection?.name ?? 'Design System';
@@ -111,7 +115,6 @@ export const Playground = ({ collections }: { collections: Collection[] }) => {
   return (
     <AppRoot
       theme={theme}
-      experiments={settings.experiments}
       reducedMotion={settings.reducedMotion}
       highContrastMode={settings.highContrastMode}
       saturation={settings.saturation}

@@ -6,9 +6,10 @@ export type ThemeSetting = Theme | 'system';
 export type UIDensity = 'compact' | 'default' | 'cozy';
 export type ReducedMotionSetting = 'auto' | 'reduce' | 'no-preference';
 export type RoleStyle = 'username' | 'dot' | 'hidden';
+export type DynamicRange = 'no-limit' | 'standard';
 
 // The client settings Discord's playground settings menu changes. The standalone playground keeps them
-// itself; theme, motion, contrast, saturation, density, on/off indicators and experiments take effect,
+// itself; theme, motion, contrast, saturation, density, dynamic range and on/off indicators take effect,
 // the chat/role-color/display-name ones only change what the menu shows.
 export interface AppSettings {
   theme: ThemeSetting;
@@ -17,10 +18,10 @@ export interface AppSettings {
   saturation: number;
   uiDensity: UIDensity;
   messageDisplayCompact: boolean;
+  hdrDynamicRange: DynamicRange;
   roleStyle: RoleStyle;
   displayNameStylesEnabled: boolean;
   switchIconsEnabled: boolean;
-  experiments: string[];
 }
 
 const location = readLocation();
@@ -32,10 +33,10 @@ let settings: AppSettings = {
   saturation: 1,
   uiDensity: 'default',
   messageDisplayCompact: false,
+  hdrDynamicRange: 'no-limit',
   roleStyle: 'username',
   displayNameStylesEnabled: true,
   switchIconsEnabled: false,
-  experiments: location.experiments,
 };
 
 const listeners = new Set<() => void>();

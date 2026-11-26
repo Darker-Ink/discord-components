@@ -1,22 +1,18 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef } from 'react';
 import {
   IconButton,
-  MENU_EXPERIMENT,
   Menu,
   MenuCheckboxItem,
   MenuControlItem,
   MenuGroup,
   MenuItem,
   MenuRadioItem,
-  MenuSearchControl,
-  MenuSeparator,
   MenuSliderControl,
   Popout,
-  showToast,
 } from '@discord-components/components';
-import { SettingsIcon, TrashIcon } from '@discord-components/icons';
+import { SettingsIcon } from '@discord-components/icons';
 import { ThemeTypes } from '@discord-components/tokens';
-import { getAppSettings, updateAppSettings, useAppSettings, type ThemeSetting } from './appSettings';
+import { updateAppSettings, useAppSettings, type ThemeSetting } from './appSettings';
 import { ControlsLayout, playgroundStore } from './playgroundStore';
 
 const noop = () => {};
@@ -51,6 +47,12 @@ const ROLE_STYLE_OPTIONS = [
   { name: 'Show role colors in names', value: 'username' },
   { name: 'Show role colors next to names', value: 'dot' },
   { name: "Don't show role colors", value: 'hidden' },
+] as const;
+
+// Discord shows this one only in an experiment; here it's always on.
+const DYNAMIC_RANGE_OPTIONS = [
+  { name: 'Full Dynamic Range', value: 'no-limit' },
+  { name: 'Standard Range', value: 'standard' },
 ] as const;
 
 const useAccessibilityItems = () => {
@@ -130,6 +132,20 @@ const useAccessibilityItems = () => {
         action={() => updateAppSettings({ messageDisplayCompact: true })}
       />
     </MenuGroup>,
+    <MenuGroup key="hdr-dynamic-range">
+      <MenuItem id="hdr-dynamic-range" label="High Dynamic Range">
+        {DYNAMIC_RANGE_OPTIONS.map(({ name, value }) => (
+          <MenuRadioItem
+            key={value}
+            id={value}
+            group="hdr-dynamic-range"
+            checked={value === settings.hdrDynamicRange}
+            label={name}
+            action={() => updateAppSettings({ hdrDynamicRange: value })}
+          />
+        ))}
+      </MenuItem>
+    </MenuGroup>,
     <MenuGroup key="role-colors">
       <MenuItem id="role-colors" label="Role Colors">
         {ROLE_STYLE_OPTIONS.map(({ name, value }) => (
@@ -164,117 +180,11 @@ const useAccessibilityItems = () => {
   ];
 };
 
-// Client experiments our components react to. Unlike Discord's experiment registry these are on/off.
-const KNOWN_EXPERIMENTS = [MENU_EXPERIMENT, 'mana-badge-refresh', 'refresh-fast-follow-avatars'];
-
-const EXPERIMENT_VARIANTS = [
-  { id: 0, label: 'Control' },
-  { id: 1, label: 'Treatment' },
-];
-
-// Like the `fuzzysearch` package Discord filters experiments with: the query's characters in order.
-const fuzzyMatch = (query: string, text: string) => {
-  if (query.length > text.length) return false;
-  if (query.length === text.length) return query === text;
-  let position = 0;
-  outer: for (const char of query) {
-    while (position < text.length) if (text[position++] === char) continue outer;
-    return false;
-  }
-  return true;
-};
-
-const setExperiment = (id: string, variant: number | null) => {
-  const { experiments } = getAppSettings();
-  const others = experiments.filter((name) => name !== id);
-  updateAppSettings({ experiments: variant === 1 ? [...others, id] : others });
-};
-
-const copyExperimentLink = async (id: string) => {
-  if (typeof navigator.clipboard?.writeText !== 'function') return;
-  const params = new URLSearchParams(window.location.search);
-  params.set('experiments', id);
-  try {
-    await navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}?${params}`);
-    showToast({ text: 'Copied experiment link', variant: 'success' });
-  } catch {
-    // Clipboard access can be denied.
-  }
-};
-
-const renderExperiment = ({ id, overridden }: { id: string; overridden: boolean }) => (
-  <MenuItem key={id} id={id.replaceAll('--', '__')} label={id} action={() => setExperiment(id, null)}>
-    {EXPERIMENT_VARIANTS.map((variant) => (
-      <MenuCheckboxItem
-        key={`${variant.id}`}
-        id={`${variant.id}`}
-        label={variant.label}
-        checked={overridden ? variant.id === 1 : false}
-        action={() => setExperiment(id, variant.id)}
-      />
-    ))}
-    <MenuGroup>
-      {typeof navigator.clipboard?.writeText === 'function' && (
-        <MenuItem id="copy-link" label="Copy Link" action={() => void copyExperimentLink(id)} />
-      )}
-      {overridden && (
-        <MenuItem
-          id="clear-override"
-          label="Clear Override"
-          color="danger"
-          icon={TrashIcon}
-          action={() => setExperiment(id, null)}
-        />
-      )}
-    </MenuGroup>
-  </MenuItem>
-);
-
-const useExperimentItems = () => {
-  const { experiments } = useAppSettings();
-  const all = useMemo(
-    () =>
-      [...new Set([...KNOWN_EXPERIMENTS, ...experiments])]
-        .sort((a, b) => b.localeCompare(a))
-        .map((id) => ({ id, overridden: experiments.includes(id) })),
-    [experiments],
-  );
-  const [query, setQuery] = useState('');
-  const [filtered, setFiltered] = useState(all);
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setFiltered(query.trim().length === 0 ? all : all.filter(({ id }) => fuzzyMatch(query, id.toLowerCase())));
-  }, [all, query]);
-  const overridden = useMemo(() => all.filter((experiment) => experiment.overridden), [all]);
-  const others = useMemo(() => filtered.filter((experiment) => !experiment.overridden), [filtered]);
-  const search = (
-    <MenuControlItem
-      key="experiments-search"
-      id="experiments-search"
-      control={(props, ref) => (
-        <MenuSearchControl {...props} query={query} onChange={setQuery} ref={ref} placeholder="Search" />
-      )}
-    />
-  );
-  return overridden.length > 0
-    ? [
-        <MenuGroup key="overridden-group" label="Overridden Experiments">
-          {overridden.map(renderExperiment)}
-        </MenuGroup>,
-        <MenuSeparator key="separator-2" />,
-        <MenuItem key="other-experiments" id="other-experiments" label="Other Experiments">
-          {search}
-          {others.map(renderExperiment)}
-        </MenuItem>,
-      ]
-    : [search, ...others.map(renderExperiment)];
-};
-
-// Like Discord's playground settings menu: picking an item keeps the menu open.
+// Like Discord's playground settings menu: picking an item keeps the menu open. Discord's also has an
+// Experiments submenu for client experiments, which the standalone playground has none of.
 const SettingsMenu = () => {
   const appearanceItems = useAppearanceItems();
   const accessibilityItems = useAccessibilityItems();
-  const experimentItems = useExperimentItems();
   const controlsLayout = playgroundStore.useField('controlsLayout');
   const controlsGroup = useMemo(
     () => (
@@ -317,9 +227,6 @@ const SettingsMenu = () => {
       </MenuItem>
       <MenuItem id="accessibility" label="Accessibility">
         {accessibilityItems}
-      </MenuItem>
-      <MenuItem id="experiments" label="Experiments">
-        {experimentItems}
       </MenuItem>
     </Menu>
   );
