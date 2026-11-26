@@ -5,9 +5,6 @@ import {
   Checkbox as ManaCheckbox,
   CheckboxGroup as ManaCheckboxGroup,
   FormContextProvider,
-  FormText,
-  FormTextTypes,
-  FormTitle,
   RadioGroup as ManaRadioGroup,
   TextArea,
   TextInput as ManaTextInput,
@@ -15,6 +12,8 @@ import {
 import { useMessageI18n } from '../Message/messageI18n';
 import { useComponentContext, useComponentParents, useComponentState, type ComponentState } from './ComponentState';
 import { FileUpload } from './FileUpload';
+import { FormText, FormTextTypes } from './FormText';
+import { FormTitle } from './FormTitle';
 import {
   ComponentType,
   TextInputStyle,
