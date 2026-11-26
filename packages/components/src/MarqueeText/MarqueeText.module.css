@@ -1,0 +1,27 @@
+.container {
+  display: flex;
+  min-width: 0;
+  overflow: hidden;
+}
+.text {
+  display: inline-block;
+  inset-inline-start: 0;
+  max-width: 100%;
+  overflow: hidden;
+  position: relative;
+  text-overflow: ellipsis;
+  vertical-align: top;
+  white-space: nowrap;
+}
+.row:hover .container[data-marquee-overflow='true'],
+.row[data-marquee-active='true'] .container[data-marquee-overflow='true'] {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8px, #000 calc(100% - 8px), transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8px, #000 calc(100% - 8px), transparent);
+}
+.row:hover .container[data-marquee-overflow='true'] .text,
+.row[data-marquee-active='true'] .container[data-marquee-overflow='true'] .text {
+  inset-inline-start: calc(var(--custom-marquee-overflow, 0px) * -1);
+  max-width: none;
+  overflow: visible;
+  transition: inset-inline-start var(--custom-marquee-duration, 2s) linear;
+}
