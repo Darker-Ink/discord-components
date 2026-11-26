@@ -14,6 +14,8 @@ import {
   WebhookPanel,
   toPreviewMessage,
   useMessageBuilder,
+  mergeRestrictions,
+  restrictionPresets,
   prepareComponents,
   prepareEmbed,
   useMediaSizes,
@@ -289,6 +291,41 @@ ParityStory.displayName = 'ParityStory';
 
 const controls: Controls = { sample: sampleControl };
 
+// A "tag builder": text in one container, no media, no buttons or selects, no identity overrides.
+const TAG_RESTRICTIONS = mergeRestrictions(restrictionPresets.textOnly, {
+  modes: ['cv2'],
+  counts: { container: 1 },
+  message: { username: false, avatar_url: false },
+});
+
+const TAG_SAMPLE: WebhookMessagePayload = {
+  flags: 1 << 15,
+  components: [
+    {
+      type: 17,
+      accent_color: 0x57f287,
+      components: [
+        {
+          type: 10,
+          content: '## How to report a bug\nTell us what happened, what you expected, and how to make it happen again.',
+        },
+        { type: 14, divider: true, spacing: 1 },
+        { type: 10, content: '-# Screenshots and logs help: drop them in the thread.' },
+      ],
+    },
+  ],
+};
+
+const TagBuilderStory = () => (
+  <Frame>
+    <div style={{ flex: 1, minWidth: 0 }}>
+      <MessageBuilder defaultValue={TAG_SAMPLE} restrictions={TAG_RESTRICTIONS} resolvers={RESOLVERS} author={AUTHOR} />
+    </div>
+  </Frame>
+);
+
+TagBuilderStory.displayName = 'TagBuilderStory';
+
 const builder: StoryGroup = {
   title: 'Builder',
   stories: [
@@ -302,6 +339,7 @@ const builder: StoryGroup = {
         hidePalette: { type: 'boolean', label: 'Hide palette', defaultValue: false },
       },
     },
+    { name: 'Tag builder', id: 'builder-tag', component: TagBuilderStory },
     { name: 'Composed pieces', id: 'builder-composed', component: ComposedStory, controls },
     {
       name: 'BuilderCanvas',
