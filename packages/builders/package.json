@@ -39,11 +39,13 @@
     "@discord-mana/icons": "workspace:*",
     "@discord-mana/messages": "workspace:*",
     "@discord-mana/tokens": "workspace:*",
-    "clsx": "^2.1.1"
+    "clsx": "^2.1.1",
+    "use-sync-external-store": "^1.7.0"
   },
   "devDependencies": {
     "@types/react": "^19.3.3",
     "@types/react-dom": "^19.3.0",
+    "@types/use-sync-external-store": "^1.7.0",
     "react": "^19",
     "react-dom": "^19.3.1",
     "vitest": "^5.1.2"
