@@ -16,6 +16,7 @@ import {
   useMessageBuilder,
   prepareComponents,
   prepareEmbed,
+  useMediaSizes,
   type BuilderMode,
   type WebhookMessagePayload,
 } from '@discord-mana/builders';
@@ -229,12 +230,30 @@ const preparePreview = (message: APIMessage): APIMessage => ({
  * The same JSON drawn twice: by the builder (nothing selected) and by `<Message>`. They should be identical
  * (scripts/builder-e2e.mjs compares them pixel by pixel).
  */
-const ParityStory = ({ sample, side }: { sample: string; side: string }) => {
+const PARITY_VALIDATION = { applicationOwnedWebhook: true };
+
+const parsePayload = (text: string) => {
+  try {
+    return JSON.parse(text) as WebhookMessagePayload;
+  } catch {
+    return null;
+  }
+};
+
+const ParityStory = ({ sample, side, payload }: { sample: string; side: string; payload: string }) => {
   const [timestamp] = useState('2026-11-26T12:00:00.000Z');
-  const builder = useMessageBuilder(SAMPLES[sample]);
+  // Interactive buttons are fine here: the parity check is about drawing, not about the webhook's owner.
+  const builder = useMessageBuilder({
+    defaultValue: (payload !== '' ? parsePayload(payload) : null) ?? SAMPLES[sample],
+    validation: PARITY_VALIDATION,
+  });
+  const sizes = useMediaSizes();
   const message = useMemo(
-    () => toPreviewMessage(builder.doc, { author: AUTHOR, timestamp, channelId: '1300000000000000003' }),
-    [builder.doc, timestamp],
+    () =>
+      preparePreview(toPreviewMessage(builder.doc, { author: AUTHOR, timestamp, channelId: '1300000000000000003' })),
+    // `sizes` changes when an image's size becomes known.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [builder.doc, timestamp, sizes],
   );
   return (
     <MediaViewerProvider>
@@ -247,7 +266,7 @@ const ParityStory = ({ sample, side }: { sample: string; side: string }) => {
           <ol style={{ listStyle: 'none', margin: 0, padding: 0 }}>
             <MessageListItem message={message}>
               <Message
-                message={preparePreview(message)}
+                message={message}
                 resolvers={RESOLVERS}
                 renderMarkdown={renderMessageMarkdown}
                 renderEmbedMarkdown={renderEmbedMarkdown}
@@ -334,6 +353,7 @@ const builder: StoryGroup = {
             { label: '<Message>', value: 'reference' },
           ],
         },
+        payload: { type: 'text', label: 'Payload JSON (replaces the sample)', defaultValue: '' },
       },
     },
   ],
