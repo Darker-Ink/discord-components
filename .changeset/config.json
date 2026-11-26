@@ -10,7 +10,8 @@
       "@discord-mana/components",
       "@discord-mana/messages",
       "@discord-mana/markdown",
-      "@discord-mana/slate"
+      "@discord-mana/slate",
+      "@discord-mana/builders"
     ]
   ],
   "linked": [],

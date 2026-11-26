@@ -1,0 +1,72 @@
+{
+  "name": "@discord-mana/builders",
+  "version": "0.0.0",
+  "description": "Discord message builder for React: an editable embed and Components v2 editor with drag and drop, Discord's validation rules, JSON import and export, and webhook sending.",
+  "keywords": [
+    "discord",
+    "mana",
+    "react",
+    "embeds",
+    "components-v2",
+    "message-builder",
+    "webhook"
+  ],
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Darker-Ink/discord-components.git",
+    "directory": "packages/builders"
+  },
+  "type": "module",
+  "sideEffects": [
+    "**/*.css",
+    "./dist/index.js"
+  ],
+  "exports": {
+    ".": "./src/index.ts",
+    "./core": "./src/core/index.ts"
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@discord-mana/components": "workspace:*",
+    "@discord-mana/icons": "workspace:*",
+    "@discord-mana/messages": "workspace:*",
+    "@discord-mana/tokens": "workspace:*",
+    "clsx": "^2.1.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.3",
+    "@types/react-dom": "^19.3.0",
+    "react": "^19",
+    "react-dom": "^19.3.1",
+    "vitest": "^5.1.2"
+  },
+  "peerDependencies": {
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  "publishConfig": {
+    "access": "public",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "./core": {
+        "types": "./dist/core/index.d.ts",
+        "default": "./dist/core/index.js"
+      },
+      "./style.css": "./dist/style.css",
+      "./package.json": "./package.json"
+    }
+  }
+}

@@ -14,6 +14,7 @@ const stylesheets = [
   '@discord-mana/messages/style.css',
   '@discord-mana/markdown/style.css',
   '@discord-mana/slate/style.css',
+  '@discord-mana/builders/style.css',
 ];
 
 export default defineLibraryConfig(import.meta.dirname, {

@@ -34,6 +34,7 @@
     "build": "vite build"
   },
   "dependencies": {
+    "@discord-mana/builders": "workspace:*",
     "@discord-mana/components": "workspace:*",
     "@discord-mana/icons": "workspace:*",
     "@discord-mana/markdown": "workspace:*",

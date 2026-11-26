@@ -4,3 +4,4 @@ export * from '@discord-mana/components';
 export * from '@discord-mana/messages';
 export * from '@discord-mana/markdown';
 export * from '@discord-mana/slate';
+export * from '@discord-mana/builders';
