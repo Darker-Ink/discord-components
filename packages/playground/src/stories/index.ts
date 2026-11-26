@@ -48,7 +48,26 @@ const messageGroups = Object.values(
   import.meta.glob<StoryGroup>('./messages/*.tsx', { eager: true, import: 'default' }),
 );
 
+// Discord's older component collection, kept for app components that predate Mana.
+const VOID_GROUP_ORDER = [
+  'Select',
+  'Slider',
+  'TabBar',
+  'Avatar',
+  'Badges',
+  'Chip',
+  'Notice',
+  'VoidInputs',
+  'Form Components',
+  'Menu',
+  'Stacked Avatars',
+  'Stacked Guild Icons',
+];
+
+const voidGroups = Object.values(import.meta.glob<StoryGroup>('./void/*.tsx', { eager: true, import: 'default' }));
+
 export const collections: Collection[] = [
   { id: 'mana', name: 'Mana', groups: manaGroups.sort(byOrder(MANA_GROUP_ORDER)) },
+  { id: 'void', name: 'Void', groups: voidGroups.sort(byOrder(VOID_GROUP_ORDER)) },
   { id: 'messages', name: 'Messages', groups: messageGroups.sort(byOrder(MESSAGE_GROUP_ORDER)) },
 ];

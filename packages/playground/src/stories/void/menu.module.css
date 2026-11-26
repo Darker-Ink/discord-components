@@ -1,0 +1,12 @@
+.layerRoot {
+  min-height: 600px;
+  position: relative;
+  width: 100%;
+}
+.container {
+  align-items: flex-start;
+  display: flex;
+  justify-content: center;
+  min-height: 400px;
+  padding: 32px;
+}
