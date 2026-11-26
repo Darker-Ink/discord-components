@@ -5,6 +5,7 @@ import {
   KeyboardCode,
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   type DragEndEvent,
@@ -12,6 +13,7 @@ import {
   type DragStartEvent,
   type KeyboardCoordinateGetter,
   type PointerSensorOptions,
+  type TouchSensorOptions,
 } from '@dnd-kit/core';
 import { AccessibilityAnnouncer } from '@discord-mana/components';
 import { canMove, findNode, type BuilderDocument, type TemplateType } from '../../core';
@@ -48,8 +50,36 @@ class NodePointerSensor extends PointerSensor {
         { onActivation }: PointerSensorOptions,
       ) => {
         if (!nativeEvent.isPrimary || nativeEvent.button !== 0 || !startsDrag(nativeEvent.target)) return false;
+        // Touch has its own sensor: a long press drags, so a swipe still scrolls.
+        if (nativeEvent.pointerType === 'touch') return false;
         // Presses in a popout opened from the node reach it through React's tree; they aren't on the node.
         if (currentTarget instanceof Node && !currentTarget.contains(nativeEvent.target as Node)) return false;
+        onActivation?.({ event: nativeEvent });
+        return true;
+      },
+    },
+  ];
+}
+
+/**
+ * Elements a long press doesn't drag from: text (a tap there starts editing and swaps the element, which would
+ * lose the touch's end) and the editor's own controls.
+ */
+const NO_TOUCH_DRAG_SELECTOR = NO_DRAG_SELECTOR;
+
+/** Long-press to drag on touch screens; a quick swipe scrolls as usual. */
+class NodeTouchSensor extends TouchSensor {
+  static override activators = [
+    {
+      eventName: 'onTouchStart' as const,
+      handler: (
+        { nativeEvent, currentTarget }: { nativeEvent: TouchEvent; currentTarget: EventTarget | null },
+        { onActivation }: TouchSensorOptions,
+      ) => {
+        const target = nativeEvent.target;
+        if (nativeEvent.touches.length > 1) return false;
+        if (target instanceof Element && target.closest(NO_TOUCH_DRAG_SELECTOR) != null) return false;
+        if (currentTarget instanceof Node && !currentTarget.contains(target as Node)) return false;
         onActivation?.({ event: nativeEvent });
         return true;
       },
@@ -82,11 +112,12 @@ export const BuilderDndProvider = ({ children }: { children: ReactNode }) => {
   const isValidFor = useCallback(
     (doc: BuilderDocument, activeId: string, template: string | undefined) => (slot: DropSlot) => {
       const target = { parentId: slot.parentId, slot: slot.slot, index: slot.index };
-      if (template != null) return canPlace(doc, template as TemplateType, target);
+      const restrictions = store.getRestrictions();
+      if (template != null) return canPlace(doc, template as TemplateType, target, restrictions);
       if (isCurrentPosition(doc, activeId, slot)) return true;
-      return canMove(doc, activeId, { ...target, index: finalIndex(doc, activeId, slot) });
+      return canMove(doc, activeId, { ...target, index: finalIndex(doc, activeId, slot) }, { restrictions });
     },
-    [],
+    [store],
   );
 
   const remeasure = useCallback(() => {
@@ -142,6 +173,7 @@ export const BuilderDndProvider = ({ children }: { children: ReactNode }) => {
 
   const sensors = useSensors(
     useSensor(NodePointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(NodeTouchSensor, { activationConstraint: { delay: 350, tolerance: 8 } }),
     useSensor(KeyboardSensor, {
       coordinateGetter,
       keyboardCodes: {
@@ -164,7 +196,12 @@ export const BuilderDndProvider = ({ children }: { children: ReactNode }) => {
       startPointRef.current =
         activatorEvent instanceof PointerEvent || activatorEvent instanceof MouseEvent
           ? { x: activatorEvent.clientX, y: activatorEvent.clientY }
-          : null;
+          : typeof TouchEvent !== 'undefined' &&
+              activatorEvent instanceof TouchEvent &&
+              activatorEvent.touches[0] != null
+            ? { x: activatorEvent.touches[0].clientX, y: activatorEvent.touches[0].clientY }
+            : null;
+      if (!keyboard) navigator.vibrate?.(10);
       remeasure();
       if (keyboard) {
         // Start on the node's own place, so the first arrow press moves it one step.
@@ -215,7 +252,7 @@ export const BuilderDndProvider = ({ children }: { children: ReactNode }) => {
       const doc = store.getState().doc;
       const target = { parentId: dropTarget.parentId, slot: dropTarget.slot, index: dropTarget.index };
       if (current.template != null) {
-        const uid = placeTemplate(actions, doc, current.template as TemplateType, target);
+        const uid = placeTemplate(actions, doc, current.template as TemplateType, target, store.getRestrictions());
         if (uid != null) ui.set({ selectedId: uid, pendingFocus: { uid } });
         AccessibilityAnnouncer.announce(`Added ${current.label}.`, 'polite');
         return;

@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import {
   Button,
   Popout,
+  ScrollerThin,
   Switch,
   Text,
   TextInput,
@@ -44,7 +45,7 @@ export const PopoutPanel = ({
     <Text variant="heading-sm/semibold" color="text-strong" className={styles.title}>
       {title}
     </Text>
-    <div className={styles.body}>{children}</div>
+    <ScrollerThin className={styles.body}>{children}</ScrollerThin>
     {footer != null ? <div className={styles.footer}>{footer}</div> : null}
   </div>
 );

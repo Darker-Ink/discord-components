@@ -210,6 +210,8 @@ export const useNodeFrame = ({ uid, kind, disabled = false }: NodeFrameOptions) 
   const onContextMenu = (event: MouseEvent<HTMLElement>) => {
     if (disabled || !isInnermost(event) || isEditorUI(event.target)) return;
     event.preventDefault();
+    // On touch screens a long press drags; the menu is in the toolbar's "More".
+    if (ui.modality === 'touch') return;
     ui.set({ selectedId: uid, contextMenu: { uid, x: event.clientX, y: event.clientY } });
   };
 

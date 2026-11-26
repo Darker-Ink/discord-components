@@ -38,11 +38,26 @@
 }
 
 /*
- * Empty content next to embeds or components shows "Add a message" only while the canvas is pointed at or
- * focused; otherwise it takes no room, like the client's empty content.
+ * Empty content next to embeds or components takes no room, like the client's empty content: its "Add a message"
+ * sits on the header line instead (shown while the canvas is pointed at), so nothing moves when it appears.
  */
-.canvas:not(:hover):not(:focus-within):has([data-builder-node]) [data-builder-field='content'][data-empty] > * {
-  display: block;
-  height: 0;
-  overflow: hidden;
+.canvas:has([data-builder-node]) [id^='message-content-']:has(> [data-builder-field='content'][data-empty]) {
+  position: relative;
+}
+.canvas:has([data-builder-node]) [data-builder-field='content'][data-empty] > [role='textbox']:not([contenteditable]) {
+  font-size: 0.875rem;
+  inset-inline-end: 16px;
+  line-height: 1.375rem;
+  opacity: 0;
+  position: absolute;
+  top: -1.375rem;
+}
+.canvas:hover [data-builder-field='content'][data-empty] > [role='textbox']:not([contenteditable]),
+.canvas [data-builder-field='content'][data-empty] > [role='textbox']:not([contenteditable]):focus {
+  opacity: 1;
+}
+@media (pointer: coarse) {
+  .canvas [data-builder-field='content'][data-empty] > [role='textbox']:not([contenteditable]) {
+    opacity: 1;
+  }
 }

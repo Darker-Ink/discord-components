@@ -57,3 +57,16 @@
 [data-builder-kind='button'] {
   border-radius: 8px;
 }
+
+/* Touch: a long press drags the node instead of selecting text or opening the browser's menu. */
+@media (pointer: coarse) {
+  [data-builder-canvas]:not([data-readonly]) [data-builder-node] {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  [data-builder-canvas] [contenteditable] {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+}

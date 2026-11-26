@@ -16,6 +16,7 @@
   background: var(--background-base-lowest);
   border: 1px solid var(--border-subtle);
   border-radius: 8px;
+  display: flex;
   flex: 1;
   min-height: 240px;
   overflow: hidden;
@@ -27,28 +28,31 @@
 .editor[data-invalid] {
   border-color: var(--status-danger);
 }
+.scroller {
+  height: 100%;
+}
+.surface {
+  min-height: 100%;
+  min-width: 100%;
+  position: relative;
+  width: max-content;
+}
 .code,
 .input {
   box-sizing: border-box;
   font-family: var(--font-code);
   font-size: 13px;
   font-variant-ligatures: none;
-  inset: 0;
   line-height: 20px;
   margin: 0;
-  overflow: auto;
   padding: 10px 12px;
-  position: absolute;
   tab-size: 2;
   white-space: pre;
 }
 .code {
   color: var(--text-default);
+  min-height: 100%;
   pointer-events: none;
-  scrollbar-width: none;
-}
-.code::-webkit-scrollbar {
-  display: none;
 }
 .input {
   background: transparent;
@@ -56,7 +60,10 @@
   caret-color: var(--text-strong);
   color: transparent;
   height: 100%;
+  inset: 0;
   outline: none;
+  overflow: hidden;
+  position: absolute;
   resize: none;
   width: 100%;
 }

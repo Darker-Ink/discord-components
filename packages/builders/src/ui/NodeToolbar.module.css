@@ -95,3 +95,71 @@
 .kind {
   letter-spacing: 0.01em;
 }
+
+/* Touch screens: 44px targets. */
+@media (pointer: coarse) {
+  .button,
+  .handle {
+    height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* The docked bar (phones): along the bottom of the screen, above the safe area, scrolling sideways. */
+.dock {
+  align-items: center;
+  background: var(--background-surface-high);
+  border-top: 1px solid var(--border-subtle);
+  bottom: 0;
+  box-shadow: var(--shadow-high);
+  box-sizing: border-box;
+  color: var(--interactive-text-default);
+  display: flex;
+  font-family: var(--font-primary);
+  gap: 4px;
+  left: 0;
+  padding: 6px max(8px, env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom))
+    max(12px, env(safe-area-inset-left));
+  position: fixed;
+  right: 0;
+  z-index: 100;
+}
+.dock[data-hidden] {
+  display: none;
+}
+.dock .button {
+  height: 44px;
+  min-width: 44px;
+}
+.dockKind {
+  align-items: center;
+  color: var(--text-strong);
+  display: flex;
+  flex: none;
+  font-size: 13px;
+  font-weight: var(--font-weight-semibold);
+  gap: 6px;
+  padding-inline-end: 4px;
+  white-space: nowrap;
+}
+.dockTools {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  gap: 2px;
+  min-width: 0;
+}
+.dockDone {
+  appearance: none;
+  background: var(--control-primary-background-default);
+  border: 0;
+  border-radius: 8px;
+  color: var(--control-primary-text-default, var(--white));
+  cursor: pointer;
+  flex: none;
+  font-family: var(--font-primary);
+  font-size: 14px;
+  font-weight: var(--font-weight-semibold);
+  height: 36px;
+  padding: 0 14px;
+}

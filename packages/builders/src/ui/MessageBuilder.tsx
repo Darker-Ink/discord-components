@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useState, type CSSProperties, type ReactNode } from 'react';
 import clsx from 'clsx';
-import { HeaderBar, Tabs, type TabsItem } from '@discord-mana/components';
+import { HeaderBar, ScrollerAuto, ScrollerThin, Tabs, type TabsItem } from '@discord-mana/components';
 import { TextIcon } from '@discord-mana/icons';
 import { useBuilderIssues, useBuilderSelector, type BuilderMode } from '../core';
 import { BuilderCanvas, type BuilderAuthor } from './BuilderCanvas';
@@ -121,7 +121,7 @@ export const BuilderChannel = ({
         ) : null}
         {actions != null ? <div className={styles.channelActions}>{actions}</div> : null}
       </HeaderBar>
-      <div
+      <ScrollerAuto
         className={styles.channelScroller}
         // A click in the channel but outside the message clears the selection.
         onPointerUp={(event) => {
@@ -130,7 +130,7 @@ export const BuilderChannel = ({
         }}
       >
         {children}
-      </div>
+      </ScrollerAuto>
       {footer}
     </section>
   );
@@ -219,18 +219,22 @@ const Layout = ({
   const scope = useBuilderScope();
   const [size, setRoot] = useLayoutSize();
   const hasPanels = panels.length > 0;
-  return (
+  const grid = (
     <div
-      ref={setRoot}
-      className={clsx(styles.builder, className)}
+      className={clsx(styles.builder, size !== 'narrow' && styles.fill)}
       data-size={size}
       style={gridFor(size, !hidePalette, hasPanels)}
-      {...scope}
     >
       <ControlledMode mode={mode} />
       {!hidePalette ? (
         <aside className={styles.palette} aria-label="Add components">
-          <ComponentPalette compact={size === 'medium'} orientation={size === 'narrow' ? 'horizontal' : 'vertical'} />
+          {size === 'narrow' ? (
+            <ComponentPalette orientation="horizontal" />
+          ) : (
+            <ScrollerThin className={styles.paletteScroller}>
+              <ComponentPalette compact={size === 'medium'} />
+            </ScrollerThin>
+          )}
         </aside>
       ) : null}
       <BuilderChannel
@@ -247,9 +251,26 @@ const Layout = ({
       </BuilderChannel>
       {hasPanels ? (
         <aside className={styles.side} aria-label="Message tools">
-          <BuilderPanels panels={panels} webhookStorageKey={webhookStorageKey} fetch={fetchImpl} />
+          {size === 'narrow' ? (
+            <BuilderPanels panels={panels} webhookStorageKey={webhookStorageKey} fetch={fetchImpl} />
+          ) : (
+            <ScrollerThin className={styles.sideScroller}>
+              <BuilderPanels panels={panels} webhookStorageKey={webhookStorageKey} fetch={fetchImpl} />
+            </ScrollerThin>
+          )}
         </aside>
       ) : null}
+    </div>
+  );
+  return (
+    <div ref={setRoot} className={clsx(styles.root, className)} data-size={size} {...scope}>
+      {size === 'narrow' ? (
+        <ScrollerThin className={styles.rootScroller} scrollbarGutter={false}>
+          {grid}
+        </ScrollerThin>
+      ) : (
+        grid
+      )}
     </div>
   );
 };

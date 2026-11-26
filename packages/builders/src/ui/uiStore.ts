@@ -61,7 +61,7 @@ export const createBuilderUIStore = () => {
   const lists = new Map<string, HTMLElement>();
   return {
     /** How the user last interacted (focus selects a node only when it comes from the keyboard). */
-    modality: 'pointer' as 'pointer' | 'keyboard',
+    modality: 'pointer' as 'pointer' | 'touch' | 'keyboard',
     getState: () => state,
     set(patch: Partial<BuilderUIState>) {
       const next = { ...state, ...patch };

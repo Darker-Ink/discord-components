@@ -1,12 +1,21 @@
-import { useLayoutEffect, type ComponentType, type MouseEvent, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useState, type ComponentType, type MouseEvent, type ReactNode } from 'react';
 import clsx from 'clsx';
 import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react-dom';
-import { Tooltip, type PopoutRenderProps } from '@discord-mana/components';
+import { ScrollerNone, Tooltip, type PopoutRenderProps } from '@discord-mana/components';
 import { AnchoredPopout } from './popouts';
-import { CopyIcon, DragIcon, MoreHorizontalIcon, TrashIcon, type IconProps } from '@discord-mana/icons';
-import type { NodeKind } from '../core';
+import {
+  ArrowSmallDownIcon,
+  ArrowSmallUpIcon,
+  CopyIcon,
+  DragIcon,
+  MoreHorizontalIcon,
+  TrashIcon,
+  type IconProps,
+} from '@discord-mana/icons';
+import { findNode, type NodeKind } from '../core';
 import { isMac } from './NodeFrame';
 import { KIND_ICONS, KIND_LABELS } from './meta';
+import { useBuilderRender } from './renderContext';
 import { useBuilderContext } from './useBuilderContext';
 import { useBuilderUIStore } from './uiStore';
 import styles from './NodeToolbar.module.css';
@@ -88,9 +97,30 @@ export const NodeToolbarSeparator = () => <div className={styles.separator} role
 NodeToolbarSeparator.displayName = 'NodeToolbarSeparator';
 
 /** The bar above a selected node: drag handle, its own tools, duplicate, more and delete. */
+/** Whether text is being typed somewhere (a phone's keyboard is then up: the docked bar steps aside). */
+const useEditingText = () => {
+  const [editing, setEditing] = useState(false);
+  useEffect(() => {
+    const update = () => {
+      const element = document.activeElement;
+      setEditing(
+        element instanceof HTMLElement &&
+          (element.isContentEditable || element.tagName === 'INPUT' || element.tagName === 'TEXTAREA'),
+      );
+    };
+    document.addEventListener('focusin', update);
+    document.addEventListener('focusout', update);
+    return () => {
+      document.removeEventListener('focusin', update);
+      document.removeEventListener('focusout', update);
+    };
+  }, []);
+  return editing;
+};
+
 export const NodeToolbar = ({ uid, kind, tools }: { uid: string; kind: NodeKind; tools?: ReactNode }) => {
   const ui = useBuilderUIStore();
-  const { actions } = useBuilderContext();
+  const { actions, store } = useBuilderContext();
   // Stay on the canvas (a fixed toolbar would otherwise only be kept in the window).
   const boundary = ui.frames.get(uid)?.closest('[data-builder-canvas]') ?? 'clippingAncestors';
   const {
@@ -112,6 +142,56 @@ export const NodeToolbar = ({ uid, kind, tools }: { uid: string; kind: NodeKind;
     setReference(ui.frames.get(uid) ?? null);
   }, [setReference, ui, uid]);
   const KindIcon = KIND_ICONS[kind];
+  const { toolbar } = useBuilderRender();
+  const editingText = useEditingText();
+  if (toolbar === 'docked') {
+    const move = (offset: number) => {
+      const doc = store.getState().doc;
+      const location = findNode(doc, uid);
+      if (location == null || location.slot === 'accessory') return;
+      actions.move(uid, { parentId: location.parentId, slot: location.slot, index: location.index + offset });
+    };
+    return (
+      <div
+        className={styles.dock}
+        data-builder-ui
+        data-hidden={editingText || undefined}
+        role="toolbar"
+        aria-label={`${KIND_LABELS[kind]} tools`}
+      >
+        <span className={styles.dockKind}>
+          <KindIcon size="xs" color="currentColor" />
+          {KIND_LABELS[kind]}
+        </span>
+        <ScrollerNone orientation="horizontal" className={styles.dockTools}>
+          {tools}
+          {tools != null ? <NodeToolbarSeparator /> : null}
+          <NodeToolbarButton icon={ArrowSmallUpIcon} label="Move up" onClick={() => move(-1)} />
+          <NodeToolbarButton icon={ArrowSmallDownIcon} label="Move down" onClick={() => move(1)} />
+          <NodeToolbarButton
+            icon={CopyIcon}
+            label="Duplicate"
+            onClick={() => {
+              const copy = actions.duplicate(uid);
+              if (copy != null) ui.set({ selectedId: copy });
+            }}
+          />
+          <NodeToolbarButton
+            icon={MoreHorizontalIcon}
+            label="More"
+            onClick={(event) => {
+              const rect = event.currentTarget.getBoundingClientRect();
+              ui.set({ contextMenu: { uid, x: rect.left, y: rect.top - 4 } });
+            }}
+          />
+          <NodeToolbarButton icon={TrashIcon} label="Delete" danger onClick={() => actions.remove(uid)} />
+        </ScrollerNone>
+        <button type="button" className={styles.dockDone} onClick={() => ui.set({ selectedId: null })}>
+          Done
+        </button>
+      </div>
+    );
+  }
   return (
     <div
       ref={setFloating}
@@ -121,7 +201,7 @@ export const NodeToolbar = ({ uid, kind, tools }: { uid: string; kind: NodeKind;
       role="toolbar"
       aria-label={`${KIND_LABELS[kind]} tools`}
     >
-      <Tooltip text="Drag to move, or press Space on the selection" position="top">
+      <Tooltip text="Drag to move" position="top">
         <span className={styles.handle} aria-hidden>
           <DragIcon size="xs" color="currentColor" />
           <KindIcon size="xs" color="currentColor" />

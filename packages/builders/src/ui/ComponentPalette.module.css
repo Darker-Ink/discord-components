@@ -93,10 +93,12 @@
 }
 
 .horizontal {
+  display: block;
+}
+.row {
+  display: flex;
   flex-direction: row;
   gap: 4px;
-  overflow-x: auto;
-  scrollbar-width: none;
 }
 .horizontal .group,
 .horizontal .list {
@@ -110,4 +112,35 @@
   height: 32px;
   padding: 0 12px 0 10px;
   width: auto;
+}
+
+/* Tiles for a touch sheet. */
+.grid {
+  gap: 20px;
+}
+.grid .list {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+}
+.grid .item {
+  background: var(--background-mod-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  font-size: 15px;
+  gap: 10px;
+  height: 52px;
+  padding: 0 12px;
+}
+.grid .title {
+  font-size: 13px;
+  padding: 0 2px;
+}
+@media (pointer: coarse) {
+  .item {
+    height: 44px;
+  }
+  .grid .item {
+    height: 52px;
+  }
 }

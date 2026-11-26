@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type DragEvent, type ReactNode } from 'react';
 import clsx from 'clsx';
-import { Button, Text } from '@discord-mana/components';
+import { Button, ScrollerThin, Text } from '@discord-mana/components';
 import { CheckmarkLargeIcon, CopyIcon, DownloadIcon, UploadIcon } from '@discord-mana/icons';
 import { parseMessageJSON, stringifyMessage, useBuilderSelector } from '../core';
 import { useBuilderContext } from './useBuilderContext';
@@ -110,7 +110,6 @@ export const JsonPanel = ({ className, fileName = 'message.json', actions: extra
   const [copied, setCopied] = useState(false);
   const [dropping, setDropping] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const highlightRef = useRef<HTMLPreElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const text = draft ?? json;
 
@@ -219,59 +218,53 @@ export const JsonPanel = ({ className, fileName = 'message.json', actions: extra
         {extraActions}
       </div>
       <div className={styles.editor} data-invalid={state.status === 'error' || undefined}>
-        <pre ref={highlightRef} className={styles.code} aria-hidden>
-          {text.split('\n').map((line, index) => (
-            <span key={index} className={clsx(styles.line, { [styles.errorLine]: errorLine === index + 1 })}>
-              {highlightJSON(line)}
-              {'\n'}
-            </span>
-          ))}
-        </pre>
-        <textarea
-          ref={textareaRef}
-          className={styles.input}
-          value={text}
-          spellCheck={false}
-          autoCapitalize="off"
-          autoComplete="off"
-          aria-label="Message JSON"
-          aria-invalid={state.status === 'error'}
-          aria-describedby={state.status === 'error' ? 'builder-json-error' : undefined}
-          onChange={(event) => onChange(event.currentTarget.value)}
-          onBlur={() => {
-            // Leaving valid JSON shows it formatted again; invalid JSON stays as typed until it is fixed.
-            if (state.status === 'ok') setDraft(null);
-          }}
-          onScroll={(event) => {
-            if (highlightRef.current != null) {
-              highlightRef.current.scrollTop = event.currentTarget.scrollTop;
-              highlightRef.current.scrollLeft = event.currentTarget.scrollLeft;
-            }
-          }}
-          onKeyDown={(event) => {
-            if (event.key === 'Tab' && !event.shiftKey) {
-              event.preventDefault();
-              document.execCommand('insertText', false, '  ');
-            }
-          }}
-        />
+        {/* The scroller scrolls the text: the textarea is as big as its content, over a highlighted copy. */}
+        <ScrollerThin orientation="auto" className={styles.scroller} scrollbarGutter={false}>
+          <div className={styles.surface}>
+            <pre className={styles.code} aria-hidden>
+              {text.split('\n').map((line, index) => (
+                <span key={index} className={clsx(styles.line, { [styles.errorLine]: errorLine === index + 1 })}>
+                  {highlightJSON(line)}
+                  {'\n'}
+                </span>
+              ))}
+            </pre>
+            <textarea
+              ref={textareaRef}
+              className={styles.input}
+              value={text}
+              wrap="off"
+              spellCheck={false}
+              autoCapitalize="off"
+              autoComplete="off"
+              aria-label="Message JSON"
+              aria-invalid={state.status === 'error'}
+              aria-describedby={state.status === 'error' ? 'builder-json-error' : undefined}
+              onChange={(event) => onChange(event.currentTarget.value)}
+              onBlur={() => {
+                // Leaving valid JSON shows it formatted again; invalid JSON stays as typed until it is fixed.
+                if (state.status === 'ok') setDraft(null);
+              }}
+              onKeyDown={(event) => {
+                if (event.key === 'Tab' && !event.shiftKey) {
+                  event.preventDefault();
+                  document.execCommand('insertText', false, '  ');
+                }
+              }}
+            />
+          </div>
+        </ScrollerThin>
       </div>
       {state.status === 'error' ? (
         <div className={styles.error} id="builder-json-error" role="alert">
           <Text variant="body-sm/semibold" color="text-feedback-critical">
-            {state.line != null
-              ? `Invalid JSON at line ${state.line}, column ${state.column}`
-              : 'This JSON can’t be used'}
+            {state.line != null ? `Invalid JSON at line ${state.line}, column ${state.column}` : 'Invalid message'}
           </Text>
           <Text variant="body-sm/normal" color="text-muted">
-            {state.message}. The message keeps its last valid version until this is fixed.
+            {state.message}
           </Text>
         </div>
-      ) : (
-        <Text variant="body-xs/normal" color="text-muted" className={styles.hint}>
-          Edit the JSON directly, paste a payload, or drop a .json file here.
-        </Text>
-      )}
+      ) : null}
       {dropping ? (
         <div className={styles.dropOverlay} aria-hidden>
           <UploadIcon size="md" color="currentColor" />

@@ -2,32 +2,44 @@
  * Palette | channel | tools, like the client's server list | chat | member list. The columns are set from the
  * builder's own width (see MessageBuilder.tsx): the channel always keeps room for the message.
  */
+.root {
+  background: var(--background-base-lowest);
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+}
+.rootScroller {
+  height: 100%;
+}
+.fill {
+  height: 100%;
+}
 .builder {
   background: var(--background-base-lowest);
   box-sizing: border-box;
   color: var(--text-default);
   display: grid;
   font-family: var(--font-primary);
-  height: 100%;
   min-height: 0;
   min-width: 0;
   width: 100%;
-}
-.builder[data-size='narrow'] {
-  overflow-y: auto;
 }
 
 .palette {
   border-right: 1px solid var(--border-subtle);
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
   grid-area: palette;
   min-height: 0;
   min-width: 0;
-  overflow-y: auto;
+}
+.paletteScroller {
   padding: 16px 8px;
 }
-.builder[data-size='medium'] .palette {
-  padding: 12px 10px;
+.builder[data-size='medium'] .paletteScroller {
+  padding: 12px 4px 12px 10px;
 }
 .builder[data-size='narrow'] .palette {
   border-bottom: 1px solid var(--border-subtle);
@@ -47,7 +59,6 @@
   grid-area: side;
   min-height: 0;
   min-width: 0;
-  overflow-y: auto;
 }
 .builder[data-size='narrow'] .side {
   border-left: 0;
@@ -82,8 +93,11 @@
 .channelScroller {
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
   padding: 16px 0 48px;
+}
+.sideScroller {
+  display: flex;
+  flex-direction: column;
 }
 
 .panels {
