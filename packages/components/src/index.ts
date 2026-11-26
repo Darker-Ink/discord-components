@@ -73,3 +73,4 @@ export * from './MarqueeText';
 export * from './ClickableContainer';
 export * from './Listbox';
 export * from './Select';
+export * from './Combobox';
