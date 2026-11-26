@@ -126,8 +126,8 @@
   right: 0;
   z-index: 100;
 }
-.dock[data-hidden] {
-  display: none;
+.dock[data-keyboard] {
+  padding-bottom: 6px;
 }
 .dock .button {
   height: 44px;

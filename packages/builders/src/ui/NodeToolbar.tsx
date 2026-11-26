@@ -97,33 +97,28 @@ export const NodeToolbarSeparator = () => <div className={styles.separator} role
 NodeToolbarSeparator.displayName = 'NodeToolbarSeparator';
 
 /**
- * Whether an on-screen keyboard is up for text being typed: the docked bar would sit behind it (or crowd the
- * line being typed), so it steps aside. With a hardware keyboard, or once the keyboard is dismissed without
- * leaving the text (Android's back button), the bar stays.
+ * How much of the layout viewport's bottom an on-screen keyboard covers (0 when there's none). A docked bar sits
+ * on top of it, like the client's own formatting bar, instead of disappearing behind it.
  */
-const useSoftKeyboard = () => {
-  const [open, setOpen] = useState(false);
+const useKeyboardInset = () => {
+  const [inset, setInset] = useState(0);
   useEffect(() => {
     const viewport = window.visualViewport;
+    if (viewport == null) return;
     const update = () => {
-      const element = document.activeElement;
-      const typing =
-        element instanceof HTMLElement &&
-        (element.isContentEditable || element.tagName === 'INPUT' || element.tagName === 'TEXTAREA');
-      const covered = viewport != null && window.innerHeight - viewport.height > 120;
-      setOpen(typing && covered);
+      const covered = window.innerHeight - (viewport.offsetTop + viewport.height);
+      // Small differences are browser chrome (an address bar sliding away), not a keyboard.
+      setInset(covered > 120 ? Math.round(covered) : 0);
     };
     update();
-    document.addEventListener('focusin', update);
-    document.addEventListener('focusout', update);
-    viewport?.addEventListener('resize', update);
+    viewport.addEventListener('resize', update);
+    viewport.addEventListener('scroll', update);
     return () => {
-      document.removeEventListener('focusin', update);
-      document.removeEventListener('focusout', update);
-      viewport?.removeEventListener('resize', update);
+      viewport.removeEventListener('resize', update);
+      viewport.removeEventListener('scroll', update);
     };
   }, []);
-  return open;
+  return inset;
 };
 
 /** The bar above a selected node: drag handle, its own tools, duplicate, more and delete. */
@@ -152,7 +147,7 @@ export const NodeToolbar = ({ uid, kind, tools }: { uid: string; kind: NodeKind;
   }, [setReference, ui, uid]);
   const KindIcon = KIND_ICONS[kind];
   const { toolbar } = useBuilderRender();
-  const keyboard = useSoftKeyboard();
+  const keyboardInset = useKeyboardInset();
   if (toolbar === 'docked') {
     const move = (offset: number) => {
       const doc = store.getState().doc;
@@ -164,7 +159,8 @@ export const NodeToolbar = ({ uid, kind, tools }: { uid: string; kind: NodeKind;
       <div
         className={styles.dock}
         data-builder-ui
-        data-hidden={keyboard || undefined}
+        data-keyboard={keyboardInset > 0 || undefined}
+        style={keyboardInset > 0 ? { bottom: keyboardInset } : undefined}
         role="toolbar"
         aria-label={`${KIND_LABELS[kind]} tools`}
       >
