@@ -77,6 +77,16 @@ export interface ConnectPreviewOptions {
   onReady?: (event: ReadyEvent) => void;
   /** Set the iframe's height from the preview's resize messages. Default true. */
   autoResize?: boolean;
+  /**
+   * How long the preview waits before showing "This interaction failed", in ms. 0, Infinity or "none" never
+   * fail; other values are clamped to 100 ms to 24 hours.
+   */
+  timeouts?: {
+    /** For an interaction nobody answers. Default 3000 (Discord's 3 seconds). */
+    response?: number | 'none';
+    /** Once deferred ("thinking…"). Default 900000 (Discord's 15 minutes). */
+    deferred?: number | 'none';
+  };
 }
 
 export interface PreviewConnection {

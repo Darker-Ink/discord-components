@@ -251,6 +251,7 @@ export const Viewer = ({ id }: { id: string }) => {
     allowedOrigins: content?.options.allowedOrigins ?? null,
     setMessages,
     getMessages,
+    timeouts: { response: params.responseTimeout, deferred: params.deferredTimeout },
   });
   const theme = params.theme ?? content?.options.theme ?? 'dark';
   const title = content?.options.title ?? 'preview';

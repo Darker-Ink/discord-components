@@ -33,7 +33,29 @@ export interface ViewParams {
   reducedMotion: boolean | null;
   /** Sends interactions to the embedding page and takes its commands (needs `options.interactions` too). */
   interactions: boolean;
+  /** Milliseconds before an unanswered interaction fails; `Infinity` never fails it. */
+  responseTimeout: number;
+  /** Milliseconds a deferred ("thinking…") interaction may take; `Infinity` never fails it. */
+  deferredTimeout: number;
 }
+
+/** Discord's: 3 seconds to answer an interaction, 15 minutes once it is deferred. */
+export const DEFAULT_TIMEOUTS = { response: 3_000, deferred: 15 * 60_000 } as const;
+
+const MIN_TIMEOUT = 100;
+const MAX_TIMEOUT = 24 * 60 * 60_000;
+
+/**
+ * A timeout in ms from a URL param or a configure command: 0, Infinity and "none" mean never; other values are
+ * clamped to 100 ms to 24 hours. Anything else is `null` (keep the current value).
+ */
+export const parseTimeout = (value: unknown): number | null => {
+  if (value === 'none' || value === 'Infinity' || value === Infinity) return Infinity;
+  const number = typeof value === 'string' && value.trim() !== '' ? Number(value) : value;
+  if (typeof number !== 'number' || Number.isNaN(number) || number < 0) return null;
+  if (number === 0 || number === Infinity) return Infinity;
+  return Math.min(MAX_TIMEOUT, Math.max(MIN_TIMEOUT, Math.round(number)));
+};
 
 export const DEFAULT_VIEW_PARAMS: ViewParams = {
   theme: null,
@@ -48,6 +70,8 @@ export const DEFAULT_VIEW_PARAMS: ViewParams = {
   welcome: null,
   reducedMotion: null,
   interactions: false,
+  responseTimeout: DEFAULT_TIMEOUTS.response,
+  deferredTimeout: DEFAULT_TIMEOUTS.deferred,
 };
 
 const oneOf = <T extends string | number>(values: readonly T[], raw: string | null, parse: (raw: string) => T) => {
@@ -85,6 +109,8 @@ export const parseViewParams = (search: URLSearchParams): ViewParams => {
     welcome: flag(search.get('welcome')),
     reducedMotion: flag(search.get('reducedMotion')),
     interactions: flag(search.get('interactions')) ?? d.interactions,
+    responseTimeout: parseTimeout(search.get('responseTimeout')) ?? d.responseTimeout,
+    deferredTimeout: parseTimeout(search.get('deferredTimeout')) ?? d.deferredTimeout,
   };
 };
 
@@ -93,7 +119,7 @@ export const serializeViewParams = (params: Partial<ViewParams>) => {
   const search = new URLSearchParams();
   for (const [key, value] of Object.entries(params) as [keyof ViewParams, unknown][]) {
     if (value == null || value === DEFAULT_VIEW_PARAMS[key]) continue;
-    search.set(key, typeof value === 'boolean' ? (value ? '1' : '0') : String(value));
+    search.set(key, typeof value === 'boolean' ? (value ? '1' : '0') : value === Infinity ? 'none' : String(value));
   }
   return search.toString();
 };

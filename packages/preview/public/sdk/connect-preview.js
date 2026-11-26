@@ -100,6 +100,8 @@ export function connectPreview(iframe, options = {}) {
     switch (data.type) {
       case 'discord-mana:ready': {
         ready = true;
+        // Settings first (again after every reload of the preview), then whatever was queued.
+        if (options.timeouts != null) send({ type: PREFIX + 'configure', timeouts: options.timeouts });
         const pending = queue;
         queue = [];
         for (const item of pending) send(item);
