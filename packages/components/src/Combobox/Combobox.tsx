@@ -125,13 +125,13 @@ interface ComboboxBaseProps<T extends ListboxOption> {
 
 export interface SingleComboboxProps<T extends ListboxOption = ListboxOption> extends ComboboxBaseProps<T> {
   selectionMode: 'single';
-  value: T['value'] | null | undefined;
+  value?: T['value'] | null;
   onSelectionChange: (value: T['value'] | null | undefined) => void;
 }
 
 export interface MultipleComboboxProps<T extends ListboxOption = ListboxOption> extends ComboboxBaseProps<T> {
   selectionMode: 'multiple';
-  value: T['value'][] | null | undefined;
+  value?: T['value'][] | null;
   onSelectionChange: (value: T['value'][]) => void;
 }
 
