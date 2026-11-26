@@ -98,6 +98,8 @@ JSON everywhere, CORS enabled on `/api/*`. Authenticate with `Authorization: Bea
   "secret": false, // true: only signed links open it; `url` is null
   "options": {
     "interactive": false, // true: buttons and selects look enabled (clicking does nothing)
+    "interactions": false, // true: the embedding page handles interactions (see Interactions)
+    "allowedOrigins": ["https://app.example.com"], // optional: who may handle them
     "title": "ticket-1042", // channel-style header and page title
     "theme": "dark", // default theme: light | ash | dark | onyx
   },
@@ -151,13 +153,31 @@ window.addEventListener('message', (event) => {
 });
 ```
 
+## Interactions
+
+Previews created with `options.interactions: true` and embedded with `?interactions=1` send component clicks,
+select changes and modal submissions to the embedding page (`postMessage` events `discord-mana:interaction` and
+`discord-mana:modal-submit`, with `data` in the API's interaction data shapes), and take commands back:
+`append-message`, `update-message`, `delete-message`, `open-modal`, `set-loading`, `ack`, `interaction-failed`
+and `ping`, all prefixed `discord-mana:`. Commands are validated with the API's message and modal schemas (the
+validation code only loads on pages that use interactions); invalid ones are dropped with a console warning.
+Nothing is stored and nothing leaves the browser. Like Discord, an interaction nobody answers within 3 seconds
+fails; `set-loading` extends that to 15 minutes. `options.allowedOrigins` (up to 10 origins) limits which parent
+pages receive events and may send commands.
+
+`public/sdk/connect-preview.js` (with `connect-preview.d.ts`) is a dependency-free helper, served with CORS at
+`/sdk/connect-preview.js`: `connectPreview(iframe, { onInteraction, onModalSubmit, onReady })` returns
+`{ appendMessage, updateMessage, deleteMessage, openModal, setLoading, ack, fail, disconnect }`. `/docs#interactions`
+has a full example.
+
 ## Tests
 
 - `pnpm test`: API tests in the Workers runtime (`@cloudflare/vitest-plugin`, local D1 and R2, test limits from
   `vitest.config.ts`), including a 5,000-message preview.
 - `pnpm test:e2e [base-url]`: Playwright checks of the home page, the docs and the viewer in all four themes, signed,
   403 and 404 pages, URL params, a 5,000-message transcript at the top level and in a cross-origin auto-height
-  iframe, and phone-width layouts. Run it against `pnpm preview` (production build, strict
+  iframe, interactions from a parent page on another origin (clicks, selects, a modal, loading and failures,
+  invalid commands, `allowedOrigins`), and phone-width layouts. Run it against `pnpm preview` (production build, strict
   CSP); screenshots land in `test-results/e2e`. Set `CHROMIUM_PATH` if Chromium isn't at
   `/opt/pw-browsers/chromium`. Locally created keys count against the per-IP limit; clear it with
   `wrangler d1 execute DB --local --command "DELETE FROM key_creation_windows"`.

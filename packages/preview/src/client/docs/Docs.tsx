@@ -19,6 +19,7 @@ const SECTIONS = [
   { id: 'secret-previews', title: 'Secret previews and signed URLs' },
   { id: 'listing-and-deleting', title: 'Listing and deleting' },
   { id: 'embedding', title: 'Embedding' },
+  { id: 'interactions', title: 'Interactions' },
   { id: 'limits', title: 'Limits' },
   { id: 'errors', title: 'Errors' },
 ] as const;
@@ -166,6 +167,77 @@ app.get('/transcripts/:ticket', async (req, res) => {
   });
   const { url } = await response.json();
   res.redirect(url);
+});`;
+
+const INTERACTIONS_CREATE = `{
+  "data": [
+    {
+      "author": { "id": "1000000000000000002", "username": "Helper", "bot": true },
+      "content": "Tell us how we did.",
+      "components": [
+        { "type": 1, "components": [
+          { "type": 2, "style": 1, "label": "Leave feedback", "custom_id": "feedback" }
+        ] }
+      ]
+    }
+  ],
+  "options": {
+    "interactions": true,
+    "allowedOrigins": ["https://app.example.com"]
+  }
+}`;
+
+const INTERACTIONS_EXAMPLE = `<iframe id="transcript" src="${ORIGIN}/p/Tq58RezRWP8nnWke?interactions=1"
+  title="Feedback" style="width: 100%; border: 0"></iframe>
+
+<script type="module">
+  import { connectPreview } from '${ORIGIN}/sdk/connect-preview.js';
+
+  const bot = { id: '1000000000000000002', username: 'Helper', bot: true };
+
+  connectPreview(document.getElementById('transcript'), {
+    // A button was clicked: answer with a modal.
+    onInteraction(event, reply) {
+      if (event.data.custom_id !== 'feedback') return reply.fail();
+      reply.openModal({
+        custom_id: 'feedback_modal',
+        title: 'Leave feedback',
+        components: [
+          { type: 1, components: [
+            { type: 4, custom_id: 'rating', label: 'Rating (1 to 5)', style: 1, max_length: 1 },
+          ] },
+          { type: 1, components: [
+            { type: 4, custom_id: 'comment', label: 'Anything else?', style: 2, required: false },
+          ] },
+        ],
+      });
+    },
+    // The modal was submitted: show what was sent as a new message.
+    async onModalSubmit(event, reply) {
+      const values = Object.fromEntries(
+        event.data.components.map((row) => [row.components[0].custom_id, row.components[0].value]),
+      );
+      await fetch('/api/feedback', { method: 'POST', body: JSON.stringify(values) }); // your own backend
+      reply.reply({
+        author: bot,
+        content: \`Thanks! Rating: \${values.rating}. \${values.comment || 'No comment.'}\`,
+      });
+    },
+  });
+</script>`;
+
+const RAW_EVENTS = `window.addEventListener('message', (event) => {
+  if (event.origin !== '${ORIGIN}' || event.data?.type !== 'discord-mana:interaction') return;
+  const { interactionId, messageId, data } = event.data;
+  event.source.postMessage(
+    {
+      type: 'discord-mana:update-message',
+      interactionId,
+      messageId,
+      message: { content: \`You clicked \${data.custom_id}.\` },
+    },
+    '${ORIGIN}',
+  );
 });`;
 
 const IFRAME_SNIPPET = `<iframe
@@ -409,6 +481,18 @@ const Content = () => (
             'boolean',
             'Shows buttons and selects as enabled. Clicking them still does nothing. Default false.',
           ],
+          [
+            'options.interactions',
+            'boolean',
+            <>
+              Lets the embedding page handle <a href="#interactions">interactions</a>. Default false.
+            </>,
+          ],
+          [
+            'options.allowedOrigins',
+            'string[]',
+            'Origins allowed to handle interactions, e.g. https://app.example.com.',
+          ],
           ['expiresIn', 'integer', 'Seconds until the preview is deleted. Defaults to the preview lifetime below.'],
         ]}
       />
@@ -579,8 +663,108 @@ const Content = () => (
           ['dates', '0, 1', 'Date dividers between days. Default 1.'],
           ['welcome', '0, 1', 'The “Welcome to #channel!” start of the transcript. Default: same as chrome.'],
           ['reducedMotion', '0, 1', 'Turns animations off or on. Default: the viewer’s system setting.'],
+          [
+            'interactions',
+            '0, 1',
+            <>
+              Lets this page handle the preview&apos;s <a href="#interactions">interactions</a>. Needs{' '}
+              <InlineCode>options.interactions</InlineCode>. Default 0.
+            </>,
+          ],
         ]}
       />
+    </Section>
+
+    <Section id="interactions" title="Interactions">
+      <p className={styles.p}>
+        Buttons, selects and modals can work for real, handled by the page that embeds the preview. Clicks go to your
+        page as events, and your page answers with commands: add, change or remove messages, open a modal, or report a
+        failure. It all happens in the browser through <InlineCode>postMessage</InlineCode>: nothing is sent to a bot or
+        stored, and reloading the page brings the preview back as it was created.
+      </p>
+      <p className={styles.p}>
+        It takes two opt-ins: create the preview with <InlineCode>options.interactions</InlineCode>, and embed it with{' '}
+        <InlineCode>interactions=1</InlineCode> in the URL. Without both, components stay disabled. Set{' '}
+        <InlineCode>options.allowedOrigins</InlineCode> to limit which pages can receive the events and send commands;
+        without it any page that frames the preview can.
+      </p>
+      <CodeBlock title="Request body" samples={[{ label: 'JSON', code: INTERACTIONS_CREATE }]} />
+      <H3 id="connect-preview">connectPreview</H3>
+      <p className={styles.p}>
+        A small, dependency-free module served by this site handles the messaging for you. Types are at{' '}
+        <a href="/sdk/connect-preview.d.ts">/sdk/connect-preview.d.ts</a>. This page asks for feedback in a modal and
+        shows the answer as a new message:
+      </p>
+      <CodeBlock samples={[{ label: 'HTML', code: INTERACTIONS_EXAMPLE }]} />
+      <p className={styles.p}>
+        Each handler gets the event and answers bound to it. Use one answer per interaction; if you use none, the
+        interaction is acknowledged when the handler returns, and while a returned promise is pending the component
+        shows as loading. Like on Discord, an interaction nobody answers within 3 seconds shows &ldquo;This interaction
+        failed&rdquo;; <InlineCode>defer()</InlineCode> extends that to 15 minutes.
+      </p>
+      <Fields
+        head={['Answer', 'Arguments', 'What it does']}
+        rows={[
+          ['reply', 'message', 'Adds a message below the others.'],
+          [
+            'update',
+            'message, messageId?',
+            'Changes a message, by default the one clicked. Fields you leave out stay.',
+          ],
+          ['openModal', 'modal, application?', 'Opens a modal (APIModalInteractionResponseCallbackData).'],
+          ['defer', '', 'Keeps the component loading ("thinking…") until you answer later.'],
+          ['fail', 'message?', 'Shows “This interaction failed”, or your message.'],
+        ]}
+      />
+      <p className={styles.p}>
+        <InlineCode>connectPreview</InlineCode> also returns <InlineCode>appendMessage</InlineCode>,{' '}
+        <InlineCode>updateMessage</InlineCode>, <InlineCode>deleteMessage</InlineCode>,{' '}
+        <InlineCode>openModal</InlineCode>, <InlineCode>setLoading</InlineCode>, <InlineCode>ack</InlineCode> and{' '}
+        <InlineCode>fail</InlineCode>, for answering later or changing messages at any time, and sizes the iframe from
+        its resize messages.
+      </p>
+      <H3 id="interaction-messages">Events and commands</H3>
+      <p className={styles.p}>
+        Without the module, listen for the events and post commands to the iframe yourself. Every message is an object
+        with a <InlineCode>type</InlineCode>. Messages and modals in commands are checked like in the API; invalid
+        commands are dropped with a console warning.
+      </p>
+      <Fields
+        head={['Event (to your page)', 'Fields', 'When']}
+        rows={[
+          ['discord-mana:ready', 'previewId', 'The preview takes commands. Sent again in answer to discord-mana:ping.'],
+          [
+            'discord-mana:interaction',
+            'previewId, messageId, interactionId, data',
+            'A button was clicked or a select changed. data has custom_id, component_type, values and resolved.',
+          ],
+          [
+            'discord-mana:modal-submit',
+            'previewId, interactionId, sourceInteractionId, messageId, data',
+            'A modal was submitted. data has custom_id and components with their values.',
+          ],
+          ['discord-mana:resize', 'id, height', 'The page’s height changed.'],
+        ]}
+      />
+      <Fields
+        head={['Command (to the preview)', 'Fields', 'Does']}
+        rows={[
+          ['discord-mana:append-message', 'message, interactionId?', 'Adds a message.'],
+          ['discord-mana:update-message', 'messageId, message, interactionId?', 'Changes a message (partial).'],
+          ['discord-mana:delete-message', 'messageId, interactionId?', 'Removes a message.'],
+          ['discord-mana:open-modal', 'interactionId, modal, application?', 'Opens a modal.'],
+          ['discord-mana:set-loading', 'interactionId', 'Keeps the interaction loading for up to 15 minutes.'],
+          ['discord-mana:ack', 'interactionId', 'Settles the interaction without changes.'],
+          ['discord-mana:interaction-failed', 'interactionId, message?', 'Shows the failure.'],
+          ['discord-mana:ping', '', 'Asks for a discord-mana:ready.'],
+        ]}
+      />
+      <CodeBlock samples={[{ label: 'JavaScript', code: RAW_EVENTS }]} />
+      <p className={styles.p}>
+        An <InlineCode>interactionId</InlineCode> on a message command answers that interaction too. With{' '}
+        <InlineCode>allowedOrigins</InlineCode>, events are only posted to those origins and commands from other origins
+        are ignored.
+      </p>
     </Section>
 
     <Section id="limits" title="Limits">
