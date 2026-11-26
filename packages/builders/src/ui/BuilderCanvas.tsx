@@ -1,4 +1,13 @@
-import { useCallback, useMemo, useRef, useState, type MouseEvent, type PointerEvent, type ReactNode } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type MouseEvent,
+  type PointerEvent,
+  type ReactNode,
+} from 'react';
 import clsx from 'clsx';
 import { Popout, Text } from '@discord-mana/components';
 import { Message, MessageListItem, type APIMessage } from '@discord-mana/messages';
@@ -7,9 +16,10 @@ import { BuilderTextField } from './BuilderTextField';
 import { EditableComponents } from './EditableComponents';
 import { EditableEmbed } from './EditableEmbed';
 import { NodeContextMenu } from './NodeContextMenu';
+import { focusFirstText } from './NodeFrame';
 import { NodeTextInput, PopoutPanel } from './popouts';
 import { useBuilderRender } from './renderContext';
-import { useBuilderUI, useBuilderUIStore } from './uiStore';
+import { listKey, useBuilderUI, useBuilderUIStore } from './uiStore';
 import { IssueBadge } from './IssueBadge';
 import { useBuilderScope } from './BuilderProvider';
 import styles from './BuilderCanvas.module.css';
@@ -63,6 +73,30 @@ const nodeOf = (target: EventTarget | null) =>
 const isEditorUI = (target: EventTarget | null) =>
   target instanceof Element && target.closest('[data-builder-ui], [data-builder-field], [role="textbox"]') != null;
 
+/**
+ * Focuses the text the editor asked for once its node has rendered: the first text of a node just added, or
+ * the text an issue is about.
+ */
+const usePendingFocus = () => {
+  const ui = useBuilderUIStore();
+  const pending = useBuilderUI((state) => state.pendingFocus);
+  useEffect(() => {
+    if (pending == null) return;
+    const frame = requestAnimationFrame(() => {
+      const element =
+        pending.uid === ROOT_UID
+          ? document.querySelector<HTMLElement>('[data-builder-canvas]')
+          : ui.frames.get(pending.uid);
+      if (focusFirstText(element, pending.field)) ui.set({ pendingFocus: null });
+      else if (pending.field == null) {
+        element?.focus();
+        ui.set({ pendingFocus: null });
+      }
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [pending, ui]);
+};
+
 const IdentityPopout = ({ author }: { author: BuilderAuthor }) => (
   <PopoutPanel title="Webhook profile">
     <NodeTextInput
@@ -110,6 +144,26 @@ export const BuilderCanvas = ({ author = DEFAULT_AUTHOR, timestamp, className, e
   const identityRef = useRef<Element | null>(null);
   const [identityOpen, setIdentityOpen] = useState(false);
   const rootIssues = useNodeIssues(ROOT_UID);
+  usePendingFocus();
+  // The message's own lists: drops on an empty message land in its placeholder, else anywhere on the canvas.
+  const canvasRef = useRef<HTMLDivElement | null>(null);
+  const registerCanvas = useCallback(
+    (element: HTMLDivElement | null) => {
+      canvasRef.current = element;
+      for (const slot of ['embeds', 'components'] as const) {
+        if (element != null) ui.lists.set(listKey(null, slot), element);
+        else ui.lists.delete(listKey(null, slot));
+      }
+    },
+    [ui],
+  );
+  const registerEmpty = useCallback(
+    (element: HTMLDivElement | null) => {
+      const target = element ?? canvasRef.current;
+      if (target != null) ui.lists.set(listKey(null, 'components'), target);
+    },
+    [ui],
+  );
   const scope = useBuilderScope();
 
   // Selection happens on release, not on press: selecting shows a node's empty parts, and the layout must not
@@ -174,7 +228,9 @@ export const BuilderCanvas = ({ author = DEFAULT_AUTHOR, timestamp, className, e
         : null}
       <EditableComponents message={message} />
       {isEmpty && !readOnly && doc.mode === 'cv2' ? (
-        <div className={styles.empty}>{emptyState ?? <DefaultEmptyState mode={doc.mode} />}</div>
+        <div className={styles.empty} ref={registerEmpty}>
+          {emptyState ?? <DefaultEmptyState mode={doc.mode} />}
+        </div>
       ) : null}
     </>
   );
@@ -196,6 +252,7 @@ export const BuilderCanvas = ({ author = DEFAULT_AUTHOR, timestamp, className, e
     ) : null;
   return (
     <div
+      ref={registerCanvas}
       className={clsx(styles.canvas, className)}
       {...scope}
       data-builder-canvas

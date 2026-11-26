@@ -250,6 +250,8 @@ export const BuilderDndProvider = ({ children }: { children: ReactNode }) => {
         onDragCancel: () => undefined,
       },
       screenReaderInstructions: { draggable: SCREEN_READER_INSTRUCTIONS },
+      // Focus goes where the drop put it (the moved node, or the new node's text), not back to the palette.
+      restoreFocus: false,
     }),
     [],
   );

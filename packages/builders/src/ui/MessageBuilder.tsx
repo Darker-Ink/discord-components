@@ -9,6 +9,7 @@ import { BuilderProvider, useBuilderScope, type BuilderProviderProps } from './B
 import { ComponentPalette } from './ComponentPalette';
 import { JsonPanel } from './JsonPanel';
 import { useBuilderContext } from './useBuilderContext';
+import { useBuilderUIStore } from './uiStore';
 import { ValidationPanel } from './ValidationPanel';
 import { WebhookPanel, type WebhookPanelProps } from './WebhookPanel';
 import styles from './MessageBuilder.module.css';
@@ -101,23 +102,35 @@ export const BuilderChannel = ({
   actions?: ReactNode;
   /** Under the messages, where the client has its chat input. */
   footer?: ReactNode;
-}) => (
-  <section className={clsx(styles.channel, className)} aria-label={`#${name}`}>
-    <HeaderBar className={styles.channelHeader} aria-label={`#${name}`}>
-      <HeaderBar.ChannelIcon icon={TextIcon} aria-label="Text channel" disabled />
-      <HeaderBar.Title>{name}</HeaderBar.Title>
-      {topic != null ? (
-        <>
-          <HeaderBar.Divider />
-          <span className={styles.topic}>{topic}</span>
-        </>
-      ) : null}
-      {actions != null ? <div className={styles.channelActions}>{actions}</div> : null}
-    </HeaderBar>
-    <div className={styles.channelScroller}>{children}</div>
-    {footer}
-  </section>
-);
+}) => {
+  const ui = useBuilderUIStore();
+  return (
+    <section className={clsx(styles.channel, className)} aria-label={`#${name}`}>
+      <HeaderBar className={styles.channelHeader} aria-label={`#${name}`}>
+        <HeaderBar.ChannelIcon icon={TextIcon} aria-label="Text channel" disabled />
+        <HeaderBar.Title>{name}</HeaderBar.Title>
+        {topic != null ? (
+          <>
+            <HeaderBar.Divider />
+            <span className={styles.topic}>{topic}</span>
+          </>
+        ) : null}
+        {actions != null ? <div className={styles.channelActions}>{actions}</div> : null}
+      </HeaderBar>
+      <div
+        className={styles.channelScroller}
+        // A click in the channel but outside the message clears the selection.
+        onPointerUp={(event) => {
+          const target = event.target as Element;
+          if (target.closest('[data-builder-canvas], [data-builder-ui]') == null) ui.set({ selectedId: null });
+        }}
+      >
+        {children}
+      </div>
+      {footer}
+    </section>
+  );
+};
 
 BuilderChannel.displayName = 'BuilderChannel';
 

@@ -1,11 +1,11 @@
 import {
   useCallback,
-  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
   useState,
   type ElementType,
+  type FocusEvent,
   type KeyboardEvent,
   type ReactNode,
 } from 'react';
@@ -17,7 +17,6 @@ import { getLimit, useNodeIssues, type NodeKind, type ValidationIssue } from '..
 import { patchField, readText, useEditableNode } from './fields';
 import { isMod } from './NodeFrame';
 import { useBuilderContext } from './useBuilderContext';
-import { useBuilderUI, useBuilderUIStore } from './uiStore';
 import styles from './BuilderTextField.module.css';
 
 /** Characters as Discord counts them for limits (UTF-16 code units, like `String.length`). */
@@ -46,18 +45,6 @@ export const useHistoryKeys = () => {
 const useFieldIssues = (uid: string, field: string) => {
   const issues = useNodeIssues(uid);
   return useMemo(() => issues.filter((issue) => issue.field === field), [issues, field]);
-};
-
-/** Focuses the field once if the editor asked for it (a node just added, an issue clicked). */
-const usePendingFocus = (uid: string, field: string, focus: () => void, isFirstField: boolean) => {
-  const ui = useBuilderUIStore();
-  const pending = useBuilderUI((state) => state.pendingFocus);
-  useEffect(() => {
-    if (pending == null || pending.uid !== uid) return;
-    if (pending.field != null ? pending.field !== field : !isFirstField) return;
-    ui.set({ pendingFocus: null });
-    requestAnimationFrame(focus);
-  }, [field, focus, isFirstField, pending, ui, uid]);
 };
 
 export interface FieldStatusProps {
@@ -187,20 +174,13 @@ export const BuilderTextField = ({
     [actions, field, uid],
   );
 
-  // In its rendered state the editor is a focusable element that starts editing when focused.
-  const focus = useCallback(() => {
-    const textbox = wrapperRef.current?.querySelector<HTMLElement>('[role="textbox"]');
-    if (textbox != null) textbox.focus();
-    else editorRef.current?.focus();
-  }, []);
-  usePendingFocus(uid, field, focus, isFirstField);
-
   const invalid = issues.some((issue) => issue.severity === 'error');
   return (
     <span
       ref={wrapperRef}
       className={styles.field}
       data-builder-field={field}
+      data-builder-first={isFirstField || undefined}
       data-invalid={invalid || undefined}
       data-multiline={multiline || undefined}
     >
@@ -292,16 +272,6 @@ export const BuilderPlainTextField = ({
     setAnchor(element);
   }, []);
 
-  const focus = useCallback(() => {
-    const element = elementRef.current;
-    if (element == null) return;
-    element.focus();
-    const selection = window.getSelection();
-    selection?.selectAllChildren(element);
-    selection?.collapseToEnd();
-  }, []);
-  usePendingFocus(uid, field, focus, isFirstField);
-
   const invalid = issues.some((issue) => issue.severity === 'error');
   return (
     <>
@@ -315,9 +285,19 @@ export const BuilderPlainTextField = ({
         aria-invalid={invalid || undefined}
         spellCheck
         data-builder-field={field}
+        data-builder-first={isFirstField || undefined}
         data-invalid={invalid || undefined}
         data-placeholder={placeholder}
-        onFocus={() => setFocused(true)}
+        onFocus={(event: FocusEvent<HTMLElement>) => {
+          setFocused(true);
+          // Focused from the keyboard or by the editor: the caret goes to the end, like the markdown fields.
+          const element = event.currentTarget;
+          const selection = window.getSelection();
+          if (selection != null && !element.contains(selection.anchorNode)) {
+            selection.selectAllChildren(element);
+            selection.collapseToEnd();
+          }
+        }}
         onBlur={() => {
           setFocused(false);
           actions.checkpoint();

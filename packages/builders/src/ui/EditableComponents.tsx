@@ -188,10 +188,23 @@ export const EditableComponents = ({ message }: EditableComponentsProps) => {
   // `sizes` changes when media sizes arrive.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const records = useMemo(() => buildRecords(doc), [doc, sizes]);
-  const [ref, outerWidth] = useMeasuredWidth();
-  const isComponentsV2 = doc.mode === 'cv2';
-  const renderChildren = renderChildrenOf(records);
   if (records.top.length === 0) return null;
+  return <ComponentsLayout records={records} message={message} isComponentsV2={doc.mode === 'cv2'} />;
+};
+
+EditableComponents.displayName = 'EditableComponents';
+
+// Mounted only with components, so its width is measured from the moment its element exists.
+const ComponentsLayout = ({
+  records,
+  message,
+  isComponentsV2,
+}: {
+  records: Records;
+  message: EditableComponentsProps['message'];
+  isComponentsV2: boolean;
+}) => {
+  const [ref, outerWidth] = useMeasuredWidth();
   return (
     <RecordsContext.Provider value={records}>
       <ComponentStateProvider components={records.top} message={message ?? {}} channelId={message?.channel_id}>
@@ -206,7 +219,7 @@ export const EditableComponents = ({ message }: EditableComponentsProps) => {
                     { [messageComponentsStyles.isComponentsV2]: isComponentsV2 },
                   ])}
                 >
-                  {renderChildren(records.top)}
+                  {renderChildrenOf(records)(records.top)}
                 </div>
               )}
             </AutoMeasuredNestedContainer>
@@ -217,7 +230,7 @@ export const EditableComponents = ({ message }: EditableComponentsProps) => {
   );
 };
 
-EditableComponents.displayName = 'EditableComponents';
+ComponentsLayout.displayName = 'ComponentsLayout';
 
 /** An empty list (a row, container or gallery with nothing in it yet): where things can be dropped or added. */
 const EmptyList = ({

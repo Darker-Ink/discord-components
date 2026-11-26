@@ -33,8 +33,11 @@ export const focusNode = (ui: BuilderUIStore, uid: string | null) => {
 /** The first editable text of a node, to start typing in it with Enter. */
 export const focusFirstText = (element: HTMLElement | null | undefined, field?: string) => {
   if (element == null) return false;
-  const selector = field != null ? `[data-builder-field="${CSS.escape(field)}"]` : '[data-builder-field]';
-  const field_ = element.querySelector<HTMLElement>(selector);
+  const field_ =
+    field != null
+      ? element.querySelector<HTMLElement>(`[data-builder-field="${CSS.escape(field)}"]`)
+      : (element.querySelector<HTMLElement>('[data-builder-first]') ??
+        element.querySelector<HTMLElement>('[data-builder-field]'));
   if (field_ == null) return false;
   const target = field_.matches('[role="textbox"]') ? field_ : field_.querySelector<HTMLElement>('[role="textbox"]');
   if (target == null) return false;
@@ -83,6 +86,8 @@ export const useNodeFrame = ({ uid, kind, disabled = false }: NodeFrameOptions) 
   const onKeyDown = useCallback(
     (event: KeyboardEvent<HTMLElement>) => {
       if (event.target !== event.currentTarget || disabled) return;
+      // While dragging with the keyboard, the arrow keys and Space belong to the drag.
+      if (ui.getState().drag != null) return;
       const doc = store.getState().doc;
       const location = findNode(doc, uid);
       if (location == null) return;

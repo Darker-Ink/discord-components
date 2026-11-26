@@ -3,6 +3,8 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  /* Holds the tooltips' visually hidden texts, so a scrolling row clips them too. */
+  position: relative;
   user-select: none;
 }
 .group {

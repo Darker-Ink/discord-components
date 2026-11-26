@@ -71,7 +71,17 @@ export const measureSlots = (doc: BuilderDocument, ui: BuilderUIStore, isValid: 
     for (let index = 0; index <= count; index++) {
       const dropSlot: DropSlot = { parentId, slot, index };
       if (!isValid(dropSlot)) continue;
-      const geometry = slotShape(rects, index, row, listRect, slot === 'accessory' ? rects[0] : null);
+      // An empty list of the message (no embeds yet): a line under what the message already shows.
+      const atCanvasEnd = count === 0 && listRect != null && listElement?.hasAttribute('data-builder-canvas') === true;
+      const geometry = atCanvasEnd
+        ? ({
+            type: 'line',
+            x1: listRect.left + 72,
+            y1: listRect.bottom - 4,
+            x2: listRect.right - 16,
+            y2: listRect.bottom - 4,
+          } as const)
+        : slotShape(rects, index, row, listRect, slot === 'accessory' ? rects[0] : null);
       if (geometry != null) result.push({ slot: dropSlot, shape: geometry, listRect, depth });
     }
   });
