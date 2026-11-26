@@ -9,3 +9,4 @@ export * from './emoji/emojiUtils';
 export { getLookup, CHANNEL_TYPES } from './state';
 export { parseAnsi, ansiStyle, createAnsiPalette, ANSI_COLORS, type AnsiSegment, type AnsiColor } from './ansi';
 export { highlightCode, loadCodeGrammar, isHighlightable } from './highlight';
+export { default as codeHighlightStyles } from './components/CodeHighlight.module.css';
