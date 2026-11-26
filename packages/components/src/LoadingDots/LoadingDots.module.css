@@ -1,0 +1,8 @@
+.dots {
+  color: var(--white);
+  pointer-events: none;
+  transform: translateZ(0);
+}
+.dots.themed {
+  color: var(--text-default);
+}
