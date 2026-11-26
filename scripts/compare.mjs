@@ -84,8 +84,16 @@ const STYLE_PROPS = [
 ];
 
 const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined });
+// Discord sniffs the browser from the user agent (e.g. webp support); present a regular Chrome.
+const userAgent = (
+  await browser.newPage().then(async (p) => {
+    const ua = await p.evaluate(() => navigator.userAgent);
+    await p.close();
+    return ua;
+  })
+).replace('HeadlessChrome', 'Chrome');
 const capture = async (url) => {
-  const page = await browser.newPage({ viewport: { width: 1000, height: 700 }, deviceScaleFactor: 1 });
+  const page = await browser.newPage({ viewport: { width: 1000, height: 700 }, deviceScaleFactor: 1, userAgent });
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await page.goto(url);
@@ -93,6 +101,10 @@ const capture = async (url) => {
   await root.waitFor({ timeout: 30000 });
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(600);
+  // Layers promoted with will-change can keep a mid-animation raster scale, which shows up as
+  // anti-aliasing noise that differs between runs.
+  await page.addStyleTag({ content: '* { will-change: auto !important; }' });
+  await page.waitForTimeout(50);
   const box = await root.boundingBox();
   const shot = await page.screenshot({
     clip: { x: 0, y: 0, width: 1000, height: Math.max(1, Math.ceil(box.y + box.height)) },
