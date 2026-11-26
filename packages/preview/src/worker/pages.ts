@@ -1,4 +1,5 @@
 import { DEMO_PREVIEW_ID, readOptions, THEMES, type PreviewTheme } from '../shared/api';
+import { PUBLIC_ORIGIN } from '../shared/links';
 import { SKELETON_HTML } from '../shared/skeleton';
 import { checkAccess, findPreview } from './previews';
 
@@ -56,13 +57,24 @@ export const servePage = async (request: Request, env: Env) => {
   const common = { 'x-content-type-options': 'nosniff', 'cache-control': 'no-store' };
   const preview = PREVIEW_PATH_RE.exec(url.pathname);
   if (preview == null) {
-    const status = SPA_ROUTES.has(url.pathname) ? asset.status : 404;
-    return withHeaders(asset, status, {
+    const found = SPA_ROUTES.has(url.pathname);
+    const path = url.pathname.startsWith('/docs') ? '/docs' : '/';
+    const page = new HTMLRewriter()
+      .on('meta[property="og:url"]', {
+        element: (element) => {
+          if (found) element.setAttribute('content', PUBLIC_ORIGIN + path);
+          else element.remove();
+        },
+      })
+      .transform(asset);
+    const response = withHeaders(page, found ? asset.status : 404, {
       ...common,
       'content-security-policy': __RELAXED_CSP__ ? DEV_HOME_CSP : HOME_CSP,
       'x-frame-options': 'DENY',
       'referrer-policy': 'strict-origin-when-cross-origin',
     });
+    response.headers.delete('content-length');
+    return response;
   }
 
   // The page itself is the SPA shell; its status mirrors what the content endpoint will answer so crawlers,
@@ -84,6 +96,12 @@ export const servePage = async (request: Request, env: Env) => {
         element.setAttribute('data-page', 'viewer');
         element.setAttribute('data-boot-theme', bootTheme);
         if (url.searchParams.get('bg') === 'transparent') element.setAttribute('data-boot-bg', 'transparent');
+      },
+    })
+    // A preview is its own page, not the site's home.
+    .on('meta[property="og:url"]', {
+      element: (element) => {
+        element.remove();
       },
     })
     .on('#root', {

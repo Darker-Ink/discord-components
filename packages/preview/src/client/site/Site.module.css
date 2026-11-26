@@ -45,6 +45,7 @@
 }
 .wordmark {
   font-size: 17px;
+  white-space: nowrap;
   font-weight: var(--font-weight-semibold);
   letter-spacing: -0.01em;
   line-height: 20px;
@@ -59,6 +60,7 @@
 }
 .navLink {
   border-radius: var(--radius-xs);
+  white-space: nowrap;
   color: var(--text-muted);
   font-size: 15px;
   font-weight: var(--font-weight-medium);
@@ -227,14 +229,29 @@
 }
 
 .footer {
+  box-sizing: border-box;
   color: var(--text-muted);
+  display: flex;
+  flex-wrap: wrap;
   font-size: 13px;
+  gap: 8px 24px;
+  justify-content: space-between;
   line-height: 18px;
   margin: 0 auto;
   max-width: 1200px;
   padding: 32px;
   width: 100%;
-  box-sizing: border-box;
+}
+.footerLinks {
+  display: flex;
+  gap: 20px;
+}
+.footerLinks a {
+  color: inherit;
+}
+.footerLinks a:hover {
+  color: var(--text-strong);
+  text-decoration: none;
 }
 
 @media (max-width: 640px) {
@@ -253,5 +270,12 @@
   }
   .footer {
     padding: 24px 16px;
+  }
+}
+
+/* Phones: the full wordmark, Docs and the swatches don't leave room for a second link. */
+@media (max-width: 440px) {
+  .navLinkWide {
+    display: none;
   }
 }

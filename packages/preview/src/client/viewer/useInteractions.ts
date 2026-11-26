@@ -151,13 +151,13 @@ export const useInteractions = ({
         case 'discord-mana:update-message': {
           const current = getMessages().find((message) => message.id === command.messageId);
           if (current == null) {
-            console.warn(`[mana preview] update-message: no message ${command.messageId}`);
+            console.warn(`[discord-mana preview] update-message: no message ${command.messageId}`);
             return;
           }
           const { mergeMessage } = await import('./commands');
           const result = mergeMessage(current, command.patch);
           if ('error' in result) {
-            console.warn('[mana preview] Ignored an invalid update-message command:', result.error);
+            console.warn('[discord-mana preview] Ignored an invalid update-message command:', result.error);
             return;
           }
           setMessages((messages) =>
@@ -206,12 +206,12 @@ export const useInteractions = ({
         const data = event.data as { type?: unknown } | null;
         if (typeof data?.type !== 'string' || !data.type.startsWith('discord-mana:')) return;
         if (allowedOrigins != null && !allowedOrigins.includes(event.origin)) {
-          console.warn(`[mana preview] Ignored ${data.type} from ${event.origin}: not an allowed origin.`);
+          console.warn(`[discord-mana preview] Ignored ${data.type} from ${event.origin}: not an allowed origin.`);
           return;
         }
         const result = parseCommand(data);
         if ('error' in result) {
-          console.warn(`[mana preview] Ignored an invalid ${data.type} command:`, result.error);
+          console.warn(`[discord-mana preview] Ignored an invalid ${data.type} command:`, result.error);
           return;
         }
         // Commands apply in the order they arrive, even when one has to wait for a lazy import.

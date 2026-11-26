@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { AppRoot, Button, Text } from '@discord-mana/components';
 import { DEMO_PREVIEW_ID } from '../../shared/api';
+import { SiteFooter } from '../site/SiteFooter';
 import { SiteHeader } from '../site/SiteHeader';
 import { useSiteTheme } from '../site/useSiteTheme';
 import siteStyles from '../site/Site.module.css';
@@ -25,7 +26,7 @@ NotFound.displayName = 'NotFound';
 export const Home = ({ notFound }: { notFound: boolean }) => {
   const [theme, setTheme] = useSiteTheme();
   useEffect(() => {
-    document.title = notFound ? 'Not found · mana preview' : 'mana preview: Discord messages as a link';
+    document.title = notFound ? 'Not found · discord-mana preview' : 'discord-mana preview: Discord messages as a link';
   }, [notFound]);
   const demo = `/p/${DEMO_PREVIEW_ID}?theme=${theme}&chrome=1&welcome=0`;
 
@@ -58,9 +59,7 @@ export const Home = ({ notFound }: { notFound: boolean }) => {
             </figure>
           </main>
         )}
-        <footer className={siteStyles.footer}>
-          Not affiliated with Discord. Previews show whatever their creators send.
-        </footer>
+        <SiteFooter />
       </div>
     </AppRoot>
   );

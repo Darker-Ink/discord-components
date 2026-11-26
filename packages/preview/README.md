@@ -4,6 +4,8 @@ A small Cloudflare Worker that renders Discord messages as hosted, embeddable pa
 home page, `POST` messages in Discord's API format, and get back a URL that renders them with
 `@discord-mana/messages`, exactly like the client. Built for ticket transcripts, logs and docs.
 
+Live at https://preview.discord-mana.dev (docs at https://preview.discord-mana.dev/docs).
+
 - **Worker + SPA** in one Vite project (`@cloudflare/vite-plugin`). The Worker (`src/worker`) serves the JSON API
   and every page; the React app (`src/client`) is the home page, the docs at `/docs` and the viewer at `/p/:id`.
 - **D1** holds API keys (only a SHA-256 hash of each key's secret) and preview metadata. The quota checks and the
@@ -46,6 +48,10 @@ openssl rand -base64 32 | npx wrangler secret put SIGNING_SECRET
 pnpm deploy                                         # vite build && wrangler deploy
 ```
 
+`wrangler.jsonc` routes the Worker to `preview.discord-mana.dev` as a Custom Domain. The `discord-mana.dev` zone has
+to be on the same Cloudflare account; the first deploy creates the DNS record and certificate (don't add a record for
+`preview` yourself). From the repo root, `pnpm deploy:preview` does the same as `pnpm deploy` here.
+
 Creating a 10 MiB preview parses and validates every message, which takes well over the 10 ms of CPU time the
 Workers Free plan allows; use Workers Paid (or lower `MAX_BODY_BYTES`). A 5,000-message, 2 MB transcript takes
 about 0.2 s locally. Change `API_RATE_LIMITER.namespace_id` in `wrangler.jsonc` if the account already uses `1001`. Rotating
@@ -74,7 +80,7 @@ cron (`17 4 * * *`) deletes expired previews (rows and R2 objects); expired prev
 
 ## API
 
-JSON everywhere, CORS enabled on `/api/*`. Authenticate with `Authorization: Bearer dm_<id>_<secret>`. Errors are
+The base URL is `https://preview.discord-mana.dev`. JSON everywhere, CORS enabled on `/api/*`. Authenticate with `Authorization: Bearer dm_<id>_<secret>`. Errors are
 `{ "error": { "code", "message", "details"? } }`.
 
 | Method   | Path                         | Auth              | Does                                                                                    |
@@ -168,7 +174,7 @@ URL params; `0`, `Infinity` or `none` never fail, other values are clamped to 10
 pages receive events and may send commands.
 
 `public/sdk/connect-preview.js` (with `connect-preview.d.ts`) is a dependency-free helper, served with CORS at
-`/sdk/connect-preview.js`: `connectPreview(iframe, { onInteraction, onModalSubmit, onReady })` returns
+`https://preview.discord-mana.dev/sdk/connect-preview.js`: `connectPreview(iframe, { onInteraction, onModalSubmit, onReady })` returns
 `{ appendMessage, updateMessage, deleteMessage, openModal, setLoading, ack, fail, disconnect }`. `/docs#interactions`
 has a full example.
 

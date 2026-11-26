@@ -20,7 +20,7 @@ export const SiteHeader = ({
         <a href="/docs" className={styles.navLink} aria-current={page === 'docs' ? 'page' : undefined}>
           Docs
         </a>
-        <a href="/#key" className={styles.navLink}>
+        <a href="/#key" className={clsx(styles.navLink, styles.navLinkWide)}>
           Get a key
         </a>
       </nav>

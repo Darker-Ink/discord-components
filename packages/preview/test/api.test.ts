@@ -460,6 +460,13 @@ describe('headers', () => {
     expect(html).toContain('data-boot-theme="dark"');
   });
 
+  it('points og:url at the public home and docs pages only', async () => {
+    expect(await (await call('/')).text()).toContain('content="https://preview.discord-mana.dev/"');
+    expect(await (await call('/docs')).text()).toContain('content="https://preview.discord-mana.dev/docs"');
+    expect(await (await call('/nope')).text()).not.toContain('og:url');
+    expect(await (await call('/p/demo')).text()).not.toContain('og:url');
+  });
+
   it('answers CORS preflights and sends CORS headers on the API only', async () => {
     const preflight = await call('/api/previews', {
       method: 'OPTIONS',

@@ -5,12 +5,12 @@ import { LinkIcon } from '@discord-mana/icons';
 import type { Limits } from '../../shared/api';
 import { CodeBlock, InlineCode } from '../site/CodeBlock';
 import { SiteHeader } from '../site/SiteHeader';
+import { PUBLIC_ORIGIN } from '../../shared/links';
+import { SiteFooter } from '../site/SiteFooter';
 import { useSiteTheme } from '../site/useSiteTheme';
 import siteStyles from '../site/Site.module.css';
 import { THEME_CLASSES } from '../viewParams';
 import styles from './Docs.module.css';
-
-const ORIGIN = window.location.origin;
 
 const SECTIONS = [
   { id: 'getting-started', title: 'Getting started' },
@@ -102,14 +102,14 @@ Fields.displayName = 'Fields';
 
 const curl = (method: string, path: string, body?: string) =>
   [
-    `curl${method === 'GET' ? '' : ` -X ${method}`} ${ORIGIN}${path}`,
+    `curl${method === 'GET' ? '' : ` -X ${method}`} ${PUBLIC_ORIGIN}${path}`,
     `  -H "Authorization: Bearer $MANA_PREVIEW_KEY"`,
     ...(body != null ? ['  -H "Content-Type: application/json"', `  -d '${body}'`] : []),
   ].join(' \\\n');
 
 const js = (method: string, path: string, body?: string, result = 'const data = await response.json();') =>
   [
-    `const response = await fetch('${ORIGIN}${path}', {`,
+    `const response = await fetch('${PUBLIC_ORIGIN}${path}', {`,
     ...(method !== 'GET' ? [`  method: '${method}',`] : []),
     '  headers: {',
     '    Authorization: `Bearer ${process.env.MANA_PREVIEW_KEY}`,',
@@ -145,7 +145,7 @@ const CREATE_BODY_JS = `{
 
 const CREATE_RESPONSE = `{
   "id": "Tq58RezRWP8nnWke",
-  "url": "${ORIGIN}/p/Tq58RezRWP8nnWke",
+  "url": "${PUBLIC_ORIGIN}/p/Tq58RezRWP8nnWke",
   "secret": false,
   "messageCount": 1,
   "size": 214,
@@ -157,7 +157,7 @@ app.get('/transcripts/:ticket', async (req, res) => {
   const ticket = await db.tickets.find(req.params.ticket);
   if (!ticket || !req.user.canView(ticket)) return res.sendStatus(404);
 
-  const response = await fetch(\`${ORIGIN}/api/previews/\${ticket.previewId}\`, {
+  const response = await fetch(\`${PUBLIC_ORIGIN}/api/previews/\${ticket.previewId}\`, {
     method: 'POST',
     headers: {
       Authorization: \`Bearer \${process.env.MANA_PREVIEW_KEY}\`,
@@ -187,11 +187,11 @@ const INTERACTIONS_CREATE = `{
   }
 }`;
 
-const INTERACTIONS_EXAMPLE = `<iframe id="transcript" src="${ORIGIN}/p/Tq58RezRWP8nnWke?interactions=1"
+const INTERACTIONS_EXAMPLE = `<iframe id="transcript" src="${PUBLIC_ORIGIN}/p/Tq58RezRWP8nnWke?interactions=1"
   title="Feedback" style="width: 100%; border: 0"></iframe>
 
 <script type="module">
-  import { connectPreview } from '${ORIGIN}/sdk/connect-preview.js';
+  import { connectPreview } from '${PUBLIC_ORIGIN}/sdk/connect-preview.js';
 
   const bot = { id: '1000000000000000002', username: 'Helper', bot: true };
 
@@ -227,7 +227,7 @@ const INTERACTIONS_EXAMPLE = `<iframe id="transcript" src="${ORIGIN}/p/Tq58RezRW
 </script>`;
 
 const RAW_EVENTS = `window.addEventListener('message', (event) => {
-  if (event.origin !== '${ORIGIN}' || event.data?.type !== 'discord-mana:interaction') return;
+  if (event.origin !== '${PUBLIC_ORIGIN}' || event.data?.type !== 'discord-mana:interaction') return;
   const { interactionId, messageId, data } = event.data;
   event.source.postMessage(
     {
@@ -236,18 +236,18 @@ const RAW_EVENTS = `window.addEventListener('message', (event) => {
       messageId,
       message: { content: \`You clicked \${data.custom_id}.\` },
     },
-    '${ORIGIN}',
+    '${PUBLIC_ORIGIN}',
   );
 });`;
 
 const IFRAME_SNIPPET = `<iframe
-  src="${ORIGIN}/p/Tq58RezRWP8nnWke?theme=light&bg=transparent"
+  src="${PUBLIC_ORIGIN}/p/Tq58RezRWP8nnWke?theme=light&bg=transparent"
   title="Ticket transcript"
   style="width: 100%; height: 480px; border: 0"
 ></iframe>`;
 
 const RESIZE_SNIPPET = `window.addEventListener('message', (event) => {
-  if (event.origin !== '${ORIGIN}') return;
+  if (event.origin !== '${PUBLIC_ORIGIN}') return;
   const { type, id, height } = event.data ?? {};
   if (type !== 'discord-mana:resize') return;
   // id is the preview's id, for pages that embed several.
@@ -389,8 +389,8 @@ const Content = () => (
     <header className={styles.intro}>
       <h1 className={styles.h1}>Documentation</h1>
       <p className={styles.lead}>
-        mana preview turns Discord messages into a page that looks exactly like the client. Your bot sends the messages;
-        you get back a URL to share, redirect to or embed.
+        discord-mana preview turns Discord messages into a page that looks exactly like the client. Your bot sends the
+        messages; you get back a URL to share, redirect to or embed.
       </p>
       <details className={styles.mobileToc}>
         <summary>On this page</summary>
@@ -557,7 +557,7 @@ const Content = () => (
           {
             label: 'JSON',
             code: `{
-  "url": "${ORIGIN}/p/oWUy21fQ4CP2O2fv?exp=1795679683&sig=KqrQhzfKWkJzRzzSshygjOK16ESOgahcY7xmJEcHeOo",
+  "url": "${PUBLIC_ORIGIN}/p/oWUy21fQ4CP2O2fv?exp=1795679683&sig=KqrQhzfKWkJzRzzSshygjOK16ESOgahcY7xmJEcHeOo",
   "expiresAt": "2026-11-26T09:25:10.000Z",
   "expiresIn": 300
 }`,
@@ -604,7 +604,7 @@ const Content = () => (
       "options": { "interactive": false, "title": "ticket-1042", "theme": null },
       "createdAt": "2026-11-26T09:20:10.000Z",
       "expiresAt": "2026-12-26T09:20:10.000Z",
-      "url": "${ORIGIN}/p/Tq58RezRWP8nnWke"
+      "url": "${PUBLIC_ORIGIN}/p/Tq58RezRWP8nnWke"
     }
   ],
   "nextCursor": "1795673210000.Tq58RezRWP8nnWke"
@@ -745,7 +745,7 @@ const Content = () => (
           },
           {
             label: 'URL',
-            code: `${ORIGIN}/p/Tq58RezRWP8nnWke?interactions=1&responseTimeout=10000&deferredTimeout=none`,
+            code: `${PUBLIC_ORIGIN}/p/Tq58RezRWP8nnWke?interactions=1&responseTimeout=10000&deferredTimeout=none`,
           },
         ]}
       />
@@ -860,7 +860,7 @@ Content.displayName = 'Content';
 export const Docs = () => {
   const [theme, setTheme] = useSiteTheme();
   useEffect(() => {
-    document.title = 'Docs · mana preview';
+    document.title = 'Docs · discord-mana preview';
     // The SPA renders after the browser tried to scroll to the hash, so do it once the content exists.
     if (window.location.hash.length > 1) document.getElementById(window.location.hash.slice(1))?.scrollIntoView();
   }, []);
@@ -872,6 +872,7 @@ export const Docs = () => {
           <Sidebar />
           <Content />
         </div>
+        <SiteFooter />
       </div>
     </AppRoot>
   );

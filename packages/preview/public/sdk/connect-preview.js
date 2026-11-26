@@ -1,8 +1,8 @@
 // @ts-check
 /* global window, URL */
 /**
- * connectPreview: talk to a mana preview embedded in an iframe. Framework-free, no dependencies.
- * Types: ./connect-preview.d.ts. Docs: /docs#interactions
+ * connectPreview: talk to a discord-mana preview embedded in an iframe. Framework-free, no dependencies.
+ * Types: ./connect-preview.d.ts. Docs: https://preview.discord-mana.dev/docs#interactions
  *
  * @typedef {import('./connect-preview.d.ts').ConnectPreviewOptions} ConnectPreviewOptions
  * @typedef {import('./connect-preview.d.ts').PreviewConnection} PreviewConnection

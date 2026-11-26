@@ -13,10 +13,10 @@ const LogoMark = ({ className }: { className?: string }) => (
 LogoMark.displayName = 'LogoMark';
 
 export const Logo = () => (
-  <a href="/" className={styles.logo} aria-label="mana preview, home">
+  <a href="/" className={styles.logo} aria-label="discord-mana preview, home">
     <LogoMark className={styles.logoMark} />
     <span className={styles.wordmark}>
-      mana <span className={styles.wordmarkMuted}>preview</span>
+      discord-mana <span className={styles.wordmarkMuted}>preview</span>
     </span>
   </a>
 );

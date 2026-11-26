@@ -4,6 +4,8 @@
   "main": "./src/worker/index.ts",
   "compatibility_date": "2026-11-20",
   "observability": { "enabled": true },
+  // A Custom Domain: `wrangler deploy` creates its DNS record and certificate (the zone must be on Cloudflare).
+  "routes": [{ "pattern": "preview.discord-mana.dev", "custom_domain": true }],
   "assets": {
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",

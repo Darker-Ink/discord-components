@@ -450,7 +450,8 @@ const main = async () => {
     `${scratchOrigin}/interactions?src=${encodeURIComponent(`${BASE}/p/${id}?theme=light&${query}`)}`;
   const frameWarnings = [];
   page.on('console', (message) => {
-    if (message.type() === 'warning' && message.text().includes('[mana preview]')) frameWarnings.push(message.text());
+    if (message.type() === 'warning' && message.text().includes('[discord-mana preview]'))
+      frameWarnings.push(message.text());
   });
 
   let interactionsId;
