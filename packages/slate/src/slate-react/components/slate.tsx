@@ -1,3 +1,4 @@
+// @ts-nocheck -- vendored slate-react 0.91.11, written against an older TypeScript and @types/react.
 import React, { useState, useCallback, useEffect, useRef } from 'react'
 import { Editor, Node, type Descendant, Scrubber } from 'slate'
 import { ReactEditor } from '../plugin/react-editor'

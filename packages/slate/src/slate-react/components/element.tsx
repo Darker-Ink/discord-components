@@ -1,3 +1,4 @@
+// @ts-nocheck -- vendored slate-react 0.91.11, written against an older TypeScript and @types/react.
 import React, { useCallback } from 'react'
 import getDirection from 'direction'
 import { Editor, Node, Range, Element as SlateElement } from 'slate'
@@ -131,7 +132,8 @@ const Element = (props: {
     NODE_TO_PARENT.set(text, element)
   }
 
-  return renderElement({ attributes, children, element })
+  // DISCORD PATCH: elements get their decorations too (inline voids take the markdown styles around them).
+  return renderElement({ attributes, children, element, decorations })
 }
 
 const MemoizedElement = React.memo(Element, (prev, next) => {

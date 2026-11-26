@@ -1,0 +1,5 @@
+/* App-wide sizes the client defines on :root for the chat bar. */
+:root {
+  --custom-channel-textarea-text-area-height: 56px;
+  --custom-channel-textarea-text-area-max-height: 50vh;
+}

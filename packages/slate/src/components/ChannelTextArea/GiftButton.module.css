@@ -1,0 +1,46 @@
+.container {
+  display: flex;
+  position: relative;
+}
+.container:before {
+  background: var(--custom-promotion-gradient);
+  border-radius: 8px;
+  content: '';
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  transition: opacity 0.2s ease;
+  z-index: -1;
+}
+.containerHovered:before {
+  opacity: 1;
+}
+.iconContainer {
+  align-items: center;
+  display: flex;
+  height: 20px;
+  justify-content: center;
+  pointer-events: none;
+  position: relative;
+  width: 20px;
+}
+.giftBoxIcon {
+  bottom: -6px;
+  height: auto;
+  inset-inline-start: -6px;
+  position: absolute;
+  width: 32px;
+}
+.trinketsIcon {
+  position: relative;
+  z-index: 3;
+}
+.trinketsDecoration {
+  height: 175%;
+  inset-inline-start: -37.5%;
+  position: absolute;
+  top: -37.5%;
+  width: 175%;
+  z-index: 4;
+}

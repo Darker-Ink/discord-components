@@ -1,0 +1,23 @@
+.characterCount {
+  align-items: flex-end;
+  bottom: 10px;
+  color: var(--text-default);
+  display: flex;
+  flex-direction: column;
+  inset-inline-end: 14px;
+  position: absolute;
+}
+.premiumFlair {
+  color: var(--interactive-text-default);
+}
+.premiumFlair:not(:last-child) {
+  margin-inline-end: 4px;
+}
+.flairContainer {
+  align-items: center;
+  display: flex;
+  height: 24px;
+}
+.upsell {
+  margin-top: 8px;
+}

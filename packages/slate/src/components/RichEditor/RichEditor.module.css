@@ -1,0 +1,27 @@
+.editor {
+  caret-color: var(--text-default);
+  text-align: start;
+  white-space: break-spaces !important;
+  word-break: break-word;
+}
+.editor pre {
+  max-width: none;
+}
+.placeholder {
+  color: var(--channel-text-area-placeholder);
+  inset-inline: 0;
+  overflow: hidden;
+  pointer-events: none;
+  position: absolute;
+  text-overflow: ellipsis;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  white-space: nowrap;
+}
+:global(.enable-forced-colors) .placeholder {
+  color: GrayText;
+}
+:global(.theme-dark):global(.custom-theme-background):global(.custom-client-theme) .placeholder {
+  color: color-mix(in oklab, var(--text-default) 40%, transparent);
+}

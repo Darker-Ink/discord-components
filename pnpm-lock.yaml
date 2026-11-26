@@ -246,6 +246,9 @@ importers:
       '@discord-mana/messages':
         specifier: workspace:*
         version: link:../messages
+      '@discord-mana/slate':
+        specifier: workspace:*
+        version: link:../slate
       '@discord-mana/tokens':
         specifier: workspace:*
         version: link:../tokens
@@ -292,12 +295,21 @@ importers:
       '@discord-mana/icons':
         specifier: workspace:*
         version: link:../icons
+      '@discord-mana/markdown':
+        specifier: workspace:*
+        version: link:../markdown
+      '@discord-mana/messages':
+        specifier: workspace:*
+        version: link:../messages
       '@discord-mana/tokens':
         specifier: workspace:*
         version: link:../tokens
       '@juggle/resize-observer':
         specifier: 3.4.0
         version: 3.4.0
+      '@react-spring/web':
+        specifier: ^10.1.2
+        version: 10.1.2(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -313,6 +325,9 @@ importers:
       lodash:
         specifier: 4.17.21
         version: 4.17.21
+      lottie-web:
+        specifier: 5.12.2
+        version: 5.12.2
       scroll-into-view-if-needed:
         specifier: 2.2.31
         version: 2.2.31

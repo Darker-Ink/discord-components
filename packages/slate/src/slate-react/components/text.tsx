@@ -1,3 +1,4 @@
+// @ts-nocheck -- vendored slate-react 0.91.11, written against an older TypeScript and @types/react.
 import React, { useRef, useCallback } from 'react'
 import { Element, Range, Text as SlateText } from 'slate'
 import { ReactEditor, useSlateStatic } from '..'

@@ -1,0 +1,15 @@
+.lottieIconColors :not(defs *)[fill][fill-opacity] {
+  fill: var(--__lottieIconColor, var(--interactive-text-default));
+}
+.lottieIconColors :not(defs *)[stroke][stroke-opacity] {
+  stroke: var(--__lottieIconColor, var(--interactive-text-default));
+}
+.lottieIcon svg {
+  transform: none !important;
+}
+:global(.enable-forced-colors) .lottieIcon :not(defs *)[fill][fill-opacity] {
+  fill: currentColor;
+}
+:global(.enable-forced-colors) .lottieIcon :not(defs *)[stroke][stroke-opacity] {
+  stroke: currentColor;
+}

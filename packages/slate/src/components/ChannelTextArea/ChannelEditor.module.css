@@ -1,0 +1,13 @@
+.slateContainer {
+  position: relative;
+}
+.slateTextArea {
+  box-sizing: border-box;
+  inset-inline: 0 10px;
+  min-height: var(--custom-channel-textarea-editor-min-height, var(--custom-channel-textarea-text-area-height));
+  padding: calc((var(--custom-channel-textarea-text-area-height) - var(--chat-markup-line-height)) / 2) 0;
+  position: absolute;
+}
+:global(.enable-forced-colors) .placeholder {
+  color: GrayText;
+}

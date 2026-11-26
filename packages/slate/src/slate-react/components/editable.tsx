@@ -84,6 +84,8 @@ const Children = (props: Parameters<typeof useChildren>[0]) => (
 export interface RenderElementProps {
   children: any
   element: Element
+  /** DISCORD PATCH: the decorations of the element's range. */
+  decorations?: Range[]
   attributes: {
     'data-slate-node': 'element'
     'data-slate-inline'?: true
@@ -174,11 +176,11 @@ export const Editable = (props: EditableProps) => {
     []
   )
 
-  // DISCORD PATCH: drop the reference to the editor's DOM node on unmount.
+  // DISCORD PATCH: drop the reference to the editor's DOM node on unmount. (Discord also calls `.remove()` on
+  // it; React removes the node itself on a real unmount, and removing it breaks StrictMode's effect replay.)
   useIsomorphicLayoutEffect(
     () => () => {
       if (state.latestElement != null) {
-        state.latestElement.remove()
         state.latestElement = null
       }
     },

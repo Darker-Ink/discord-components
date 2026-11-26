@@ -1,3 +1,4 @@
+// @ts-nocheck -- vendored slate-react 0.91.11, written against an older TypeScript and @types/react.
 import { type Ancestor, Editor, Node, Range, RangeRef, Text } from 'slate'
 import { type Action } from '../hooks/android-input-manager/android-input-manager'
 import { type TextDiff } from './diff-text'

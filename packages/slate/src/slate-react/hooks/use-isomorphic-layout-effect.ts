@@ -1,3 +1,4 @@
+// @ts-nocheck -- vendored slate-react 0.91.11, written against an older TypeScript and @types/react.
 import { useLayoutEffect, useEffect } from 'react'
 import { CAN_USE_DOM } from '../utils/environment'
 

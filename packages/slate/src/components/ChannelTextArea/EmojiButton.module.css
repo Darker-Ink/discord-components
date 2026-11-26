@@ -1,0 +1,99 @@
+.emojiButton {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  font-size: 14px;
+  justify-content: center;
+  max-height: 50px;
+}
+.emojiButtonHovered {
+  composes: emojiButton;
+}
+.emojiButtonNormal {
+  composes: emojiButton;
+}
+.spriteContainer {
+  position: relative;
+  --custom-emoji-sprite-bg-position: calc(var(--custom-emoji-sprite-col) * -1 * var(--custom-emoji-sprite-size))
+    calc(var(--custom-emoji-sprite-row) * -1 * var(--custom-emoji-sprite-size));
+  --custom-emoji-sprite-bg-size: calc(var(--custom-emoji-sprite-size) * 20) calc(var(--custom-emoji-sprite-size) * 4);
+}
+.sprite,
+.spriteContainer {
+  display: block;
+  height: var(--custom-emoji-sprite-size);
+  width: var(--custom-emoji-sprite-size);
+}
+.sprite {
+  inset-inline-start: 0;
+  position: absolute;
+  top: 0;
+}
+.spriteColored {
+  background-image: url('./assets/emoji-sprite.png');
+  background-position: var(--custom-emoji-sprite-bg-position);
+  background-size: var(--custom-emoji-sprite-bg-size);
+}
+.spriteGreyscale {
+  background-color: var(--interactive-text-default);
+}
+.spriteGreyscale,
+.spritePremiumColored {
+  -webkit-mask-image: url('./assets/emoji-sprite-mask.png');
+  mask-image: url('./assets/emoji-sprite-mask.png');
+  -webkit-mask-position: var(--custom-emoji-sprite-bg-position);
+  mask-position: var(--custom-emoji-sprite-bg-position);
+  -webkit-mask-size: var(--custom-emoji-sprite-bg-size);
+  mask-size: var(--custom-emoji-sprite-bg-size);
+}
+.spritePremiumColored.reducedMotion {
+  background-color: var(--premium-tier-2-purple-for-gradients-2);
+}
+.spritePremiumColored:not(.reducedMotion) {
+  animation: spritePremiumPulsing 2s infinite;
+}
+@keyframes spritePremiumPulsing {
+  0% {
+    background-color: var(--premium-tier-2-purple);
+  }
+  50% {
+    background-color: var(--premium-tier-2-purple-for-gradients-2);
+  }
+  to {
+    background-color: var(--premium-tier-2-purple);
+  }
+}
+.inactive {
+  opacity: 0;
+}
+.active {
+  opacity: 1;
+}
+.premiumUnlockAnimation {
+  position: absolute;
+  z-index: 100;
+}
+.premiumUnlockAnimation.reducedMotion {
+  height: 48px;
+  width: 48px;
+}
+.premiumUnlockAnimation:not(.reducedMotion) {
+  animation: shrink 2s forwards;
+}
+@keyframes shrink {
+  0% {
+    height: 60px;
+    width: 60px;
+  }
+  75% {
+    height: 60px;
+    width: 60px;
+  }
+  to {
+    height: 48px;
+    width: 48px;
+  }
+}
+:global(.enable-forced-colors) .spriteGreyscale {
+  background-color: ButtonText;
+}

@@ -1,0 +1,60 @@
+.button > .disabled {
+  color: var(--icon-muted);
+  cursor: not-allowed;
+}
+.container {
+  align-items: center;
+  display: flex;
+  margin-inline-start: 0;
+}
+.separator {
+  align-self: center;
+  background-color: var(--border-normal);
+  height: var(--chat-markup-line-height);
+  margin-inline-start: 0;
+  width: 1px;
+}
+.buttonContainer {
+  display: flex;
+}
+.sendIcon {
+  height: 20px !important;
+  width: 20px !important;
+}
+.button {
+  box-sizing: border-box;
+  margin-inline: 0;
+  min-height: var(--space-32);
+  min-width: var(--space-32);
+  padding: 4px;
+}
+.buttonChild {
+  transition: color 0.25s ease-in-out;
+}
+.activeButtonChild {
+  color: var(--text-brand);
+}
+:global(.theme-dark) .button:focus .activeButtonChild,
+:global(.theme-dark) .button:focus-within .activeButtonChild,
+:global(.theme-dark) .button:hover .activeButtonChild {
+  color: var(--brand-430);
+}
+:global(.theme-dark) .button:active .activeButtonChild {
+  color: var(--brand-500);
+}
+:global(.theme-light) .activeInnerButton:focus,
+:global(.theme-light) .activeInnerButton:hover,
+:global(.theme-light) .buttonContainer:focus,
+:global(.theme-light) .buttonContainer:hover {
+  color: var(--brand-560);
+}
+:global(.theme-light) .activeInnerButton:active,
+:global(.theme-light) .buttonContainer:active {
+  color: var(--brand-600);
+}
+:global(.reduce-motion) .button {
+  transition: unset;
+}
+.container:before {
+  display: none;
+}

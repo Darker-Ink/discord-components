@@ -1,0 +1,95 @@
+.attachWrapper {
+  align-self: stretch;
+  flex: 0 0 auto;
+  padding: var(--space-12) calc(var(--space-md) - 6px);
+  position: sticky;
+}
+.attachButton {
+  box-sizing: border-box;
+  color: var(--interactive-text-default);
+  height: unset;
+  padding: 0;
+  position: sticky;
+  top: 0;
+}
+.attachButton:hover {
+  color: var(--icon-strong);
+}
+.attachButton .attachButtonPlus {
+  fill: currentColor !important;
+}
+.attachButtonInner {
+  border-radius: 8px;
+  height: var(--chat-input-icon-size);
+  padding: 6px;
+  transition-duration: 0.2s;
+}
+.attachButtonInner:hover {
+  background-color: var(--interactive-background-selected);
+}
+.attachButtonPlus,
+.attachButtonPlusGradient {
+  height: var(--chat-input-icon-size);
+  transform-origin: 50% 50%;
+  width: var(--chat-input-icon-size);
+}
+.attachButtonPlus {
+  fill: var(--interactive-text-default);
+}
+.attachButton:hover .attachButtonPlus {
+  fill: var(--interactive-text-hover);
+}
+.attachButtonClip {
+  fill: var(--brand-500);
+}
+.attachButtonPlay {
+  fill: var(--green-360);
+}
+.attachPopout {
+  background-color: var(--background-surface-high);
+  border-radius: 8px;
+  box-shadow: var(--shadow-border), var(--shadow-high);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-medium);
+  min-width: 200px;
+  padding: 8px;
+}
+.attachPopoutRow {
+  align-items: center;
+  border-radius: 3px;
+  color: var(--interactive-text-default);
+  cursor: pointer;
+  display: flex;
+  padding: 8px;
+  transition: background-color 0.2s ease;
+}
+.attachPopoutRow:hover {
+  background-color: var(--interactive-background-hover);
+  color: var(--interactive-text-hover);
+}
+.attachPopoutRowText {
+  margin-inline-start: 8px;
+}
+.attachPopoutIcon {
+  height: var(--chat-input-icon-size);
+  width: var(--chat-input-icon-size);
+}
+.uploadInput {
+  height: 0;
+  pointer-events: none;
+  position: relative;
+  width: 0;
+}
+.buttonAnimation {
+  height: 44px;
+  width: 40px;
+}
+.buttonAnimationGlow {
+  inset-inline-start: -16px;
+  position: absolute;
+  top: -6px;
+  z-index: 1;
+}
+.buttonAnimationTrinkets {
+  inset-inline-start: -10px;
+}

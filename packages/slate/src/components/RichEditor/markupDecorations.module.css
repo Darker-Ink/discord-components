@@ -1,0 +1,131 @@
+.syntaxAfter,
+.syntaxBefore {
+  font-weight: var(--font-weight-semibold);
+}
+.codeBlockSyntax,
+.syntaxAfter,
+.syntaxBefore {
+  color: var(--textbox-markdown-syntax);
+}
+.codeBlockLang {
+  color: var(--text-feedback-positive);
+}
+.after_s,
+.after_spoiler,
+.after_u,
+.before_s,
+.before_spoiler,
+.before_u,
+.syntaxAfter.after_link,
+.syntaxBefore.before_link,
+.syntaxOverride {
+  font-weight: var(--font-weight-normal);
+}
+.before_em {
+  margin-inline-end: -1px;
+}
+.after_em {
+  margin-inline-start: 1px;
+}
+.before_s,
+.before_u {
+  margin-inline-end: 1px;
+}
+.after_s,
+.after_u {
+  margin-inline-start: 1px;
+}
+.after_u,
+.before_u {
+  text-decoration: underline;
+}
+.before_inlineCode {
+  border-radius: 3px 0 0 3px;
+  border-end-start-radius: var(--radius-xs);
+  border-start-start-radius: var(--radius-xs);
+}
+.after_inlineCode {
+  border-radius: 0 3px 3px 0;
+  border-end-end-radius: var(--radius-xs);
+  border-start-end-radius: var(--radius-xs);
+}
+.bold {
+  font-weight: var(--font-weight-bold);
+}
+.italics {
+  font-style: italic;
+}
+.underline {
+  text-decoration: underline;
+}
+.strikethrough {
+  text-decoration: line-through;
+}
+.fakeLink {
+  -webkit-text-decoration: var(--link-decoration);
+  text-decoration: var(--link-decoration);
+}
+.fakeLink,
+.silentPrefix {
+  color: var(--text-link);
+}
+.after_inlineCode,
+.before_inlineCode,
+.inlineCode {
+  background: var(--background-code);
+  border: 1px solid var(--border-muted);
+  box-sizing: border-box;
+  font-family: var(--font-code);
+  font-size: 85%;
+  height: auto;
+  line-height: 18px;
+  margin: 0;
+  padding: 0;
+  text-indent: 0;
+  white-space: pre-wrap;
+  width: auto;
+}
+.inlineCode {
+  border-inline-start: none;
+}
+.before_inlineCode,
+.inlineCode {
+  border-inline-end: none;
+}
+.after_inlineCode {
+  border-inline-start: none;
+}
+.spoiler {
+  padding: 0 0.2em;
+}
+.codeBlockText,
+.codeLine {
+  color: var(--text-default);
+  font-family: var(--font-code);
+  font-size: 85%;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+.codeLine :global(.hljs-comment),
+.codeLine :global(.hljs-quote) {
+  color: var(--text-muted);
+}
+.codeLine .ansiControlSequence {
+  color: var(--textbox-markdown-syntax);
+  font-size: 70%;
+  padding-inline-end: 0.1em;
+  vertical-align: middle;
+}
+.before_subtext {
+  font-weight: 700;
+}
+.after_subtext,
+.before_subtext,
+.subtext {
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 17.875px;
+}
+.subtext.fakeLink {
+  color: var(--text-link);
+}

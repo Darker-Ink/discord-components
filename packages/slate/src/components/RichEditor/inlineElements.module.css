@@ -1,0 +1,124 @@
+.inlineElement {
+  display: inline-block;
+}
+.inlineVoid {
+  cursor: default;
+}
+.inlineVoid :global(.mention) {
+  padding-bottom: 1px;
+}
+.applicationCommand {
+  display: flex;
+  flex-wrap: wrap;
+  margin-inline-start: -4px;
+  margin-bottom: -4px;
+  margin-top: -8px;
+}
+.applicationCommand > [data-slate-node='text'] > * {
+  display: inline-block;
+  padding-top: 8px;
+}
+.applicationCommand > [data-slate-node='text']:not(:first-child) > :first-child {
+  margin-inline-start: 4px;
+}
+.applicationCommand > [data-slate-node='text']:not(:first-child) > :first-child.emptyText {
+  margin-inline-start: 2px;
+}
+.applicationCommand > [data-slate-node='text']:not(:last-child) > :last-child {
+  margin-inline-end: 4px;
+}
+.applicationCommand > [data-slate-node='text']:not(:last-child) > :last-child.emptyText {
+  margin-inline-end: 2px;
+}
+.applicationCommand:after {
+  color: var(--text-muted);
+  content: attr(data-trailing-placeholder);
+  flex: 1;
+  padding-inline-start: 4px;
+  padding-top: 8px;
+  pointer-events: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  white-space: nowrap;
+}
+.applicationCommand > [data-slate-node='text'] > *,
+.optionPillValue > [data-slate-node='text'] > * {
+  min-width: 4px;
+}
+.commandName {
+  font-weight: var(--font-weight-semibold);
+  margin-inline-start: 4px;
+}
+.optionPill {
+  align-self: flex-start;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 6px;
+  max-width: calc(100% - 30px);
+  vertical-align: top;
+}
+.optionPill .optionPill {
+  margin-block: 0;
+  max-width: none;
+}
+.optionPillKey {
+  border-end-start-radius: 4px;
+  border-start-start-radius: 4px;
+  display: inline-block;
+  flex-shrink: 0;
+  padding: 1px 8px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+.optionPillValue {
+  display: block;
+  flex: 1;
+  padding: 1px 8px;
+  vertical-align: top;
+  white-space: pre-wrap;
+}
+.readonlyPillValue {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+.readonlyPillValue ::-moz-selection {
+  background: transparent;
+}
+.readonlyPillValue ::selection {
+  background: transparent;
+}
+.attachmentFilename {
+  color: var(--brand-500);
+}
+:global(.theme-dark) .optionPill {
+  background-color: var(--background-mod-normal);
+  border-color: var(--background-base-lowest);
+}
+:global(.theme-dark) .optionPillKey {
+  background-color: var(--background-surface-high);
+}
+:global(.theme-light) .optionPill {
+  background-color: var(--background-base-lower);
+  border-color: var(--interactive-background-selected);
+}
+:global(.theme-light) .optionPillKey {
+  background-color: var(--background-base-lowest);
+}
+.selectedPill {
+  border-color: Highlight !important;
+}
+.erroredPill {
+  border-color: var(--red-400) !important;
+}
+.newLine {
+  display: inline-block;
+}
+.inlineFlex {
+  display: inline-flex;
+  margin: 0;
+}
