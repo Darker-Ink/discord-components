@@ -165,11 +165,8 @@ export const MenuItemRow = (props: MenuItemRowProps) => {
         MarqueeText.rowClassName,
         MENU_COLOR_CLASSES[color],
         className,
-        {
-          [styles.disabled]: disabled,
-          [styles.focused]: isFocused,
-          [focusedClassName ?? '']: isFocused,
-        },
+        { [styles.disabled]: disabled, [styles.focused]: isFocused },
+        isFocused && focusedClassName,
       )}
       onClick={disabled ? undefined : onClick}
       aria-disabled={disabled}
@@ -308,7 +305,8 @@ export const MenuCheckboxItemRow = ({
         MarqueeText.rowClassName,
         MENU_COLOR_CLASSES[color],
         className,
-        { [styles.disabled]: disabled, [styles.focused]: isFocused, [focusedClassName ?? '']: isFocused },
+        { [styles.disabled]: disabled, [styles.focused]: isFocused },
+        isFocused && focusedClassName,
       )}
       onClick={disabled ? undefined : onClick}
       {...menuItemProps}

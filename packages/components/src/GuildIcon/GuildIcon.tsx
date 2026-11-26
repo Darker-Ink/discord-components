@@ -159,8 +159,7 @@ export const GuildIcon = ({
   const Tag = onClick != null ? Clickable : 'div';
   const icon = (
     <Tag
-      className={clsx(styles.icon, className, styles[`iconSize${size}`], {
-        [styles[`iconActive${size}`] ?? '']: active,
+      className={clsx(styles.icon, className, styles[`iconSize${size}`], active && styles[`iconActive${size}`], {
         [styles.iconInactive]: !active,
         [styles.noIcon]: guild.icon == null,
       })}
