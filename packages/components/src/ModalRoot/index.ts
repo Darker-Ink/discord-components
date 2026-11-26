@@ -14,3 +14,10 @@ export {
   type ModalImpression,
 } from './ModalFocusLock';
 export { renderModalSpinner } from './ModalSpinner';
+export {
+  ModalContent,
+  ModalListContent,
+  type ModalContentProps,
+  type ModalListContentProps,
+  type ModalScrollbarType,
+} from './ModalContent';

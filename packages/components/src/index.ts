@@ -78,3 +78,4 @@ export * from './SearchableSelect';
 export * from './Countdown';
 export * from './Calendar';
 export * from './GlobalBanner';
+export * from './AdvancedScroller';
