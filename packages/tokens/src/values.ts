@@ -7,10 +7,6 @@ export interface ColorRef {
   opacity?: number;
 }
 export type DensityValues<T> = Record<TokenDensity, T> & { fallback?: T };
-export interface DensityTable<T> {
-  default: DensityValues<T>;
-  experiments?: Record<string, DensityValues<T>>;
-}
 export interface ShadowValue {
   boxShadow: string;
   filter: string;
@@ -4549,41 +4545,6 @@ export const SEMANTIC_COLORS = {
   },
 } as const satisfies Record<string, { category: string } & Partial<Record<TokenTheme, ColorRef>>>;
 
-export const SEMANTIC_COLOR_EXPERIMENTS: Record<string, Record<string, Partial<Record<TokenTheme, ColorRef>>>> = {
-  BADGE_EXPRESSIVE_BORDER: {
-    'mana-badge-refresh': {
-      dark: { raw: 'OPACITY_WHITE_8', opacity: 0.0784313725490196 },
-      light: { raw: 'OPACITY_WHITE_8', opacity: 0.0784313725490196 },
-      midnight: { raw: 'OPACITY_WHITE_8', opacity: 0.0784313725490196 },
-      darker: { raw: 'OPACITY_WHITE_8', opacity: 0.0784313725490196 },
-    },
-  },
-  BADGE_INVERTED_BORDER: {
-    'mana-badge-refresh': {
-      dark: { raw: 'OPACITY_BLACK_8', opacity: 0.0784313725490196 },
-      light: { raw: 'OPACITY_WHITE_8', opacity: 0.0784313725490196 },
-      midnight: { raw: 'OPACITY_BLACK_8', opacity: 0.0784313725490196 },
-      darker: { raw: 'OPACITY_BLACK_8', opacity: 0.0784313725490196 },
-    },
-  },
-  BADGE_PRIMARY_BORDER: {
-    'mana-badge-refresh': {
-      dark: { raw: 'OPACITY_WHITE_8', opacity: 0.0784313725490196 },
-      light: { raw: 'OPACITY_WHITE_8', opacity: 0.0784313725490196 },
-      midnight: { raw: 'OPACITY_WHITE_8', opacity: 0.0784313725490196 },
-      darker: { raw: 'OPACITY_WHITE_8', opacity: 0.0784313725490196 },
-    },
-  },
-  BADGE_SECONDARY_BORDER: {
-    'mana-badge-refresh': {
-      dark: { raw: 'OPACITY_WHITE_8', opacity: 0.0784313725490196 },
-      light: { raw: 'OPACITY_WHITE_8', opacity: 0.0784313725490196 },
-      midnight: { raw: 'OPACITY_WHITE_8', opacity: 0.0784313725490196 },
-      darker: { raw: 'OPACITY_WHITE_8', opacity: 0.0784313725490196 },
-    },
-  },
-};
-
 export const SEMANTIC_COLOR_HIGH_CONTRAST: Record<string, Partial<Record<TokenTheme, ColorRef>>> = {
   ANSI_BLUE: {
     dark: { raw: 'BLUE_NEW_31', opacity: 1 },
@@ -8341,880 +8302,337 @@ export const SPACE_PX = {
 } as const;
 
 export const MODULES = {
-  badge: {
-    BORDER_WIDTH: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mana-badge-refresh': { compact: 1, cozy: 1, default: 1, fallback: 1 } },
-    },
-  },
+  badge: { BORDER_WIDTH: { compact: 0, cozy: 0, default: 0, fallback: 0 } },
   button: {
-    BORDER_RADIUS: {
-      default: { compact: 2147483647, cozy: 2147483647, default: 2147483647, fallback: 2147483647 },
-      experiments: { 'mobile-visual-refresh': { compact: 8, cozy: 8, default: 8, fallback: 8 } },
-    },
-    BORDER_RADIUS_LG: {
-      default: { compact: 2147483647, cozy: 2147483647, default: 2147483647, fallback: 2147483647 },
-      experiments: { 'mobile-visual-refresh': { compact: 12, cozy: 12, default: 12, fallback: 12 } },
-    },
+    BORDER_RADIUS: { compact: 2147483647, cozy: 2147483647, default: 2147483647, fallback: 2147483647 },
+    BORDER_RADIUS_LG: { compact: 2147483647, cozy: 2147483647, default: 2147483647, fallback: 2147483647 },
   },
   channels: {
-    NAME_LINE_HEIGHT: { default: { compact: 20, cozy: 28, default: 24, fallback: 24 } },
-    SPINE_INVERTED_OFFSET_TOP: { default: { compact: 2, cozy: 9, default: 6, fallback: 6 } },
-    SPINE_OFFSET_LEFT: { default: { compact: 20, cozy: 28, default: 24, fallback: 24 } },
+    NAME_LINE_HEIGHT: { compact: 20, cozy: 28, default: 24, fallback: 24 },
+    SPINE_INVERTED_OFFSET_TOP: { compact: 2, cozy: 9, default: 6, fallback: 6 },
+    SPINE_OFFSET_LEFT: { compact: 20, cozy: 28, default: 24, fallback: 24 },
   },
   chat: {
-    AVATAR_SIZE: { default: { compact: 40, cozy: 40, default: 40, fallback: 40 } },
-    INPUT_ICON_SIZE: { default: { compact: 20, cozy: 20, default: 20, fallback: 20 } },
-    MARKUP_LINE_HEIGHT: {
-      default: { compact: '1.375rem', cozy: '1.375rem', default: '1.375rem', fallback: '1.375rem' },
-    },
-    RESIZE_HANDLE_WIDTH: { default: { compact: 8, cozy: 8, default: 8, fallback: 8 } },
+    AVATAR_SIZE: { compact: 40, cozy: 40, default: 40, fallback: 40 },
+    INPUT_ICON_SIZE: { compact: 20, cozy: 20, default: 20, fallback: 20 },
+    MARKUP_LINE_HEIGHT: { compact: '1.375rem', cozy: '1.375rem', default: '1.375rem', fallback: '1.375rem' },
+    RESIZE_HANDLE_WIDTH: { compact: 8, cozy: 8, default: 8, fallback: 8 },
   },
   control: {
-    INPUT_HEIGHT_MD: { default: { compact: 40, cozy: 40, default: 40, fallback: 40 } },
-    INPUT_HEIGHT_SM: { default: { compact: 32, cozy: 32, default: 32, fallback: 32 } },
-    ITEM_HEIGHT_MD: { default: { compact: 40, cozy: 40, default: 40, fallback: 40 } },
-    ITEM_HEIGHT_SM: { default: { compact: 32, cozy: 32, default: 32, fallback: 32 } },
+    INPUT_HEIGHT_MD: { compact: 40, cozy: 40, default: 40, fallback: 40 },
+    INPUT_HEIGHT_SM: { compact: 32, cozy: 32, default: 32, fallback: 32 },
+    ITEM_HEIGHT_MD: { compact: 40, cozy: 40, default: 40, fallback: 40 },
+    ITEM_HEIGHT_SM: { compact: 32, cozy: 32, default: 32, fallback: 32 },
   },
-  form: { INPUT_HEIGHT: { default: { compact: 44, cozy: 44, default: 44, fallback: 44 } } },
+  form: { INPUT_HEIGHT: { compact: 44, cozy: 44, default: 44, fallback: 44 } },
   guildbar: {
-    AVATAR_SIZE: {
-      default: { compact: 40, cozy: 40, default: 40, fallback: 40 },
-      experiments: { 'refresh-fast-follow-avatars': { compact: 40, cozy: 44, default: 44, fallback: 40 } },
-    },
-    FOLDER_SIZE: {
-      default: { compact: 48, cozy: 48, default: 48, fallback: 48 },
-      experiments: { 'refresh-fast-follow-avatars': { compact: 48, cozy: 52, default: 52, fallback: 48 } },
-    },
+    AVATAR_SIZE: { compact: 40, cozy: 40, default: 40, fallback: 40 },
+    FOLDER_SIZE: { compact: 48, cozy: 48, default: 48, fallback: 48 },
   },
   icon: {
-    SIZE_LG: { default: { compact: 32, cozy: 32, default: 32, fallback: 32 } },
-    SIZE_MD: { default: { compact: 24, cozy: 24, default: 24, fallback: 24 } },
-    SIZE_SM: { default: { compact: 18, cozy: 18, default: 18, fallback: 18 } },
-    SIZE_XS: { default: { compact: 16, cozy: 16, default: 16, fallback: 16 } },
-    SIZE_XXS: { default: { compact: 12, cozy: 12, default: 12, fallback: 12 } },
+    SIZE_LG: { compact: 32, cozy: 32, default: 32, fallback: 32 },
+    SIZE_MD: { compact: 24, cozy: 24, default: 24, fallback: 24 },
+    SIZE_SM: { compact: 18, cozy: 18, default: 18, fallback: 18 },
+    SIZE_XS: { compact: 16, cozy: 16, default: 16, fallback: 16 },
+    SIZE_XXS: { compact: 12, cozy: 12, default: 12, fallback: 12 },
   },
   menu: {
-    BORDER_WIDTH: { default: { compact: 1, cozy: 1, default: 1, fallback: 1 } },
-    SCROLLER_BLOCK_PADDING: { default: { compact: 8, cozy: 8, default: 8, fallback: 8 } },
+    BORDER_WIDTH: { compact: 1, cozy: 1, default: 1, fallback: 1 },
+    SCROLLER_BLOCK_PADDING: { compact: 8, cozy: 8, default: 8, fallback: 8 },
   },
   mobile: {
-    BOUNTY_TILE_BORDER_RADIUS: {
-      default: { compact: 24, cozy: 24, default: 24, fallback: 24 },
-      experiments: { 'mobile-visual-refresh': { compact: 12, cozy: 12, default: 12, fallback: 12 } },
-    },
-    CARD_DEFAULT_RADIUS: { default: { compact: 16, cozy: 16, default: 16, fallback: 16 } },
-    CHANNEL_DETAILS_NAV_BUTTONS_GAP: {
-      default: { compact: 12, cozy: 12, default: 12, fallback: 12 },
-      experiments: { 'mobile-visual-refresh': { compact: 0, cozy: 0, default: 0, fallback: 0 } },
-    },
-    CHANNEL_DETAILS_NAV_ICON_BUTTON_SIZE: {
-      default: { compact: 'sm', cozy: 'sm', default: 'sm', fallback: 'sm' },
-      experiments: { 'mobile-visual-refresh': { compact: 'lg', cozy: 'lg', default: 'lg', fallback: 'lg' } },
-    },
+    BOUNTY_TILE_BORDER_RADIUS: { compact: 24, cozy: 24, default: 24, fallback: 24 },
+    CARD_DEFAULT_RADIUS: { compact: 16, cozy: 16, default: 16, fallback: 16 },
+    CHANNEL_DETAILS_NAV_BUTTONS_GAP: { compact: 12, cozy: 12, default: 12, fallback: 12 },
+    CHANNEL_DETAILS_NAV_ICON_BUTTON_SIZE: { compact: 'sm', cozy: 'sm', default: 'sm', fallback: 'sm' },
     CHANNEL_DETAILS_NAV_ICON_BUTTON_VARIANT: {
-      default: { compact: 'tertiary', cozy: 'tertiary', default: 'tertiary', fallback: 'tertiary' },
-      experiments: {
-        'mobile-visual-refresh': {
-          compact: 'icon-only',
-          cozy: 'icon-only',
-          default: 'icon-only',
-          fallback: 'icon-only',
-        },
-      },
+      compact: 'tertiary',
+      cozy: 'tertiary',
+      default: 'tertiary',
+      fallback: 'tertiary',
     },
-    CHANNEL_DRAWER_CORNER_RADIUS: {
-      default: { compact: 8, cozy: 8, default: 8, fallback: 8 },
-      experiments: { 'mobile-visual-refresh-floating': { compact: 0, cozy: 0, default: 0, fallback: 0 } },
-    },
-    CHANNEL_DRAWER_DIVIDER_WIDTH: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh-floating': { compact: 1, cozy: 1, default: 1, fallback: 1 } },
-    },
-    CHANNEL_DRAWER_SPACING: {
-      default: { compact: 8, cozy: 8, default: 8, fallback: 8 },
-      experiments: { 'mobile-visual-refresh-floating': { compact: 0, cozy: 0, default: 0, fallback: 0 } },
-    },
-    CHANNEL_HEADER_ICON_SIZE: {
-      default: { compact: 'md', cozy: 'md', default: 'md', fallback: 'md' },
-      experiments: { 'mobile-visual-refresh': { compact: 'xs', cozy: 'xs', default: 'xs', fallback: 'xs' } },
-    },
-    CHANNEL_ITEM_RADIUS: {
-      default: { compact: 12, cozy: 12, default: 12, fallback: 12 },
-      experiments: { 'mobile-visual-refresh': { compact: 8, cozy: 8, default: 8, fallback: 8 } },
-    },
+    CHANNEL_DRAWER_CORNER_RADIUS: { compact: 8, cozy: 8, default: 8, fallback: 8 },
+    CHANNEL_DRAWER_DIVIDER_WIDTH: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    CHANNEL_DRAWER_SPACING: { compact: 8, cozy: 8, default: 8, fallback: 8 },
+    CHANNEL_HEADER_ICON_SIZE: { compact: 'md', cozy: 'md', default: 'md', fallback: 'md' },
+    CHANNEL_ITEM_RADIUS: { compact: 12, cozy: 12, default: 12, fallback: 12 },
     CHANNEL_LIST_SUBTITLE_TEXT_STYLE: {
-      default: {
-        compact: 'body-xs/medium',
-        cozy: 'body-xs/medium',
-        default: 'body-xs/medium',
-        fallback: 'body-xs/medium',
-      },
-      experiments: {
-        'mobile-visual-refresh': {
-          compact: 'body-sm/medium',
-          cozy: 'body-sm/medium',
-          default: 'body-sm/medium',
-          fallback: 'body-sm/medium',
-        },
-      },
+      compact: 'body-xs/medium',
+      cozy: 'body-xs/medium',
+      default: 'body-xs/medium',
+      fallback: 'body-xs/medium',
     },
     CHANNEL_LIST_TITLE_TEXT_STYLE: {
-      default: {
-        compact: 'heading-md/semibold',
-        cozy: 'heading-md/semibold',
-        default: 'heading-md/semibold',
-        fallback: 'heading-md/semibold',
-      },
-      experiments: {
-        'mobile-visual-refresh': {
-          compact: 'heading-lg/semibold',
-          cozy: 'heading-lg/semibold',
-          default: 'heading-lg/semibold',
-          fallback: 'heading-lg/semibold',
-        },
-      },
+      compact: 'heading-md/semibold',
+      cozy: 'heading-md/semibold',
+      default: 'heading-md/semibold',
+      fallback: 'heading-md/semibold',
     },
-    CHANNEL_NAME_CHANNEL_BORDER_WIDTH: {
-      default: { compact: 1, cozy: 1, default: 1, fallback: 1 },
-      experiments: { 'mobile-visual-refresh': { compact: 0, cozy: 0, default: 0, fallback: 0 } },
-    },
-    CHANNEL_NAME_CHANNEL_ICON_RADIUS: {
-      default: { compact: 12, cozy: 12, default: 12, fallback: 12 },
-      experiments: { 'mobile-visual-refresh': { compact: 8, cozy: 8, default: 8, fallback: 8 } },
-    },
+    CHANNEL_NAME_CHANNEL_BORDER_WIDTH: { compact: 1, cozy: 1, default: 1, fallback: 1 },
+    CHANNEL_NAME_CHANNEL_ICON_RADIUS: { compact: 12, cozy: 12, default: 12, fallback: 12 },
     CHANNEL_SAFE_AREA_BOTTOM_BACKGROUND: {
-      default: {
-        compact: 'background-base-lower',
-        cozy: 'background-base-lower',
-        default: 'background-base-lower',
-        fallback: 'background-base-lower',
-      },
+      compact: 'background-base-lower',
+      cozy: 'background-base-lower',
+      default: 'background-base-lower',
+      fallback: 'background-base-lower',
     },
-    CHAT_INPUT_ACTION_BUTTON_GAP: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: {
-        'mobile-visual-refresh': { compact: 8, cozy: 8, default: 8, fallback: 8 },
-        'mobile-visual-refresh-legacy-send-button': { compact: 8, cozy: 8, default: 8, fallback: 8 },
-        'mobile-visual-refresh-floating': { compact: 10, cozy: 10, default: 10, fallback: 10 },
-      },
-    },
-    CHAT_INPUT_ACTION_BUTTON_MARGIN: {
-      default: { compact: 4, cozy: 4, default: 4, fallback: 4 },
-      experiments: { 'mobile-visual-refresh': { compact: 0, cozy: 0, default: 0, fallback: 0 } },
-    },
-    CHAT_INPUT_ACTION_BUTTON_SIZE: {
-      default: { compact: 40, cozy: 40, default: 40, fallback: 40 },
-      experiments: { 'mobile-visual-refresh': { compact: 32, cozy: 32, default: 32, fallback: 32 } },
-    },
+    CHAT_INPUT_ACTION_BUTTON_GAP: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    CHAT_INPUT_ACTION_BUTTON_MARGIN: { compact: 4, cozy: 4, default: 4, fallback: 4 },
+    CHAT_INPUT_ACTION_BUTTON_SIZE: { compact: 40, cozy: 40, default: 40, fallback: 40 },
     CHAT_INPUT_ACTION_ICON_ACTIVE_TINT: {
-      default: { compact: 'icon-strong', cozy: 'icon-strong', default: 'icon-strong', fallback: 'icon-strong' },
+      compact: 'icon-strong',
+      cozy: 'icon-strong',
+      default: 'icon-strong',
+      fallback: 'icon-strong',
     },
-    CHAT_INPUT_ACTION_ICON_PIXEL_SIZE: {
-      default: { compact: 24, cozy: 24, default: 24, fallback: 24 },
-      experiments: { 'mobile-visual-refresh': { compact: 20, cozy: 20, default: 20, fallback: 20 } },
-    },
-    CHAT_INPUT_BORDER_RADIUS: {
-      default: { compact: 24, cozy: 24, default: 24, fallback: 24 },
-      experiments: { 'mobile-visual-refresh': { compact: 8, cozy: 8, default: 8, fallback: 8 } },
-    },
-    CHAT_INPUT_BUTTON_MIN_TOUCH_TARGET_SIZE: { default: { compact: 44, cozy: 44, default: 44, fallback: 44 } },
-    CHAT_INPUT_COMMAND_CATEGORIES_BORDER_TOP_WIDTH: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh': { compact: 1, cozy: 1, default: 1, fallback: 1 } },
-    },
-    CHAT_INPUT_CONTAINER_HORIZONTAL_PADDING: {
-      default: { compact: 8, cozy: 8, default: 8, fallback: 8 },
-      experiments: { 'mobile-visual-refresh': { compact: 16, cozy: 16, default: 16, fallback: 16 } },
-    },
-    CHAT_INPUT_CONTEXT_BAR_GAP: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh-floating': { compact: 8, cozy: 8, default: 8, fallback: 8 } },
-    },
-    CHAT_INPUT_CONTEXT_BAR_PADDING_HORIZONTAL: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh-floating': { compact: 12, cozy: 12, default: 12, fallback: 12 } },
-    },
-    CHAT_INPUT_CONTEXT_BAR_PADDING_VERTICAL: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh-floating': { compact: 8, cozy: 8, default: 8, fallback: 8 } },
-    },
-    CHAT_INPUT_EXPRESSION_OFFSET_LEFT: {
-      default: { compact: 6, cozy: 6, default: 6, fallback: 6 },
-      experiments: { 'mobile-visual-refresh': { compact: 12, cozy: 12, default: 12, fallback: 12 } },
-    },
-    CHAT_INPUT_EXPRESSION_OFFSET_TOP: {
-      default: { compact: 6, cozy: 6, default: 6, fallback: 6 },
-      experiments: { 'mobile-visual-refresh': { compact: 10, cozy: 10, default: 10, fallback: 10 } },
-    },
-    CHAT_INPUT_FLOATING_ACCESSORY_BORDER_WIDTH: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh-floating': { compact: 1, cozy: 1, default: 1, fallback: 1 } },
-    },
-    CHAT_INPUT_FLOATING_ACCESSORY_MARGIN_BOTTOM: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh-floating': { compact: 8, cozy: 8, default: 8, fallback: 8 } },
-    },
-    CHAT_INPUT_FLOATING_ACCESSORY_MARGIN_HORIZONTAL: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh-floating': { compact: 16, cozy: 16, default: 16, fallback: 16 } },
-    },
-    CHAT_INPUT_FLOATING_ACCESSORY_PADDING_TOP: {
-      default: { compact: 4, cozy: 4, default: 4, fallback: 4 },
-      experiments: { 'mobile-visual-refresh-floating': { compact: 0, cozy: 0, default: 0, fallback: 0 } },
-    },
-    CHAT_INPUT_FLOATING_ACCESSORY_TOP_BORDER_WIDTH: { default: { compact: 1, cozy: 1, default: 1, fallback: 1 } },
-    CHAT_INPUT_FLOATING_BORDER_RADIUS: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh-floating': { compact: 16, cozy: 16, default: 16, fallback: 16 } },
-    },
-    CHAT_INPUT_FLOATING_CONTENT_GAP: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh-floating': { compact: 8, cozy: 8, default: 8, fallback: 8 } },
-    },
-    CHAT_INPUT_FLOATING_CONTENT_PADDING_HORIZONTAL: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: {
-        'mobile-visual-refresh-floating': { compact: 10, cozy: 10, default: 10, fallback: 10 },
-        'mobile-visual-refresh-legacy-send-button': { compact: 12, cozy: 12, default: 12, fallback: 12 },
-      },
-    },
-    CHAT_INPUT_FLOATING_CONTENT_PADDING_VERTICAL: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: {
-        'mobile-visual-refresh-floating': { compact: 10, cozy: 10, default: 10, fallback: 10 },
-        'mobile-visual-refresh-legacy-send-button': { compact: 12, cozy: 12, default: 12, fallback: 12 },
-      },
-    },
-    CHAT_INPUT_FLOATING_INLINE_FULL_GRADIENT_HEIGHT: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh': { compact: 20, cozy: 20, default: 20, fallback: 20 } },
-    },
-    CHAT_INPUT_FLOATING_OFFSET_MINIMUM: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh': { compact: 16, cozy: 16, default: 16, fallback: 16 } },
-    },
-    CHAT_INPUT_FLOATING_SCRIM_GRADIENT_HEIGHT: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh': { compact: 56, cozy: 56, default: 56, fallback: 56 } },
-    },
-    CHAT_INPUT_FLOATING_SCRIM_GRADIENT_HEIGHT_AT_BOTTOM: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh': { compact: 36, cozy: 36, default: 36, fallback: 36 } },
-    },
-    CHAT_INPUT_FLOATING_SCRIM_OFFSET_TOP: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh': { compact: 24, cozy: 24, default: 24, fallback: 24 } },
-    },
-    CHAT_INPUT_FLOATING_TYPING_GRADIENT_HEIGHT_REDUCED: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh': { compact: 12, cozy: 12, default: 12, fallback: 12 } },
-    },
+    CHAT_INPUT_ACTION_ICON_PIXEL_SIZE: { compact: 24, cozy: 24, default: 24, fallback: 24 },
+    CHAT_INPUT_BORDER_RADIUS: { compact: 24, cozy: 24, default: 24, fallback: 24 },
+    CHAT_INPUT_BUTTON_MIN_TOUCH_TARGET_SIZE: { compact: 44, cozy: 44, default: 44, fallback: 44 },
+    CHAT_INPUT_COMMAND_CATEGORIES_BORDER_TOP_WIDTH: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    CHAT_INPUT_CONTAINER_HORIZONTAL_PADDING: { compact: 8, cozy: 8, default: 8, fallback: 8 },
+    CHAT_INPUT_CONTEXT_BAR_GAP: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    CHAT_INPUT_CONTEXT_BAR_PADDING_HORIZONTAL: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    CHAT_INPUT_CONTEXT_BAR_PADDING_VERTICAL: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    CHAT_INPUT_EXPRESSION_OFFSET_LEFT: { compact: 6, cozy: 6, default: 6, fallback: 6 },
+    CHAT_INPUT_EXPRESSION_OFFSET_TOP: { compact: 6, cozy: 6, default: 6, fallback: 6 },
+    CHAT_INPUT_FLOATING_ACCESSORY_BORDER_WIDTH: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    CHAT_INPUT_FLOATING_ACCESSORY_MARGIN_BOTTOM: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    CHAT_INPUT_FLOATING_ACCESSORY_MARGIN_HORIZONTAL: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    CHAT_INPUT_FLOATING_ACCESSORY_PADDING_TOP: { compact: 4, cozy: 4, default: 4, fallback: 4 },
+    CHAT_INPUT_FLOATING_ACCESSORY_TOP_BORDER_WIDTH: { compact: 1, cozy: 1, default: 1, fallback: 1 },
+    CHAT_INPUT_FLOATING_BORDER_RADIUS: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    CHAT_INPUT_FLOATING_CONTENT_GAP: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    CHAT_INPUT_FLOATING_CONTENT_PADDING_HORIZONTAL: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    CHAT_INPUT_FLOATING_CONTENT_PADDING_VERTICAL: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    CHAT_INPUT_FLOATING_INLINE_FULL_GRADIENT_HEIGHT: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    CHAT_INPUT_FLOATING_OFFSET_MINIMUM: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    CHAT_INPUT_FLOATING_SCRIM_GRADIENT_HEIGHT: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    CHAT_INPUT_FLOATING_SCRIM_GRADIENT_HEIGHT_AT_BOTTOM: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    CHAT_INPUT_FLOATING_SCRIM_OFFSET_TOP: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    CHAT_INPUT_FLOATING_TYPING_GRADIENT_HEIGHT_REDUCED: { compact: 0, cozy: 0, default: 0, fallback: 0 },
     CHAT_INPUT_ICON_DEFAULT_TINT: {
-      default: {
-        compact: 'interactive-icon-default',
-        cozy: 'interactive-icon-default',
-        default: 'interactive-icon-default',
-        fallback: 'interactive-icon-default',
-      },
+      compact: 'interactive-icon-default',
+      cozy: 'interactive-icon-default',
+      default: 'interactive-icon-default',
+      fallback: 'interactive-icon-default',
     },
-    CHAT_INPUT_ICON_SIZE: {
-      default: { compact: 'medium', cozy: 'medium', default: 'medium', fallback: 'medium' },
-      experiments: {
-        'mobile-visual-refresh': { compact: 'small20', cozy: 'small20', default: 'small20', fallback: 'small20' },
-      },
-    },
-    CHAT_INPUT_PILL_BORDER_WIDTH: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh': { compact: 1, cozy: 1, default: 1, fallback: 1 } },
-    },
-    CHAT_INPUT_PILL_MARGIN_HORIZONTAL: {
-      default: { compact: 4, cozy: 4, default: 4, fallback: 4 },
-      experiments: { 'mobile-visual-refresh': { compact: 8, cozy: 8, default: 8, fallback: 8 } },
-    },
-    CHAT_INPUT_PILL_PADDING: {
-      default: { compact: 2, cozy: 2, default: 2, fallback: 2 },
-      experiments: { 'mobile-visual-refresh': { compact: 0, cozy: 0, default: 0, fallback: 0 } },
-    },
-    CHAT_INPUT_REPLY_MENTION_ICON_MARGIN_RIGHT: {
-      default: { compact: 4, cozy: 4, default: 4, fallback: 4 },
-      experiments: { 'mobile-visual-refresh-floating': { compact: 0, cozy: 0, default: 0, fallback: 0 } },
-    },
-    CHAT_INPUT_REPLY_MENTION_ICON_SIZE: {
-      default: { compact: 20, cozy: 20, default: 20, fallback: 20 },
-      experiments: { 'mobile-visual-refresh-floating': { compact: 16, cozy: 16, default: 16, fallback: 16 } },
-    },
-    CHAT_INPUT_SEND_BUTTON_HEIGHT: {
-      default: { compact: 40, cozy: 40, default: 40, fallback: 40 },
-      experiments: {
-        'mobile-visual-refresh': { compact: 32, cozy: 32, default: 32, fallback: 32 },
-        'mobile-visual-refresh-legacy-send-button': { compact: 32, cozy: 32, default: 32, fallback: 32 },
-        'mobile-visual-refresh-floating': { compact: 36, cozy: 36, default: 36, fallback: 36 },
-      },
-    },
-    CHAT_INPUT_SEND_BUTTON_WIDTH: {
-      default: { compact: 40, cozy: 40, default: 40, fallback: 40 },
-      experiments: {
-        'mobile-visual-refresh': { compact: 32, cozy: 32, default: 32, fallback: 32 },
-        'mobile-visual-refresh-floating': { compact: 36, cozy: 36, default: 36, fallback: 36 },
-        'mobile-visual-refresh-legacy-send-button': { compact: 40, cozy: 40, default: 40, fallback: 40 },
-      },
-    },
-    COACHMARK_BODY_WIDTH: {
-      default: { compact: 260, cozy: 260, default: 260, fallback: 260 },
-      experiments: { 'mobile-visual-refresh': { compact: 240, cozy: 240, default: 240, fallback: 240 } },
-    },
-    COACHMARK_BUTTON_SPACING: {
-      default: { compact: 12, cozy: 12, default: 12, fallback: 12 },
-      experiments: { 'mobile-visual-refresh': { compact: 16, cozy: 16, default: 16, fallback: 16 } },
-    },
-    CONTROL_CHECKBOX_BORDER_RADIUS: {
-      default: { compact: 8, cozy: 8, default: 8, fallback: 8 },
-      experiments: { 'mobile-visual-refresh': { compact: 4, cozy: 4, default: 4, fallback: 4 } },
-    },
-    CONTROL_CHECKBOX_BORDER_WIDTH: {
-      default: { compact: 2, cozy: 2, default: 2, fallback: 2 },
-      experiments: { 'mobile-visual-refresh': { compact: 1.2, cozy: 1.2, default: 1.2, fallback: 1.2 } },
-    },
-    CONTROL_CHECKBOX_SIZE_DEFAULT: { default: { compact: 24, cozy: 24, default: 24, fallback: 24 } },
-    CONTROL_RADIO_ICON_BORDER_WIDTH: {
-      default: { compact: 2, cozy: 2, default: 2, fallback: 2 },
-      experiments: { 'mobile-visual-refresh': { compact: 1.2, cozy: 1.2, default: 1.2, fallback: 1.2 } },
-    },
-    CONTROL_RADIO_ICON_DOT_SIZE_DEFAULT: {
-      default: { compact: 10, cozy: 10, default: 10, fallback: 10 },
-      experiments: { 'mobile-visual-refresh': { compact: 8, cozy: 8, default: 8, fallback: 8 } },
-    },
-    CONTROL_RADIO_ICON_SIZE_DEFAULT: { default: { compact: 24, cozy: 24, default: 24, fallback: 24 } },
-    CONTROL_SWITCH_HEIGHT: {
-      default: { compact: 32, cozy: 32, default: 32, fallback: 32 },
-      experiments: { 'mobile-visual-refresh': { compact: 28, cozy: 28, default: 28, fallback: 28 } },
-    },
-    CONTROL_SWITCH_KNOB_CHECKED_OFFSET: {
-      default: { compact: 16, cozy: 16, default: 16, fallback: 16 },
-      experiments: { 'mobile-visual-refresh': { compact: 28, cozy: 28, default: 28, fallback: 28 } },
-    },
-    CONTROL_SWITCH_KNOB_SIZE: {
-      default: { compact: 24, cozy: 24, default: 24, fallback: 24 },
-      experiments: { 'mobile-visual-refresh': { compact: 20, cozy: 20, default: 20, fallback: 20 } },
-    },
-    CONTROL_SWITCH_WIDTH: {
-      default: { compact: 48, cozy: 48, default: 48, fallback: 48 },
-      experiments: { 'mobile-visual-refresh': { compact: 56, cozy: 56, default: 56, fallback: 56 } },
-    },
-    EMOJI_ROW_EMOJI_CONTAINER_SIZE: {
-      default: { compact: 48, cozy: 48, default: 48, fallback: 48 },
-      experiments: { 'mobile-visual-refresh': { compact: 48, cozy: 48, default: 48, fallback: 48 } },
-    },
-    EMOJI_ROW_EMOJI_FONT_SIZE: {
-      default: { compact: 28, cozy: 28, default: 28, fallback: 28 },
-      experiments: { 'mobile-visual-refresh': { compact: 22, cozy: 22, default: 22, fallback: 22 } },
-    },
-    EMOJI_ROW_EMOJI_LINE_HEIGHT: {
-      default: { compact: 33, cozy: 33, default: 33, fallback: 33 },
-      experiments: { 'mobile-visual-refresh': { compact: 28, cozy: 28, default: 28, fallback: 28 } },
-    },
-    EMOJI_ROW_EMOJI_MIN_SPACING: {
-      default: { compact: 12, cozy: 12, default: 12, fallback: 12 },
-      experiments: { 'mobile-visual-refresh': { compact: 12, cozy: 12, default: 12, fallback: 12 } },
-    },
-    EMOJI_ROW_EMOJI_SIZE: {
-      default: { compact: 28, cozy: 28, default: 28, fallback: 28 },
-      experiments: { 'mobile-visual-refresh': { compact: 24, cozy: 24, default: 24, fallback: 24 } },
-    },
-    GIFTING_SETTINGS_PADDING_HORIZONTAL: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh': { compact: 16, cozy: 16, default: 16, fallback: 16 } },
-    },
-    GROUP_AVATAR_SIZE: {
-      default: { compact: 72, cozy: 72, default: 72, fallback: 72 },
-      experiments: { 'mobile-visual-refresh': { compact: 64, cozy: 64, default: 64, fallback: 64 } },
-    },
-    GUILD_BAR_ITEM_MARGIN: {
-      default: { compact: 4, cozy: 4, default: 4, fallback: 4 },
-      experiments: { 'mobile-visual-refresh': { compact: 6, cozy: 6, default: 6, fallback: 6 } },
-    },
-    GUILD_BAR_ITEM_PADDING: { default: { compact: 8, cozy: 8, default: 8, fallback: 8 } },
-    GUILD_BAR_ITEM_SIZE: { default: { compact: 48, cozy: 48, default: 48, fallback: 48 } },
-    GUILD_FOLDER_BACKGROUND_LEFT: {
-      default: { compact: 12, cozy: 12, default: 12, fallback: 12 },
-      experiments: { 'mobile-visual-refresh': { compact: 8, cozy: 8, default: 8, fallback: 8 } },
-    },
+    CHAT_INPUT_ICON_SIZE: { compact: 'medium', cozy: 'medium', default: 'medium', fallback: 'medium' },
+    CHAT_INPUT_PILL_BORDER_WIDTH: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    CHAT_INPUT_PILL_MARGIN_HORIZONTAL: { compact: 4, cozy: 4, default: 4, fallback: 4 },
+    CHAT_INPUT_PILL_PADDING: { compact: 2, cozy: 2, default: 2, fallback: 2 },
+    CHAT_INPUT_REPLY_MENTION_ICON_MARGIN_RIGHT: { compact: 4, cozy: 4, default: 4, fallback: 4 },
+    CHAT_INPUT_REPLY_MENTION_ICON_SIZE: { compact: 20, cozy: 20, default: 20, fallback: 20 },
+    CHAT_INPUT_SEND_BUTTON_HEIGHT: { compact: 40, cozy: 40, default: 40, fallback: 40 },
+    CHAT_INPUT_SEND_BUTTON_WIDTH: { compact: 40, cozy: 40, default: 40, fallback: 40 },
+    COACHMARK_BODY_WIDTH: { compact: 260, cozy: 260, default: 260, fallback: 260 },
+    COACHMARK_BUTTON_SPACING: { compact: 12, cozy: 12, default: 12, fallback: 12 },
+    CONTROL_CHECKBOX_BORDER_RADIUS: { compact: 8, cozy: 8, default: 8, fallback: 8 },
+    CONTROL_CHECKBOX_BORDER_WIDTH: { compact: 2, cozy: 2, default: 2, fallback: 2 },
+    CONTROL_CHECKBOX_SIZE_DEFAULT: { compact: 24, cozy: 24, default: 24, fallback: 24 },
+    CONTROL_RADIO_ICON_BORDER_WIDTH: { compact: 2, cozy: 2, default: 2, fallback: 2 },
+    CONTROL_RADIO_ICON_DOT_SIZE_DEFAULT: { compact: 10, cozy: 10, default: 10, fallback: 10 },
+    CONTROL_RADIO_ICON_SIZE_DEFAULT: { compact: 24, cozy: 24, default: 24, fallback: 24 },
+    CONTROL_SWITCH_HEIGHT: { compact: 32, cozy: 32, default: 32, fallback: 32 },
+    CONTROL_SWITCH_KNOB_CHECKED_OFFSET: { compact: 16, cozy: 16, default: 16, fallback: 16 },
+    CONTROL_SWITCH_KNOB_SIZE: { compact: 24, cozy: 24, default: 24, fallback: 24 },
+    CONTROL_SWITCH_WIDTH: { compact: 48, cozy: 48, default: 48, fallback: 48 },
+    EMOJI_ROW_EMOJI_CONTAINER_SIZE: { compact: 48, cozy: 48, default: 48, fallback: 48 },
+    EMOJI_ROW_EMOJI_FONT_SIZE: { compact: 28, cozy: 28, default: 28, fallback: 28 },
+    EMOJI_ROW_EMOJI_LINE_HEIGHT: { compact: 33, cozy: 33, default: 33, fallback: 33 },
+    EMOJI_ROW_EMOJI_MIN_SPACING: { compact: 12, cozy: 12, default: 12, fallback: 12 },
+    EMOJI_ROW_EMOJI_SIZE: { compact: 28, cozy: 28, default: 28, fallback: 28 },
+    GIFTING_SETTINGS_PADDING_HORIZONTAL: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    GROUP_AVATAR_SIZE: { compact: 72, cozy: 72, default: 72, fallback: 72 },
+    GUILD_BAR_ITEM_MARGIN: { compact: 4, cozy: 4, default: 4, fallback: 4 },
+    GUILD_BAR_ITEM_PADDING: { compact: 8, cozy: 8, default: 8, fallback: 8 },
+    GUILD_BAR_ITEM_SIZE: { compact: 48, cozy: 48, default: 48, fallback: 48 },
+    GUILD_FOLDER_BACKGROUND_LEFT: { compact: 12, cozy: 12, default: 12, fallback: 12 },
     GUILD_FOLDER_BACKGROUND_RADIUS: {
-      default: { compact: 2147483647, cozy: 2147483647, default: 2147483647, fallback: 2147483647 },
-      experiments: { 'mobile-visual-refresh': { compact: 16, cozy: 16, default: 16, fallback: 16 } },
+      compact: 2147483647,
+      cozy: 2147483647,
+      default: 2147483647,
+      fallback: 2147483647,
     },
-    GUILD_FOLDER_BACKGROUND_WIDTH_OFFSET: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh': { compact: 8, cozy: 8, default: 8, fallback: 8 } },
-    },
-    GUILD_FOLDER_COLOR_OPACITY: { default: { compact: 0.15, cozy: 0.15, default: 0.15, fallback: 0.15 } },
-    GUILD_FOLDER_PADDING: { default: { compact: 8, cozy: 8, default: 8, fallback: 8 } },
-    GUILD_FOLDER_PREVIEW_ICON_MARGIN: { default: { compact: 6, cozy: 6, default: 6, fallback: 6 } },
-    GUILD_FOLDER_PREVIEW_OPACITY: { default: { compact: 0.4, cozy: 0.4, default: 0.4, fallback: 0.4 } },
-    GUILD_ITEM_SELECTED_BORDER_RADIUS: {
-      default: { compact: 16, cozy: 16, default: 16, fallback: 16 },
-      experiments: { 'mobile-visual-refresh': { compact: 12, cozy: 12, default: 12, fallback: 12 } },
-    },
+    GUILD_FOLDER_BACKGROUND_WIDTH_OFFSET: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    GUILD_FOLDER_COLOR_OPACITY: { compact: 0.15, cozy: 0.15, default: 0.15, fallback: 0.15 },
+    GUILD_FOLDER_PADDING: { compact: 8, cozy: 8, default: 8, fallback: 8 },
+    GUILD_FOLDER_PREVIEW_ICON_MARGIN: { compact: 6, cozy: 6, default: 6, fallback: 6 },
+    GUILD_FOLDER_PREVIEW_OPACITY: { compact: 0.4, cozy: 0.4, default: 0.4, fallback: 0.4 },
+    GUILD_ITEM_SELECTED_BORDER_RADIUS: { compact: 16, cozy: 16, default: 16, fallback: 16 },
     HEADER_TITLE_TEXT_STYLE: {
-      default: {
-        compact: 'heading-sm/semibold',
-        cozy: 'heading-sm/semibold',
-        default: 'heading-sm/semibold',
-        fallback: 'heading-sm/semibold',
-      },
-      experiments: {
-        'mobile-visual-refresh': {
-          compact: 'heading-lg/semibold',
-          cozy: 'heading-lg/semibold',
-          default: 'heading-lg/semibold',
-          fallback: 'heading-lg/semibold',
-        },
-      },
+      compact: 'heading-sm/semibold',
+      cozy: 'heading-sm/semibold',
+      default: 'heading-sm/semibold',
+      fallback: 'heading-sm/semibold',
     },
-    INPUT_FIELD_BORDER_WIDTH: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh': { compact: 1, cozy: 1, default: 1, fallback: 1 } },
-    },
-    INPUT_FIELD_PADDING_VERTICAL_SM_IOS: {
-      default: { compact: 8, cozy: 8, default: 8, fallback: 8 },
-      experiments: { 'mobile-visual-refresh': { compact: 4, cozy: 4, default: 4, fallback: 4 } },
-    },
-    INPUT_FIELD_RADIUS_LG: {
-      default: { compact: 16, cozy: 16, default: 16, fallback: 16 },
-      experiments: { 'mobile-visual-refresh': { compact: 12, cozy: 12, default: 12, fallback: 12 } },
-    },
-    INPUT_FIELD_RADIUS_MD: {
-      default: { compact: 12, cozy: 12, default: 12, fallback: 12 },
-      experiments: { 'mobile-visual-refresh': { compact: 8, cozy: 8, default: 8, fallback: 8 } },
-    },
-    INPUT_FIELD_RADIUS_SM: {
-      default: { compact: 12, cozy: 12, default: 12, fallback: 12 },
-      experiments: { 'mobile-visual-refresh': { compact: 8, cozy: 8, default: 8, fallback: 8 } },
-    },
-    INPUT_FIELD_ROUND_RADIUS: {
-      default: { compact: 2147483647, cozy: 2147483647, default: 2147483647, fallback: 2147483647 },
-      experiments: { 'mobile-visual-refresh': { compact: 8, cozy: 8, default: 8, fallback: 8 } },
-    },
+    INPUT_FIELD_BORDER_WIDTH: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    INPUT_FIELD_PADDING_VERTICAL_SM_IOS: { compact: 8, cozy: 8, default: 8, fallback: 8 },
+    INPUT_FIELD_RADIUS_LG: { compact: 16, cozy: 16, default: 16, fallback: 16 },
+    INPUT_FIELD_RADIUS_MD: { compact: 12, cozy: 12, default: 12, fallback: 12 },
+    INPUT_FIELD_RADIUS_SM: { compact: 12, cozy: 12, default: 12, fallback: 12 },
+    INPUT_FIELD_ROUND_RADIUS: { compact: 2147483647, cozy: 2147483647, default: 2147483647, fallback: 2147483647 },
     INPUT_FIELD_TEXT_STYLE_LG: {
-      default: {
-        compact: 'body-md/medium',
-        cozy: 'body-md/medium',
-        default: 'body-md/medium',
-        fallback: 'body-md/medium',
-      },
-      experiments: {
-        'mobile-visual-refresh': {
-          compact: 'body-md/normal',
-          cozy: 'body-md/normal',
-          default: 'body-md/normal',
-          fallback: 'body-md/normal',
-        },
-      },
+      compact: 'body-md/medium',
+      cozy: 'body-md/medium',
+      default: 'body-md/medium',
+      fallback: 'body-md/medium',
     },
     INPUT_FIELD_TEXT_STYLE_MD: {
-      default: {
-        compact: 'body-sm/medium',
-        cozy: 'body-sm/medium',
-        default: 'body-sm/medium',
-        fallback: 'body-sm/medium',
-      },
-      experiments: {
-        'mobile-visual-refresh': {
-          compact: 'body-md/normal',
-          cozy: 'body-md/normal',
-          default: 'body-md/normal',
-          fallback: 'body-md/normal',
-        },
-      },
+      compact: 'body-sm/medium',
+      cozy: 'body-sm/medium',
+      default: 'body-sm/medium',
+      fallback: 'body-sm/medium',
     },
     INPUT_FIELD_TEXT_STYLE_SM: {
-      default: {
-        compact: 'body-xs/medium',
-        cozy: 'body-xs/medium',
-        default: 'body-xs/medium',
-        fallback: 'body-xs/medium',
-      },
-      experiments: {
-        'mobile-visual-refresh': {
-          compact: 'body-sm/normal',
-          cozy: 'body-sm/normal',
-          default: 'body-sm/normal',
-          fallback: 'body-sm/normal',
-        },
-      },
+      compact: 'body-xs/medium',
+      cozy: 'body-xs/medium',
+      default: 'body-xs/medium',
+      fallback: 'body-xs/medium',
     },
-    JUMP_TO_PRESENT_BOTTOM_SPACING: {
-      default: { compact: 12, cozy: 12, default: 12, fallback: 12 },
-      experiments: { 'mobile-visual-refresh': { compact: 8, cozy: 8, default: 8, fallback: 8 } },
-    },
-    JUMP_TO_PRESENT_BUTTON_SIZE: { default: { compact: 40, cozy: 40, default: 40, fallback: 40 } },
-    JUMP_TO_PRESENT_ICON_SIZE: { default: { compact: 20, cozy: 20, default: 20, fallback: 20 } },
-    JUMP_TO_PRESENT_RIGHT_SPACING: {
-      default: { compact: 12, cozy: 12, default: 12, fallback: 12 },
-      experiments: { 'mobile-visual-refresh': { compact: 16, cozy: 16, default: 16, fallback: 16 } },
-    },
+    JUMP_TO_PRESENT_BOTTOM_SPACING: { compact: 12, cozy: 12, default: 12, fallback: 12 },
+    JUMP_TO_PRESENT_BUTTON_SIZE: { compact: 40, cozy: 40, default: 40, fallback: 40 },
+    JUMP_TO_PRESENT_ICON_SIZE: { compact: 20, cozy: 20, default: 20, fallback: 20 },
+    JUMP_TO_PRESENT_RIGHT_SPACING: { compact: 12, cozy: 12, default: 12, fallback: 12 },
     MEDIA_KEYBOARD_BAR_BORDER_RADIUS: {
-      default: { compact: 2147483647, cozy: 2147483647, default: 2147483647, fallback: 2147483647 },
-      experiments: { 'mobile-visual-refresh': { compact: 16, cozy: 16, default: 16, fallback: 16 } },
+      compact: 2147483647,
+      cozy: 2147483647,
+      default: 2147483647,
+      fallback: 2147483647,
     },
-    MEDIA_KEYBOARD_BAR_BORDER_WIDTH: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh': { compact: 1, cozy: 1, default: 1, fallback: 1 } },
-    },
-    MEDIA_KEYBOARD_BAR_BUTTONS_MARGIN_HORIZONTAL: {
-      default: { compact: 24, cozy: 24, default: 24, fallback: 24 },
-      experiments: { 'mobile-visual-refresh': { compact: 0, cozy: 0, default: 0, fallback: 0 } },
-    },
-    MEDIA_KEYBOARD_BAR_GAP: {
-      default: { compact: 16, cozy: 16, default: 16, fallback: 16 },
-      experiments: { 'mobile-visual-refresh': { compact: 4, cozy: 4, default: 4, fallback: 4 } },
-    },
-    MEDIA_KEYBOARD_BAR_MARGIN_HORIZONTAL: {
-      default: { compact: 16, cozy: 16, default: 16, fallback: 16 },
-      experiments: { 'mobile-visual-refresh': { compact: 12, cozy: 12, default: 12, fallback: 12 } },
-    },
-    MEDIA_KEYBOARD_BAR_PADDING_HORIZONTAL: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh': { compact: 8, cozy: 8, default: 8, fallback: 8 } },
-    },
-    MEDIA_KEYBOARD_BUTTON_BORDER_RADIUS: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh': { compact: 8, cozy: 8, default: 8, fallback: 8 } },
-    },
+    MEDIA_KEYBOARD_BAR_BORDER_WIDTH: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    MEDIA_KEYBOARD_BAR_BUTTONS_MARGIN_HORIZONTAL: { compact: 24, cozy: 24, default: 24, fallback: 24 },
+    MEDIA_KEYBOARD_BAR_GAP: { compact: 16, cozy: 16, default: 16, fallback: 16 },
+    MEDIA_KEYBOARD_BAR_MARGIN_HORIZONTAL: { compact: 16, cozy: 16, default: 16, fallback: 16 },
+    MEDIA_KEYBOARD_BAR_PADDING_HORIZONTAL: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    MEDIA_KEYBOARD_BUTTON_BORDER_RADIUS: { compact: 0, cozy: 0, default: 0, fallback: 0 },
     MEDIA_KEYBOARD_BUTTON_ICON_COLOR_ACTIVE: {
-      default: { compact: 'icon-default', cozy: 'icon-default', default: 'icon-default', fallback: 'icon-default' },
+      compact: 'icon-default',
+      cozy: 'icon-default',
+      default: 'icon-default',
+      fallback: 'icon-default',
     },
-    MEDIA_KEYBOARD_BUTTON_PADDING: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh': { compact: 4, cozy: 4, default: 4, fallback: 4 } },
-    },
+    MEDIA_KEYBOARD_BUTTON_PADDING: { compact: 0, cozy: 0, default: 0, fallback: 0 },
     MEDIA_KEYBOARD_BUTTON_TEXT_COLOR_ACTIVE: {
-      default: { compact: 'text-default', cozy: 'text-default', default: 'text-default', fallback: 'text-default' },
+      compact: 'text-default',
+      cozy: 'text-default',
+      default: 'text-default',
+      fallback: 'text-default',
     },
     MEDIA_KEYBOARD_BUTTON_TEXT_VARIANT: {
-      default: {
-        compact: 'body-xs/semibold',
-        cozy: 'body-xs/semibold',
-        default: 'body-xs/semibold',
-        fallback: 'body-xs/semibold',
-      },
-      experiments: {
-        'mobile-visual-refresh': {
-          compact: 'body-xs/medium',
-          cozy: 'body-xs/medium',
-          default: 'body-xs/medium',
-          fallback: 'body-xs/medium',
-        },
-      },
+      compact: 'body-xs/semibold',
+      cozy: 'body-xs/semibold',
+      default: 'body-xs/semibold',
+      fallback: 'body-xs/semibold',
     },
-    MEDIA_KEYBOARD_SEND_VERTICAL_INSET: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh': { compact: 8, cozy: 8, default: 8, fallback: 8 } },
-    },
-    MESSAGES_HEADER_BUTTON_GAP: {
-      default: { compact: 8, cozy: 8, default: 8, fallback: 8 },
-      experiments: { 'mobile-visual-refresh': { compact: 12, cozy: 12, default: 12, fallback: 12 } },
-    },
-    MESSAGES_HEADER_BUTTON_LAYOUT: { default: { compact: 'row', cozy: 'row', default: 'row', fallback: 'row' } },
-    MESSAGES_HEADER_PADDING_BOTTOM: {
-      default: { compact: 16, cozy: 16, default: 16, fallback: 16 },
-      experiments: { 'mobile-visual-refresh': { compact: 12, cozy: 12, default: 12, fallback: 12 } },
-    },
-    MESSAGES_ITEM_CHANNEL_AVATAR_MARGIN_END: {
-      default: { compact: 8, cozy: 8, default: 8, fallback: 8 },
-      experiments: { 'mobile-visual-refresh': { compact: 12, cozy: 12, default: 12, fallback: 12 } },
-    },
-    MESSAGES_ITEM_CHANNEL_AVATAR_SIZE: { default: { compact: 32, cozy: 32, default: 32, fallback: 32 } },
+    MEDIA_KEYBOARD_SEND_VERTICAL_INSET: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    MESSAGES_HEADER_BUTTON_GAP: { compact: 8, cozy: 8, default: 8, fallback: 8 },
+    MESSAGES_HEADER_BUTTON_LAYOUT: { compact: 'row', cozy: 'row', default: 'row', fallback: 'row' },
+    MESSAGES_HEADER_PADDING_BOTTOM: { compact: 16, cozy: 16, default: 16, fallback: 16 },
+    MESSAGES_ITEM_CHANNEL_AVATAR_MARGIN_END: { compact: 8, cozy: 8, default: 8, fallback: 8 },
+    MESSAGES_ITEM_CHANNEL_AVATAR_SIZE: { compact: 32, cozy: 32, default: 32, fallback: 32 },
     MESSAGES_ITEM_CHANNEL_NAME_TEXT_STYLE: {
-      default: {
-        compact: 'heading-sm/semibold',
-        cozy: 'heading-sm/semibold',
-        default: 'heading-sm/semibold',
-        fallback: 'heading-sm/semibold',
-      },
-      experiments: {
-        'mobile-visual-refresh': {
-          compact: 'body-md/medium',
-          cozy: 'body-md/medium',
-          default: 'body-md/medium',
-          fallback: 'body-md/medium',
-        },
-      },
+      compact: 'heading-sm/semibold',
+      cozy: 'heading-sm/semibold',
+      default: 'heading-sm/semibold',
+      fallback: 'heading-sm/semibold',
     },
-    MESSAGES_ITEM_HAPPENING_NOW_PADDING_BOTTOM: {
-      default: { compact: 8, cozy: 8, default: 8, fallback: 8 },
-      experiments: { 'mobile-visual-refresh': { compact: 16, cozy: 16, default: 16, fallback: 16 } },
-    },
-    MOBILE_KEYBOARD_TOP_BORDER_RADIUS: {
-      default: { compact: 15, cozy: 15, default: 15, fallback: 15 },
-      experiments: { 'mobile-visual-refresh-floating': { compact: 24, cozy: 24, default: 24, fallback: 24 } },
-    },
-    MOBILE_MEDIA_KEYBOARD_TOP_BORDER_RADIUS: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh-floating': { compact: 24, cozy: 24, default: 24, fallback: 24 } },
-    },
-    PROMO_SHEET_GRAPHIC_MAX_WIDTH: { default: { compact: 288, cozy: 288, default: 288, fallback: 288 } },
-    QUEST_DOCK_BORDER_RADIUS: {
-      default: { compact: 24, cozy: 24, default: 24, fallback: 24 },
-      experiments: { 'mobile-visual-refresh': { compact: 16, cozy: 16, default: 16, fallback: 16 } },
-    },
-    SEGMENTED_CONTROL_BORDER_RADIUS: {
-      default: { compact: 16, cozy: 16, default: 16, fallback: 16 },
-      experiments: { 'mobile-visual-refresh': { compact: 8, cozy: 8, default: 8, fallback: 8 } },
-    },
-    SETTINGS_PADDING_TOP: {
-      default: { compact: 16, cozy: 16, default: 16, fallback: 16 },
-      experiments: { 'mobile-visual-refresh': { compact: 24, cozy: 24, default: 24, fallback: 24 } },
-    },
-    SHEET_HANDLE_HEIGHT: { default: { compact: 4, cozy: 4, default: 4, fallback: 4 } },
-    SHEET_HANDLE_MARGIN_BOTTOM: {
-      default: { compact: 12, cozy: 12, default: 12, fallback: 12 },
-      experiments: { 'mobile-visual-refresh': { compact: 24, cozy: 24, default: 24, fallback: 24 } },
-    },
-    SHEET_HANDLE_MARGIN_TOP: {
-      default: { compact: 4, cozy: 4, default: 4, fallback: 4 },
-      experiments: { 'mobile-visual-refresh': { compact: 8, cozy: 8, default: 8, fallback: 8 } },
-    },
-    SHEET_HANDLE_WIDTH: {
-      default: { compact: 32, cozy: 32, default: 32, fallback: 32 },
-      experiments: { 'mobile-visual-refresh': { compact: 36, cozy: 36, default: 36, fallback: 36 } },
-    },
-    SHEET_HEADER_PADDING_HORIZONTAL: {
-      default: { compact: 16, cozy: 16, default: 16, fallback: 16 },
-      experiments: { 'mobile-visual-refresh': { compact: 0, cozy: 0, default: 0, fallback: 0 } },
-    },
-    TABLE_ROW_ARROW_MARGIN_END: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh': { compact: 8, cozy: 8, default: 8, fallback: 8 } },
-    },
-    TABLE_ROW_ARROW_MARGIN_START: {
-      default: { compact: 14, cozy: 14, default: 14, fallback: 14 },
-      experiments: { 'mobile-visual-refresh': { compact: 8, cozy: 8, default: 8, fallback: 8 } },
-    },
-    TABLE_ROW_ARROW_WIDTH: {
-      default: { compact: 8, cozy: 8, default: 8, fallback: 8 },
-      experiments: { 'mobile-visual-refresh': { compact: 12, cozy: 12, default: 12, fallback: 12 } },
-    },
-    TABLE_ROW_BORDER_RADIUS: {
-      default: { compact: 16, cozy: 16, default: 16, fallback: 16 },
-      experiments: { 'mobile-visual-refresh': { compact: 12, cozy: 12, default: 12, fallback: 12 } },
-    },
-    TABLE_ROW_CONTENT_HEIGHT: {
-      default: { compact: 36, cozy: 36, default: 36, fallback: 36 },
-      experiments: { 'mobile-visual-refresh': { compact: 32, cozy: 32, default: 32, fallback: 32 } },
-    },
-    TABLE_ROW_DIVIDER_PADDING: { default: { compact: 56, cozy: 56, default: 56, fallback: 56 } },
+    MESSAGES_ITEM_HAPPENING_NOW_PADDING_BOTTOM: { compact: 8, cozy: 8, default: 8, fallback: 8 },
+    MOBILE_KEYBOARD_TOP_BORDER_RADIUS: { compact: 15, cozy: 15, default: 15, fallback: 15 },
+    MOBILE_MEDIA_KEYBOARD_TOP_BORDER_RADIUS: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    PROMO_SHEET_GRAPHIC_MAX_WIDTH: { compact: 288, cozy: 288, default: 288, fallback: 288 },
+    QUEST_DOCK_BORDER_RADIUS: { compact: 24, cozy: 24, default: 24, fallback: 24 },
+    SEGMENTED_CONTROL_BORDER_RADIUS: { compact: 16, cozy: 16, default: 16, fallback: 16 },
+    SETTINGS_PADDING_TOP: { compact: 16, cozy: 16, default: 16, fallback: 16 },
+    SHEET_HANDLE_HEIGHT: { compact: 4, cozy: 4, default: 4, fallback: 4 },
+    SHEET_HANDLE_MARGIN_BOTTOM: { compact: 12, cozy: 12, default: 12, fallback: 12 },
+    SHEET_HANDLE_MARGIN_TOP: { compact: 4, cozy: 4, default: 4, fallback: 4 },
+    SHEET_HANDLE_WIDTH: { compact: 32, cozy: 32, default: 32, fallback: 32 },
+    SHEET_HEADER_PADDING_HORIZONTAL: { compact: 16, cozy: 16, default: 16, fallback: 16 },
+    TABLE_ROW_ARROW_MARGIN_END: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    TABLE_ROW_ARROW_MARGIN_START: { compact: 14, cozy: 14, default: 14, fallback: 14 },
+    TABLE_ROW_ARROW_WIDTH: { compact: 8, cozy: 8, default: 8, fallback: 8 },
+    TABLE_ROW_BORDER_RADIUS: { compact: 16, cozy: 16, default: 16, fallback: 16 },
+    TABLE_ROW_CONTENT_HEIGHT: { compact: 36, cozy: 36, default: 36, fallback: 36 },
+    TABLE_ROW_DIVIDER_PADDING: { compact: 56, cozy: 56, default: 56, fallback: 56 },
     TABLE_ROW_GROUP_HELPER_TEXT_STYLE: {
-      default: {
-        compact: 'body-sm/medium',
-        cozy: 'body-sm/medium',
-        default: 'body-sm/medium',
-        fallback: 'body-sm/medium',
-      },
-      experiments: {
-        'mobile-visual-refresh': {
-          compact: 'body-sm/normal',
-          cozy: 'body-sm/normal',
-          default: 'body-sm/normal',
-          fallback: 'body-sm/normal',
-        },
-      },
+      compact: 'body-sm/medium',
+      cozy: 'body-sm/medium',
+      default: 'body-sm/medium',
+      fallback: 'body-sm/medium',
     },
-    TABLE_ROW_HEIGHT: {
-      default: { compact: 60, cozy: 60, default: 60, fallback: 60 },
-      experiments: { 'mobile-visual-refresh': { compact: 56, cozy: 56, default: 56, fallback: 56 } },
-    },
-    TABLE_ROW_ICON_SIZE: { default: { compact: 32, cozy: 32, default: 32, fallback: 32 } },
+    TABLE_ROW_HEIGHT: { compact: 60, cozy: 60, default: 60, fallback: 60 },
+    TABLE_ROW_ICON_SIZE: { compact: 32, cozy: 32, default: 32, fallback: 32 },
     TABLE_ROW_LABEL_COLOR: {
-      default: { compact: 'text-strong', cozy: 'text-strong', default: 'text-strong', fallback: 'text-strong' },
+      compact: 'text-strong',
+      cozy: 'text-strong',
+      default: 'text-strong',
+      fallback: 'text-strong',
     },
     TABLE_ROW_LABEL_TEXT_STYLE: {
-      default: {
-        compact: 'body-md/semibold',
-        cozy: 'body-md/semibold',
-        default: 'body-md/semibold',
-        fallback: 'body-md/semibold',
-      },
-      experiments: {
-        'mobile-visual-refresh': {
-          compact: 'body-md/medium',
-          cozy: 'body-md/medium',
-          default: 'body-md/medium',
-          fallback: 'body-md/medium',
-        },
-      },
+      compact: 'body-md/semibold',
+      cozy: 'body-md/semibold',
+      default: 'body-md/semibold',
+      fallback: 'body-md/semibold',
     },
-    TABLE_ROW_PADDING: { default: { compact: 12, cozy: 12, default: 12, fallback: 12 } },
-    TAB_BAR_UNREAD_BADGE_SIZE: {
-      default: { compact: 22, cozy: 22, default: 22, fallback: 22 },
-      experiments: { 'mobile-visual-refresh': { compact: 12, cozy: 12, default: 12, fallback: 12 } },
-    },
-    TAB_LABEL_MARGIN_TOP: {
-      default: { compact: -6, cozy: -6, default: -6, fallback: -6 },
-      experiments: { 'mobile-visual-refresh': { compact: -4, cozy: -4, default: -4, fallback: -4 } },
-    },
+    TABLE_ROW_PADDING: { compact: 12, cozy: 12, default: 12, fallback: 12 },
+    TAB_BAR_UNREAD_BADGE_SIZE: { compact: 22, cozy: 22, default: 22, fallback: 22 },
+    TAB_LABEL_MARGIN_TOP: { compact: -6, cozy: -6, default: -6, fallback: -6 },
     TAB_LABEL_TEXT_STYLE: {
-      default: {
-        compact: 'footnote/semibold',
-        cozy: 'footnote/semibold',
-        default: 'footnote/semibold',
-        fallback: 'footnote/semibold',
-      },
-      experiments: {
-        'mobile-visual-refresh': {
-          compact: 'body-xs/medium',
-          cozy: 'body-xs/medium',
-          default: 'body-xs/medium',
-          fallback: 'body-xs/medium',
-        },
-      },
+      compact: 'footnote/semibold',
+      cozy: 'footnote/semibold',
+      default: 'footnote/semibold',
+      fallback: 'footnote/semibold',
     },
     USER_PROFILE_ABOUT_ME_HEADING_TEXT_STYLE: {
-      default: {
-        compact: 'body-sm/semibold',
-        cozy: 'body-sm/semibold',
-        default: 'body-sm/semibold',
-        fallback: 'body-sm/semibold',
-      },
-      experiments: {
-        'mobile-visual-refresh': {
-          compact: 'body-sm/medium',
-          cozy: 'body-sm/medium',
-          default: 'body-sm/medium',
-          fallback: 'body-sm/medium',
-        },
-      },
+      compact: 'body-sm/semibold',
+      cozy: 'body-sm/semibold',
+      default: 'body-sm/semibold',
+      fallback: 'body-sm/semibold',
     },
-    USER_ROW_LABEL_LINE_HEIGHT_ANDROID: { default: { compact: 16, cozy: 16, default: 16, fallback: 16 } },
-    USER_ROW_LABEL_LINE_HEIGHT_IOS: {
-      default: { compact: 22, cozy: 22, default: 22, fallback: 22 },
-      experiments: { 'mobile-visual-refresh': { compact: 20, cozy: 20, default: 20, fallback: 20 } },
-    },
-    VOICE_CHANNEL_USER_LIMIT_BORDER_WIDTH: {
-      default: { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      experiments: { 'mobile-visual-refresh': { compact: 1, cozy: 1, default: 1, fallback: 1 } },
-    },
-    VOICE_MESSAGE_CHAT_GAP: {
-      default: { compact: 8, cozy: 8, default: 8, fallback: 8 },
-      experiments: { 'mobile-visual-refresh-floating': { compact: 10, cozy: 10, default: 10, fallback: 10 } },
-    },
-    VOICE_MESSAGE_DURATION_LINE_HEIGHT_ANDROID: { default: { compact: 14, cozy: 14, default: 14, fallback: 14 } },
-    VOICE_MESSAGE_DURATION_LINE_HEIGHT_IOS: { default: { compact: 17, cozy: 17, default: 17, fallback: 17 } },
-    VOICE_MESSAGE_DURATION_MARGIN_LEFT: {
-      default: { compact: 4, cozy: 4, default: 4, fallback: 4 },
-      experiments: { 'mobile-visual-refresh-floating': { compact: 0, cozy: 0, default: 0, fallback: 0 } },
-    },
+    USER_ROW_LABEL_LINE_HEIGHT_ANDROID: { compact: 16, cozy: 16, default: 16, fallback: 16 },
+    USER_ROW_LABEL_LINE_HEIGHT_IOS: { compact: 22, cozy: 22, default: 22, fallback: 22 },
+    VOICE_CHANNEL_USER_LIMIT_BORDER_WIDTH: { compact: 0, cozy: 0, default: 0, fallback: 0 },
+    VOICE_MESSAGE_CHAT_GAP: { compact: 8, cozy: 8, default: 8, fallback: 8 },
+    VOICE_MESSAGE_DURATION_LINE_HEIGHT_ANDROID: { compact: 14, cozy: 14, default: 14, fallback: 14 },
+    VOICE_MESSAGE_DURATION_LINE_HEIGHT_IOS: { compact: 17, cozy: 17, default: 17, fallback: 17 },
+    VOICE_MESSAGE_DURATION_MARGIN_LEFT: { compact: 4, cozy: 4, default: 4, fallback: 4 },
     VOICE_MESSAGE_DURATION_TEXT_STYLE: {
-      default: {
-        compact: 'body-sm/semibold',
-        cozy: 'body-sm/semibold',
-        default: 'body-sm/semibold',
-        fallback: 'body-sm/semibold',
-      },
-      experiments: {
-        'mobile-visual-refresh': {
-          compact: 'body-xs/semibold',
-          cozy: 'body-xs/semibold',
-          default: 'body-xs/semibold',
-          fallback: 'body-xs/semibold',
-        },
-        'mobile-visual-refresh-floating': {
-          compact: 'body-sm/semibold',
-          cozy: 'body-sm/semibold',
-          default: 'body-sm/semibold',
-          fallback: 'body-sm/semibold',
-        },
-      },
+      compact: 'body-sm/semibold',
+      cozy: 'body-sm/semibold',
+      default: 'body-sm/semibold',
+      fallback: 'body-sm/semibold',
     },
-    VOICE_MESSAGE_RECORDING_CHAT_CONTAINER_HEIGHT: {
-      default: { compact: 40, cozy: 40, default: 40, fallback: 40 },
-      experiments: {
-        'mobile-visual-refresh': { compact: 32, cozy: 32, default: 32, fallback: 32 },
-        'mobile-visual-refresh-floating': { compact: 58, cozy: 58, default: 58, fallback: 58 },
-      },
-    },
-    VOICE_MESSAGE_RECORDING_CHAT_CONTAINER_MARGIN_RIGHT: {
-      default: { compact: 8, cozy: 8, default: 8, fallback: 8 },
-      experiments: { 'mobile-visual-refresh-floating': { compact: 0, cozy: 0, default: 0, fallback: 0 } },
-    },
-    VOICE_MESSAGE_RECORDING_CONTAINER_PADDING_BOTTOM: {
-      default: { compact: 9, cozy: 9, default: 9, fallback: 9 },
-      experiments: { 'mobile-visual-refresh-floating': { compact: 0, cozy: 0, default: 0, fallback: 0 } },
-    },
-    VOICE_MESSAGE_RECORDING_CONTAINER_PADDING_HORIZONTAL: {
-      default: { compact: 12, cozy: 12, default: 12, fallback: 12 },
-      experiments: { 'mobile-visual-refresh-floating': { compact: 16, cozy: 16, default: 16, fallback: 16 } },
-    },
-    VOICE_MESSAGE_RECORDING_CONTAINER_PADDING_VERTICAL: {
-      default: { compact: 10, cozy: 10, default: 10, fallback: 10 },
-      experiments: {
-        'mobile-visual-refresh': { compact: 6, cozy: 6, default: 6, fallback: 6 },
-        'mobile-visual-refresh-floating': { compact: 0, cozy: 0, default: 0, fallback: 0 },
-      },
-    },
-    VOICE_MESSAGE_RECORDING_LOCK_PILL_OFFSET_RIGHT: {
-      default: { compact: 12, cozy: 12, default: 12, fallback: 12 },
-      experiments: { 'mobile-visual-refresh-floating': { compact: 27, cozy: 27, default: 27, fallback: 27 } },
-    },
-    VOICE_MESSAGE_RECORDING_LOCK_PILL_WIDTH: {
-      default: { compact: 40, cozy: 40, default: 40, fallback: 40 },
-      experiments: {
-        'mobile-visual-refresh': { compact: 32, cozy: 32, default: 32, fallback: 32 },
-        'mobile-visual-refresh-floating': { compact: 36, cozy: 36, default: 36, fallback: 36 },
-      },
-    },
-    VOICE_MESSAGE_RECORDING_PILL_BORDER_RADIUS: {
-      default: { compact: 32, cozy: 32, default: 32, fallback: 32 },
-      experiments: { 'mobile-visual-refresh-floating': { compact: 16, cozy: 16, default: 16, fallback: 16 } },
-    },
-    VOICE_MESSAGE_RECORDING_PILL_PADDING_HORIZONTAL: {
-      default: { compact: 12, cozy: 12, default: 12, fallback: 12 },
-      experiments: {
-        'mobile-visual-refresh-floating': { compact: 10, cozy: 10, default: 10, fallback: 10 },
-        'mobile-visual-refresh-legacy-send-button': { compact: 12, cozy: 12, default: 12, fallback: 12 },
-      },
-    },
-    VOICE_PANEL_CONTROLS_BORDER_RADIUS: {
-      default: { compact: 32, cozy: 32, default: 32, fallback: 32 },
-      experiments: { 'mobile-visual-refresh': { compact: 16, cozy: 16, default: 16, fallback: 16 } },
-    },
-    VOICE_PANEL_CONTROLS_PADDING: {
-      default: { compact: 16, cozy: 16, default: 16, fallback: 16 },
-      experiments: { 'mobile-visual-refresh': { compact: 4, cozy: 4, default: 4, fallback: 4 } },
-    },
-    VOICE_PANEL_GUTTER: {
-      default: { compact: 12, cozy: 12, default: 12, fallback: 12 },
-      experiments: { 'mobile-visual-refresh': { compact: 16, cozy: 16, default: 16, fallback: 16 } },
-    },
-    VOICE_PANEL_PADDING: {
-      default: { compact: 12, cozy: 12, default: 12, fallback: 12 },
-      experiments: { 'mobile-visual-refresh': { compact: 16, cozy: 16, default: 16, fallback: 16 } },
-    },
-    VOICE_TILE_BORDER_RADIUS: {
-      default: { compact: 24, cozy: 24, default: 24, fallback: 24 },
-      experiments: { 'mobile-visual-refresh': { compact: 12, cozy: 12, default: 12, fallback: 12 } },
-    },
-    YOU_BAR_BORDER_RADIUS: {
-      default: { compact: 28, cozy: 28, default: 28, fallback: 28 },
-      experiments: { 'mobile-visual-refresh': { compact: 16, cozy: 16, default: 16, fallback: 16 } },
-    },
+    VOICE_MESSAGE_RECORDING_CHAT_CONTAINER_HEIGHT: { compact: 40, cozy: 40, default: 40, fallback: 40 },
+    VOICE_MESSAGE_RECORDING_CHAT_CONTAINER_MARGIN_RIGHT: { compact: 8, cozy: 8, default: 8, fallback: 8 },
+    VOICE_MESSAGE_RECORDING_CONTAINER_PADDING_BOTTOM: { compact: 9, cozy: 9, default: 9, fallback: 9 },
+    VOICE_MESSAGE_RECORDING_CONTAINER_PADDING_HORIZONTAL: { compact: 12, cozy: 12, default: 12, fallback: 12 },
+    VOICE_MESSAGE_RECORDING_CONTAINER_PADDING_VERTICAL: { compact: 10, cozy: 10, default: 10, fallback: 10 },
+    VOICE_MESSAGE_RECORDING_LOCK_PILL_OFFSET_RIGHT: { compact: 12, cozy: 12, default: 12, fallback: 12 },
+    VOICE_MESSAGE_RECORDING_LOCK_PILL_WIDTH: { compact: 40, cozy: 40, default: 40, fallback: 40 },
+    VOICE_MESSAGE_RECORDING_PILL_BORDER_RADIUS: { compact: 32, cozy: 32, default: 32, fallback: 32 },
+    VOICE_MESSAGE_RECORDING_PILL_PADDING_HORIZONTAL: { compact: 12, cozy: 12, default: 12, fallback: 12 },
+    VOICE_PANEL_CONTROLS_BORDER_RADIUS: { compact: 32, cozy: 32, default: 32, fallback: 32 },
+    VOICE_PANEL_CONTROLS_PADDING: { compact: 16, cozy: 16, default: 16, fallback: 16 },
+    VOICE_PANEL_GUTTER: { compact: 12, cozy: 12, default: 12, fallback: 12 },
+    VOICE_PANEL_PADDING: { compact: 12, cozy: 12, default: 12, fallback: 12 },
+    VOICE_TILE_BORDER_RADIUS: { compact: 24, cozy: 24, default: 24, fallback: 24 },
+    YOU_BAR_BORDER_RADIUS: { compact: 28, cozy: 28, default: 28, fallback: 28 },
   },
   modal: {
-    HORIZONTAL_PADDING: { default: { compact: 24, cozy: 24, default: 24, fallback: 24 } },
-    VERTICAL_PADDING: { default: { compact: 16, cozy: 16, default: 16, fallback: 16 } },
-    WIDTH_LARGE: { default: { compact: 800, cozy: 800, default: 800, fallback: 800 } },
-    WIDTH_MEDIUM: { default: { compact: 602, cozy: 602, default: 602, fallback: 602 } },
-    WIDTH_SMALL: { default: { compact: 442, cozy: 442, default: 442, fallback: 442 } },
+    HORIZONTAL_PADDING: { compact: 24, cozy: 24, default: 24, fallback: 24 },
+    VERTICAL_PADDING: { compact: 16, cozy: 16, default: 16, fallback: 16 },
+    WIDTH_LARGE: { compact: 800, cozy: 800, default: 800, fallback: 800 },
+    WIDTH_MEDIUM: { compact: 602, cozy: 602, default: 602, fallback: 602 },
+    WIDTH_SMALL: { compact: 442, cozy: 442, default: 442, fallback: 442 },
   },
   select: {
-    MAX_WIDTH: { default: { compact: 248, cozy: 248, default: 248, fallback: 248 } },
-    OPTION_HEIGHT: { default: { compact: 40, cozy: 40, default: 40, fallback: 40 } },
+    MAX_WIDTH: { compact: 248, cozy: 248, default: 248, fallback: 248 },
+    OPTION_HEIGHT: { compact: 40, cozy: 40, default: 40, fallback: 40 },
   },
   toast: {
-    ANIMATION_DURATION_MS: { default: { compact: 300, cozy: 300, default: 300, fallback: 300 } },
-    MAX_WIDTH: { default: { compact: 280, cozy: 280, default: 280, fallback: 280 } },
-    QUEUE_ENTER_DELAY_MS: { default: { compact: 400, cozy: 400, default: 400, fallback: 400 } },
-    TEXT_LINE_COUNT: { default: { compact: 2, cozy: 2, default: 2, fallback: 2 } },
+    ANIMATION_DURATION_MS: { compact: 300, cozy: 300, default: 300, fallback: 300 },
+    MAX_WIDTH: { compact: 280, cozy: 280, default: 280, fallback: 280 },
+    QUEUE_ENTER_DELAY_MS: { compact: 400, cozy: 400, default: 400, fallback: 400 },
+    TEXT_LINE_COUNT: { compact: 2, cozy: 2, default: 2, fallback: 2 },
   },
-} as const satisfies Record<string, Record<string, DensityTable<unknown>>>;
+} as const satisfies Record<string, Record<string, DensityValues<unknown>>>;

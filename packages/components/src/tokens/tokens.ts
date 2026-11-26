@@ -4,7 +4,6 @@ import {
   RADII,
   RAW_COLORS,
   SEMANTIC_COLORS,
-  SEMANTIC_COLOR_EXPERIMENTS,
   SEMANTIC_COLOR_HIGH_CONTRAST,
   SHADOWS,
   SPACE,
@@ -12,7 +11,6 @@ import {
   SPACING,
   ThemeTypes,
   type ColorRef,
-  type DensityTable,
   type DensityValues,
   type ShadowValue,
   type Theme,
@@ -24,7 +22,6 @@ import { Color } from './color';
 export interface TokenContext {
   theme?: Theme | string;
   saturation?: number;
-  enabledExperiments?: readonly string[];
   density?: TokenDensity;
   highContrastModeEnabled?: boolean;
 }
@@ -104,16 +101,6 @@ const colors = mapValues(
     resolve: (context) => {
       const theme = themeOrDefault(context.theme);
       let { raw, opacity } = value[theme] as Required<ColorRef>;
-      const experimentOverrides = SEMANTIC_COLOR_EXPERIMENTS[name];
-      if (experimentOverrides != null && context.enabledExperiments != null && context.enabledExperiments.length > 0) {
-        for (const experiment of context.enabledExperiments) {
-          const override = experimentOverrides[experiment]?.[theme];
-          if (override != null) {
-            raw = override.raw ?? raw;
-            opacity = override.opacity ?? opacity;
-          }
-        }
-      }
       if (context.highContrastModeEnabled === true) {
         const override = SEMANTIC_COLOR_HIGH_CONTRAST[name]?.[theme];
         if (override != null) {
@@ -140,15 +127,9 @@ const shadows = mapValues(SHADOWS as Record<string, Record<Theme, ShadowValue>>,
 const byDensity = <T>(values: DensityValues<T>, density: TokenDensity | undefined) =>
   density != null && density in values ? values[density] : values.fallback;
 
-const modules = mapValues(MODULES as Record<string, Record<string, DensityTable<unknown>>>, (group) =>
-  mapValues(group, (table): ValueToken<unknown> => ({
-    resolve: ({ enabledExperiments = [], density }) => {
-      for (const experiment of enabledExperiments) {
-        const values = table.experiments?.[experiment];
-        if (values != null) return byDensity(values, density);
-      }
-      return byDensity(table.default, density);
-    },
+const modules = mapValues(MODULES as Record<string, Record<string, DensityValues<unknown>>>, (group) =>
+  mapValues(group, (values): ValueToken<unknown> => ({
+    resolve: ({ density }) => byDensity(values, density),
   })),
 ) as { [Group in keyof typeof MODULES]: { [Name in keyof (typeof MODULES)[Group]]: ValueToken<unknown> } };
 
@@ -163,7 +144,7 @@ const space = {
 };
 
 // Discord's design tokens as JS values: `css` gives the CSS variable, `resolve` the concrete value
-// for a theme (and saturation, density, experiments), for places CSS variables can't go.
+// for a theme (and saturation, density, contrast), for places CSS variables can't go.
 export const tokens = {
   themes: ThemeTypes,
   modules,

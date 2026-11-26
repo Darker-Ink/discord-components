@@ -567,11 +567,3 @@
   --brightness: calc(0.5 + var(--saturation-factor, 1) * 0.5);
   --contrast: var(--saturation-factor, 1);
 }
-
-.mana-badge-refresh .theme-light,
-.mana-badge-refresh.theme-light {
-  --badge-expressive-border: hsl(var(--opacity-white-8-hsl)/0.0784313725490196);
-  --badge-inverted-border: hsl(var(--opacity-white-8-hsl)/0.0784313725490196);
-  --badge-primary-border: hsl(var(--opacity-white-8-hsl)/0.0784313725490196);
-  --badge-secondary-border: hsl(var(--opacity-white-8-hsl)/0.0784313725490196);
-}

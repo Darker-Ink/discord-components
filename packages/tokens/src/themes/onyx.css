@@ -560,11 +560,3 @@
   --shadow-top-low: 0 -1px 4px 0 hsl(none 0% 0%/0.14);
   --shadow-top-low-filter: drop-shadow(0 -1px 4px hsl(none 0% 0%/0.14));
 }
-
-.mana-badge-refresh .theme-midnight,
-.mana-badge-refresh.theme-midnight {
-  --badge-expressive-border: hsl(var(--opacity-white-8-hsl)/0.0784313725490196);
-  --badge-inverted-border: hsl(var(--opacity-black-8-hsl)/0.0784313725490196);
-  --badge-primary-border: hsl(var(--opacity-white-8-hsl)/0.0784313725490196);
-  --badge-secondary-border: hsl(var(--opacity-white-8-hsl)/0.0784313725490196);
-}

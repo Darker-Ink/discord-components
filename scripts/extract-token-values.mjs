@@ -5,9 +5,9 @@
 //   node scripts/extract-token-values.mjs
 //
 // The module is evaluated in node and its tables are read back: semantic colors per theme (with
-// experiment and high contrast overrides), raw colors, shadows and the spacing scales. Module
-// tokens and density-dependent space tokens are functions in the build; they are tabulated for
-// every density, with and without each experiment they check.
+// high contrast overrides), raw colors, shadows and the spacing scales. Module tokens and
+// density-dependent space tokens are functions in the build; they are tabulated for every density
+// with no client experiments enabled, which is what Discord renders by default.
 import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
@@ -61,7 +61,6 @@ const tokens = Object.values(req(TOKENS_MODULE)).find((v) => v?.colors && v?.mod
 const {
   m: semantic,
   g: raw,
-  T: experiments,
   S: highContrast,
   N: shadows,
   C: spacing,
@@ -83,33 +82,15 @@ const byTheme = (value, fn) => Object.fromEntries(THEMES.filter((t) => t in valu
 const semanticColors = Object.fromEntries(
   Object.entries(semantic).map(([name, value]) => [name, { category: value.category, ...byTheme(value, pair) }]),
 );
-const experimentColors = Object.fromEntries(
-  Object.entries(experiments).map(([name, byExperiment]) => [
-    name,
-    Object.fromEntries(Object.entries(byExperiment).map(([exp, value]) => [exp, byTheme(value, pair)])),
-  ]),
-);
 const highContrastColors = Object.fromEntries(
   Object.entries(highContrast).map(([name, value]) => [name, byTheme(value, pair)]),
 );
 
-// Experiment names a resolver may check, found in its source.
-const experimentsIn = (fn) => [
-  ...new Set(
-    [...fn.toString().matchAll(/"([a-z][a-z0-9-]*)"(?:===|:)/g)].map((m) => m[1]).filter((n) => !DENSITIES.includes(n)),
-  ),
-];
-const tabulate = (resolve) => {
-  const names = experimentsIn(resolve);
-  // `fallback` is what an unknown density gets, which isn't always the 'default' density's value.
-  const row = (enabledExperiments) => ({
-    ...Object.fromEntries(DENSITIES.map((density) => [density, resolve({ density, enabledExperiments })])),
-    fallback: resolve({ density: undefined, enabledExperiments }),
-  });
-  const out = { default: row([]) };
-  if (names.length) out.experiments = Object.fromEntries(names.map((name) => [name, row([name])]));
-  return out;
-};
+// `fallback` is what an unknown density gets, which isn't always the 'default' density's value.
+const tabulate = (resolve) => ({
+  ...Object.fromEntries(DENSITIES.map((density) => [density, resolve({ density, enabledExperiments: [] })])),
+  fallback: resolve({ density: undefined, enabledExperiments: [] }),
+});
 const moduleTokens = Object.fromEntries(
   Object.entries(modules).map(([group, entries]) => [
     group,
@@ -137,10 +118,6 @@ export interface ColorRef {
   opacity?: number;
 }
 export type DensityValues<T> = Record<TokenDensity, T> & { fallback?: T };
-export interface DensityTable<T> {
-  default: DensityValues<T>;
-  experiments?: Record<string, DensityValues<T>>;
-}
 export interface ShadowValue {
   boxShadow: string;
   filter: string;
@@ -148,8 +125,6 @@ export interface ShadowValue {
 }
 
 export const SEMANTIC_COLORS = ${ts(semanticColors)} as const satisfies Record<string, { category: string } & Partial<Record<TokenTheme, ColorRef>>>;
-
-export const SEMANTIC_COLOR_EXPERIMENTS: Record<string, Record<string, Partial<Record<TokenTheme, ColorRef>>>> = ${ts(experimentColors)};
 
 export const SEMANTIC_COLOR_HIGH_CONTRAST: Record<string, Partial<Record<TokenTheme, ColorRef>>> = ${ts(highContrastColors)};
 
@@ -167,7 +142,7 @@ export const SPACE = ${ts(spaceTokens)} as const satisfies Record<string, { css:
 
 export const SPACE_PX = ${ts(spacePx)} as const;
 
-export const MODULES = ${ts(moduleTokens)} as const satisfies Record<string, Record<string, DensityTable<unknown>>>;
+export const MODULES = ${ts(moduleTokens)} as const satisfies Record<string, Record<string, DensityValues<unknown>>>;
 `;
 
 const config = await prettier.resolveConfig(OUT);

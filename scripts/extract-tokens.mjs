@@ -28,18 +28,8 @@ const FONT_FAMILIES = new Set([
   'Noto Sans',
   'Source Code Pro',
 ]);
-// Experiments the client switches on with a root class; their token overrides are kept under that
-// class (e.g. `.mana-badge-refresh .theme-light,.mana-badge-refresh.theme-light`).
-const ROOT_CLASS_EXPERIMENTS = ['mana-badge-refresh'];
-const experimentSelector = (experiment, themes) =>
-  [...themes.map((t) => `.${experiment} .theme-${t}`), ...themes.map((t) => `.${experiment}.theme-${t}`)].join(',');
 const KEPT_SELECTORS = new Set([
   ':root',
-  ...ROOT_CLASS_EXPERIMENTS.flatMap((e) => [
-    `.${e}`,
-    ...['light', 'dark', 'darker', 'midnight'].map((t) => experimentSelector(e, [t])),
-    experimentSelector(e, ['darker', 'midnight']),
-  ]),
   ...['light', 'dark', 'darker', 'midnight'].map((t) => `.theme-${t}`),
   '.theme-darker,.theme-midnight',
   '.visual-refresh',
@@ -156,18 +146,11 @@ for (const density of ['compact', 'cozy', 'default']) {
 tokenRoot.walkRules((rule) => {
   if (rule.parent.type === 'root' && /^:root:lang\(/.test(rule.selector)) primitivesCss += `${rule.toString()}\n`;
 });
-for (const experiment of ROOT_CLASS_EXPERIMENTS) primitivesCss += block(`.${experiment}`, merged(`.${experiment}`));
 const themeBlocks = (theme, ...shared) =>
   block(
     `.theme-${theme}`,
     merged(`.theme-${theme}`, ...shared.map((group) => group.map((t) => `.theme-${t}`).join(','))),
-  ) +
-  ROOT_CLASS_EXPERIMENTS.map((e) =>
-    block(
-      experimentSelector(e, [theme]),
-      merged(experimentSelector(e, [theme]), ...shared.map((g) => experimentSelector(e, g))),
-    ),
-  ).join('');
+  );
 const themeFiles = {
   light: themeBlocks('light'),
   ash: themeBlocks('dark'),
