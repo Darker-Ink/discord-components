@@ -140,6 +140,35 @@ const ChatInputStory = ({
 
 ChatInputStory.displayName = 'ChatInputStory';
 
+const EditMessageStory = ({ value }: { value: string }) => {
+  const resolvers = useMemo(() => createEditorResolvers(SAMPLE_EDITOR_DATA), []);
+  const [saved, setSaved] = useState<string | null>(null);
+  return (
+    <div style={{ width: 640, display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <ChannelTextArea
+        key={value}
+        type="EDIT"
+        defaultValue={value}
+        onSubmit={setSaved}
+        guildId={SAMPLE_EDITOR_DATA.guild_id}
+        channelId={SAMPLE_EDITOR_DATA.channel_id}
+        resolvers={resolvers}
+        placeholder="Edit message"
+      />
+      <Text variant="body-xs/normal" color="text-muted">
+        escape to cancel • enter to save
+      </Text>
+      {saved != null ? (
+        <Text variant="mono-md/normal" color="text-muted">
+          saved: {JSON.stringify(saved)}
+        </Text>
+      ) : null}
+    </div>
+  );
+};
+
+EditMessageStory.displayName = 'EditMessageStory';
+
 const group: StoryGroup = {
   title: 'Text Area',
   stories: [
@@ -149,6 +178,19 @@ const group: StoryGroup = {
       component: ChatInputStory,
       controls,
       docs: 'The chat bar: type markdown, @mentions, #channels and :emoji:. The value is message text (`<@id>`, `<:name:id>`).',
+    },
+    {
+      name: 'Edit Message',
+      id: 'edit-message-input',
+      component: EditMessageStory,
+      controls: {
+        value: {
+          type: 'text',
+          label: 'Message',
+          defaultValue: 'Hey <@1000000000000000001>, **check** <#1200000000000000001> :fire:',
+        },
+      },
+      docs: 'The edit-message input (type EDIT): no attach button, emoji button only; its mentions turn into pills when it opens.',
     },
     {
       name: 'Chat Input Fixtures',
