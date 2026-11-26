@@ -613,6 +613,9 @@ importers:
 
   packages/playground:
     dependencies:
+      '@discord-mana/builders':
+        specifier: workspace:*
+        version: link:../builders
       '@discord-mana/components':
         specifier: workspace:*
         version: link:../components

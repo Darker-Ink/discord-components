@@ -10,6 +10,7 @@
     "deploy": "vite build && wrangler deploy"
   },
   "dependencies": {
+    "@discord-mana/builders": "workspace:*",
     "@discord-mana/components": "workspace:*",
     "@discord-mana/icons": "workspace:*",
     "@discord-mana/markdown": "workspace:*",

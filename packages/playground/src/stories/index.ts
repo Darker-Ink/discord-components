@@ -42,7 +42,7 @@ const byOrder = (order: string[]) => (a: StoryGroup, b: StoryGroup) => {
 const manaGroups = Object.values(import.meta.glob<StoryGroup>('./mana/*.tsx', { eager: true, import: 'default' }));
 
 // Not part of Discord's playground: message rendering (embeds, attachments, components) has no Mana stories.
-const MESSAGE_GROUP_ORDER = ['Message', 'Markdown', 'Embeds', 'Media Mosaic', 'Media Viewer', 'Components'];
+const MESSAGE_GROUP_ORDER = ['Message', 'Markdown', 'Embeds', 'Media Mosaic', 'Media Viewer', 'Components', 'Builder'];
 
 const messageGroups = Object.values(
   import.meta.glob<StoryGroup>('./messages/*.tsx', { eager: true, import: 'default' }),
