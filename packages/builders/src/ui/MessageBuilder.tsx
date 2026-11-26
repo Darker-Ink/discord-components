@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useState, type CSSProperties, type ReactNode } from 'react';
 import clsx from 'clsx';
 import { HeaderBar, Tabs, type TabsItem } from '@discord-mana/components';
 import { TextIcon } from '@discord-mana/icons';
@@ -165,6 +165,46 @@ export interface MessageBuilderProps extends Omit<BuilderProviderProps, 'childre
   className?: string;
 }
 
+type LayoutSize = 'wide' | 'medium' | 'narrow';
+
+// The builder lays itself out by its own width (it can sit in a sidebar or a playground frame, not just a page).
+// The message keeps priority: the palette shrinks to icons, then to a row of chips, and the panels go under it.
+const sizeFor = (width: number): LayoutSize => (width >= 1080 ? 'wide' : width >= 720 ? 'medium' : 'narrow');
+
+const useLayoutSize = () => {
+  const [size, setSize] = useState<LayoutSize>('wide');
+  const [element, setElement] = useState<HTMLDivElement | null>(null);
+  useLayoutEffect(() => {
+    if (element == null) return;
+    const update = () => setSize(sizeFor(element.getBoundingClientRect().width));
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [element]);
+  return [size, setElement] as const;
+};
+
+const gridFor = (size: LayoutSize, palette: boolean, side: boolean): CSSProperties => {
+  if (size === 'narrow') {
+    const areas = [palette ? "'palette'" : null, "'main'", side ? "'side'" : null].filter((area) => area != null);
+    return {
+      gridTemplateAreas: areas.join(' '),
+      gridTemplateColumns: 'minmax(0, 1fr)',
+      gridTemplateRows: [palette ? 'auto' : null, 'minmax(420px, 1fr)', side ? 'auto' : null]
+        .filter((row) => row != null)
+        .join(' '),
+    };
+  }
+  const columns = [
+    palette ? (size === 'wide' ? '220px' : '60px') : null,
+    'minmax(360px, 1fr)',
+    side ? (size === 'wide' ? 'minmax(300px, 360px)' : '300px') : null,
+  ].filter((column) => column != null);
+  const areas = [palette ? 'palette' : null, 'main', side ? 'side' : null].filter((area) => area != null);
+  return { gridTemplateAreas: `'${areas.join(' ')}'`, gridTemplateColumns: columns.join(' ') };
+};
+
 const Layout = ({
   onModeChange,
   author,
@@ -177,19 +217,20 @@ const Layout = ({
   mode,
 }: Omit<MessageBuilderProps, keyof BuilderProviderProps>) => {
   const scope = useBuilderScope();
+  const [size, setRoot] = useLayoutSize();
+  const hasPanels = panels.length > 0;
   return (
     <div
-      className={clsx(
-        styles.builder,
-        { [styles.noPalette]: hidePalette, [styles.noPanels]: panels.length === 0 },
-        className,
-      )}
+      ref={setRoot}
+      className={clsx(styles.builder, className)}
+      data-size={size}
+      style={gridFor(size, !hidePalette, hasPanels)}
       {...scope}
     >
       <ControlledMode mode={mode} />
       {!hidePalette ? (
         <aside className={styles.palette} aria-label="Add components">
-          <ComponentPalette />
+          <ComponentPalette compact={size === 'medium'} orientation={size === 'narrow' ? 'horizontal' : 'vertical'} />
         </aside>
       ) : null}
       <BuilderChannel
@@ -198,13 +239,13 @@ const Layout = ({
         actions={
           <>
             <BuilderModeSwitch onChange={onModeChange} />
-            <BuilderHistoryButtons />
+            {size !== 'narrow' ? <BuilderHistoryButtons /> : null}
           </>
         }
       >
         <BuilderCanvas author={author} />
       </BuilderChannel>
-      {panels.length > 0 ? (
+      {hasPanels ? (
         <aside className={styles.side} aria-label="Message tools">
           <BuilderPanels panels={panels} webhookStorageKey={webhookStorageKey} fetch={fetchImpl} />
         </aside>
