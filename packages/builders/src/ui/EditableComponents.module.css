@@ -6,9 +6,10 @@
 }
 .select {
   display: flex;
+  /* The client's select is 400px wide (at most the row): the frame hugs it. */
+  flex: 0 1 400px;
   max-width: 100%;
   min-width: 0;
-  width: 100%;
 }
 .separator {
   display: flow-root;

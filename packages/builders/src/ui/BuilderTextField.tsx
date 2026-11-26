@@ -183,6 +183,7 @@ export const BuilderTextField = ({
       data-builder-first={isFirstField || undefined}
       data-invalid={invalid || undefined}
       data-multiline={multiline || undefined}
+      data-empty={value === '' || undefined}
     >
       <InlineEditor
         ref={editorRef}

@@ -31,3 +31,18 @@
   right: 16px;
   top: 8px;
 }
+
+/* The chat's hover highlight would sit behind every edit; the editing outlines show what is under the pointer. */
+.canvas:not([data-readonly]) [role='article']:hover {
+  background-color: transparent;
+}
+
+/*
+ * An empty message content shows "Add a message" only while the canvas is pointed at or focused; otherwise it
+ * takes no room, like the client's empty content.
+ */
+.canvas:not(:hover):not(:focus-within) [data-builder-field='content'][data-empty] > * {
+  display: block;
+  height: 0;
+  overflow: hidden;
+}

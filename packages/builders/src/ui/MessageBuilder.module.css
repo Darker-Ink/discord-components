@@ -112,3 +112,13 @@
     max-height: 50vh;
   }
 }
+
+/* The JSON tab fills the panel's height. */
+.jsonBody {
+  height: max(320px, calc(100vh - 200px));
+}
+@media (max-width: 860px) {
+  .jsonBody {
+    height: 60vh;
+  }
+}

@@ -444,7 +444,12 @@ export const EditableComponent = ({ uid }: { uid: string }) => {
         </NodeFrame>
       );
     case 'mediaGallery': {
-      const gallery = record as Extract<MessageComponent, { type: 12 }>;
+      const record_ = record as Extract<MessageComponent, { type: 12 }>;
+      // Items without a URL yet are edited in the strip; the gallery shows the others.
+      const gallery = {
+        ...record_,
+        items: record_.items.filter((item) => item.media?.url != null && item.media.url !== ''),
+      };
       return (
         <NodeFrame
           uid={uid}
@@ -455,7 +460,15 @@ export const EditableComponent = ({ uid }: { uid: string }) => {
           {gallery.items.length > 0 ? (
             <ComponentMediaGallery {...gallery} />
           ) : (
-            <EmptyList parentId={uid} slot="items" hint="Empty gallery: add images or videos" />
+            <EmptyList
+              parentId={uid}
+              slot="items"
+              hint={
+                record_.items.length > 0
+                  ? 'Select the gallery and click an item to set its URL'
+                  : 'Empty gallery: add images or videos'
+              }
+            />
           )}
         </NodeFrame>
       );

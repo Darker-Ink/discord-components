@@ -46,7 +46,18 @@ import { useBuilderContext } from './useBuilderContext';
 import { useBuilderUI, useBuilderUIStore } from './uiStore';
 import ui from './EditableEmbed.module.css';
 
-const SUGGESTED_COLORS = ['#5865f2', '#57f287', '#fee75c', '#eb459e', '#ed4245', '#f0b232', '#00a8fc', '#ffffff'];
+const SUGGESTED_COLORS = [
+  '#5865f2',
+  '#57f287',
+  '#fee75c',
+  '#eb459e',
+  '#ed4245',
+  '#f0b232',
+  '#00a8fc',
+  '#9b59b6',
+  '#1abc9c',
+  '#ffffff',
+];
 
 // The client loads author and footer icons as still images unless GIFs autoplay.
 const toStaticImage = (url: string) => {

@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import { useDraggable } from '@dnd-kit/core';
 import { AccessibilityAnnouncer, Tooltip } from '@discord-mana/components';
 import {
-  canInsert,
   findNode,
   NODE_SLOTS,
   useBuilderSelector,
@@ -14,6 +13,7 @@ import {
 } from '../core';
 import { useBuilderScope } from './BuilderProvider';
 import { listSlots } from './dnd/geometry';
+import { canPlace, placeTemplate } from './placeTemplate';
 import { PALETTE_ITEMS, type PaletteItem } from './meta';
 import { useBuilderContext } from './useBuilderContext';
 import { useBuilderUIStore } from './uiStore';
@@ -50,7 +50,7 @@ export const findInsertTarget = (
   template: TemplateType,
   selectedId: string | null,
 ): NodeTarget | null => {
-  const fits = (target: NodeTarget) => canInsert(doc, template, target);
+  const fits = (target: NodeTarget) => canPlace(doc, template, target);
   const location = selectedId != null ? findNode(doc, selectedId) : null;
   if (location != null) {
     for (const slot of NODE_SLOTS[location.kind] ?? []) {
@@ -94,7 +94,7 @@ const PaletteButton = ({ item, available, compact }: { item: PaletteItem; availa
       AccessibilityAnnouncer.announce(`${item.label} can't be added here.`, 'polite');
       return;
     }
-    const uid = actions.insert(target.parentId, target.slot, target.index, item.template as TemplateType);
+    const uid = placeTemplate(actions, doc, item.template as TemplateType, target);
     if (uid != null) {
       ui.set({ selectedId: uid, pendingFocus: { uid } });
       AccessibilityAnnouncer.announce(`Added ${item.label}.`, 'polite');
@@ -161,7 +161,7 @@ export const ComponentPalette = ({
       (state: { doc: BuilderDocument }) => {
         const slots = listSlots(state.doc, { endsOnly: true });
         return items
-          .filter((item) => slots.some((slot) => canInsert(state.doc, item.template as TemplateType, slot)))
+          .filter((item) => slots.some((slot) => canPlace(state.doc, item.template as TemplateType, slot)))
           .map((item) => item.template)
           .join(',');
       },

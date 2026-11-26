@@ -54,7 +54,11 @@ export const BuilderPanels = ({
       'aria-label': issues.length > 0 ? `Issues: ${errors} errors, ${issues.length - errors} warnings` : 'Issues',
       panel: () => <ValidationPanel className={styles.panelBody} />,
     },
-    json: { id: 'json', label: 'JSON', panel: () => <JsonPanel className={styles.panelBody} actions={jsonActions} /> },
+    json: {
+      id: 'json',
+      label: 'JSON',
+      panel: () => <JsonPanel className={clsx(styles.panelBody, styles.jsonBody)} actions={jsonActions} />,
+    },
     send: {
       id: 'send',
       label: 'Send',

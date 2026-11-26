@@ -55,3 +55,4 @@ export {
 export { parseEmoji, formatEmoji } from './componentTools';
 export { KIND_LABELS, KIND_ICONS, PALETTE_ITEMS, type PaletteItem } from './meta';
 export { describeNode } from './describe';
+export { canPlace, placeTemplate } from './placeTemplate';

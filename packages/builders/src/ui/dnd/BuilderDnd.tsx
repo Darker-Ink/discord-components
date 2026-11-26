@@ -14,8 +14,9 @@ import {
   type PointerSensorOptions,
 } from '@dnd-kit/core';
 import { AccessibilityAnnouncer } from '@discord-mana/components';
-import { canInsert, canMove, findNode, type BuilderDocument, type TemplateType } from '../../core';
+import { canMove, findNode, type BuilderDocument, type TemplateType } from '../../core';
 import { describeNode, describeSlot } from '../describe';
+import { canPlace, placeTemplate } from '../placeTemplate';
 import { useBuilderContext } from '../useBuilderContext';
 import { useBuilderUI, useBuilderUIStore, type DropSlot } from '../uiStore';
 import { DragPreview } from './DragPreview';
@@ -81,7 +82,7 @@ export const BuilderDndProvider = ({ children }: { children: ReactNode }) => {
   const isValidFor = useCallback(
     (doc: BuilderDocument, activeId: string, template: string | undefined) => (slot: DropSlot) => {
       const target = { parentId: slot.parentId, slot: slot.slot, index: slot.index };
-      if (template != null) return canInsert(doc, template as TemplateType, target);
+      if (template != null) return canPlace(doc, template as TemplateType, target);
       if (isCurrentPosition(doc, activeId, slot)) return true;
       return canMove(doc, activeId, { ...target, index: finalIndex(doc, activeId, slot) });
     },
@@ -214,7 +215,7 @@ export const BuilderDndProvider = ({ children }: { children: ReactNode }) => {
       const doc = store.getState().doc;
       const target = { parentId: dropTarget.parentId, slot: dropTarget.slot, index: dropTarget.index };
       if (current.template != null) {
-        const uid = actions.insert(target.parentId, target.slot, target.index, current.template as TemplateType);
+        const uid = placeTemplate(actions, doc, current.template as TemplateType, target);
         if (uid != null) ui.set({ selectedId: uid, pendingFocus: { uid } });
         AccessibilityAnnouncer.announce(`Added ${current.label}.`, 'polite');
         return;

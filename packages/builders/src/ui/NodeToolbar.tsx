@@ -95,11 +95,15 @@ export const NodeToolbar = ({ uid, kind, tools }: { uid: string; kind: NodeKind;
     refs: { setReference, setFloating },
     floatingStyles,
   } = useFloating({
-    // Over the node's end, like the client's message toolbar; from its start when the node is narrower than
-    // the toolbar, so it doesn't reach back over what's beside it.
-    placement: (ui.frames.get(uid)?.offsetWidth ?? 0) >= 420 ? 'top-end' : 'top-start',
+    // Beside the node where there's room (it covers nothing there), else over its top end like the client's
+    // message toolbar.
+    placement: 'right-start',
     strategy: 'fixed',
-    middleware: [offset(8), flip(), shift({ padding: 8 })],
+    middleware: [
+      offset(8),
+      flip({ fallbackPlacements: ['top-end', 'top-start', 'bottom-start'] }),
+      shift({ padding: 8 }),
+    ],
     whileElementsMounted: autoUpdate,
   });
   useLayoutEffect(() => {
