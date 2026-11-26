@@ -1,0 +1,190 @@
+{
+  "story": "markdown-fixtures",
+  "now": "2026-11-26T12:30:00.000Z",
+  "data": {
+    "preset": "message",
+    "cases": [
+      ":smile: :tada: :thumbsup::skin-tone-3: :heart: :flag_us:",
+      "😄 🎉 👍🏽 ❤️ 🇺🇸 👨‍👩‍👧 🏴󠁧󠁢󠁳󠁣󠁴󠁿",
+      "<:custom:1000000000000000099> <a:animated:1000000000000000098> <:unknown:1000000000000000097>",
+      ":notanemoji: :smile",
+      "¯\\_(ツ)_/¯",
+      "text with emoji 😄 in it",
+      "😄",
+      "😄 🎉 :fire:",
+      "<:custom:1000000000000000099><:custom:1000000000000000099>",
+      "🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥",
+      "🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥",
+      "**😄**",
+      "✨ text"
+    ],
+    "users": [
+      {
+        "id": "1000000000000000001",
+        "username": "wumpus",
+        "global_name": "Wumpus",
+        "avatar": null,
+        "discriminator": "0"
+      },
+      {
+        "id": "1000000000000000002",
+        "username": "nelly",
+        "global_name": null,
+        "avatar": null,
+        "discriminator": "0"
+      },
+      {
+        "id": "1000000000000000003",
+        "username": "clyde",
+        "global_name": "Clyde",
+        "avatar": null,
+        "discriminator": "0",
+        "bot": true
+      }
+    ],
+    "members": {
+      "1000000000000000002": {
+        "nick": "Nelly the Mod"
+      }
+    },
+    "roles": [
+      {
+        "id": "1100000000000000010",
+        "name": "Moderators",
+        "color": 3447003
+      },
+      {
+        "id": "1100000000000000011",
+        "name": "Members",
+        "color": 0
+      },
+      {
+        "id": "1100000000000000012",
+        "name": "Gradient",
+        "color": 15277667,
+        "colors": {
+          "primary_color": 15277667,
+          "secondary_color": 3447003,
+          "tertiary_color": null
+        }
+      }
+    ],
+    "channels": [
+      {
+        "id": "1200000000000000000",
+        "name": "general",
+        "type": 0,
+        "guild_id": "1100000000000000000"
+      },
+      {
+        "id": "1200000000000000001",
+        "name": "Stage",
+        "type": 13,
+        "guild_id": "1100000000000000000"
+      },
+      {
+        "id": "1200000000000000002",
+        "name": "announcements",
+        "type": 5,
+        "guild_id": "1100000000000000000"
+      },
+      {
+        "id": "1200000000000000003",
+        "name": "help-forum",
+        "type": 15,
+        "guild_id": "1100000000000000000"
+      },
+      {
+        "id": "1200000000000000004",
+        "name": "staff",
+        "type": 0,
+        "guild_id": "1100000000000000000",
+        "can_view": false
+      },
+      {
+        "id": "1200000000000000005",
+        "name": "off-topic",
+        "type": 0,
+        "guild_id": "1100000000000000099"
+      },
+      {
+        "id": "1200000000000000006",
+        "name": "Lounge",
+        "type": 2,
+        "guild_id": "1100000000000000000"
+      },
+      {
+        "id": "1200000000000000007",
+        "name": "a-thread",
+        "type": 11,
+        "guild_id": "1100000000000000000",
+        "parent_id": "1200000000000000000"
+      },
+      {
+        "id": "1200000000000000008",
+        "name": "nsfw-chat",
+        "type": 0,
+        "guild_id": "1100000000000000000",
+        "nsfw": true
+      },
+      {
+        "id": "1200000000000000009",
+        "name": "Category",
+        "type": 4,
+        "guild_id": "1100000000000000000"
+      },
+      {
+        "id": "1200000000000000010",
+        "name": "a-very-long-channel-name-that-goes-past-thirty-two",
+        "type": 0,
+        "guild_id": "1100000000000000000"
+      },
+      {
+        "id": "1200000000000000011",
+        "name": "locked-voice",
+        "type": 2,
+        "guild_id": "1100000000000000000",
+        "can_connect": false
+      },
+      {
+        "id": "1200000000000000012",
+        "name": "media",
+        "type": 16,
+        "guild_id": "1100000000000000000"
+      },
+      {
+        "id": "1200000000000000013",
+        "name": "forum-post",
+        "type": 11,
+        "guild_id": "1100000000000000000",
+        "parent_id": "1200000000000000003"
+      }
+    ],
+    "guilds": [
+      {
+        "id": "1100000000000000000",
+        "name": "Wumpus World"
+      },
+      {
+        "id": "1100000000000000099",
+        "name": "Another Server",
+        "icon": null
+      }
+    ],
+    "emoji_urls": {
+      "😄": "{{assets}}/emoji/1f604.svg",
+      "🎉": "{{assets}}/emoji/1f389.svg",
+      "👍🏽": "{{assets}}/emoji/1f44d-1f3fd.svg",
+      "🔥": "{{assets}}/emoji/1f525.svg",
+      "❤️": "{{assets}}/emoji/2764-fe0f.svg",
+      "🇺🇸": "{{assets}}/emoji/1f1fa-1f1f8.svg",
+      "👨‍👩‍👧": "{{assets}}/emoji/1f468-200d-1f469-200d-1f467.svg",
+      "😂": "{{assets}}/emoji/1f602.svg",
+      "🏴󠁧󠁢󠁳󠁣󠁴󠁿": "{{assets}}/emoji/1f3f4-e0067-e0062-e0073-e0063-e0074-e007f.svg",
+      "✨": "{{assets}}/emoji/2728.svg",
+      "1000000000000000099": "{{assets}}/icon.png",
+      "1000000000000000098": "{{assets}}/small.png",
+      "1000000000000000097": "{{assets}}/square.png"
+    }
+  }
+}

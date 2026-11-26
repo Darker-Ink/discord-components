@@ -82,6 +82,8 @@ const normalizeHtml = (html) =>
     .replace(/\bpopout_\d+/g, 'popout_')
     // React Aria's radio group names carry a random per-page prefix.
     .replace(/\breact-aria\d+-/g, 'react-aria-')
+    // Hidden spoilers number their focus-blocking attribute with a page-wide counter (StrictMode counts twice).
+    .replace(/\bdata-focus-blocked-\d+=/g, 'data-focus-blocked-N=')
     // Bundled SVG assets: Discord serves them from /assets, Vite inlines them (same files, copied from the build).
     .replace(/src="(?:\/assets\/[0-9a-f]+\.svg|data:image\/svg\+xml[^"]*)"/g, 'src="{svg}"')
     .replace(/></g, '>\n<');
