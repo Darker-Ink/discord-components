@@ -10,3 +10,5 @@ packages/preview/src/worker/env.d.ts
 packages/slate/src/slate-react/
 # End-to-end screenshots and downloads
 **/test-results/
+# Vendored focus-layers (kept in its upstream formatting)
+packages/components/src/focus-layers/

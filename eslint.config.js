@@ -5,7 +5,16 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['**/dist/**', '**/.wrangler/**', '.cache/**', 'scripts/**', 'packages/slate/src/slate-react/**'] },
+  {
+    ignores: [
+      '**/dist/**',
+      '**/.wrangler/**',
+      '.cache/**',
+      'scripts/**',
+      'packages/slate/src/slate-react/**',
+      'packages/components/src/focus-layers/**',
+    ],
+  },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {

@@ -208,9 +208,6 @@ importers:
       colorjs.io:
         specifier: 0.5.2
         version: 0.5.2
-      focus-layers:
-        specifier: ^0.6.1
-        version: 0.6.1(react@19.3.1)
       lottie-web:
         specifier: 5.12.2
         version: 5.12.2
@@ -3067,11 +3064,6 @@ packages:
 
   flatted@3.4.4:
     resolution: {integrity: sha512-5+ybhBZANEJxaH3X5evAFatUxLfEHSr7n6kYJ+1Qd0mUqr4eu9gIf6GDbWHf8RJijHrjjO8G+la14SlL2SeS1Q==}
-
-  focus-layers@0.6.1:
-    resolution: {integrity: sha512-iYW3+DtKvQsFyDiliODaral53+dxey92sdFjbt6s0WkXnsmHRmTIgHrUYlTa9GOdQOdaQX6J5X9gyuxYsXRvXA==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0
 
   for-each@0.3.5:
     resolution: {integrity: sha512-dKx12eRCVIzqCxFGplyFKJMPvLEWgmNtUrpTiJIR5u97zEhRG8ySrtboPHZXx7daLxQVrl643cTzbab2tkQjxg==}
@@ -6029,10 +6021,6 @@ snapshots:
       keyv: 4.5.4
 
   flatted@3.4.4: {}
-
-  focus-layers@0.6.1(react@19.3.1):
-    dependencies:
-      react: 19.3.1
 
   for-each@0.3.5:
     dependencies:

@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, type RefObject } from 'react';
-import { useFocusLock as useFocusLayersLock } from 'focus-layers';
+import { useFocusLock as useFocusLayersLock } from '../focus-layers/useFocusLock';
 
 type ReturnTarget = HTMLElement | { element: HTMLElement; focus: () => void } | null;
 
