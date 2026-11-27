@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { CustomPicker, type InjectedColorProps } from 'react-color';
-import { Hue, Saturation } from 'react-color/lib/components/common';
+import { Hue, Saturation } from 'react-color/lib/components/common/index.js';
 import type { HueProps } from 'react-color/lib/components/common/Hue';
 import type { SaturationProps } from 'react-color/lib/components/common/Saturation';
 import styles from './ColorPickerSaturationHue.module.css';
