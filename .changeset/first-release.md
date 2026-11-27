@@ -1,9 +1,12 @@
 ---
-'discord-mana': minor
-'@discord-mana/tokens': minor
-'@discord-mana/icons': minor
-'@discord-mana/components': minor
-'@discord-mana/messages': minor
+'discord-mana': major
+'@discord-mana/tokens': major
+'@discord-mana/icons': major
+'@discord-mana/components': major
+'@discord-mana/messages': major
+'@discord-mana/markdown': major
+'@discord-mana/slate': major
+'@discord-mana/builders': major
 ---
 
-First release.
+First stable release.

@@ -10,7 +10,8 @@
     "embeds",
     "components-v2"
   ],
-  "license": "UNLICENSED",
+  "license": "MIT",
+  "homepage": "https://discord-mana.dev",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Darker-Ink/discord-components.git",
