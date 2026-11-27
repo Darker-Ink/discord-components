@@ -1,6 +1,6 @@
 {
   "name": "@discord-mana/slate",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Discord's chat input for React: the Slate rich text editor with live markdown, mentions and emoji.",
   "keywords": [
     "discord",

@@ -1,6 +1,6 @@
 {
   "name": "@discord-mana/messages",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "React components that render Discord messages: embeds, attachments, media and Components v2.",
   "keywords": [
     "discord",

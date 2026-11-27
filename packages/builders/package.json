@@ -1,6 +1,6 @@
 {
   "name": "@discord-mana/builders",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Discord message builder for React: an editable embed and Components v2 editor with drag and drop, Discord's validation rules, JSON import and export, and webhook sending.",
   "keywords": [
     "discord",

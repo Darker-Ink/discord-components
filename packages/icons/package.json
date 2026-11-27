@@ -1,6 +1,6 @@
 {
   "name": "@discord-mana/icons",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Discord's icons as React components, for discord-mana.",
   "keywords": [
     "discord",
