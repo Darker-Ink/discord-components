@@ -36,6 +36,8 @@ export const App = () => (
 
 Components take the same props as Discord's. If you know how a component is used in the client, you know how to use it here.
 
+A few components play Rive animations, such as expressive buttons. Discord's CDN doesn't let other sites load the `.riv` files, so host copies yourself and call `setRiveAssetUrlResolver` with a function that maps Discord's URLs to yours.
+
 ## Themes
 
 Discord has four themes. Pass the class name value to `AppRoot`, or use `ThemeTypes` from the tokens package.
@@ -113,7 +115,7 @@ Then import each language once, for example next to your app's root:
 import '@discord-mana/markdown/languages/rust';
 ```
 
-`@discord-mana/markdown/languages/all` enables every language Discord highlights, but that needs all of the grammar packages (about 180 MB). Each grammar is loaded the first time a code block uses it.
+`@discord-mana/markdown/languages/all` enables every language Discord highlights, but that needs all of the grammar packages (about 180 MB). Each grammar is loaded the first time a code block uses it. With Vite, add `optimizeDeps: { exclude: ['@discord-mana/markdown'] }` to your config, or the grammars won't load in `vite dev`.
 
 Languages: `ada`, `agda`, `asciidoc`, `asm`, `awk`, `bash`, `batch`, `c`, `c-sharp`, `caddy`, `capnp`, `cedar`, `cedarschema`, `clojure`, `cmake`, `commonlisp`, `cpp`, `css`, `d`, `dart`, `devicetree`, `diff`, `dockerfile`, `dot`, `elisp`, `elixir`, `elm`, `erlang`, `fish`, `fsharp`, `gleam`, `glsl`, `go`, `graphql`, `groovy`, `haskell`, `hcl`, `hlsl`, `html`, `idris`, `ini`, `java`, `javascript`, `jinja2`, `jq`, `json`, `julia`, `kotlin`, `lean`, `lua`, `markdown`, `matlab`, `meson`, `ninja`, `nix`, `objc`, `ocaml`, `perl`, `php`, `postscript`, `powershell`, `prolog`, `python`, `query`, `r`, `rego`, `rescript`, `ron`, `ruby`, `rust`, `scala`, `scheme`, `scss`, `solidity`, `sparql`, `sql`, `ssh-config`, `starlark`, `styx`, `svelte`, `swift`, `textproto`, `thrift`, `tlaplus`, `toml`, `tsx`, `typescript`, `typst`, `verilog`, `vhdl`, `vim`, `vue`, `wit`, `x86asm`, `xml`, `yaml`, `yuri`, `zig`, `zsh`.
 

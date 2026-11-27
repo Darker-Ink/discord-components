@@ -26,4 +26,13 @@ import '@discord-mana/markdown/languages/rust';
 
 `@discord-mana/markdown/languages/all` enables every language Discord highlights, but needs all of the grammar packages. Each grammar loads the first time a code block uses it.
 
+With Vite, leave this package out of dependency pre-bundling, or the grammars won't load in `vite dev`:
+
+```ts
+// vite.config.ts
+export default defineConfig({
+  optimizeDeps: { exclude: ['@discord-mana/markdown'] },
+});
+```
+
 Part of [discord-mana](https://github.com/Darker-Ink/discord-components).

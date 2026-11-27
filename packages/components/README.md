@@ -19,6 +19,14 @@ export const App = () => (
 );
 ```
 
+Some components play Rive animations (expressive buttons, for one). The `.riv` files come from Discord's CDN, which doesn't allow other sites to load them, so host copies yourself and point the components at them before rendering:
+
+```ts
+import { setRiveAssetUrlResolver } from '@discord-mana/components';
+
+setRiveAssetUrlResolver((url) => `/rive/${url.split('/').pop()}`);
+```
+
 Components take the same props as Discord's. Every one of them has a story in the playground at https://play.discord-mana.dev.
 
 Part of [discord-mana](https://github.com/Darker-Ink/discord-components).
