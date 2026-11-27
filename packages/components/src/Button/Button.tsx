@@ -1,4 +1,6 @@
 import {
+  lazy,
+  Suspense,
   useContext,
   useEffect,
   useRef,
@@ -22,7 +24,6 @@ import { Spinner, SpinnerTypes } from '../Spinner';
 import { Text, type TextVariant } from '../Text';
 import { isThemeLight } from '../Theme';
 import { useButtonGroupContext } from './ButtonGroupContext';
-import { ExpressiveButtonRive } from './ExpressiveButtonRive';
 import styles from './Button.module.css';
 import toggleStyles from './ToggleButton.module.css';
 
@@ -142,6 +143,11 @@ interface ExpressiveLayersProps {
   disabled: boolean | undefined;
 }
 
+// The Rive runtime is only needed by expressive buttons, so it loads with the first one instead of with Button.
+const ExpressiveButtonRive = lazy(() =>
+  import('./ExpressiveButtonRive').then((module) => ({ default: module.ExpressiveButtonRive })),
+);
+
 // With reduced motion the glow only plays while hovered, and the pointer-following highlight is left out.
 const ExpressiveLayers = ({ hasReducedMotion, buttonRef, isLightMode, disabled }: ExpressiveLayersProps) => {
   const glowRef = useRef<RiveAnimationHandle>(null);
@@ -161,23 +167,25 @@ const ExpressiveLayers = ({ hasReducedMotion, buttonRef, isLightMode, disabled }
 
   return (
     <>
-      {!disabled && (
-        <ExpressiveButtonRive
-          className={clsx(styles.expressiveRive, styles.expressiveBackground)}
-          eventTargetRef={buttonRef}
-          fit="layout"
-          artboard="BaseGlowRemapped"
-          ref={glowRef}
-          withReducedMotion="short-loop"
-        />
-      )}
-      {!hasReducedMotion && !disabled && (
-        <ExpressiveButtonRive
-          className={clsx(styles.expressiveRive, styles.expressiveHoverContainer)}
-          fit="layout"
-          artboard={isLightMode ? 'HoverLightmode' : 'HoverDarkmode'}
-        />
-      )}
+      <Suspense fallback={null}>
+        {!disabled && (
+          <ExpressiveButtonRive
+            className={clsx(styles.expressiveRive, styles.expressiveBackground)}
+            eventTargetRef={buttonRef}
+            fit="layout"
+            artboard="BaseGlowRemapped"
+            ref={glowRef}
+            withReducedMotion="short-loop"
+          />
+        )}
+        {!hasReducedMotion && !disabled && (
+          <ExpressiveButtonRive
+            className={clsx(styles.expressiveRive, styles.expressiveHoverContainer)}
+            fit="layout"
+            artboard={isLightMode ? 'HoverLightmode' : 'HoverDarkmode'}
+          />
+        )}
+      </Suspense>
       <div className={clsx(styles.expressiveRive, styles.expressiveFill)} />
     </>
   );
