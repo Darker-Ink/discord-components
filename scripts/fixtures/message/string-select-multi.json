@@ -1,0 +1,172 @@
+{
+  "story": "message-fixtures",
+  "now": "2026-11-26T12:30:00.000Z",
+  "data": {
+    "message": {
+      "content": "Multi-selects with default options",
+      "author": {
+        "id": "1000000000000000002",
+        "username": "helper",
+        "global_name": null,
+        "avatar": "a1b2",
+        "discriminator": "0",
+        "bot": true,
+        "avatar_url": "{{assets}}/icon.png"
+      },
+      "components": [
+        {
+          "type": 1,
+          "components": [
+            {
+              "type": 3,
+              "custom_id": "single-default",
+              "options": [
+                {
+                  "label": "Announcements",
+                  "value": "v0"
+                },
+                {
+                  "label": "Events",
+                  "value": "v1",
+                  "default": true
+                },
+                {
+                  "label": "Patch notes",
+                  "value": "v2"
+                },
+                {
+                  "label": "Giveaways",
+                  "value": "v3"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": 1,
+          "components": [
+            {
+              "type": 3,
+              "custom_id": "multi-one-default",
+              "options": [
+                {
+                  "label": "Announcements",
+                  "value": "v0"
+                },
+                {
+                  "label": "Events",
+                  "value": "v1",
+                  "default": true
+                },
+                {
+                  "label": "Patch notes",
+                  "value": "v2"
+                },
+                {
+                  "label": "Giveaways",
+                  "value": "v3"
+                }
+              ],
+              "max_values": 15
+            }
+          ]
+        },
+        {
+          "type": 1,
+          "components": [
+            {
+              "type": 3,
+              "custom_id": "multi-two-defaults",
+              "options": [
+                {
+                  "label": "Announcements",
+                  "value": "v0",
+                  "default": true
+                },
+                {
+                  "label": "Events",
+                  "value": "v1"
+                },
+                {
+                  "label": "Patch notes",
+                  "value": "v2",
+                  "default": true
+                },
+                {
+                  "label": "Giveaways",
+                  "value": "v3"
+                }
+              ],
+              "max_values": 15,
+              "min_values": 2
+            }
+          ]
+        },
+        {
+          "type": 1,
+          "components": [
+            {
+              "type": 3,
+              "custom_id": "multi-long",
+              "options": [
+                {
+                  "label": "A rather long option label that goes on",
+                  "value": "v0",
+                  "default": true
+                },
+                {
+                  "label": "Events",
+                  "value": "v1",
+                  "default": true
+                },
+                {
+                  "label": "Patch notes and more patch notes",
+                  "value": "v2",
+                  "default": true
+                },
+                {
+                  "label": "Giveaways",
+                  "value": "v3",
+                  "default": true
+                }
+              ],
+              "max_values": 15
+            }
+          ]
+        },
+        {
+          "type": 1,
+          "components": [
+            {
+              "type": 3,
+              "custom_id": "multi-none",
+              "options": [
+                {
+                  "label": "Announcements",
+                  "value": "v0"
+                },
+                {
+                  "label": "Events",
+                  "value": "v1"
+                },
+                {
+                  "label": "Patch notes",
+                  "value": "v2"
+                },
+                {
+                  "label": "Giveaways",
+                  "value": "v3"
+                }
+              ],
+              "max_values": 15
+            }
+          ]
+        }
+      ]
+    },
+    "emoji_urls": {
+      "🪨": "{{assets}}/small.png",
+      "1000000000000000099": "{{assets}}/icon.png"
+    }
+  }
+}

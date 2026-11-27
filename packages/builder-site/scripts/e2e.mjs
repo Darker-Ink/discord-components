@@ -772,6 +772,289 @@ await step('Components v2: a File component and a gallery item pick attached fil
   assert.match(await page.getByRole('tabpanel').innerText(), /icon\.png isn't shown/);
 });
 
+/** Loads a payload as the draft (a fresh page). */
+const loadDraft = async (payload) => {
+  await page.evaluate((value) => {
+    localStorage.setItem('discord-mana-builder:draft', JSON.stringify(value));
+  }, payload);
+  await page.reload({ waitUntil: 'networkidle' });
+  await settle(500);
+};
+/** The message as autosaved (after its debounce). */
+const draft = async () => {
+  await settle(400);
+  return page.evaluate(() => JSON.parse(localStorage.getItem('discord-mana-builder:draft') ?? '{}'));
+};
+const nodeOfKind = (kind, index = 0) => page.locator(`[data-builder-canvas] [data-builder-kind="${kind}"]`).nth(index);
+const selectedKind = () =>
+  page.evaluate(() => document.querySelector('[data-selected]')?.getAttribute('data-builder-kind'));
+
+/** Uses a color picker the way a hand would: swatches, the saturation area, the hue slider, a typed hex. */
+const useColorPicker = async (read) => {
+  const picker = page.getByRole('dialog', { name: 'Pick a Color' });
+  const values = new Set();
+  for (const index of [1, 3, 5]) {
+    await picker.locator('[class*="suggestedColor"]').nth(index).click();
+    await settle(150);
+    assert.ok(await picker.isVisible(), 'the picker stays open after picking a swatch');
+    values.add(await read());
+  }
+  assert.equal(values.size, 3, 'each swatch applied its color');
+  for (const selector of ['[class*="saturation"]', '[class*="hue"]']) {
+    const box = await picker.locator(selector).first().boundingBox();
+    await page.mouse.move(box.x + 8, box.y + box.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width * 0.7, box.y + box.height / 3, { steps: 8 });
+    await page.mouse.up();
+    await settle(150);
+    assert.ok(await picker.isVisible(), `the picker stays open after dragging in ${selector}`);
+  }
+  await picker.locator('input').first().fill('ff00aa');
+  await settle(150);
+  assert.ok(await picker.isVisible(), 'the picker stays open while typing a hex value');
+  assert.equal(await read(), 0xff00aa);
+};
+
+await step('popouts stay open while you use them (colors, style, emoji, options, media, files)', async () => {
+  await loadDraft({
+    embeds: [{ title: 'Colors' }],
+    components: [{ type: 1, components: [{ type: 2, style: 1, label: 'Go', custom_id: 'go' }] }],
+  });
+  // The embed's color, from its toolbar and from its color bar.
+  await embeds()
+    .nth(0)
+    .click({ position: { x: 8, y: 6 } });
+  await page.getByRole('toolbar').getByRole('button', { name: 'Color', exact: true }).click();
+  await settle(300);
+  await useColorPicker(async () => (await draft()).embeds[0].color);
+  await shot('30-color-picker-open');
+  await page.keyboard.press('Escape');
+  await settle(200);
+  await page.locator('[aria-label="Embed color"]').click();
+  await settle(300);
+  await useColorPicker(async () => (await draft()).embeds[0].color);
+  await page.keyboard.press('Escape');
+  await deselect();
+  // A button's style and emoji.
+  await nodeOfKind('button').click({ position: { x: 4, y: 4 } });
+  await page.keyboard.press('Escape');
+  await page
+    .getByRole('toolbar')
+    .getByRole('button', { name: /^Style/ })
+    .click();
+  await settle(300);
+  const styles = page.getByRole('radiogroup', { name: 'Button style' });
+  for (const name of ['Secondary', 'Success', 'Danger']) {
+    await styles.getByRole('radio', { name }).click();
+    await settle(150);
+    assert.ok(await styles.isVisible(), `the style popout stays open after picking ${name}`);
+  }
+  assert.equal((await draft()).components[0].components[0].style, 4);
+  await page.keyboard.press('Escape');
+  await page.getByRole('toolbar').getByRole('button', { name: 'Emoji', exact: true }).click();
+  await settle(300);
+  const emoji = page.getByRole('group', { name: 'Common emoji' });
+  for (const name of ['🔥', '🎉']) {
+    await emoji.getByRole('button', { name }).click();
+    await settle(150);
+    assert.ok(await emoji.isVisible(), 'the emoji picker stays open');
+  }
+  assert.equal((await draft()).components[0].components[0].emoji.name, '🎉');
+  await page.keyboard.press('Escape');
+  await deselect();
+
+  // Components v2: a container's accent color, a select's options, a thumbnail's media and a file.
+  await loadDraft({
+    flags: 32768,
+    components: [
+      { type: 17, components: [{ type: 10, content: 'In a container' }] },
+      {
+        type: 9,
+        components: [{ type: 10, content: 'Section' }],
+        accessory: { type: 11, media: { url: 'https://example.com/a.png' } },
+      },
+      { type: 1, components: [{ type: 3, custom_id: 's', options: [{ label: 'One', value: '1' }] }] },
+    ],
+  });
+  await nodeOfKind('container').click({ position: { x: 4, y: 4 } });
+  await page.getByRole('toolbar').getByRole('button', { name: 'Accent color' }).click();
+  await settle(300);
+  await useColorPicker(async () => (await draft()).components[0].accent_color);
+  await page.keyboard.press('Escape');
+  await deselect();
+  await nodeOfKind('stringSelect').click({ position: { x: 4, y: 4 } });
+  await page.getByRole('toolbar').getByRole('button', { name: 'Options and settings' }).click();
+  await settle(300);
+  const options = page.getByRole('dialog', { name: 'Select menu' });
+  await options.getByLabel('Placeholder').fill('Pick some');
+  await options.getByLabel('Max').fill('15');
+  await options.getByText('Selected by default').click();
+  await options.getByRole('button', { name: 'Add option' }).click();
+  await settle(300);
+  assert.ok(await options.isVisible(), 'the options editor stays open');
+  const select = (await draft()).components[2].components[0];
+  assert.equal(select.placeholder, 'Pick some');
+  assert.equal(select.max_values, 15);
+  assert.equal(select.options.length, 2);
+  assert.equal(select.options[0].default, true);
+  await page.keyboard.press('Escape');
+  await deselect();
+  await nodeOfKind('thumbnail').click({ position: { x: 10, y: 10 } });
+  await page.getByRole('toolbar').getByRole('button', { name: 'Image', exact: true }).click();
+  await settle(300);
+  const media = page.getByRole('dialog', { name: 'Thumbnail' });
+  await media.getByLabel('Image URL').fill(`${BASE}/favicon.svg`);
+  await media.getByLabel('Alt text').fill('An icon');
+  await media.getByText('Spoiler').click();
+  await settle(200);
+  assert.ok(await media.isVisible(), 'the media popout stays open');
+  await chooseFiles(page, () => media.getByRole('button', { name: /Upload/ }).click(), ['icon.png']);
+  assert.ok(await media.isVisible(), 'the media popout stays open after uploading a file');
+  assert.equal((await draft()).components[1].accessory.media.url, 'attachment://icon.png');
+  await page.keyboard.press('Escape');
+  await deselect();
+});
+
+await step('empty and small parts are easy to select and edit', async () => {
+  await loadDraft({
+    flags: 32768,
+    components: [
+      { type: 10, content: 'Before' },
+      { type: 14, divider: false, spacing: 1 },
+      { type: 10, content: 'After' },
+      { type: 10, content: '' },
+      { type: 9, components: [{ type: 10, content: '' }], accessory: { type: 11, media: { url: '' } } },
+      {
+        type: 1,
+        components: [
+          { type: 2, style: 1, label: '', custom_id: 'a' },
+          { type: 2, style: 2, emoji: { name: '🔥' }, custom_id: 'b' },
+          { type: 2, style: 5, label: 'Link', url: 'https://example.com' },
+        ],
+      },
+      { type: 1, components: [] },
+      { type: 17, components: [] },
+    ],
+  });
+  await shot('31-empty-parts');
+  // An invisible separator: pressing the space it takes selects it.
+  const separator = await nodeOfKind('separator').boundingBox();
+  await page.mouse.click(separator.x + separator.width / 2, separator.y - 5);
+  await settle(200);
+  assert.equal(await selectedKind(), 'separator');
+  await shot('32-separator-selected');
+  await page.getByRole('toolbar').getByRole('button', { name: 'Show a line' }).click();
+  await settle(200);
+  assert.notEqual((await draft()).components[1].divider, false, 'the line is on (the default)');
+  await deselect();
+  // An empty text display shows its placeholder, and takes typing.
+  await nodeOfKind('textDisplay', 2).getByRole('textbox').click();
+  await page.keyboard.type('Now with text', { delay: 5 });
+  await deselect();
+  assert.equal((await draft()).components[3].content, 'Now with text');
+  // The empty text of a section, too.
+  await nodeOfKind('section').locator('[role="textbox"]').click();
+  await page.keyboard.type('Section text', { delay: 5 });
+  await deselect();
+  assert.equal((await draft()).components[4].components[0].content, 'Section text');
+  // A button with no label: selecting it goes straight to typing its label.
+  await nodeOfKind('button', 0).click();
+  await settle(300);
+  await shot('33-empty-button-selected');
+  assert.equal(await page.evaluate(() => document.activeElement?.getAttribute('aria-label')), 'Button label');
+  await page.keyboard.type('Start', { delay: 5 });
+  await page.keyboard.press('Enter');
+  await deselect();
+  assert.equal((await draft()).components[5].components[0].label, 'Start');
+  // An emoji-only button gets a label the same way.
+  await nodeOfKind('button', 1).click();
+  await settle(300);
+  await page.keyboard.type('Hot', { delay: 5 });
+  await page.keyboard.press('Enter');
+  await deselect();
+  assert.equal((await draft()).components[5].components[1].label, 'Hot');
+  // A link button's URL, from its toolbar.
+  await nodeOfKind('button', 2).click();
+  await page.keyboard.press('Escape');
+  await page.getByRole('toolbar').getByRole('button', { name: 'Link', exact: true }).click();
+  await settle(300);
+  await page.getByRole('dialog').getByLabel('URL').fill('https://discord.com');
+  await page.keyboard.press('Escape');
+  await deselect();
+  assert.equal((await draft()).components[5].components[2].url, 'https://discord.com');
+  // Empty rows and containers: their "Add" puts something in.
+  await nodeOfKind('actionRow', 1).getByRole('button', { name: /Add/ }).click();
+  await settle(300);
+  await page.getByRole('menuitem').first().click();
+  await settle(300);
+  await deselect();
+  assert.equal((await draft()).components[6].components.length, 1);
+  await nodeOfKind('container').getByRole('button', { name: /Add/ }).click();
+  await settle(300);
+  await page.getByRole('menuitem', { name: /Text/ }).first().click();
+  await settle(300);
+  await page.keyboard.type('Inside', { delay: 5 });
+  await deselect();
+  assert.equal((await draft()).components[7].components[0].content, 'Inside');
+  // A classic embed with nothing in it shows where its title and description go.
+  await loadDraft({ embeds: [{ fields: [{ name: '', value: '' }] }, {}] });
+  await shot('34-empty-embed');
+  await embeds().nth(1).getByRole('textbox', { name: 'Embed title' }).click();
+  await page.keyboard.type('Titled', { delay: 5 });
+  await deselect();
+  await fields(embeds().nth(0)).nth(0).getByRole('textbox', { name: 'Field name' }).click();
+  await page.keyboard.type('Name', { delay: 5 });
+  await fields(embeds().nth(0)).nth(0).getByRole('textbox', { name: 'Field value' }).click();
+  await page.keyboard.type('Value', { delay: 5 });
+  await deselect();
+  const json = await draft();
+  assert.equal(json.embeds[1].title, 'Titled');
+  assert.deepEqual(json.embeds[0].fields[0], { name: 'Name', value: 'Value' });
+});
+
+await step(
+  'a select with many values grows like Discord’s, and the builder holds still while you edit it',
+  async () => {
+    await loadDraft({
+      flags: 32768,
+      components: [
+        {
+          type: 1,
+          components: [
+            {
+              type: 3,
+              custom_id: 's',
+              options: [
+                { label: 'One', value: '1' },
+                { label: 'Two', value: '2', default: true },
+              ],
+            },
+          ],
+        },
+        { type: 10, content: 'Below' },
+      ],
+    });
+    await nodeOfKind('stringSelect').click({ position: { x: 4, y: 4 } });
+    await page.getByRole('toolbar').getByRole('button', { name: 'Options and settings' }).click();
+    await settle(300);
+    const options = page.getByRole('dialog', { name: 'Select menu' });
+    const before = await options.boundingBox();
+    const toolbar = await page.getByRole('toolbar').boundingBox();
+    await options.getByLabel('Max').fill('15');
+    await settle(300);
+    await shot('35-select-max-15');
+    const after = await options.boundingBox();
+    assert.deepEqual(
+      [after.x, after.y, after.width, after.height].map(Math.round),
+      [before.x, before.y, before.width, before.height].map(Math.round),
+      'the options editor stays where it was',
+    );
+    const toolbarAfter = await page.getByRole('toolbar').boundingBox();
+    assert.equal(Math.round(toolbarAfter.y), Math.round(toolbar.y), 'the toolbar stays where it was');
+    await page.keyboard.press('Escape');
+  },
+);
+
 await step('every theme renders on desktop', async () => {
   await startFrom('^Example$');
   for (const theme of THEMES) {
@@ -1013,6 +1296,68 @@ for (const phone of PHONES) {
     await closeSheet();
   });
 
+  await step(`${phone.name}: tap an invisible separator and an empty button`, async () => {
+    await m.evaluate(() =>
+      localStorage.setItem(
+        'discord-mana-builder:draft',
+        JSON.stringify({
+          flags: 32768,
+          components: [
+            { type: 10, content: 'Before' },
+            { type: 14, divider: false, spacing: 1 },
+            { type: 10, content: 'After' },
+            { type: 1, components: [{ type: 2, style: 1, label: '', custom_id: 'a' }] },
+          ],
+        }),
+      ),
+    );
+    await m.reload({ waitUntil: 'networkidle' });
+    await m.waitForTimeout(500);
+    const separator = await m.locator('[data-builder-canvas] [data-builder-kind="separator"]').boundingBox();
+    await m.touchscreen.tap(separator.x + separator.width / 2, separator.y - 10);
+    await m.waitForTimeout(300);
+    assert.equal(
+      await m.evaluate(() => document.querySelector('[data-selected]')?.getAttribute('data-builder-kind')),
+      'separator',
+    );
+    await mshot('15-separator-tapped');
+    await m.locator('[data-builder-canvas] [data-builder-kind="button"]').tap();
+    await m.waitForTimeout(400);
+    assert.equal(await m.evaluate(() => document.activeElement?.getAttribute('aria-label')), 'Button label');
+    await m.keyboard.type('Go', { delay: 10 });
+    await m.waitForTimeout(500);
+    const json = await m.evaluate(() => JSON.parse(localStorage.getItem('discord-mana-builder:draft')));
+    assert.equal(json.components[3].components[0].label, 'Go');
+    await done();
+    await m.evaluate(() => localStorage.removeItem('discord-mana-builder:draft'));
+    await m.reload({ waitUntil: 'networkidle' });
+    await m.waitForTimeout(400);
+  });
+
+  await step(`${phone.name}: pick colors from the docked toolbar, and the picker stays open`, async () => {
+    const box = await mEmbed().boundingBox();
+    await mEmbed().tap({ position: { x: box.width - 6, y: 4 } });
+    await m.waitForTimeout(300);
+    await m.getByRole('toolbar').getByRole('button', { name: 'Color', exact: true }).tap();
+    await m.waitForTimeout(400);
+    const picker = m.getByRole('dialog', { name: 'Pick a Color' });
+    const colors = new Set();
+    for (const index of [2, 3, 4]) {
+      await picker.locator('[class*="suggestedColor"]').nth(index).tap();
+      await m.waitForTimeout(250);
+      assert.ok(await picker.isVisible(), 'the picker stays open after a tap');
+      colors.add(await picker.locator('input').first().inputValue());
+    }
+    assert.equal(colors.size, 3);
+    const viewport = m.viewportSize();
+    const pickerBox = await picker.boundingBox();
+    assert.ok(pickerBox.x >= 0 && pickerBox.x + pickerBox.width <= viewport.width + 1, 'the picker fits the screen');
+    await mshot('16-color-picker');
+    await m.keyboard.press('Escape');
+    await m.waitForTimeout(200);
+    await done();
+  });
+
   await step(`${phone.name}: switch to a poll from the header`, async () => {
     await m.getByRole('radiogroup', { name: 'Message type' }).getByRole('radio', { name: 'Poll' }).tap();
     await m.waitForTimeout(500);
@@ -1027,7 +1372,7 @@ for (const phone of PHONES) {
     await poll.getByRole('textbox', { name: 'Answer 2' }).tap();
     await m.keyboard.type('Desert', { delay: 10 });
     await m.waitForTimeout(300);
-    await mshot('15-poll');
+    await mshot('17-poll');
     const json = await m.evaluate(() => JSON.parse(localStorage.getItem('discord-mana-builder:draft') ?? '{}'));
     assert.equal(json.poll?.question?.text, 'Which map next?');
     assert.equal(json.embeds, undefined);

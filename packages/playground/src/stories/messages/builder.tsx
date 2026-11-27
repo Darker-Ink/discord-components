@@ -299,6 +299,8 @@ const ParityStory = ({ sample, side, payload }: { sample: string; side: string; 
                 resolvers={RESOLVERS}
                 renderMarkdown={renderMessageMarkdown}
                 renderEmbedMarkdown={renderEmbedMarkdown}
+                // The builder counts a poll's time from when the message was sent.
+                now={new Date(timestamp)}
               />
             </MessageListItem>
           </ol>
