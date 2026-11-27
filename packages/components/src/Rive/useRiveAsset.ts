@@ -105,7 +105,8 @@ export const useRiveAsset = (src: string | ArrayBuffer | null | undefined): Rive
     if (key == null || override != null || isBuffer || assetCache.has(key)) return;
     const file = new RiveFile({ src: resolveAssetUrl(key) });
     runWhenIdle(() => {
-      void file.init();
+      // A failed download is reported through LoadError below.
+      file.init().catch(() => {});
       file.on(EventType.Load, () => storeBuffer(key, (file as unknown as { buffer: ArrayBuffer }).buffer));
       file.on(EventType.LoadError, (error) => console.error('Rive file load error', key, error));
     });
