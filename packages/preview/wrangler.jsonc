@@ -3,9 +3,16 @@
   "name": "discord-mana-preview",
   "main": "./src/worker/index.ts",
   "compatibility_date": "2026-11-20",
-  "observability": { "enabled": true },
+  "observability": {
+    "enabled": true,
+  },
   // A Custom Domain: `wrangler deploy` creates its DNS record and certificate (the zone must be on Cloudflare).
-  "routes": [{ "pattern": "preview.discord-mana.dev", "custom_domain": true }],
+  "routes": [
+    {
+      "pattern": "preview.discord-mana.dev",
+      "custom_domain": true,
+    },
+  ],
   "assets": {
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
@@ -16,17 +23,32 @@
     {
       "binding": "DB",
       "database_name": "discord-mana-preview",
-      // Replace with the id `wrangler d1 create discord-mana-preview` prints.
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "f1672116-0563-4a1e-af12-3c2fca7c17ce",
       "migrations_dir": "migrations",
     },
   ],
   // Preview payloads (gzipped message JSON, one object per preview). Metadata stays in D1.
-  "r2_buckets": [{ "binding": "PAYLOADS", "bucket_name": "discord-mana-preview-payloads" }],
+  "r2_buckets": [
+    {
+      "binding": "PAYLOADS",
+      "bucket_name": "discord-mana-preview-payloads",
+    },
+  ],
   // Per-key burst protection for the authenticated API (approximate, per location; period is 10 or 60 s).
-  "ratelimits": [{ "name": "API_RATE_LIMITER", "namespace_id": "1001", "simple": { "limit": 120, "period": 60 } }],
+  "ratelimits": [
+    {
+      "name": "API_RATE_LIMITER",
+      "namespace_id": "1001",
+      "simple": {
+        "limit": 120,
+        "period": 60,
+      },
+    },
+  ],
   // Daily sweep of expired previews and old rate limit windows.
-  "triggers": { "crons": ["17 4 * * *"] },
+  "triggers": {
+    "crons": ["17 4 * * *"],
+  },
   "vars": {
     // Largest accepted request body, in bytes (10 MiB; at most 100 MiB, the Workers request limit).
     "MAX_BODY_BYTES": 10485760,
