@@ -8,6 +8,7 @@ import {
   toJSON,
   useBuilderRestrictions,
   useBuilderSelector,
+  useBuilderTarget,
   useNodeIssues,
   type BuilderDocument,
 } from '../core';
@@ -15,7 +16,7 @@ import { BuilderTextField } from './BuilderTextField';
 import { EditableComponents } from './EditableComponents';
 import { EditableAttachments } from './EditableAttachments';
 import { EditableEmbed } from './EditableEmbed';
-import { EditablePoll } from './EditablePoll';
+import { EditablePoll, toPreviewPoll } from './EditablePoll';
 import { NodeContextMenu } from './NodeContextMenu';
 import { focusFirstText, nodeOf } from './NodeFrame';
 import { NodeTextInput, PopoutPanel } from './popouts';
@@ -52,6 +53,8 @@ export const toPreviewMessage = (
     timestamp,
     edited_timestamp: null,
     content: doc.mode === 'cv2' ? '' : (payload.content ?? ''),
+    // A poll as the sent message carries it (answer ids, an expiry).
+    ...(doc.mode === 'poll' && payload.poll != null ? { poll: toPreviewPoll(payload.poll, timestamp) } : {}),
     flags: payload.flags,
     author: {
       id: author.id ?? DEFAULT_AUTHOR.id!,
@@ -140,8 +143,11 @@ export const BuilderCanvas = ({ author = DEFAULT_AUTHOR, timestamp, className, e
   const [identityOpen, setIdentityOpen] = useState(false);
   const rootIssues = useNodeIssues(ROOT_UID);
   const restrictions = useBuilderRestrictions();
+  // A webhook's name and avatar can be overridden per message; a bot's can't.
+  const target = useBuilderTarget();
   const canEditIdentity =
-    isMessageFieldAllowed(restrictions, 'username') || isMessageFieldAllowed(restrictions, 'avatar_url');
+    target === 'webhook' &&
+    (isMessageFieldAllowed(restrictions, 'username') || isMessageFieldAllowed(restrictions, 'avatar_url'));
   usePendingFocus();
   // The message's own lists: drops on an empty message land in its placeholder, else anywhere on the canvas.
   const canvasRef = useRef<HTMLDivElement | null>(null);
@@ -191,10 +197,11 @@ export const BuilderCanvas = ({ author = DEFAULT_AUTHOR, timestamp, className, e
 
   const accessories = (
     <>
-      {/* The client's order: attachments (none beside a poll), the poll, embeds, components. */}
-      {doc.mode === 'classic' && doc.poll == null ? <EditableAttachments message={message} /> : null}
-      {doc.mode === 'classic' ? <EditablePoll /> : null}
-      {doc.mode === 'classic'
+      {/* The client's order: attachments, the poll, embeds, components. A poll message is the poll alone;
+          anything else it came with (imported JSON) still shows, to be removed. */}
+      {doc.mode !== 'cv2' ? <EditableAttachments message={message} /> : null}
+      {doc.mode === 'poll' ? <EditablePoll message={message} /> : null}
+      {doc.mode !== 'cv2'
         ? doc.embeds.map((embed, index) => (
             <EditableEmbed key={embed.uid} uid={embed.uid} embedIndex={index} message={message} />
           ))
@@ -209,7 +216,8 @@ export const BuilderCanvas = ({ author = DEFAULT_AUTHOR, timestamp, className, e
   );
 
   const content =
-    doc.mode === 'classic' && (doc.content !== '' || isMessageFieldAllowed(restrictions, 'content')) ? (
+    (doc.mode === 'classic' && (doc.content !== '' || isMessageFieldAllowed(restrictions, 'content'))) ||
+    (doc.mode === 'poll' && doc.content !== '') ? (
       <BuilderTextField
         uid={ROOT_UID}
         kind="message"

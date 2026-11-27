@@ -8,6 +8,7 @@ import {
   ROOT_UID,
   useBuilderRestrictions,
   useBuilderSelector,
+  useBuilderTarget,
   useNodeIssues,
   type AllowedMentionType,
   type APIAllowedMentions,
@@ -186,12 +187,16 @@ export const MessageOptions = ({ className }: MessageOptionsProps) => {
   const restrictions = useBuilderRestrictions();
   const mode = useBuilderSelector((state) => state.doc.mode);
   const tts = useBuilderSelector((state) => state.doc.tts === true);
+  const target = useBuilderTarget();
   const flags = isMessageFieldAllowed(restrictions, 'flags');
   const allowsTts = isMessageFieldAllowed(restrictions, 'tts') && mode === 'classic';
   const mentions = isMessageFieldAllowed(restrictions, 'allowed_mentions');
   if (!flags && !allowsTts && !mentions) return null;
   return (
     <section className={clsx(styles.options, className)} aria-label="Message options">
+      {flags && target === 'interaction' ? (
+        <FlagSwitch flag={MessageFlag.Ephemeral} label="Only visible to the user" />
+      ) : null}
       {flags ? <FlagSwitch flag={MessageFlag.SuppressNotifications} label="Silent" /> : null}
       {flags && mode === 'classic' ? <FlagSwitch flag={MessageFlag.SuppressEmbeds} label="Hide link previews" /> : null}
       {allowsTts ? (

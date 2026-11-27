@@ -106,7 +106,21 @@ export const CV2_SAMPLE: WebhookMessagePayload = {
   ],
 };
 
-const SAMPLES: Record<string, WebhookMessagePayload> = { classic: CLASSIC_SAMPLE, cv2: CV2_SAMPLE };
+/** A poll message: the poll and nothing else. */
+export const POLL_SAMPLE: WebhookMessagePayload = {
+  poll: {
+    question: { text: 'Which component should we build next?' },
+    answers: [
+      { poll_media: { text: 'Date picker', emoji: { name: '📅' } } },
+      { poll_media: { text: 'Rich text editor', emoji: { name: '✍️' } } },
+      { poll_media: { text: 'Kanban board' } },
+    ],
+    duration: 168,
+    allow_multiselect: true,
+  },
+};
+
+const SAMPLES: Record<string, WebhookMessagePayload> = { classic: CLASSIC_SAMPLE, cv2: CV2_SAMPLE, poll: POLL_SAMPLE };
 
 const sampleControl = {
   type: 'select' as const,
@@ -115,6 +129,7 @@ const sampleControl = {
   options: [
     { label: 'Classic (embeds)', value: 'classic' },
     { label: 'Components v2', value: 'cv2' },
+    { label: 'Poll', value: 'poll' },
   ],
 };
 
@@ -128,10 +143,12 @@ const MessageBuilderStory = ({
   sample,
   readOnly,
   hidePalette,
+  target,
 }: {
   sample: string;
   readOnly: boolean;
   hidePalette: boolean;
+  target: 'webhook' | 'message' | 'interaction';
 }) => (
   <Frame>
     <div style={{ flex: 1, minWidth: 0 }}>
@@ -142,6 +159,7 @@ const MessageBuilderStory = ({
         author={AUTHOR}
         readOnly={readOnly}
         hidePalette={hidePalette}
+        target={target}
       />
     </div>
   </Frame>
@@ -218,7 +236,10 @@ const PanelStory = ({ panel, sample }: { panel: string; sample: string }) => (
 PanelStory.displayName = 'PanelStory';
 
 const PaletteStory = ({ mode }: { mode: BuilderMode }) => (
-  <BuilderProvider key={mode} defaultValue={mode === 'cv2' ? CV2_SAMPLE : CLASSIC_SAMPLE}>
+  <BuilderProvider
+    key={mode}
+    defaultValue={mode === 'cv2' ? CV2_SAMPLE : mode === 'poll' ? POLL_SAMPLE : CLASSIC_SAMPLE}
+  >
     <div style={{ width: 220 }}>
       <ComponentPalette />
     </div>
@@ -337,6 +358,16 @@ const builder: StoryGroup = {
         sample: sampleControl,
         readOnly: { type: 'boolean', label: 'Read only', defaultValue: false },
         hidePalette: { type: 'boolean', label: 'Hide palette', defaultValue: false },
+        target: {
+          type: 'select',
+          label: 'Sent by',
+          defaultValue: 'webhook',
+          options: [
+            { label: 'Webhook', value: 'webhook' },
+            { label: 'Bot (Create Message)', value: 'message' },
+            { label: 'Bot (interaction response)', value: 'interaction' },
+          ],
+        },
       },
     },
     { name: 'Tag builder', id: 'builder-tag', component: TagBuilderStory },
@@ -360,6 +391,7 @@ const builder: StoryGroup = {
           options: [
             { label: 'Classic', value: 'classic' },
             { label: 'Components v2', value: 'cv2' },
+            { label: 'Poll', value: 'poll' },
           ],
         },
       },

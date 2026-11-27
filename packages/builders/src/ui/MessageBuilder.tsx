@@ -148,7 +148,7 @@ const ControlledMode = ({ mode }: { mode?: BuilderMode }) => {
 };
 
 export interface MessageBuilderProps extends Omit<BuilderProviderProps, 'children'> {
-  /** `classic` (content, embeds, action rows) or `cv2` (Components v2). Changing it converts the message. */
+  /** `classic` (content, embeds, action rows), `cv2` (Components v2) or `poll` (a poll alone). Changing it converts the message. */
   mode?: BuilderMode;
   onModeChange?: (mode: BuilderMode) => void;
   /** The webhook's own name and avatar. */

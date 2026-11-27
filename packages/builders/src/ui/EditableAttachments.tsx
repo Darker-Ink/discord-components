@@ -332,9 +332,12 @@ export const FilesSection = ({ className }: { className?: string }) => {
   const restrictions = useBuilderRestrictions();
   const summary = useAttachmentSummary();
   const attach = useAttachFiles();
+  const poll = useBuilderSelector((state) => state.doc.mode === 'poll');
   const anchorRef = useRef<Element | null>(null);
   const [editing, setEditing] = useState<string | null>(null);
   if (!isMessageFieldAllowed(restrictions, 'attachments')) return null;
+  // A poll goes alone: files only show here (to be removed) when it came with some.
+  if (poll && summary.list.length === 0) return null;
   return (
     <section className={clsx(styles.section, className)} aria-label="Files">
       <div className={styles.sectionHead}>
@@ -385,13 +388,15 @@ export const FilesSection = ({ className }: { className?: string }) => {
           ))}
         </ul>
       ) : null}
-      <Button
-        variant="secondary"
-        size="sm"
-        icon={{ type: 'icon', asset: UploadIcon }}
-        text="Attach files"
-        onClick={async () => attach(await pickFiles())}
-      />
+      {!poll ? (
+        <Button
+          variant="secondary"
+          size="sm"
+          icon={{ type: 'icon', asset: UploadIcon }}
+          text="Attach files"
+          onClick={async () => attach(await pickFiles())}
+        />
+      ) : null}
       <Popout
         shouldShow={editing != null}
         targetElementRef={anchorRef as never}

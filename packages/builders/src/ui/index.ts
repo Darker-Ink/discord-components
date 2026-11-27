@@ -94,7 +94,7 @@ export {
   MissingFilesNotice,
   useAttachmentSummary,
 } from './EditableAttachments';
-export { EditablePoll, createPoll, POLL_DURATIONS, type EditablePollProps } from './EditablePoll';
+export { EditablePoll, POLL_DURATIONS, toPreviewPoll, type EditablePollProps } from './EditablePoll';
 export {
   AllowedMentionsEditor,
   AppliedTagsInput,

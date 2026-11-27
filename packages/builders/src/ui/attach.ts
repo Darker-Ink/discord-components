@@ -85,6 +85,10 @@ export const attachToMessage = (
     AccessibilityAnnouncer.announce('Files can’t be attached here.', 'polite');
     return [];
   }
+  if (store.getState().doc.mode === 'poll') {
+    AccessibilityAnnouncer.announce('A poll can’t have files.', 'polite');
+    return [];
+  }
   const names = store.actions.batch(() => {
     const attached = attachFiles(store, files, list);
     if (show && store.getState().doc.mode === 'cv2') showInComponents(store, ui, files, attached);

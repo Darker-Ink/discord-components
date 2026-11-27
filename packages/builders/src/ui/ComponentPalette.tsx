@@ -2,7 +2,7 @@ import { useCallback, useMemo, type ReactNode } from 'react';
 import clsx from 'clsx';
 import { useDraggable } from '@dnd-kit/core';
 import { AccessibilityAnnouncer, ScrollerNone, Tooltip } from '@discord-mana/components';
-import { AttachmentIcon, PollsIcon } from '@discord-mana/icons';
+import { AttachmentIcon } from '@discord-mana/icons';
 import {
   findNode,
   isMessageFieldAllowed,
@@ -21,7 +21,6 @@ import {
 import { pickFiles, useAttachFiles } from './attach';
 import { attachmentUrl } from './attachments';
 import { useBuilderScope } from './BuilderProvider';
-import { createPoll } from './EditablePoll';
 import { listSlots } from './dnd/geometry';
 import { canPlace, placeTemplate } from './placeTemplate';
 import { PALETTE_ITEMS, type PaletteItem } from './meta';
@@ -200,13 +199,10 @@ const PaletteAction = ({
 
 PaletteAction.displayName = 'PaletteAction';
 
-/** File and Poll: the classic message's own parts. */
+/** File: attachments of a classic message. */
 const MessageActions = ({ compact, onAdd }: { compact: boolean; onAdd?: (uid: string) => void }) => {
-  const { store, actions } = useBuilderContext();
-  const ui = useBuilderUIStore();
   const attach = useAttachFiles();
   const restrictions = useBuilderRestrictions();
-  const hasPoll = useBuilderSelector((state) => state.doc.poll != null);
   const entries = [
     isMessageFieldAllowed(restrictions, 'attachments') ? (
       <PaletteAction
@@ -219,23 +215,6 @@ const MessageActions = ({ compact, onAdd }: { compact: boolean; onAdd?: (uid: st
         onActivate={async () => {
           const names = attach(await pickFiles());
           if (names.length > 0) onAdd?.(ROOT_UID);
-        }}
-      />
-    ) : null,
-    isMessageFieldAllowed(restrictions, 'poll') ? (
-      <PaletteAction
-        key="poll"
-        label="Poll"
-        description="A question with up to 10 answers"
-        icon={PollsIcon}
-        available={!hasPoll}
-        compact={compact}
-        onActivate={() => {
-          if (store.getState().doc.poll != null) return;
-          actions.updateMessage({ poll: createPoll() });
-          ui.set({ selectedId: null, pendingFocus: { uid: ROOT_UID, field: 'poll.question.text' } });
-          AccessibilityAnnouncer.announce('Added a poll.', 'polite');
-          onAdd?.(ROOT_UID);
         }}
       />
     ) : null,

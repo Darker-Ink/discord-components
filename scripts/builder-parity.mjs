@@ -3,7 +3,7 @@
 //
 //   node scripts/builder-parity.mjs [--theme light|dark|darker|midnight|all] [--payload file.json]... [--out dir]
 //
-// Without --payload it checks the story's two samples (classic embeds and Components v2). Needs `pnpm dev` (5173).
+// Without --payload it checks the story's samples (classic embeds, Components v2 and a poll). Needs `pnpm dev` (5173).
 import fs from 'node:fs';
 import path from 'node:path';
 import { PNG } from 'pngjs';
@@ -35,6 +35,7 @@ const cases =
     : [
         { name: 'classic', params: { sample: 'classic' } },
         { name: 'cv2', params: { sample: 'cv2' } },
+        { name: 'poll', params: { sample: 'poll' } },
       ];
 
 const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH ?? '/opt/pw-browsers/chromium' });

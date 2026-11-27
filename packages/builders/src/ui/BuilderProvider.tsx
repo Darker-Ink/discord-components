@@ -250,6 +250,7 @@ export const BuilderProvider = ({
   coalesceMs,
   validation,
   restrictions,
+  target,
   files,
   ...props
 }: BuilderProviderProps) => {
@@ -266,6 +267,7 @@ export const BuilderProvider = ({
       coalesceMs={coalesceMs}
       validation={checked}
       restrictions={restrictions}
+      target={target}
     >
       <BuilderFilesContext.Provider value={files ?? ownFiles}>
         <Inner {...props} />
