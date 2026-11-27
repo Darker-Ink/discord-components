@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Anchor, Button, Popout, Text, TextInput } from '@discord-mana/components';
 import { WindowLaunchIcon } from '@discord-mana/icons';
 import { toPreviewMessage, useBuilderStore, type BuilderAuthor } from '@discord-mana/builders';
@@ -28,6 +28,7 @@ const usePreviewBody = (author: BuilderAuthor, theme: SiteTheme) => {
  * its home page); without one, the request body can be copied to send yourself. The key is never stored.
  */
 export const PreviewButton = ({ author, theme }: { author: BuilderAuthor; theme: SiteTheme }) => {
+  const ref = useRef<HTMLButtonElement | null>(null);
   const [key, setKey] = useState('');
   const [status, setStatus] = useState<{ kind: 'idle' | 'busy' | 'error' | 'copied'; message?: string }>({
     kind: 'idle',
@@ -64,6 +65,7 @@ export const PreviewButton = ({ author, theme }: { author: BuilderAuthor; theme:
     <Popout
       position="bottom"
       align="right"
+      targetElementRef={ref}
       renderPopout={() => (
         <div className={styles.previewPopout} role="dialog" aria-label="Open as preview">
           <Text variant="heading-sm/semibold" color="text-strong">
@@ -103,6 +105,7 @@ export const PreviewButton = ({ author, theme }: { author: BuilderAuthor; theme:
           variant="secondary"
           icon={{ type: 'icon', asset: WindowLaunchIcon }}
           text="Open as preview"
+          buttonRef={ref}
           {...props}
         />
       )}
