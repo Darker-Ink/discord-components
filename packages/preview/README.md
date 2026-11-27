@@ -33,8 +33,7 @@ Live at https://preview.discord-mana.dev (docs at https://preview.discord-mana.d
 pnpm install
 cd packages/preview
 cp .dev.vars.example .dev.vars          # local SIGNING_SECRET
-pnpm db:migrate:local                   # create the local D1 tables
-pnpm dev                                # prints the local URL
+pnpm dev                                # applies the local D1 migrations, then prints the local URL
 ```
 
 ## Deploy
