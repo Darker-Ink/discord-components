@@ -58,3 +58,17 @@ export const EXAMPLE_CV2: WebhookMessagePayload = {
 export const BLANK: WebhookMessagePayload = { content: '' };
 
 export const BLANK_CV2: WebhookMessagePayload = { flags: IS_COMPONENTS_V2, components: [] };
+
+/** A poll message: a poll and nothing else. */
+export const POLL: WebhookMessagePayload = {
+  poll: {
+    question: { text: 'Which map should we add next?' },
+    answers: [
+      { poll_media: { text: 'Harbor', emoji: { name: '⚓' } } },
+      { poll_media: { text: 'Desert outpost', emoji: { name: '🏜️' } } },
+      { poll_media: { text: 'Glacier', emoji: { name: '🧊' } } },
+    ],
+    duration: 72,
+    allow_multiselect: false,
+  },
+};

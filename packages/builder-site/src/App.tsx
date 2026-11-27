@@ -40,6 +40,7 @@ import {
   JsonPanel,
   MissingFilesNotice,
   useBuilderIssues,
+  useBuilderSelector,
   useMessageBuilder,
   ValidationPanel,
   WebhookPanel,
@@ -52,7 +53,7 @@ import { MediaViewerProvider, type MessageResolvers } from '@discord-mana/messag
 import { clearHash, createShareUrl, readDraft, readSharedPayload, WEBHOOK_KEY, writeDraft } from './draft';
 import { Logo, LogoMark } from './Logo';
 import { PreviewButton } from './PreviewButton';
-import { BLANK, BLANK_CV2, EXAMPLE, EXAMPLE_CV2 } from './starters';
+import { BLANK, BLANK_CV2, EXAMPLE, EXAMPLE_CV2, POLL } from './starters';
 import { ThemeSwitcher } from './ThemeSwitcher';
 import { THEMES, themeOf, useSiteTheme, type SiteTheme } from './theme';
 import { useMediaQuery } from './useMediaQuery';
@@ -64,9 +65,13 @@ const RESOLVERS: MessageResolvers = { getAvatarURL: (user) => user.avatar_url ??
 
 const CHANNEL = 'announcements';
 
+/** The mode switch's labels where three don't fit at full length. */
+const PHONE_MODE_LABELS = { cv2: 'CV2' } as const;
+
 const STARTERS: { id: string; label: string; payload: WebhookMessagePayload }[] = [
   { id: 'blank', label: 'Blank message', payload: BLANK },
   { id: 'blank-cv2', label: 'Blank Components v2', payload: BLANK_CV2 },
+  { id: 'poll', label: 'Poll', payload: POLL },
   { id: 'example', label: 'Example', payload: EXAMPLE },
   { id: 'example-cv2', label: 'Components v2 example', payload: EXAMPLE_CV2 },
 ];
@@ -97,11 +102,11 @@ const NewMenu = ({ onPick }: { onPick: (payload: WebhookMessagePayload) => void 
       targetElementRef={ref}
       renderPopout={({ closePopout }) => (
         <Menu navId="builder-new" aria-label="New message" onClose={closePopout} onSelect={() => undefined}>
-          {STARTERS.slice(0, 2).map((starter) => (
+          {STARTERS.slice(0, 3).map((starter) => (
             <MenuItem key={starter.id} id={starter.id} label={starter.label} action={() => onPick(starter.payload)} />
           ))}
           <MenuSeparator />
-          {STARTERS.slice(2).map((starter) => (
+          {STARTERS.slice(3).map((starter) => (
             <MenuItem key={starter.id} id={starter.id} label={starter.label} action={() => onPick(starter.payload)} />
           ))}
         </Menu>
@@ -262,6 +267,8 @@ BottomSheet.displayName = 'BottomSheet';
 /** Phones: Add, Issues, JSON and Send along the bottom. */
 const TabBar = ({ sheet, onOpen }: { sheet: Sheet | null; onOpen: (sheet: Sheet) => void }) => {
   const issues = useBuilderIssues();
+  // A poll message has nothing to add.
+  const poll = useBuilderSelector((state) => state.doc.mode === 'poll');
   const errors = issues.filter((issue) => issue.severity === 'error').length;
   const tabs = [
     { id: 'add', label: 'Add', icon: PlusLargeIcon },
@@ -271,26 +278,28 @@ const TabBar = ({ sheet, onOpen }: { sheet: Sheet | null; onOpen: (sheet: Sheet)
   ] as const;
   return (
     <nav className={styles.tabBar} aria-label="Message tools">
-      {tabs.map(({ id, label, icon: Icon }) => (
-        <button
-          key={id}
-          type="button"
-          className={styles.tab}
-          aria-pressed={sheet === id}
-          aria-label={id === 'issues' && issues.length > 0 ? `${label} (${issues.length})` : label}
-          onClick={() => onOpen(id)}
-        >
-          <span className={styles.tabIcon}>
-            <Icon size="md" color="currentColor" />
-            {id === 'issues' && issues.length > 0 ? (
-              <span className={styles.tabBadge} data-severity={errors > 0 ? 'error' : 'warning'}>
-                {issues.length}
-              </span>
-            ) : null}
-          </span>
-          <span className={styles.tabLabel}>{label}</span>
-        </button>
-      ))}
+      {tabs
+        .filter(({ id }) => !(poll && id === 'add'))
+        .map(({ id, label, icon: Icon }) => (
+          <button
+            key={id}
+            type="button"
+            className={styles.tab}
+            aria-pressed={sheet === id}
+            aria-label={id === 'issues' && issues.length > 0 ? `${label} (${issues.length})` : label}
+            onClick={() => onOpen(id)}
+          >
+            <span className={styles.tabIcon}>
+              <Icon size="md" color="currentColor" />
+              {id === 'issues' && issues.length > 0 ? (
+                <span className={styles.tabBadge} data-severity={errors > 0 ? 'error' : 'warning'}>
+                  {issues.length}
+                </span>
+              ) : null}
+            </span>
+            <span className={styles.tabLabel}>{label}</span>
+          </button>
+        ))}
     </nav>
   );
 };
@@ -313,7 +322,9 @@ export const App = () => {
   const builder = useMessageBuilder({ defaultValue: initial, validation });
   const { store } = builder;
   const [panel, setPanel] = useState<BuilderPanelId>('json');
-  const [sheet, setSheet] = useState<Sheet | null>(null);
+  const [openSheet, setSheet] = useState<Sheet | null>(null);
+  // A poll message has nothing to add: its sheet closes when the message becomes one.
+  const sheet = openSheet === 'add' && builder.doc.mode === 'poll' ? null : openSheet;
   const phone = useMediaQuery('(max-width: 700px)');
   const tablet = useMediaQuery('(min-width: 701px) and (max-width: 1100px)');
 
@@ -378,7 +389,7 @@ export const App = () => {
                 <Logo />
               )}
               <div className={styles.headerTools}>
-                <BuilderModeSwitch className={styles.modeSwitch} />
+                <BuilderModeSwitch className={styles.modeSwitch} labels={phone ? PHONE_MODE_LABELS : undefined} />
                 <BuilderHistoryButtons />
               </div>
               <div className={styles.headerActions}>

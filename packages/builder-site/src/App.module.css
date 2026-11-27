@@ -206,7 +206,8 @@
   border-top: 1px solid var(--border-subtle);
   display: grid;
   grid-area: tabs;
-  grid-template-columns: repeat(4, 1fr);
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
   padding: 4px max(4px, env(safe-area-inset-right)) max(4px, env(safe-area-inset-bottom))
     max(4px, env(safe-area-inset-left));
 }
@@ -343,12 +344,6 @@
   justify-content: flex-end;
 }
 
-/* The narrowest phones: the mode switch gets the logo's room, so both its labels fit. */
-@media (max-width: 380px) {
-  .app[data-layout='phone'] .logoMarkOnly {
-    display: none;
-  }
-}
 .missingFiles {
   margin: 8px 16px;
 }
