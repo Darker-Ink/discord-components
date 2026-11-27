@@ -149,7 +149,7 @@ const importStylesheet = (): Plugin => ({
         seen.add(id);
         if (/\.css($|\?)/.test(id)) return true;
         const info = this.getModuleInfo(id);
-        if (info == null || info.isExternal) continue;
+        if (info == null) continue;
         queue.push(...info.importedIds, ...info.dynamicallyImportedIds);
       }
       return false;
