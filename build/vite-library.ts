@@ -130,15 +130,34 @@ const keepDependencyUrls = (): Plugin => {
   };
 };
 
-/** Makes the entry module import the extracted stylesheet, so bundlers pick up the styles with the JS. */
+/**
+ * Makes the entry modules that use CSS import the extracted stylesheet, so bundlers pick up the styles with the
+ * JS. Entries without any (e.g. the builders' headless `core`) don't, so they also load where CSS can't, such
+ * as plain Node.
+ */
 const importStylesheet = (): Plugin => ({
   name: 'discord-mana:import-stylesheet',
   enforce: 'post',
   generateBundle(_options, bundle) {
     if (!(STYLESHEET in bundle)) return;
+    const usesCss = (entry: string) => {
+      const seen = new Set<string>();
+      const queue = [entry];
+      while (queue.length > 0) {
+        const id = queue.pop()!;
+        if (seen.has(id)) continue;
+        seen.add(id);
+        if (/\.css($|\?)/.test(id)) return true;
+        const info = this.getModuleInfo(id);
+        if (info == null || info.isExternal) continue;
+        queue.push(...info.importedIds, ...info.dynamicallyImportedIds);
+      }
+      return false;
+    };
     for (const chunk of Object.values(bundle)) {
       // Imported after everything else so the package's CSS comes after its dependencies' CSS, as in development.
-      if (chunk.type !== 'chunk' || !chunk.isEntry) continue;
+      if (chunk.type !== 'chunk' || !chunk.isEntry || chunk.facadeModuleId == null) continue;
+      if (!usesCss(chunk.facadeModuleId)) continue;
       const relative = path.posix.relative(path.posix.dirname(chunk.fileName), STYLESHEET);
       chunk.code += `import '${relative.startsWith('.') ? relative : `./${relative}`}';\n`;
     }
