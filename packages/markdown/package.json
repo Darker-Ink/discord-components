@@ -1,6 +1,6 @@
 {
   "name": "@discord-mana/markdown",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Discord's markdown for React: the message and embed parser, mentions, emoji, timestamps and highlighted code blocks.",
   "keywords": [
     "discord",
