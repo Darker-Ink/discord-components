@@ -104,7 +104,8 @@ export const createEmbed = (
   const record: MessageEmbed = {
     id: `embed_${++embedCount}`,
     url: embed.url,
-    type: embed.type,
+    // Discord stores embeds sent without a type (as bots and webhooks usually send them) as rich embeds.
+    type: embed.type ?? EmbedType.Rich,
     rawTitle: embed.title,
     rawDescription: embed.description,
     referenceId: embed.reference_id,
