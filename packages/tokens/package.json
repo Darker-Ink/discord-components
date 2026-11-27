@@ -1,6 +1,6 @@
 {
   "name": "@discord-mana/tokens",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Design tokens for discord-mana: Discord's Mana color, spacing and typography variables, themes and fonts.",
   "keywords": [
     "discord",
