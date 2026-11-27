@@ -47,6 +47,7 @@ const CV2_TOP_LEVEL: readonly NodeKind[] = [...CONTAINER_CHILDREN, 'container'];
 export const allowedChildKinds = (parentKind: ParentKind, slot: SlotName, mode: BuilderMode): readonly NodeKind[] => {
   switch (parentKind) {
     case 'message':
+      if (mode === 'poll') return [];
       if (slot === 'embeds') return mode === 'classic' ? ['embed'] : [];
       if (slot === 'components') return mode === 'classic' ? ['actionRow'] : CV2_TOP_LEVEL;
       return [];
@@ -204,6 +205,7 @@ const check = (
   const parent = resolveParent(doc, target.parentId);
   if (!parent) return fail('The target no longer exists');
   const slot = target.slot ?? inferSlot(parent.kind, candidate.kind);
+  if (doc.mode === 'poll') return fail("A poll message can't have anything but the poll");
   const allowed = allowedChildKinds(parent.kind, slot, doc.mode);
   if (!allowed.includes(candidate.kind)) {
     if (parent.kind === 'message' && slot === 'embeds') return fail('Components v2 messages cannot have embeds');

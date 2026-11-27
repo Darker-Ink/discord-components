@@ -14,6 +14,7 @@ export {
 } from './tree';
 export {
   createDocument,
+  createPoll,
   createUid,
   fromJSON,
   nodeToAPI,
@@ -58,7 +59,14 @@ export {
   type InsertResult,
   type SetModeOptions,
 } from './actions';
-export { convertToClassic, convertToCV2, embedToContainer } from './convert';
+export {
+  convertToClassic,
+  convertToCV2,
+  convertToMode,
+  convertToPoll,
+  embedToContainer,
+  pollToMarkdown,
+} from './convert';
 export {
   characterLength,
   countEmbedCharacters,
@@ -108,6 +116,7 @@ export {
   useNodeLocation,
   useAllowedTemplates,
   useBuilderRestrictions,
+  useBuilderTarget,
   type MessageBuilderApi,
   type MessageBuilderOptions,
   type MessageBuilderProviderProps,

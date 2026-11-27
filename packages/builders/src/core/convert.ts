@@ -1,8 +1,10 @@
-// Best-effort conversion between classic messages and Components v2, used by `setMode`.
-import { createUid } from './json';
+// Best-effort conversion between classic messages, Components v2 and polls, used by `setMode`.
+import { createPoll, createUid } from './json';
 import type {
   ActionRowNode,
+  APIPollCreateRequest,
   BuilderDocument,
+  BuilderMode,
   ButtonNode,
   ContainerChildNode,
   EmbedNode,
@@ -162,4 +164,79 @@ export const convertToClassic = (doc: BuilderDocument): BuilderDocument => {
     rows.push({ uid: createUid(), type: 1, components: buttons.slice(i, i + 5) });
   }
   return { ...doc, mode: 'classic', content: content.join('\n'), embeds: [...doc.embeds, ...embeds], components: rows };
+};
+
+// Polls. A poll message has nothing but the poll, so switching to one keeps a question (the first line of the
+// text) and drops the rest (undo brings it back); switching away writes the poll out as text.
+
+const plainLine = (line: string) =>
+  line
+    .replace(/^(#{1,3}|-#|>) /, '')
+    .replace(/\*\*|__|~~|`/g, '')
+    .trim();
+
+const firstLine = (doc: BuilderDocument) => {
+  const texts = [
+    doc.content,
+    ...doc.embeds.map((embed) => embed.title ?? embed.description ?? ''),
+    ...doc.components.flatMap(function collect(node): string[] {
+      if (node.type === 10) return [(node as TextDisplayNode).content];
+      const children = (node as { components?: TopLevelComponentNode[] }).components;
+      return Array.isArray(children) ? children.flatMap(collect) : [];
+    }),
+  ];
+  for (const value of texts) {
+    const line = value
+      .split('\n')
+      .map(plainLine)
+      .find((candidate) => candidate !== '');
+    if (line != null) return line.slice(0, 300);
+  }
+  return '';
+};
+
+export const convertToPoll = (doc: BuilderDocument): BuilderDocument => {
+  const { attachments: _attachments, sticker_ids: _stickers, tts: _tts, poll, ...rest } = doc;
+  const base = poll ?? createPoll();
+  const question = base.question?.text || firstLine(doc);
+  return {
+    ...rest,
+    mode: 'poll',
+    content: '',
+    embeds: [],
+    components: [],
+    poll: { ...base, question: { ...base.question, text: question } },
+  };
+};
+
+/** The poll as markdown: the question in bold, then one line per answer. */
+export const pollToMarkdown = (poll: APIPollCreateRequest | undefined) => {
+  if (poll == null) return '';
+  const lines = poll.question?.text ? [`**${poll.question.text}**`] : [];
+  for (const answer of poll.answers ?? []) {
+    const media = answer.poll_media;
+    const emoji =
+      media?.emoji?.id != null
+        ? `<:${media.emoji.name ?? '_'}:${media.emoji.id}> `
+        : media?.emoji?.name
+          ? `${media.emoji.name} `
+          : '';
+    if (media?.text || emoji) lines.push(`- ${emoji}${media?.text ?? ''}`);
+  }
+  return lines.join('\n');
+};
+
+const pollToClassic = (doc: BuilderDocument): BuilderDocument => {
+  const { poll, ...rest } = doc;
+  const text = [pollToMarkdown(poll), doc.content].filter((part) => part.trim() !== '').join('\n\n');
+  return { ...rest, mode: 'classic', content: text };
+};
+
+/** Converts a message to another mode, keeping what the new mode can show. */
+export const convertToMode = (doc: BuilderDocument, mode: BuilderMode): BuilderDocument => {
+  if (doc.mode === mode) return doc;
+  if (mode === 'poll') return convertToPoll(doc);
+  const from = doc.mode === 'poll' ? pollToClassic(doc) : doc;
+  if (from.mode === mode) return from;
+  return mode === 'cv2' ? convertToCV2(from) : convertToClassic(from);
 };

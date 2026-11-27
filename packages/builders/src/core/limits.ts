@@ -342,6 +342,15 @@ export const ruleSources = {
     inferred: true,
     note: 'The name rules (no "clyde"/"discord") are applied to the username override.',
   },
+  pollExclusive: {
+    file: 'resources/poll.mdx',
+    heading: 'Poll Create Request Object',
+    inferred: true,
+    note:
+      "Observed, not documented: a message with a poll can't also have content, embeds, components, files or " +
+      'stickers (Execute Webhook and Create Message list poll as one of content/embeds/files/poll). Polls are ' +
+      'listed as an Execute Webhook param; whether every webhook can send one is not checked here.',
+  },
   allowedMentionsExclusive: {
     file: MESSAGE,
     heading: 'Allowed Mentions Examples',

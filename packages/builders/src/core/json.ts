@@ -3,6 +3,7 @@ import { MessageFlag } from './limits';
 import { componentKind, findNode, kindInSlot, NODE_SLOTS, slotChildren } from './tree';
 import { ROOT_UID } from './types';
 import type {
+  APIPollCreateRequest,
   BuilderDocument,
   BuilderMode,
   BuilderNode,
@@ -128,12 +129,21 @@ export const reassignUids = <T extends BuilderNode>(node: T, kind: NodeKind): T 
   return copy as T;
 };
 
+/** A poll to fill in: a question and two answers, open for a day. */
+export const createPoll = (): APIPollCreateRequest => ({
+  question: { text: '' },
+  answers: [{ poll_media: { text: '' } }, { poll_media: { text: '' } }],
+  duration: 24,
+  allow_multiselect: false,
+});
+
 export const createDocument = (mode: BuilderMode = 'classic'): BuilderDocument => ({
   uid: ROOT_UID,
   mode,
   content: '',
   embeds: [],
   components: [],
+  ...(mode === 'poll' ? { poll: createPoll() } : {}),
 });
 
 /**
@@ -144,8 +154,10 @@ export const fromJSON = (payload: unknown): BuilderDocument => {
   if (!isObject(payload)) return createDocument();
   const flags = typeof payload.flags === 'number' ? payload.flags : undefined;
   const cv2 = flags != null && (flags & MessageFlag.IsComponentsV2) !== 0;
+  // A poll makes a poll message; anything else that came with it is kept (and reported by validation).
+  const mode: BuilderMode = cv2 ? 'cv2' : isObject(payload.poll) ? 'poll' : 'classic';
   const doc: BuilderDocument = {
-    ...createDocument(cv2 ? 'cv2' : 'classic'),
+    ...createDocument(mode),
     content: typeof payload.content === 'string' ? payload.content : '',
     embeds: Array.isArray(payload.embeds) ? payload.embeds.map(toEmbedNode) : [],
     components: Array.isArray(payload.components)
@@ -251,8 +263,16 @@ const requiredKeys = (node: Json, kind: NodeKind): readonly string[] => {
   }
 };
 
+/** Items of these lists keep their required keys even when blank (a poll's empty answer stays an answer). */
+const ITEM_REQUIRED: Record<string, readonly string[]> = { answers: ['poll_media'] };
+
 const compactValue = (key: string, value: unknown): unknown => {
-  if (Array.isArray(value)) return value.map((item) => compactValue('', item));
+  if (Array.isArray(value)) {
+    const required = ITEM_REQUIRED[key];
+    return value.map((item) =>
+      required != null && isObject(item) ? compactObject(item, required, true) : compactValue('', item),
+    );
+  }
   if (isObject(value)) return compactObject(value, NESTED_REQUIRED[key] ?? [], false);
   return value;
 };

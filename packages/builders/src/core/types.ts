@@ -91,7 +91,11 @@ export type RESTPostAPIWebhookWithTokenJSONBody = WebhookMessagePayload;
 // The builder document: the payload as an editable tree. Every node is the API object plus a stable `uid`
 // (React keys, drag and drop ids, selection). `uid` is separate from components' own numeric API `id`.
 
-export type BuilderMode = 'classic' | 'cv2';
+/**
+ * `classic`: content, embeds and action rows. `cv2`: Components v2 layout components. `poll`: a poll and nothing
+ * else (a message with a poll can't carry content, embeds, components, files or stickers).
+ */
+export type BuilderMode = 'classic' | 'cv2' | 'poll';
 
 export const ROOT_UID = 'root';
 

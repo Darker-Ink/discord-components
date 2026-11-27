@@ -1,7 +1,7 @@
 // The editing state (document, selection, undo/redo history) as a pure reducer, and a small framework-agnostic
 // store around it that the React bindings subscribe to.
 import { duplicateNode, insertNode, moveNode, removeNode, setMode, updateNode, type SetModeOptions } from './actions';
-import { fromJSON, toJSON } from './json';
+import { createPoll, fromJSON, toJSON } from './json';
 import { allowedModes, isModeAllowed, type BuilderRestrictions } from './restrictions';
 import { allowedTemplates, checkInsert, checkMove, type RuleResult } from './rules';
 import { sanitize } from './sanitize';
@@ -17,6 +17,7 @@ import type {
   SlotName,
   ValidateOptions,
   ValidationIssue,
+  ValidationTarget,
   WebhookMessagePayload,
 } from './types';
 import { getDocumentStats, validateDocument, type DocumentStats } from './validate';
@@ -68,7 +69,9 @@ export const isBuilderDocument = (value: unknown): value is BuilderDocument =>
   typeof value === 'object' &&
   value !== null &&
   (value as BuilderDocument).uid === ROOT_UID &&
-  ((value as BuilderDocument).mode === 'classic' || (value as BuilderDocument).mode === 'cv2') &&
+  ((value as BuilderDocument).mode === 'classic' ||
+    (value as BuilderDocument).mode === 'cv2' ||
+    (value as BuilderDocument).mode === 'poll') &&
   Array.isArray((value as BuilderDocument).embeds) &&
   Array.isArray((value as BuilderDocument).components);
 
@@ -83,7 +86,9 @@ const initialDocument = (
 ) => {
   const doc = toDocument(initial);
   const empty = doc.content === '' && doc.embeds.length === 0 && doc.components.length === 0;
-  return empty && !isModeAllowed(restrictions, doc.mode) ? { ...doc, mode: allowedModes(restrictions)[0] } : doc;
+  if (!empty || isModeAllowed(restrictions, doc.mode)) return doc;
+  const mode = allowedModes(restrictions)[0];
+  return mode === 'poll' ? { ...doc, mode, poll: doc.poll ?? createPoll() } : { ...doc, mode };
 };
 
 export const createBuilderState = (
@@ -256,6 +261,11 @@ export interface BuilderStoreOptions extends HistoryOptions {
   onChange?: (doc: BuilderDocument) => void;
   /** Options for `issues`. */
   validation?: ValidateOptions;
+  /**
+   * Where the message is sent: `webhook` (Execute Webhook, the default), `message` (a bot's Create Message) or
+   * `interaction` (a response). It sets which flags and fields are allowed (shorthand for `validation.target`).
+   */
+  target?: ValidationTarget;
 }
 
 export interface BuilderStore {
@@ -271,6 +281,8 @@ export interface BuilderStore {
   /** Sets the document without an undo step (for controlled components). */
   sync: (doc: BuilderDocument) => void;
   setOptions: (options: Partial<BuilderStoreOptions>) => void;
+  /** Where the message is sent (`webhook` unless set). */
+  getTarget: () => ValidationTarget;
   /** The builder's restrictions (`undefined` when it has none). */
   getRestrictions: () => BuilderRestrictions | undefined;
   /** `checkInsert`/`checkMove`/`allowedTemplates` on the current document with the store's restrictions. */
@@ -287,6 +299,15 @@ export const createBuilderStore = (
 ): BuilderStore => {
   let config = { ...options };
   let state = createBuilderState(initial, options.restrictions);
+  const validationOptions = (): ValidateOptions | undefined => {
+    const target = config.target ?? config.validation?.target;
+    if (!config.restrictions && target === undefined) return config.validation;
+    return {
+      ...config.validation,
+      ...(target !== undefined ? { target } : {}),
+      ...(config.restrictions ? { restrictions: config.restrictions } : {}),
+    };
+  };
   let snapshot: BuilderSnapshot = { doc: state.doc, selection: null, canUndo: false, canRedo: false };
   const listeners = new Set<() => void>();
   let batchDepth = 0;
@@ -391,13 +412,10 @@ export const createBuilderStore = (
     },
     dispatch,
     actions,
-    getIssues: () =>
-      validateDocument(
-        state.doc,
-        config.restrictions ? { ...config.validation, restrictions: config.restrictions } : config.validation,
-      ),
+    getIssues: () => validateDocument(state.doc, validationOptions()),
     getStats: () => getDocumentStats(state.doc, config.restrictions),
     getRestrictions: () => config.restrictions,
+    getTarget: () => config.target ?? config.validation?.target ?? 'webhook',
     checkInsert: (node, target, kind) =>
       checkInsert(state.doc, node, target, { kind, restrictions: config.restrictions }),
     checkMove: (uid, target) => checkMove(state.doc, uid, target, { restrictions: config.restrictions }),
@@ -418,6 +436,7 @@ export const createBuilderStore = (
     setOptions: (next) => {
       const validationChanged =
         ('validation' in next && JSON.stringify(next.validation) !== JSON.stringify(config.validation)) ||
+        ('target' in next && next.target !== config.target) ||
         ('restrictions' in next && JSON.stringify(next.restrictions) !== JSON.stringify(config.restrictions));
       config = { ...config, ...next };
       if (validationChanged) {

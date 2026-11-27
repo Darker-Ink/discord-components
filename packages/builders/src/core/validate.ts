@@ -1172,14 +1172,29 @@ export const validateMessage = (payload: unknown, options: ValidateOptions = {})
 
   validateWebhookParamsInto(ctx, payload);
 
+  // A poll goes alone (ruleSources.pollExclusive: observed, not documented).
+  const poll = !cv2 && (options.mode === 'poll' || isObject(payload.poll));
+  if (poll) {
+    if (!isObject(payload.poll)) report(ctx, ['poll'], 'REQUIRED', 'Add a poll');
+    const exclusive = (path: string, what: string) =>
+      report(ctx, [path], 'POLL_EXCLUSIVE', `A poll can't be sent with anything else (${what})`);
+    if (typeof content === 'string' && content.trim() !== '') exclusive('content', 'content');
+    if (Array.isArray(payload.embeds) && payload.embeds.length > 0) exclusive('embeds', 'embeds');
+    if (Array.isArray(payload.components) && payload.components.length > 0) exclusive('components', 'components');
+    if (fileNames.size > 0 || (Array.isArray(payload.attachments) && payload.attachments.length > 0))
+      exclusive('attachments', 'files');
+    if (Array.isArray(payload.sticker_ids) && payload.sticker_ids.length > 0) exclusive('sticker_ids', 'stickers');
+  }
+
   const hasContent = !cv2 && typeof content === 'string' && content.trim() !== '';
   const hasFiles = fileNames.size > 0 || (Array.isArray(payload.attachments) && payload.attachments.length > 0);
   const hasPoll = !cv2 && isObject(payload.poll);
   const hasStickers = Array.isArray(payload.sticker_ids) && payload.sticker_ids.length > 0;
   if (
-    cv2
+    !poll &&
+    (cv2
       ? componentCount === 0
-      : !hasContent && embedCount === 0 && componentCount === 0 && !hasFiles && !hasPoll && !hasStickers
+      : !hasContent && embedCount === 0 && componentCount === 0 && !hasFiles && !hasPoll && !hasStickers)
   ) {
     report(
       ctx,

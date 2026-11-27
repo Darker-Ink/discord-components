@@ -83,7 +83,10 @@ export interface RestrictionLimits {
 }
 
 export interface BuilderRestrictions {
-  /** Message modes the builder can make. Default: both. */
+  /**
+   * Message modes the builder can make: `classic`, `cv2` and `poll`. Default: all three. (`message.poll: false`
+   * is the same as leaving `poll` out.)
+   */
   modes?: readonly BuilderMode[];
   /**
    * Which components are allowed: `{ file: false }` turns files off; `{ default: false, textDisplay: true }`
@@ -232,9 +235,13 @@ export const isComponentAllowed = (
   return allowsName(restrictions, group ? [component, group] : [component]);
 };
 
+const MODES: readonly BuilderMode[] = ['classic', 'cv2', 'poll'];
+
 export const allowedModes = (restrictions: BuilderRestrictions | undefined): BuilderMode[] => {
   const modes = restrictions?.modes;
-  const result = (['classic', 'cv2'] as const).filter((mode) => !modes || modes.includes(mode));
+  const result = MODES.filter(
+    (mode) => (!modes || modes.includes(mode)) && (mode !== 'poll' || restrictions?.message?.poll !== false),
+  );
   return result.length > 0 ? result : ['classic', 'cv2'];
 };
 
@@ -250,7 +257,8 @@ export const isEmbedPartAllowed = (restrictions: BuilderRestrictions | undefined
 };
 
 export const isMessageFieldAllowed = (restrictions: BuilderRestrictions | undefined, field: MessageField) =>
-  restrictions?.message?.[field] !== false;
+  // A poll is a mode of its own: `poll` follows `modes` as well as `message.poll`.
+  field === 'poll' ? isModeAllowed(restrictions, 'poll') : restrictions?.message?.[field] !== false;
 
 /** The most components of this name the message can have (`Infinity` when not limited). */
 export const countLimit = (restrictions: BuilderRestrictions | undefined, name: ComponentName) =>
@@ -315,9 +323,7 @@ export const mergeRestrictions = (...list: (BuilderRestrictions | undefined)[]):
   if (all.length <= 1) return all[0] ?? {};
   const merged: BuilderRestrictions = {};
   if (all.some((item) => item.modes)) {
-    const modes = (['classic', 'cv2'] as const).filter((mode) =>
-      all.every((item) => !item.modes || item.modes.includes(mode)),
-    );
+    const modes = MODES.filter((mode) => all.every((item) => !item.modes || item.modes.includes(mode)));
     merged.modes = modes;
   }
   if (all.some((item) => item.components)) {
@@ -402,6 +408,12 @@ const COMPONENT_LABELS: Record<ComponentName, string> = {
 
 export const describeComponentName = (name: ComponentName) => COMPONENT_LABELS[name];
 
+const MODE_NOT_ALLOWED: Record<BuilderMode, string> = {
+  classic: "Classic messages aren't allowed in this builder",
+  cv2: "Components v2 messages aren't allowed in this builder",
+  poll: "Polls aren't allowed in this builder",
+};
+
 const FIELD_LABELS: Record<MessageField, string> = {
   content: 'Message content',
   username: 'A custom username',
@@ -443,16 +455,14 @@ export const validateRestrictions = (
   };
   const data = payload as Json;
   const cv2 = typeof data.flags === 'number' && (data.flags & MessageFlag.IsComponentsV2) !== 0;
-  const mode: BuilderMode = cv2 ? 'cv2' : 'classic';
+  const mode: BuilderMode = cv2 ? 'cv2' : isObject(data.poll) ? 'poll' : 'classic';
   if (!isModeAllowed(restrictions, mode)) {
-    report(
-      ['flags'],
-      'MODE_NOT_ALLOWED',
-      mode === 'cv2' ? 'This builder only makes classic messages' : 'This builder only makes Components v2 messages',
-    );
+    report(mode === 'poll' ? ['poll'] : ['flags'], 'MODE_NOT_ALLOWED', MODE_NOT_ALLOWED[mode]);
   }
 
   for (const field of MESSAGE_FIELDS) {
+    // Polls are a mode (above).
+    if (field === 'poll') continue;
     if (field === 'flags') {
       // The CV2 flag is the mode's business; other flags are what this switch covers.
       const others = typeof data.flags === 'number' ? data.flags & ~MessageFlag.IsComponentsV2 : 0;

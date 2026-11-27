@@ -1,5 +1,5 @@
 // Removes what a builder's restrictions don't allow from a document, e.g. after importing JSON.
-import { convertToClassic, convertToCV2 } from './convert';
+import { convertToMode } from './convert';
 import {
   allowedModes,
   areEmbedsAllowed,
@@ -77,7 +77,7 @@ export const sanitize = (doc: BuilderDocument, restrictions: BuilderRestrictions
   if (!restrictions) return doc;
   let next = doc;
   if (!isModeAllowed(restrictions, next.mode)) {
-    next = allowedModes(restrictions)[0] === 'cv2' ? convertToCV2(next) : convertToClassic(next);
+    next = convertToMode(next, allowedModes(restrictions)[0]);
   }
 
   if (!isMessageFieldAllowed(restrictions, 'content') && next.content !== '') next = { ...next, content: '' };

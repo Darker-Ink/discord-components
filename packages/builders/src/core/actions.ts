@@ -1,7 +1,7 @@
 // Pure document operations. Each returns a new document (sharing every untouched node) or, when the change
 // isn't allowed, the same document.
-import { convertToClassic, convertToCV2 } from './convert';
-import { createUid, reassignUids } from './json';
+import { convertToMode } from './convert';
+import { createPoll, createUid, reassignUids } from './json';
 import { limits } from './limits';
 import { isModeAllowed, type BuilderRestrictions } from './restrictions';
 import { checkInsert, checkMove, inferSlot, type RuleOptions } from './rules';
@@ -219,7 +219,7 @@ export interface SetModeOptions {
   restrictions?: BuilderRestrictions;
 }
 
-/** Switches between classic messages (content, embeds, action rows) and Components v2. */
+/** Switches between classic messages (content, embeds, action rows), Components v2 and polls. */
 export const setMode = (
   doc: BuilderDocument,
   mode: BuilderMode,
@@ -227,11 +227,17 @@ export const setMode = (
 ): BuilderDocument => {
   if (doc.mode === mode || !isModeAllowed(restrictions, mode)) return doc;
   let next: BuilderDocument;
-  if (convert) next = mode === 'cv2' ? convertToCV2(doc) : convertToClassic(doc);
-  else if (mode === 'cv2') {
+  if (convert) next = convertToMode(doc, mode);
+  else if (mode === 'poll') {
+    const { attachments: _attachments, sticker_ids: _stickers, tts: _tts, ...rest } = doc;
+    next = { ...rest, mode, content: '', embeds: [], components: [], poll: doc.poll ?? createPoll() };
+  } else if (mode === 'cv2') {
     const { poll: _poll, sticker_ids: _stickers, ...rest } = doc;
     next = { ...rest, mode, content: '', embeds: [] };
-  } else next = { ...doc, mode, components: doc.components.filter((node) => node.type === 1) };
+  } else {
+    const { poll: _poll, ...rest } = doc;
+    next = { ...rest, mode, components: doc.components.filter((node) => node.type === 1) };
+  }
   return sanitize(next, restrictions);
 };
 

@@ -21,6 +21,7 @@ import type {
   NodeLocation,
   NodeTarget,
   ValidationIssue,
+  ValidationTarget,
   WebhookMessagePayload,
 } from './types';
 import type { DocumentStats } from './validate';
@@ -49,7 +50,16 @@ export interface MessageBuilderApi {
   toJSON: () => WebhookMessagePayload;
 }
 
-const OPTION_KEYS = new Set(['value', 'defaultValue', 'onChange', 'limit', 'coalesceMs', 'validation', 'restrictions']);
+const OPTION_KEYS = new Set([
+  'value',
+  'defaultValue',
+  'onChange',
+  'limit',
+  'coalesceMs',
+  'validation',
+  'restrictions',
+  'target',
+]);
 
 const isOptions = (value: unknown): value is MessageBuilderOptions =>
   typeof value === 'object' &&
@@ -87,13 +97,13 @@ export const useMessageBuilder = (
   init?: MessageBuilderOptions | BuilderDocument | WebhookMessagePayload,
 ): MessageBuilderApi => {
   const options: MessageBuilderOptions = isOptions(init) ? init : { defaultValue: init };
-  const { value, defaultValue, onChange, limit, coalesceMs, validation, restrictions } = options;
+  const { value, defaultValue, onChange, limit, coalesceMs, validation, restrictions, target } = options;
   const [store] = useState(() =>
-    createBuilderStore(value ?? defaultValue, { onChange, limit, coalesceMs, validation, restrictions }),
+    createBuilderStore(value ?? defaultValue, { onChange, limit, coalesceMs, validation, restrictions, target }),
   );
   useLayoutEffect(() => {
-    store.setOptions({ onChange, limit, coalesceMs, validation, restrictions });
-  }, [store, onChange, limit, coalesceMs, validation, restrictions]);
+    store.setOptions({ onChange, limit, coalesceMs, validation, restrictions, target });
+  }, [store, onChange, limit, coalesceMs, validation, restrictions, target]);
   useEffect(() => {
     if (value) store.sync(value);
   }, [store, value]);
@@ -225,6 +235,10 @@ export const useDocumentStats = (): DocumentStats =>
 /** The restrictions of the nearest builder (`undefined` when it has none). */
 export const useBuilderRestrictions = (): BuilderRestrictions | undefined =>
   useBuilderSelector(useCallback((_state: BuilderState, store: BuilderStore) => store.getRestrictions(), []));
+
+/** Where the builder's message is sent: `webhook`, `message` (a bot) or `interaction`. */
+export const useBuilderTarget = (): ValidationTarget =>
+  useBuilderSelector(useCallback((_state: BuilderState, store: BuilderStore) => store.getTarget(), []));
 
 const sameList = (a: readonly string[], b: readonly string[]) =>
   a === b || (a.length === b.length && a.every((item, index) => item === b[index]));
