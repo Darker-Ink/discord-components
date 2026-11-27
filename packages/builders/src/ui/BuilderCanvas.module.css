@@ -38,13 +38,16 @@
 }
 
 /*
- * Empty content next to embeds or components takes no room, like the client's empty content: its "Add a message"
+ * Empty content (the message's own, not a text display's) next to embeds or components takes no room, like the client's empty content: its "Add a message"
  * sits on the header line instead (shown while the canvas is pointed at), so nothing moves when it appears.
  */
 .canvas:has([data-builder-node]) [id^='message-content-']:has(> [data-builder-field='content'][data-empty]) {
   position: relative;
 }
-.canvas:has([data-builder-node]) [data-builder-field='content'][data-empty] > [role='textbox']:not([contenteditable]) {
+.canvas:has([data-builder-node])
+  [id^='message-content-']
+  > [data-builder-field='content'][data-empty]
+  > [role='textbox']:not([contenteditable]) {
   font-size: 0.875rem;
   inset-inline-end: 16px;
   line-height: 1.375rem;
@@ -52,12 +55,21 @@
   position: absolute;
   top: -1.375rem;
 }
-.canvas:hover [data-builder-field='content'][data-empty] > [role='textbox']:not([contenteditable]),
-.canvas [data-builder-field='content'][data-empty] > [role='textbox']:not([contenteditable]):focus {
+.canvas:hover
+  [id^='message-content-']
+  > [data-builder-field='content'][data-empty]
+  > [role='textbox']:not([contenteditable]),
+.canvas
+  [id^='message-content-']
+  > [data-builder-field='content'][data-empty]
+  > [role='textbox']:not([contenteditable]):focus {
   opacity: 1;
 }
 @media (pointer: coarse) {
-  .canvas [data-builder-field='content'][data-empty] > [role='textbox']:not([contenteditable]) {
+  .canvas
+    [id^='message-content-']
+    > [data-builder-field='content'][data-empty]
+    > [role='textbox']:not([contenteditable]) {
     opacity: 1;
   }
 }

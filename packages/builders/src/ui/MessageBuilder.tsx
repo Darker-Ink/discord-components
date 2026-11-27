@@ -123,9 +123,11 @@ export const BuilderChannel = ({
       </HeaderBar>
       <ScrollerAuto
         className={styles.channelScroller}
-        // A click in the channel but outside the message clears the selection.
+        // A click in the channel but outside the message clears the selection. Popouts are portals: their events
+        // reach this through React but happen elsewhere in the page (picking a color is not a click outside).
         onPointerUp={(event) => {
           const target = event.target as Element;
+          if (!event.currentTarget.contains(target)) return;
           if (target.closest('[data-builder-canvas], [data-builder-ui]') == null) ui.set({ selectedId: null });
         }}
       >

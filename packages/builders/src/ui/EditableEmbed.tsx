@@ -109,7 +109,7 @@ export const EmbedColorPopout = ({ uid }: { uid: string }) => {
           <Button
             variant="secondary"
             size="sm"
-            text="No colour"
+            text="No color"
             fullWidth
             onClick={() => actions.update(uid, { color: undefined })}
           />
@@ -233,7 +233,7 @@ const Ghost = ({
   </button>
 );
 
-/** The embed's toolbar: colour, images, links and the timestamp. */
+/** The embed's toolbar: color, images, links and the timestamp. */
 const EmbedTools = ({ uid }: { uid: string }) => {
   const node = useBuilderNode(uid) as EmbedNode | null;
   const allows = useEmbedParts();
@@ -243,7 +243,7 @@ const EmbedTools = ({ uid }: { uid: string }) => {
       {allows('color') ? (
         <NodeToolbarPopoutButton
           icon={EyeDropperIcon}
-          label="Colour"
+          label="Color"
           renderPopout={() => <EmbedColorPopout uid={uid} />}
         >
           <span
@@ -297,7 +297,7 @@ export interface EditableEmbedProps {
 
 /**
  * A rich embed, drawn with the client's embed markup and styles, whose every part is edited in place: text where
- * it renders, the colour bar opens a colour picker, and empty parts (author, title, fields, images, footer,
+ * it renders, the color bar opens a color picker, and empty parts (author, title, fields, images, footer,
  * timestamp) appear as faint placeholders while the embed is selected. Unselected, it is identical to
  * `<MessageEmbeds>`' rendering of the same JSON.
  */
@@ -347,9 +347,10 @@ export const EditableEmbed = ({ uid, embedIndex = 0, message, className }: Edita
   );
   if (node == null || embed == null) return null;
 
-  // A part shows when it has content, when it was just added, or (title and description) on a blank embed.
+  // A part shows when it has content, when it was just added, or (title and description) on a blank embed,
+  // selected or not: an embed with nothing in it would otherwise be a sliver too small to click.
   const shows = (slot: 'author' | 'title' | 'description' | 'footer', hasContent: boolean) =>
-    hasContent || (active && revealed.has(slot));
+    hasContent || (active && revealed.has(slot)) || (blank && !readOnly && BLANK_REVEALED.has(slot));
   const reveal = (slot: string, field: string) => {
     setRevealed(new Set([...revealed, slot]));
     uiStore.set({ pendingFocus: { uid, field } });
@@ -691,7 +692,7 @@ export const EditableEmbed = ({ uid, embedIndex = 0, message, className }: Edita
               data-builder-ui
               data-builder-nodrag
               className={ui.colorBar}
-              aria-label="Embed colour"
+              aria-label="Embed color"
               {...props}
             />
           )}

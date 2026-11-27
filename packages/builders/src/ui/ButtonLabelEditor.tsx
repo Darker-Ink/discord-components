@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { componentButtonStyles } from '@discord-mana/messages';
 import { useBuilderNode, type ButtonNode } from '../core';
 import { useHistoryKeys } from './BuilderTextField';
@@ -17,6 +17,9 @@ const COPIED_STYLES = [
   'textTransform',
   'fontFeatureSettings',
 ] as const;
+
+/** What an empty label shows while its button is selected. */
+export const BUTTON_LABEL_PLACEHOLDER = 'Label';
 
 /**
  * Edits a selected button's label in place. A button can't hold an editable text in every browser, so this
@@ -76,10 +79,10 @@ export const ButtonLabelEditor = ({ uid }: { uid: string }) => {
     return () => observer.disconnect();
   }, [measure, ui, uid]);
 
-  // The real label hides while its copy is being edited, so only one text shows.
+  // The real label hides while its copy is being edited (or stands in for an empty one), so only one text shows.
   useLayoutEffect(() => {
     const target = findLabel();
-    if (target == null || !editing) return;
+    if (target == null || (!editing && label !== '')) return;
     target.style.visibility = 'hidden';
     return () => {
       target.style.visibility = '';
@@ -91,12 +94,28 @@ export const ButtonLabelEditor = ({ uid }: { uid: string }) => {
     if (element != null && !editing && element.textContent !== label) element.textContent = label;
   }, [editing, label, box]);
 
+  // Selecting a button with the pointer (or creating one) goes straight to its label; from the keyboard, Enter
+  // does (the node's own Enter handling focuses its first text).
+  const focusedRef = useRef(false);
+  useEffect(() => {
+    const element = ref.current;
+    if (box == null || focusedRef.current || element == null) return;
+    focusedRef.current = true;
+    if (ui.modality === 'keyboard' || document.activeElement === element) return;
+    if (document.activeElement instanceof HTMLElement && document.activeElement.isContentEditable) return;
+    element.focus({ preventScroll: true });
+    const selection = window.getSelection();
+    selection?.selectAllChildren(element);
+    selection?.collapseToEnd();
+  }, [box, ui]);
+
   if (premium || box == null) return null;
   return (
     <span
       ref={ref}
       className={styles.label}
       data-editing={editing || undefined}
+      data-placeholder={BUTTON_LABEL_PLACEHOLDER}
       data-builder-field="label"
       data-builder-nodrag
       role="textbox"

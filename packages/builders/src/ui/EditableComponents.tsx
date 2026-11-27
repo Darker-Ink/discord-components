@@ -40,7 +40,7 @@ import {
   type TemplateType,
 } from '../core';
 import { BuilderTextField } from './BuilderTextField';
-import { ButtonLabelEditor } from './ButtonLabelEditor';
+import { BUTTON_LABEL_PLACEHOLDER, ButtonLabelEditor } from './ButtonLabelEditor';
 import {
   ButtonTools,
   ContainerTools,
@@ -376,8 +376,12 @@ export const EditableComponent = ({ uid }: { uid: string }) => {
         >
           <ComponentButton
             {...(record as Extract<MessageComponent, { type: 2 }>)}
+            // Selected, an empty label is drawn as "Label" (its editor shows that as a placeholder), so there is
+            // a real target to type into; unselected, the button is exactly the client's.
             label={
-              selected && !disabled ? (record as { label?: string }).label || '​' : (record as { label?: string }).label
+              selected && !disabled
+                ? (record as { label?: string }).label || BUTTON_LABEL_PLACEHOLDER
+                : (record as { label?: string }).label
             }
           />
           {selected && !disabled ? <ButtonLabelEditor uid={uid} /> : null}

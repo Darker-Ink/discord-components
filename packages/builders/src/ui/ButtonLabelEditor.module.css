@@ -8,9 +8,15 @@
   white-space: pre;
   z-index: 1;
 }
-.label:not([data-editing]) {
+.label:not([data-editing]):not(:empty) {
   color: transparent !important;
 }
 .label[data-editing] {
   caret-color: currentColor;
+}
+/* An empty label: "Label", faded in the button's own text color, until something is typed. */
+.label:empty::before {
+  content: attr(data-placeholder);
+  opacity: 0.6;
+  pointer-events: none;
 }

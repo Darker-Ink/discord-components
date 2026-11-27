@@ -16,7 +16,7 @@ import { useBuilderUIStore, type BuilderUIStore } from './uiStore';
 
 /**
  * Opens the system's file picker. Call it from a click (or another user gesture): browsers only open it then.
- * Resolves with the chosen files (none when cancelled, where the browser says so).
+ * Resolves with the chosen files (none when canceled, where the browser says so).
  */
 export const pickFiles = ({ multiple = true, accept }: { multiple?: boolean; accept?: string } = {}) =>
   new Promise<File[]>((resolve) => {
@@ -25,6 +25,13 @@ export const pickFiles = ({ multiple = true, accept }: { multiple?: boolean; acc
     input.multiple = multiple;
     if (accept != null) input.accept = accept;
     input.style.display = 'none';
+    // The input's click isn't a click on the page: keep it from popouts' outside-click handling (an "Upload"
+    // inside a popout would otherwise close it), by stopping it before anything else sees it.
+    const contain = (event: MouseEvent) => {
+      if (event.target === input) event.stopImmediatePropagation();
+    };
+    window.addEventListener('click', contain, { capture: true });
+    const cleanup = () => window.removeEventListener('click', contain, { capture: true });
     input.addEventListener('change', () => {
       resolve(Array.from(input.files ?? []));
       input.remove();
@@ -35,6 +42,7 @@ export const pickFiles = ({ multiple = true, accept }: { multiple?: boolean; acc
     });
     document.body.append(input);
     input.click();
+    cleanup();
   });
 
 /**

@@ -58,6 +58,30 @@
   border-radius: 8px;
 }
 
+/*
+ * Small targets get room to hit without changing layout: a separator is a 1px line at most (nothing with its
+ * divider off), so its hit area and outline cover the spacing around it; on touch screens buttons and separators
+ * reach about 44px.
+ */
+:where([data-builder-canvas]:not([data-readonly])) [data-builder-kind='separator']::before {
+  content: '';
+  inset: -8px 0;
+  position: absolute;
+}
+[data-builder-kind='separator'] {
+  outline-offset: 7px;
+}
+@media (pointer: coarse) {
+  :where([data-builder-canvas]:not([data-readonly])) [data-builder-kind='separator']::before {
+    inset: -14px 0;
+  }
+  :where([data-builder-canvas]:not([data-readonly])) [data-builder-kind='button']::before {
+    content: '';
+    inset: -6px -3px;
+    position: absolute;
+  }
+}
+
 /* Touch: a long press drags the node instead of selecting text or opening the browser's menu. */
 @media (pointer: coarse) {
   [data-builder-canvas]:not([data-readonly]) [data-builder-node] {
