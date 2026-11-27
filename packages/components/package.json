@@ -1,6 +1,6 @@
 {
   "name": "@discord-mana/components",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "React recreations of Discord's Mana design system components.",
   "keywords": [
     "discord",
