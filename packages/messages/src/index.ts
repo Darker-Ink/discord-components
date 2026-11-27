@@ -10,6 +10,7 @@ export * from './attachments';
 export * from './MediaGallery';
 export * from './MediaViewer';
 export * from './Message';
+export * from './Poll';
 export * from './MessageComponents';
 export { Emoji, EMOJI_SIZES, type EmojiProps, type EmojiSize } from './Emoji/Emoji';
 export * from './InteractionModal';

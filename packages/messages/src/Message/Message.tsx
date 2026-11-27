@@ -2,6 +2,7 @@ import { useEffect, useMemo, type MouseEventHandler, type ReactNode } from 'reac
 import clsx from 'clsx';
 import { FocusRing } from '@discord-mana/components';
 import { MessageAttachments } from '../attachments/MessageAttachments';
+import { MessagePoll } from '../Poll/MessagePoll';
 import { MessageEmbeds, type RenderEmbedMarkdown } from '../Embed/MessageEmbeds';
 import type { APIEmbed } from '../Embed/types';
 import type { OnMessageComponentInteraction } from '../MessageComponents/ComponentState';
@@ -144,6 +145,7 @@ type AccessoriesProps = Pick<
   | 'shouldDisableInteractiveComponents'
   | 'onReactionClick'
   | 'accessories'
+  | 'now'
 > & { isMessageSnapshot?: boolean };
 
 const MessageAccessories = (props: AccessoriesProps) => {
@@ -155,6 +157,7 @@ const MessageAccessories = (props: AccessoriesProps) => {
     shouldDisableInteractiveComponents,
     onReactionClick,
     accessories,
+    now,
   } = props;
   const actions = useMessageActions();
   const isComponentsV2 = hasFlag(message.flags, MessageFlags.IsComponentsV2);
@@ -177,6 +180,7 @@ const MessageAccessories = (props: AccessoriesProps) => {
       {attachments.length > 0 && message.poll == null && !isComponentsV2 ? (
         <MessageAttachments attachments={attachments} message={message} />
       ) : null}
+      {accessories === undefined && message.poll != null ? <MessagePoll poll={message.poll} now={now} /> : null}
       {accessories !== undefined ? accessories : null}
       {accessories === undefined && embeds.length > 0 && renderEmbeds ? (
         <MessageEmbeds
@@ -275,6 +279,7 @@ const MessageBody = ({
         </div>
         <MessageAccessories
           message={message}
+          now={now}
           renderEmbedMarkdown={renderEmbedMarkdown}
           onInteraction={onInteraction}
           onSuppressEmbeds={onSuppressEmbeds}

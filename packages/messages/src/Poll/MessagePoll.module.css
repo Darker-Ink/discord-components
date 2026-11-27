@@ -1,0 +1,99 @@
+/* The client's poll in a message (pollContainer in the accessories, then the poll card). */
+.pollContainer {
+  margin: 4px 0;
+}
+.container {
+  --custom-poll-style-vote-percentage: var(--interactive-background-active);
+  --custom-poll-style-label: var(--text-default);
+  --custom-poll-style-border: transparent;
+  background-color: var(--background-surface-high);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  max-width: 472px;
+  min-width: min(302px, 100%);
+  padding: 16px;
+  position: relative;
+  width: 100%;
+}
+.header {
+  display: grid;
+  gap: 0 8px;
+  grid-template-areas: 'question' 'prompt';
+  grid-template-columns: 1fr;
+}
+.question {
+  grid-area: question;
+  word-break: break-word;
+}
+.prompt {
+  grid-area: prompt;
+  margin: 4px 0 0;
+}
+.answersContainer {
+  display: grid;
+  gap: 8px;
+  grid-auto-rows: 1fr;
+  grid-template-columns: 1fr;
+  margin: 8px 0 16px;
+}
+.answer {
+  display: flex;
+}
+.answerInner {
+  align-items: center;
+  background-color: var(--background-mod-muted);
+  border-radius: var(--radius-sm);
+  box-sizing: border-box;
+  color: var(--text-default);
+  display: flex;
+  gap: 8px;
+  min-height: 50px;
+  outline: 1px solid var(--custom-poll-style-border);
+  overflow: hidden;
+  padding: 8px 16px;
+  position: relative;
+  width: 100%;
+  word-break: break-word;
+  z-index: 1;
+}
+.emoji {
+  align-items: center;
+  display: flex;
+  flex: none;
+  height: 24px;
+  justify-content: center;
+  margin-inline-end: 2px;
+  width: 24px;
+}
+.emoji img {
+  height: 24px;
+  width: 24px;
+}
+.label {
+  margin-inline-end: auto;
+  min-width: 0;
+}
+.selectionIcon {
+  color: var(--text-default);
+  flex-shrink: 0;
+}
+.detailsText {
+  display: flex;
+  white-space: nowrap;
+}
+.detailsText > :not(:first-child)::before {
+  content: '\2219';
+  margin: 0 0.5rem;
+}
+.bottomBar {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: space-between;
+  min-height: var(--custom-button-button-md-height, 38px);
+}
