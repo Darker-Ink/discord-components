@@ -581,42 +581,6 @@ await step('message options: silent, no link previews, text-to-speech and allowe
   assert.deepEqual(conflict.allowed_mentions.users, ['323456789012345678']);
 });
 
-await step('a poll: question, answers with emoji, duration and multiple answers', async () => {
-  await deselect();
-  await paletteItem('Poll').click();
-  await settle(400);
-  await page.keyboard.type('Which map next?', { delay: 5 });
-  const poll = page.getByRole('group', { name: 'Poll' });
-  await typeInto(poll.getByRole('textbox', { name: 'Answer 1' }), 'Harbor');
-  await typeInto(poll.getByRole('textbox', { name: 'Answer 2' }), 'Desert');
-  await poll.getByRole('button', { name: 'Add answer' }).click();
-  await settle(300);
-  await page.keyboard.type('Glacier', { delay: 5 });
-  await poll.getByRole('button', { name: 'Answer 1 emoji' }).click();
-  await settle(300);
-  await page.getByRole('group', { name: 'Common emoji' }).getByRole('button', { name: '🔥' }).click();
-  await page.keyboard.press('Escape');
-  await poll.getByRole('button', { name: '24 hours' }).click();
-  await page.getByRole('radio', { name: '3 days' }).click();
-  await poll.getByRole('button', { name: 'Multiple answers' }).click();
-  await settle(300);
-  await shot('23-poll-editing');
-  await deselect();
-  await settle(300);
-  await shot('24-poll');
-  const json = await readJSON();
-  assert.deepEqual(json.poll, {
-    question: { text: 'Which map next?' },
-    answers: [
-      { poll_media: { text: 'Harbor', emoji: { name: '🔥' } } },
-      { poll_media: { text: 'Desert' } },
-      { poll_media: { text: 'Glacier' } },
-    ],
-    duration: 72,
-    allow_multiselect: true,
-  });
-});
-
 await step('sends files as multipart: payload_json plus files[n]', async () => {
   const requests = [];
   await page.route('https://discord.com/api/webhooks/**', async (route) => {
@@ -674,7 +638,7 @@ await step('sends files as multipart: payload_json plus files[n]', async () => {
   assert.equal(payload.flags, 4 | 4096);
   assert.equal(payload.tts, true);
   assert.deepEqual(payload.allowed_mentions.parse, ['users']);
-  assert.equal(payload.poll.question.text, 'Which map next?');
+  assert.equal(payload.poll, undefined);
   const files = parts.filter((part) => part.name?.startsWith('files['));
   assert.deepEqual(
     files.map((part) => [part.name, part.filename]),
@@ -689,6 +653,81 @@ await step('sends files as multipart: payload_json plus files[n]', async () => {
   assert.equal(sent[1].text, 'Update 2.4\n- Harbor map\n');
   await shot('25-sent-with-files');
   await page.unroute('https://discord.com/api/webhooks/**');
+});
+
+await step('a poll message: the mode switch makes one (and nothing else), edited in place', async () => {
+  await deselect();
+  await page.getByRole('radiogroup', { name: 'Message type' }).getByRole('radio', { name: 'Poll' }).click();
+  await settle(400);
+  // The palette has nothing to add to a poll.
+  assert.equal(await page.locator('nav[aria-label="Components"] button').count(), 0);
+  const poll = page.getByRole('group', { name: 'Poll' });
+  // The first line of the message became the question; replace it.
+  await poll.getByRole('textbox', { name: 'Poll question' }).click();
+  await page.keyboard.press('Control+a');
+  await page.keyboard.type('Which map next?', { delay: 5 });
+  await typeInto(poll.getByRole('textbox', { name: 'Answer 1' }), 'Harbor');
+  await typeInto(poll.getByRole('textbox', { name: 'Answer 2' }), 'Desert');
+  await poll.getByRole('button', { name: 'Add answer' }).click();
+  await settle(300);
+  await page.keyboard.type('Glacier', { delay: 5 });
+  await poll.getByRole('button', { name: 'Answer 1 emoji' }).click();
+  await settle(300);
+  await page.getByRole('group', { name: 'Common emoji' }).getByRole('button', { name: '🔥' }).click();
+  await page.keyboard.press('Escape');
+  await poll.getByRole('button', { name: '24 hours' }).click();
+  await page.getByRole('radio', { name: '3 days' }).click();
+  await poll.getByRole('button', { name: 'Multiple answers' }).click();
+  await settle(300);
+  await shot('23-poll-editing');
+  await deselect();
+  await settle(300);
+  await shot('24-poll');
+  const json = await readJSON();
+  assert.deepEqual(json.poll, {
+    question: { text: 'Which map next?' },
+    answers: [
+      { poll_media: { text: 'Harbor', emoji: { name: '🔥' } } },
+      { poll_media: { text: 'Desert' } },
+      { poll_media: { text: 'Glacier' } },
+    ],
+    duration: 72,
+    allow_multiselect: true,
+  });
+  // A poll goes alone: no content, embeds, components or files came along. Silent and mentions still apply.
+  assert.equal(json.content, undefined);
+  assert.equal(json.embeds, undefined);
+  assert.equal(json.components, undefined);
+  assert.equal(json.attachments, undefined);
+  assert.equal(json.flags, 4 | 4096);
+  await openTab('Issues');
+  assert.match(await page.getByRole('tabpanel').innerText(), /No issues/);
+  // A poll sent alone goes as JSON, not multipart.
+  const bodies = [];
+  await page.route('https://discord.com/api/webhooks/**', async (route) => {
+    const request = route.request();
+    if (request.method() === 'GET') {
+      await route.fulfill({ json: { id: '1', name: 'E2E Hook', avatar: null, channel_id: '2', application_id: null } });
+      return;
+    }
+    bodies.push(request.postDataJSON());
+    await route.fulfill({ json: { id: '523456789012345678', channel_id: '2', content: '' } });
+  });
+  await openTab('Send');
+  await page.getByRole('button', { name: 'Send', exact: true }).click();
+  await page.getByText('Message 523456789012345678').waitFor();
+  assert.deepEqual(bodies[0].poll, json.poll);
+  await page.unroute('https://discord.com/api/webhooks/**');
+  // Undo goes back through the poll's edits to the message it came from.
+  await deselect();
+  for (let index = 0; index < 40 && (await readJSON()).embeds == null; index++) {
+    await page.keyboard.press('Control+z');
+    await settle(80);
+  }
+  const before = await readJSON();
+  assert.equal(before.poll, undefined);
+  assert.equal(before.embeds.length, 1);
+  assert.equal(before.attachments.length, 2);
 });
 
 await step('Components v2: a File component and a gallery item pick attached files', async () => {
@@ -961,25 +1000,6 @@ for (const phone of PHONES) {
     await m.waitForTimeout(200);
   });
 
-  await step(`${phone.name}: add a poll from the Add sheet`, async () => {
-    await openSheet('Add');
-    await m.getByRole('dialog').getByRole('button', { name: 'Poll', exact: true }).tap();
-    await m.waitForTimeout(500);
-    await m.keyboard.type('Which map next?', { delay: 10 });
-    const poll = m.getByRole('group', { name: 'Poll' });
-    await poll.getByRole('textbox', { name: 'Answer 1' }).tap();
-    await m.keyboard.type('Harbor', { delay: 10 });
-    await poll.getByRole('textbox', { name: 'Answer 2' }).tap();
-    await m.keyboard.type('Desert', { delay: 10 });
-    await m.waitForTimeout(300);
-    await mshot('13-poll');
-    const json = await m.evaluate(() => JSON.parse(localStorage.getItem('discord-mana-builder:draft') ?? '{}'));
-    assert.equal(json.poll?.question?.text, 'Which map next?');
-    // Poll and files can't be shown together: remove the poll again.
-    await poll.getByRole('button', { name: 'Remove poll' }).tap();
-    await m.waitForTimeout(300);
-  });
-
   await step(`${phone.name}: the Send sheet lists files, options and mentions`, async () => {
     await openSheet('Send');
     const sheet = m.getByRole('dialog');
@@ -987,10 +1007,30 @@ for (const phone of PHONES) {
     await sheet.getByText('Limit mentions', { exact: true }).tap();
     await m.waitForTimeout(300);
     await sheet.getByRole('region', { name: 'Files' }).scrollIntoViewIfNeeded();
-    await mshot('14-send-files');
+    await mshot('13-send-files');
     await sheet.getByRole('region', { name: 'Message options' }).scrollIntoViewIfNeeded();
-    await mshot('15-send-options');
+    await mshot('14-send-options');
     await closeSheet();
+  });
+
+  await step(`${phone.name}: switch to a poll from the header`, async () => {
+    await m.getByRole('radiogroup', { name: 'Message type' }).getByRole('radio', { name: 'Poll' }).tap();
+    await m.waitForTimeout(500);
+    const tabs = m.locator('nav[aria-label="Message tools"]');
+    assert.equal(await tabs.getByRole('button', { name: /^Add/ }).count(), 0, 'no Add tab for a poll');
+    const poll = m.getByRole('group', { name: 'Poll' });
+    await poll.getByRole('textbox', { name: 'Poll question' }).tap();
+    await m.keyboard.press('Control+a');
+    await m.keyboard.type('Which map next?', { delay: 10 });
+    await poll.getByRole('textbox', { name: 'Answer 1' }).tap();
+    await m.keyboard.type('Harbor', { delay: 10 });
+    await poll.getByRole('textbox', { name: 'Answer 2' }).tap();
+    await m.keyboard.type('Desert', { delay: 10 });
+    await m.waitForTimeout(300);
+    await mshot('15-poll');
+    const json = await m.evaluate(() => JSON.parse(localStorage.getItem('discord-mana-builder:draft') ?? '{}'));
+    assert.equal(json.poll?.question?.text, 'Which map next?');
+    assert.equal(json.embeds, undefined);
   });
 
   await step(`${phone.name}: no page errors`, async () => {

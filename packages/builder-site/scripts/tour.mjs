@@ -151,9 +151,11 @@ for (const theme of THEMES) {
   await settle(300);
   await shot(theme, '15-send-options');
 
-  // A poll, being edited.
-  await page.locator('nav[aria-label="Components"] button[aria-label="Poll"]').click();
+  // A poll message, from the mode switch, being edited.
+  await page.getByRole('radiogroup', { name: 'Message type' }).getByRole('radio', { name: 'Poll' }).click();
   await settle(400);
+  await page.getByRole('group', { name: 'Poll' }).getByRole('textbox', { name: 'Poll question' }).click();
+  await page.keyboard.press('Control+a');
   await page.keyboard.type('Which map next?', { delay: 5 });
   const poll = page.getByRole('group', { name: 'Poll' });
   await poll.getByRole('textbox', { name: 'Answer 1' }).click();
@@ -303,24 +305,9 @@ for (const theme of THEMES) {
     await phone.getByRole('button', { name: 'Done', exact: true }).tap();
     await phone.waitForTimeout(250);
 
-    await tab('Add').tap();
-    await phone.waitForTimeout(400);
-    await sheet().getByRole('button', { name: 'Poll', exact: true }).tap();
-    await phone.waitForTimeout(500);
-    await phone.keyboard.type('Which map next?', { delay: 5 });
-    const poll = phone.getByRole('group', { name: 'Poll' });
-    await poll.getByRole('textbox', { name: 'Answer 1' }).tap();
-    await phone.keyboard.type('Harbor', { delay: 5 });
-    await poll.getByRole('textbox', { name: 'Answer 2' }).tap();
-    await phone.keyboard.type('Desert', { delay: 5 });
-    await phone.evaluate(() => document.activeElement?.blur?.());
-    await poll.scrollIntoViewIfNeeded();
-    await phone.waitForTimeout(300);
-    await snap('09-poll');
-
     for (const [label, file] of [
-      ['Issues', '10-issues'],
-      ['JSON', '11-json'],
+      ['Issues', '09-issues'],
+      ['JSON', '10-json'],
     ]) {
       await tab(label).tap();
       await phone.waitForTimeout(450);
@@ -328,14 +315,9 @@ for (const theme of THEMES) {
       await closeSheet();
     }
     // Send: delivery, then the files and the message's options further down.
-    await poll
-      .getByRole('button', { name: 'Remove poll' })
-      .tap()
-      .catch(() => undefined);
-    await phone.waitForTimeout(250);
     await tab('Send').tap();
     await phone.waitForTimeout(450);
-    await snap('12-send');
+    await snap('11-send');
     const options = sheet().getByRole('region', { name: 'Message options' });
     await options.getByText('Silent', { exact: true }).tap();
     await options.getByText('Limit mentions', { exact: true }).tap();
@@ -345,14 +327,36 @@ for (const theme of THEMES) {
       .getByRole('region', { name: 'Files' })
       .evaluate((element) => element.scrollIntoView({ block: 'start' }));
     await phone.waitForTimeout(300);
-    await snap('13-send-files');
+    await snap('12-send-files');
     await options.evaluate((element) => element.scrollIntoView({ block: 'end' }));
     await phone.waitForTimeout(300);
-    await snap('14-send-mentions');
+    await snap('13-send-mentions');
     await closeSheet();
     await phone.locator('header').getByRole('button', { name: 'More', exact: true }).tap();
     await phone.waitForTimeout(350);
-    await snap('15-more');
+    await snap('14-more');
+    await phone.keyboard.press('Escape');
+    await phone.waitForTimeout(250);
+
+    // A poll message, from the header's mode switch (the Add tab goes away).
+    await phone.getByRole('radiogroup', { name: 'Message type' }).getByRole('radio', { name: 'Poll' }).tap();
+    await phone.waitForTimeout(500);
+    const poll = phone.getByRole('group', { name: 'Poll' });
+    await poll.getByRole('textbox', { name: 'Poll question' }).tap();
+    await phone.keyboard.press('Control+a');
+    await phone.keyboard.type('Which map next?', { delay: 5 });
+    await poll.getByRole('textbox', { name: 'Answer 1' }).tap();
+    await phone.keyboard.type('Harbor', { delay: 5 });
+    await poll.getByRole('textbox', { name: 'Answer 2' }).tap();
+    await phone.keyboard.type('Desert', { delay: 5 });
+    await phone.waitForTimeout(300);
+    await snap('15-poll-editing');
+    // A tap on the empty canvas leaves the poll.
+    const canvas = phone.locator('[data-builder-canvas]');
+    const canvasBox = await canvas.boundingBox();
+    await canvas.tap({ position: { x: canvasBox.width / 2, y: canvasBox.height - 12 } });
+    await phone.waitForTimeout(300);
+    await snap('16-poll');
     await context.close();
   }
 }
