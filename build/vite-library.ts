@@ -60,28 +60,42 @@ const scopedClassNames = () => {
 
 /**
  * Imports with `?url` of a file inside a dependency (e.g. a wasm runtime) become a file in `dist/assets` that
- * the module refers to with `new URL(…, import.meta.url)`, which every modern bundler understands. Vite's
- * library mode would otherwise inline it as a data URL.
+ * the module refers to with a relative `new URL(…, import.meta.url)`, which every modern bundler understands
+ * (and Vite's dev server too, after pre-bundling the package). Vite's library mode would otherwise inline it as
+ * a data URL, and `import.meta.ROLLUP_FILE_URL_*` renders as an absolute `/assets/…` path that only exists
+ * on our own sites.
  */
 const dependencyAssetUrls = (pkgDir: string): Plugin => {
   const require = createRequire(path.join(pkgDir, 'package.json'));
+  // The id is the import specifier, not the resolved path, which would end up in the module's file name.
   const PREFIX = '\0dependency-asset:';
+  const PLACEHOLDER = '__DISCORD_MANA_DEPENDENCY_ASSET__/';
   return {
     name: 'discord-mana:dependency-asset-urls',
     enforce: 'pre',
     resolveId(id) {
       if (!id.endsWith('?url') || !isBareImport(id)) return null;
-      return PREFIX + require.resolve(id.slice(0, -'?url'.length));
+      return PREFIX + id.slice(0, -'?url'.length);
     },
     load(id) {
       if (!id.startsWith(PREFIX)) return null;
-      const file = id.slice(PREFIX.length);
-      const ref = this.emitFile({
-        type: 'asset',
-        fileName: `assets/${path.basename(file)}`,
-        source: fs.readFileSync(file),
-      });
-      return `export default import.meta.ROLLUP_FILE_URL_${ref};`;
+      const spec = id.slice(PREFIX.length);
+      const fileName = `assets/${path.basename(spec)}`;
+      this.emitFile({ type: 'asset', fileName, source: fs.readFileSync(require.resolve(spec)) });
+      return `export default new URL(/* @vite-ignore */ ${JSON.stringify(PLACEHOLDER + fileName)}, import.meta.url).href;`;
+    },
+    // Points the URL at the asset relative to wherever the module ends up in dist.
+    renderChunk(code, chunk) {
+      if (!code.includes(PLACEHOLDER)) return null;
+      const dir = path.posix.dirname(chunk.fileName);
+      const next = code.replace(
+        /new URL\(\s*(?:\/\* @vite-ignore \*\/\s*)?(['"])__DISCORD_MANA_DEPENDENCY_ASSET__\/([^'"]+)\1/g,
+        (_match, quote: string, fileName: string) => {
+          const relative = path.posix.relative(dir, fileName);
+          return `new URL(${quote}${relative.startsWith('.') ? relative : `./${relative}`}${quote}`;
+        },
+      );
+      return { code: next, map: null };
     },
   };
 };

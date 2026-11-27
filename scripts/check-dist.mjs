@@ -1,5 +1,6 @@
 // Checks the built packages before they are packed: every relative import in dist (JS, declarations and CSS)
-// points at a file that exists, and every package import is a declared dependency or peer dependency.
+// and every relative `new URL(…, import.meta.url)` points at a file that exists, every package import is a
+// declared dependency or peer dependency, and no file mentions the path of the checkout it was built in.
 // Usage: node scripts/check-dist.mjs   (after `pnpm build`)
 import fs from 'node:fs';
 import { builtinModules } from 'node:module';
@@ -11,6 +12,7 @@ const problems = [];
 
 const IMPORT_RE = /(?:\bfrom\s+|\bimport\s*\(\s*|\bimport\s+|@import\s+)(['"])([^'"]+)\1/g;
 const CSS_URL_RE = /url\(\s*(['"]?)([^'")]+)\1\s*\)/g;
+const META_URL_RE = /new URL\(\s*(['"])(\.{1,2}\/[^'"]+)\1,\s*import\.meta\.url\s*\)/g;
 
 const packageName = (spec) =>
   spec
@@ -61,7 +63,11 @@ for (const dir of fs.readdirSync(packagesDir)) {
     const file = path.join(entry.parentPath, entry.name);
     const source = fs.readFileSync(file, 'utf8');
     const where = `${manifest.name}: ${path.relative(dist, file)}`;
+    if (source.includes(root) || path.relative(dist, file).includes(root.slice(1))) {
+      problems.push(`${where}: refers to the checkout it was built in (${root})`);
+    }
     const specs = [...source.matchAll(IMPORT_RE)].map((m) => m[2]);
+    if (file.endsWith('.js')) specs.push(...[...source.matchAll(META_URL_RE)].map((m) => m[2]));
     if (file.endsWith('.css')) {
       specs.push(...[...source.matchAll(CSS_URL_RE)].map((m) => m[2]).filter((url) => url.startsWith('.')));
     }
