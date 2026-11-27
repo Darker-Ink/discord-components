@@ -10,7 +10,7 @@ import {
   type Ref,
 } from 'react';
 import clsx from 'clsx';
-import lottie, { type AnimationItem } from 'lottie-web';
+import type { AnimationItem, LottiePlayer } from 'lottie-web';
 import { animated, useSpring } from '@react-spring/web';
 import { AccessibilityPreferencesContext, Clickable, Tooltip, useTransition } from '@discord-mana/components';
 import { PlusLargeIcon, SendMessageIcon } from '@discord-mana/icons';
@@ -41,6 +41,9 @@ const HOVER_MARKERS: Record<string, LottieMarker> = {
   click: { name: 'click', start: 0, duration: 66 },
   hover: { name: 'hover', start: 90, duration: 40 },
 };
+
+let lottiePromise: Promise<LottiePlayer> | null = null;
+const loadLottie = () => (lottiePromise ??= import('lottie-web').then((module) => module.default));
 
 export interface LottieIconHandle {
   play: (marker: string) => void;
@@ -95,18 +98,28 @@ export const LottieIcon = ({
     [markers, reducedMotion],
   );
   useEffect(() => {
-    if (containerRef.current == null) return;
+    const container = containerRef.current;
+    if (container == null) return;
     const names = Object.values(markers);
     const initial = names.length === 1 ? names[0] : undefined;
-    animationRef.current = lottie.loadAnimation({
-      container: containerRef.current,
-      renderer: 'svg',
-      loop: false,
-      autoplay: false,
-      animationData: structuredClone(animationData),
-      initialSegment: initial != null ? [initial.start, initial.start + initial.duration] : undefined,
+    let cancelled = false;
+    // Loaded on demand: lottie-web touches `document` as soon as it's imported, which breaks server rendering.
+    void loadLottie().then((lottie) => {
+      if (cancelled) return;
+      animationRef.current = lottie.loadAnimation({
+        container,
+        renderer: 'svg',
+        loop: false,
+        autoplay: false,
+        animationData: structuredClone(animationData),
+        initialSegment: initial != null ? [initial.start, initial.start + initial.duration] : undefined,
+      });
     });
-    return () => animationRef.current?.destroy();
+    return () => {
+      cancelled = true;
+      animationRef.current?.destroy();
+      animationRef.current = null;
+    };
   }, [animationData, markers]);
   return (
     <div

@@ -1,7 +1,7 @@
 // @ts-nocheck -- vendored slate-react 0.91.11, written against an older TypeScript and @types/react.
 import getDirection from 'direction'
-import debounce from 'lodash/debounce'
-import throttle from 'lodash/throttle'
+import debounce from 'lodash/debounce.js'
+import throttle from 'lodash/throttle.js'
 import React, {
   useCallback,
   useEffect,
