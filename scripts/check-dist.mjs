@@ -1,6 +1,8 @@
 // Checks the built packages before they are packed: every relative import in dist (JS, declarations and CSS)
 // and every relative `new URL(…, import.meta.url)` points at a file that exists, every package import is a
-// declared dependency or peer dependency, and no file mentions the path of the checkout it was built in.
+// declared dependency or peer dependency, a JS import of a file inside a package without an exports map names
+// the file (Node and webpack resolve ES modules fully specified), and no file mentions the path of the checkout
+// it was built in.
 // Usage: node scripts/check-dist.mjs   (after `pnpm build`)
 import fs from 'node:fs';
 import { builtinModules } from 'node:module';
@@ -79,7 +81,20 @@ for (const dir of fs.readdirSync(packagesDir)) {
           problems.push(`${where}: ${spec} does not exist`);
         }
       } else if (!spec.startsWith('data:') && !spec.startsWith('node:') && !builtinModules.includes(spec)) {
-        if (!declared.has(packageName(spec))) problems.push(`${where}: ${spec} is not a dependency`);
+        const name = packageName(spec);
+        if (!declared.has(name)) problems.push(`${where}: ${spec} is not a dependency`);
+        else if (file.endsWith('.js') && spec !== name) {
+          const depDir = path.join(packagesDir, dir, 'node_modules', name);
+          const depManifest = path.join(depDir, 'package.json');
+          const target = path.join(depDir, spec.slice(name.length));
+          if (
+            fs.existsSync(depManifest) &&
+            JSON.parse(fs.readFileSync(depManifest, 'utf8')).exports == null &&
+            !(fs.existsSync(target) && fs.statSync(target).isFile())
+          ) {
+            problems.push(`${where}: ${spec} isn't a file (${name} has no exports map, so ESM needs the full path)`);
+          }
+        }
       }
     }
   }
