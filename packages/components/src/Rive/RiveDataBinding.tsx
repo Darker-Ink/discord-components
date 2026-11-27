@@ -1,19 +1,19 @@
 import { createContext, useContext, useEffect, useMemo, useRef } from 'react';
-import {
-  decodeImage,
-  type Rive,
-  type ViewModelInstance,
-  type ViewModelInstanceBoolean,
-  type ViewModelInstanceColor,
-  type ViewModelInstanceEnum,
-  type ViewModelInstanceNumber,
-  type ViewModelInstanceString,
-  type ViewModelInstanceTrigger,
+import type {
+  Rive,
+  ViewModelInstance,
+  ViewModelInstanceBoolean,
+  ViewModelInstanceColor,
+  ViewModelInstanceEnum,
+  ViewModelInstanceNumber,
+  ViewModelInstanceString,
+  ViewModelInstanceTrigger,
 } from '@rive-app/react-canvas';
 import { AccessibilityPreferencesContext } from '../AccessibilityPreferences';
 import { useManaContext } from '../ManaContext';
 import type { TokenContext } from '../tokens';
 import { getRiveCanvas } from './getRiveCanvas';
+import { decodeImage } from './riveRuntime';
 import { trackCurrentColor } from './trackCurrentColor';
 
 export interface RiveDataBindingContextValue {

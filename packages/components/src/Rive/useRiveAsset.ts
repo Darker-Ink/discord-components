@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { EventType, RiveFile } from '@rive-app/react-canvas';
+import { EventType, RiveFile } from './riveRuntime';
 
 export const RiveAssetStatus = {
   Loading: 'loading',

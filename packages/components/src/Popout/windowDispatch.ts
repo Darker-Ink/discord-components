@@ -75,7 +75,8 @@ export interface WindowContextValue {
 }
 
 export const WindowContext = createContext<WindowContextValue>({
-  renderWindow: window,
+  // The window in browsers; `window` itself would throw where there is none (server rendering).
+  renderWindow: globalThis as unknown as Window,
   windowDispatch,
 });
 

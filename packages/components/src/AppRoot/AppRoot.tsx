@@ -101,7 +101,8 @@ export const AppRoot = ({
   children,
 }: AppRootProps) => {
   const keyboardMode = useKeyboardMode();
-  const bodyRef = useRef<Element>(document.body);
+  // No document when rendering on a server.
+  const bodyRef = useRef<Element | null>(typeof document !== 'undefined' ? document.body : null);
   const manaContext = useMemo(
     () => ({
       ...DEFAULT_MANA_CONTEXT,

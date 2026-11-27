@@ -13,11 +13,6 @@ import {
   type RefObject,
 } from 'react';
 import {
-  Alignment,
-  EventType,
-  Fit,
-  Layout,
-  RuntimeLoader,
   useRive,
   useViewModel,
   useViewModelInstance,
@@ -30,6 +25,7 @@ import { AccessibilityPreferencesContext } from '../AccessibilityPreferences';
 import { useManaContext } from '../ManaContext';
 import { getRiveCanvas } from './getRiveCanvas';
 import { RiveDataBindingContext, type RiveDataBindingContextValue } from './RiveDataBinding';
+import { Alignment, EventType, Fit, Layout, RuntimeLoader } from './riveRuntime';
 
 // Discord ships the runtime's wasm with its own assets instead of letting Rive fetch it from a CDN.
 RuntimeLoader.setWasmUrl(riveWasmUrl);
