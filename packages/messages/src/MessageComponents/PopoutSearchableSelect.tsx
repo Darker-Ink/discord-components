@@ -99,15 +99,15 @@ const useLoadableOptions = <O,>({
     return () => clearTimeout(timeout);
   }, [isFunction, query, debounceTime, commit]);
   useEffect(() => {
-    let cancelled = false;
+    let canceled = false;
     if (active && debouncedQuery !== null)
       (typeof loadableOptions === 'function' ? loadableOptions(debouncedQuery) : Promise.resolve(loadableOptions)).then(
         (loaded) => {
-          if (!cancelled) setState((current) => ({ ...current, options: loaded, loading: false }));
+          if (!canceled) setState((current) => ({ ...current, options: loaded, loading: false }));
         },
       );
     return () => {
-      cancelled = true;
+      canceled = true;
     };
   }, [active, loadableOptions, debouncedQuery]);
   return {

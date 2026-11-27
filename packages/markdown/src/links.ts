@@ -295,7 +295,7 @@ const formatURL = (url: URL) => {
   return origin + decodeForDisplay(url.pathname) + decodeForDisplay(url.search) + decodeForDisplay(url.hash);
 };
 
-// Discord's hosts and the paths it recognises as invites, channel links and other in-app links.
+// Discord's hosts and the paths it recognizes as invites, channel links and other in-app links.
 const INVITE_HOST = { host: 'discord.gg', pathPrefix: null };
 const TEMPLATE_HOST = { host: 'discord.new', pathPrefix: null };
 const PRIMARY_HOSTS = [

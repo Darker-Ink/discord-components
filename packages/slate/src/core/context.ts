@@ -12,7 +12,7 @@ export interface EditorCustomEmoji {
   require_colons?: boolean;
   /** Server name, shown next to the emoji in autocomplete. */
   guildName?: string;
-  /** Whether the emoji can be used here (autocomplete greys out ones that can't). */
+  /** Whether the emoji can be used here (autocomplete grays out ones that can't). */
   available?: boolean;
 }
 

@@ -428,7 +428,7 @@ const main = async () => {
           {
             type: 3,
             custom_id: 'color',
-            placeholder: 'Pick a colour',
+            placeholder: 'Pick a color',
             options: [
               { label: 'Blurple', value: 'blurple' },
               { label: 'Green', value: 'green' },
@@ -488,7 +488,7 @@ const main = async () => {
 
   await step('sends select values', async () => {
     const frame = page.frameLocator('#frame');
-    await frame.getByText('Pick a colour').click();
+    await frame.getByText('Pick a color').click();
     await frame.getByRole('option', { name: 'Green' }).click();
     await frame.getByText('You picked green.').waitFor();
     const event = await page.evaluate(() => window.events.findLast((e) => e.type === 'discord-mana:interaction'));

@@ -53,7 +53,7 @@ ModalActionBar.displayName = 'ModalActionBar';
 
 export type ModalActionBarCheckboxProps = CheckboxProps;
 
-// A checkbox for the action bar's leading slot, labelled "Don't show again" by default.
+// A checkbox for the action bar's leading slot, labeled "Don't show again" by default.
 export const ModalActionBarCheckbox = ({ label, ...props }: ModalActionBarCheckboxProps) => {
   const { i18n } = useManaContext();
   return (

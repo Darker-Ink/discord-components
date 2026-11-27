@@ -69,7 +69,7 @@ const useAriaLabels = (reactionsLabel: string) => {
   }, [reactionsLabel]);
 };
 
-/** The ids a message's article is labelled by: author (or reply context), content, accessories and time. */
+/** The ids a message's article is labeled by: author (or reply context), content, accessories and time. */
 export const getMessageLabelledBy = (message: APIMessage) => {
   const isReply = message.type === MessageType.Reply && message.message_reference != null;
   const embeds = message.embeds ?? [];

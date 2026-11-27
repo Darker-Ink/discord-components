@@ -3,7 +3,7 @@
 // the media viewer click handlers (492230 over 541041 FX) -> MediaMosaic (349878) at Components v2 width.
 async (ref, data) => {
   await ref.boot(['349878', '383055', '492230', '541041', '731068', '448381', '253932']);
-  // The clips player (682176) needs the client's Flux stores to initialise; clips aren't covered here.
+  // The clips player (682176) needs the client's Flux stores to initialize; clips aren't covered here.
   if (window.__ref.req.c['682176'] == null)
     window.__ref.modules['682176'] = (module) => (module.exports = { A: () => null });
   const h = ref.React.createElement;

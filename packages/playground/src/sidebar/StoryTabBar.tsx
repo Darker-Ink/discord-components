@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { Clickable, Text } from '@discord-mana/components';
 import styles from './StoryTabBar.module.css';
 
-// Discord's playground lists stories in the client's legacy TabBar: a vertical `side` bar with the grey
+// Discord's playground lists stories in the client's legacy TabBar: a vertical `side` bar with the gray
 // look, whose items get their selection from the sidebar. This is the part of it the sidebar uses.
 
 const panelId = (id: string) => `${id.replace(/\s+/g, '-').toLowerCase()}-tab`;

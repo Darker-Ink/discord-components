@@ -71,7 +71,7 @@ const animatedAsset: StoryGroup = {
           ],
         },
         padColor: {
-          label: 'Pad colour',
+          label: 'Pad color',
           type: 'select',
           hint: "Asset default uses the asset's meta.json, or transparent.",
           defaultValue: ASSET_DEFAULT,

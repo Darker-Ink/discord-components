@@ -29,7 +29,7 @@ export const EXAMPLE_MESSAGES = [
   {
     id: '1310000000000000001',
     author: WUMPUS,
-    content: 'Hey! My preview embeds are showing the wrong colours since yesterday.',
+    content: 'Hey! My preview embeds are showing the wrong colors since yesterday.',
     timestamp: '2026-11-25T16:02:00.000Z',
   },
   {
@@ -83,7 +83,7 @@ export const EXAMPLE_MESSAGES = [
                 custom_id: 'category',
                 placeholder: 'Choose a category',
                 options: [
-                  { label: 'Rendering', value: 'rendering', description: 'Colours, layout, fonts' },
+                  { label: 'Rendering', value: 'rendering', description: 'Colors, layout, fonts' },
                   { label: 'Billing', value: 'billing' },
                 ],
               },
@@ -128,10 +128,10 @@ export const EXAMPLE_MESSAGES = [
         type: 'rich',
         title: 'Release notes: 2.4.1',
         url: 'https://example.com/changelog',
-        description: 'Embed colours now follow the theme you pick in the URL.',
+        description: 'Embed colors now follow the theme you pick in the URL.',
         color: 5793266,
         fields: [
-          { name: 'Fixed', value: 'Stale colour cache', inline: true },
+          { name: 'Fixed', value: 'Stale color cache', inline: true },
           { name: 'Affected', value: 'Previews since 2.4.0', inline: true },
         ],
         footer: { text: 'discord-mana preview' },

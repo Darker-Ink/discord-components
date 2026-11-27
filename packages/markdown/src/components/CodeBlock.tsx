@@ -84,7 +84,7 @@ HighlightedCode.displayName = 'HighlightedCode';
 
 export interface HighlightedCodeBlockProps extends CodeProps {
   lang?: string;
-  /** Added once the highlighted HTML is shown (the client fades the colours in). */
+  /** Added once the highlighted HTML is shown (the client fades the colors in). */
   highlightedClassName?: string;
 }
 

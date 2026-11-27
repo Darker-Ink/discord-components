@@ -57,7 +57,7 @@ panel with Issues, JSON and Send tabs. Everything is also exported on its own, t
 | Component                                    | What it is                                                                                                                                                                                                                                                          |
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `BuilderCanvas`                              | The message, editable in place. Unselected it is pixel-identical to `<Message>` with the same JSON (checked by `scripts/builder-parity.mjs`).                                                                                                                       |
-| `EditableEmbed`, `EditableEmbedField`        | One rich embed (and field): the client's embed markup with every part editable, a colour bar that opens a colour picker, and faint "add" placeholders for missing parts while selected.                                                                             |
+| `EditableEmbed`, `EditableEmbedField`        | One rich embed (and field): the client's embed markup with every part editable, a color bar that opens a color picker, and faint "add" placeholders for missing parts while selected.                                                                               |
 | `EditableComponents`, `EditableComponent`    | The message's components through `@discord-mana/messages`' own `ActionRow`, `Section`, `Container`, `TextDisplay`, `MediaGallery`…, each wrapped in an editing frame.                                                                                               |
 | `ComponentPalette`                           | What can be added, for the current mode. Drag an item to the canvas, or click it to add it next to the selection. Items with nowhere to go are dimmed.                                                                                                              |
 | `ValidationPanel`                            | Errors and warnings from the core with meters for the totals. Clicking one selects the node and focuses the text at fault.                                                                                                                                          |
@@ -72,7 +72,7 @@ panel with Issues, JSON and Send tabs. Everything is also exported on its own, t
 **Editing.** Text is edited where it renders: click a title, a field, a button's label or a Text Display and
 type. There are no inputs and no confirm buttons; every keystroke is saved into the document (consecutive
 typing in one field is one undo step). Settings that have no text on screen (a button's style, emoji and URL,
-a select's options, media URLs, a separator's spacing, a section's accessory, a container's accent colour and
+a select's options, media URLs, a separator's spacing, a section's accessory, a container's accent color and
 spoiler) are in small popouts from the selected node's toolbar, drawn like the client's message hover bar.
 Text near its limit gets a counter while you type; text over it, or invalid, gets a red underline and the
 problem on hover; nodes with problems get a red outline and a marker.
@@ -125,7 +125,7 @@ nodes keep their identity, so `memo` and selectors stay cheap.
 | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `fromJSON(payload)`                                         | Payload (or a received message object) → document. Tolerant; drops response-only fields.                                                                                                                                                                |
 | `toJSON(doc)`                                               | Document → payload. Strips uids and empty optional values; required fields stay so validation can report them.                                                                                                                                          |
-| `nodeToAPI(doc, uid)`, `nodeToJSON(node, kind)`             | The API object of one subtree, memoised per node (what `toJSON` is built from).                                                                                                                                                                         |
+| `nodeToAPI(doc, uid)`, `nodeToJSON(node, kind)`             | The API object of one subtree, memoized per node (what `toJSON` is built from).                                                                                                                                                                         |
 | `parseMessageJSON(text)`                                    | `{ doc, errors }` from pasted JSON (payloads, messages, Discohook backups).                                                                                                                                                                             |
 | `createDocument(mode?)`, `createNode(templateType)`         | Empty document; a new node with defaults (`'embed'`, `'field'`, `'button'`, `'link-button'`, `'section'`, …).                                                                                                                                           |
 | `insertNode(doc, target, nodeOrType, kind?)`                | `{ doc, uid, reason? }`. `target = { parentId, slot?, index? }`; `parentId: null` is the message.                                                                                                                                                       |
@@ -202,7 +202,7 @@ interface ValidationIssue {
 }
 ```
 
-`validateDocument(doc, options)` validates `toJSON(doc)` and maps each issue to a node, memoised per document.
+`validateDocument(doc, options)` validates `toJSON(doc)` and maps each issue to a node, memoized per document.
 For counters there is `getLimit(kind, field)` (`getLimit('embed', 'title')` → 256,
 `getLimit('message', 'content')` → 2000), `getDocumentStats(doc)` (embed characters out of 6000, components out
 of 40, text display characters out of 4000…), `countEmbedCharacters` and `characterLength`, which counts code
@@ -223,7 +223,7 @@ aren't in the docs.
 | Fields, field name / value                                        | 25, 256 / 1024                                                                           | resources/message.mdx, Embed Limits                                  |
 | Footer text / author name                                         | 2048 / 256                                                                               | resources/message.mdx, Embed Limits                                  |
 | All embeds together                                               | 6000 (trimmed)                                                                           | resources/message.mdx, Embed Limits                                  |
-| Embed colour                                                      | 0–0xFFFFFF (_inferred_ from the container docs)                                          | components/reference.mdx, Container Structure                        |
+| Embed color                                                       | 0–0xFFFFFF (_inferred_ from the container docs)                                          | components/reference.mdx, Container Structure                        |
 | Embed image/thumbnail URL, author/footer icon                     | http(s) or attachment://                                                                 | resources/message.mdx, Embed Image/Author/Footer Structure           |
 | Author URL                                                        | http(s); embed URL http(s) (_inferred_)                                                  | resources/message.mdx, Embed Author Structure                        |
 | Ignored embed fields                                              | type, provider, video, image width/height/proxy_url                                      | resources/webhook.mdx, Execute Webhook                               |
@@ -240,7 +240,7 @@ aren't in the docs.
 | Thumbnail                                                         | description 1024, images only                                                            | components/reference.mdx, Thumbnail                                  |
 | File                                                              | attachment:// only                                                                       | components/reference.mdx, File                                       |
 | Separator spacing                                                 | 1 or 2                                                                                   | components/reference.mdx, Separator                                  |
-| Container accent colour                                           | 0–0xFFFFFF or null                                                                       | components/reference.mdx, Container                                  |
+| Container accent color                                            | 0–0xFFFFFF or null                                                                       | components/reference.mdx, Container                                  |
 | Component `id`                                                    | unique, 32-bit (signed max _inferred_), 0 = unset                                        | components/reference.mdx, Anatomy of a Component                     |
 | `custom_id`                                                       | 1–100, unique per message                                                                | components/reference.mdx, Custom ID                                  |
 | Button label / URL                                                | 80 / 512                                                                                 | components/reference.mdx, Button Structure                           |

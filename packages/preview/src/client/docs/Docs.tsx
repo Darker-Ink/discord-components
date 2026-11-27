@@ -658,7 +658,7 @@ const Content = () => (
           ['padding', '0 to 64', 'Padding around the messages in pixels. Default 16.'],
           ['bg', 'default, transparent', 'transparent lets your page show through.'],
           ['fontScale', '0.75 to 1.5', 'Scales text and spacing, like Discord’s font size (12 to 24 px). Default 1.'],
-          ['saturation', '0 to 1', 'Colour saturation, as in Discord’s accessibility settings. Default 1.'],
+          ['saturation', '0 to 1', 'Color saturation, as in Discord’s accessibility settings. Default 1.'],
           ['chrome', '0, 1', 'Channel header and welcome. Default 1 on its own page, 0 in an iframe.'],
           ['dates', '0, 1', 'Date dividers between days. Default 1.'],
           ['welcome', '0, 1', 'The “Welcome to #channel!” start of the transcript. Default: same as chrome.'],

@@ -27,7 +27,7 @@ const remember = (key: string, value: CodeHighlightSpan[][] | null) => {
 const classFor = (tag: string) => (codeHighlightStyles as Record<string, string>)[tag];
 
 // Walks the highlighter's HTML: each text run takes the class of its innermost highlight element, split at line
-// breaks, with neighbouring runs of the same class merged.
+// breaks, with neighboring runs of the same class merged.
 const htmlToLineSpans = (html: string, lineCount: number): CodeHighlightSpan[][] | null => {
   const root = new DOMParser().parseFromString(`<body>${html}</body>`, 'text/html').body;
   const lines: CodeHighlightSpan[][] = [[]];
@@ -63,7 +63,7 @@ const htmlToLineSpans = (html: string, lineCount: number): CodeHighlightSpan[][]
   return lines.length === lineCount ? lines : null;
 };
 
-// ```ansi blocks: escape sequences in small syntax colour, the text between them in the colours they set.
+// ```ansi blocks: escape sequences in small syntax color, the text between them in the colors they set.
 const ansiLineSpans = (code: string, lineCount: number): CodeHighlightSpan[][] | null => {
   const lines: CodeHighlightSpan[][] = [[]];
   let column = 0;

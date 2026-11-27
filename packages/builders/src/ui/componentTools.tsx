@@ -737,7 +737,7 @@ export const ContainerTools = ({ uid }: { uid: string }) => {
     <>
       <NodeToolbarPopoutButton
         icon={EyeDropperIcon}
-        label="Accent colour"
+        label="Accent color"
         renderPopout={() => (
           <CustomColorPicker
             value={color ?? 0x5865f2}
@@ -751,7 +751,7 @@ export const ContainerTools = ({ uid }: { uid: string }) => {
                 <Button
                   variant="secondary"
                   size="sm"
-                  text="No colour"
+                  text="No color"
                   fullWidth
                   onClick={() => actions.update(uid, { accent_color: undefined })}
                 />

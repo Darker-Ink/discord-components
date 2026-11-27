@@ -12,7 +12,7 @@ export interface PlaceholderBlobProps {
   className?: string;
 }
 
-/** A grey rounded bar standing in for text while content loads (or stays hidden). */
+/** A gray rounded bar standing in for text while content loads (or stays hidden). */
 export const PlaceholderBlob = ({ width, height, opacity, className }: PlaceholderBlobProps) => {
   const [randomOpacity] = useState(() => 0.02 + Math.random() * 0.06);
   return (

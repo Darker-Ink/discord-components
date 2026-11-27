@@ -146,7 +146,7 @@ describe('embeds', () => {
     expect(countEmbedCharacters(over.embeds[1])).toBe(2001);
   });
 
-  it('colour: an RGB integer', () => {
+  it('color: an RGB integer', () => {
     expect(errorsAt(embed({ color: 0 }), 'embeds.0.color')).toEqual([]);
     expect(errorsAt(embed({ color: 0xffffff }), 'embeds.0.color')).toEqual([]);
     expect(errorsAt(embed({ color: 0x1000000 }), 'embeds.0.color')).toEqual(['INVALID_COLOR']);
@@ -271,7 +271,7 @@ describe('Components v2', () => {
     expect(errorsAt(cv2({ type: 14, spacing: 3 }), 'components.0.spacing')).toEqual(['INVALID_VALUE']);
   });
 
-  it('containers: accent colour and spoiler', () => {
+  it('containers: accent color and spoiler', () => {
     const container = (value: object) => cv2({ type: 17, components: [text()], ...value });
     expect(errorsAt(container({ accent_color: null, spoiler: true }), 'components.0.accent_color')).toEqual([]);
     expect(errorsAt(container({ accent_color: 0x1000000 }), 'components.0.accent_color')).toEqual(['INVALID_COLOR']);
@@ -569,7 +569,7 @@ describe('documents', () => {
     ]);
   });
 
-  it('is memoised per document', () => {
+  it('is memoized per document', () => {
     const doc = fromJSON({ content: 'x' });
     expect(validateDocument(doc)).toBe(validateDocument(doc));
   });

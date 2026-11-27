@@ -1,4 +1,4 @@
-// ANSI escape codes in ```ansi code blocks: SGR colours and decorations, as the client parses them.
+// ANSI escape codes in ```ansi code blocks: SGR colors and decorations, as the client parses them.
 
 const COLOR_NAMES = [
   'black',
@@ -101,7 +101,7 @@ const toCommands = (params: string[]) => {
   return commands;
 };
 
-/** Splits text into runs with the colours and decorations its escape codes set. */
+/** Splits text into runs with the colors and decorations its escape codes set. */
 export const parseAnsi = (text: string) => {
   let foreground: AnsiColor | null = null;
   let background: AnsiColor | null = null;
@@ -145,7 +145,7 @@ export const parseAnsi = (text: string) => {
 const toHex = (rgb: number[]) =>
   `#${rgb.map((value) => Math.max(0, Math.min(value, 255)).toString(16).padStart(2, '0')).join('')}`;
 
-/** Maps ANSI colours to CSS values: the 16 named colours to the theme's `--custom-ansi-color-*` variables. */
+/** Maps ANSI colors to CSS values: the 16 named colors to the theme's `--custom-ansi-color-*` variables. */
 export const createAnsiPalette = (named: Record<(typeof COLOR_NAMES)[number], string>) => {
   let table: string[] | null = null;
   const colorTable = () => {

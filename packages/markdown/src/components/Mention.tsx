@@ -56,14 +56,14 @@ const hexColor = (color: number) => {
 const rgba = (color: number, alpha?: number) =>
   `rgba(${(color >> 16) & 255}, ${(color >> 8) & 255}, ${255 & color}, ${alpha ?? ((color >> 24) & 255) / 255})`;
 
-/** A gradient role colour (`colors`), as the client passes it to mentions. */
+/** A gradient role color (`colors`), as the client passes it to mentions. */
 export interface RoleColorStrings {
   primaryColor: string;
   secondaryColor?: string | null;
   tertiaryColor?: string | null;
 }
 
-// The client's default role colour when a gradient has no primary colour.
+// The client's default role color when a gradient has no primary color.
 const DEFAULT_ROLE_COLOR = '#99aab5';
 
 const useRoleGradient = (colorStrings: RoleColorStrings | null, animateGradient: boolean) =>
@@ -86,7 +86,7 @@ const useRoleGradient = (colorStrings: RoleColorStrings | null, animateGradient:
 export interface MentionProps extends Omit<ClickableProps, 'color'> {
   ref?: Ref<HTMLElement>;
   children?: ReactNode;
-  /** A role colour: the text takes it and the background a tint of it. */
+  /** A role color: the text takes it and the background a tint of it. */
   color?: number | null;
   roleColors?: RoleColorStrings | null;
   /** Shows a channel icon before the content. */
@@ -279,11 +279,11 @@ export interface RoleMentionProps {
   roleName?: string;
   guildId?: string | null;
   children?: ReactNode;
-  /** Previews (reply bars, notifications) show mentions without colours or popouts. */
+  /** Previews (reply bars, notifications) show mentions without colors or popouts. */
   inlinePreview?: boolean;
 }
 
-/** A role mention (and `@everyone`/`@here`): the role's colour, and its member list on click. */
+/** A role mention (and `@everyone`/`@here`): the role's color, and its member list on click. */
 export const RoleMention = ({
   roleId,
   channelId,

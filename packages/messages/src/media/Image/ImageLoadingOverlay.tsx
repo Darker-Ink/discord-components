@@ -24,20 +24,20 @@ const usePlaceholderSrc = (
   const shouldDecode = enabled && version === 1 && placeholder != null;
   const [src, setSrc] = useState<string | undefined>(undefined);
   useEffect(() => {
-    let cancelled = false;
+    let canceled = false;
     if (shouldDecode) {
       // Discord decodes in a worker, so the placeholder shows up a tick after mount.
       Promise.resolve()
         .then(() => placeholderToDataURL(placeholder))
         .then(
           (png) => {
-            if (!cancelled) setSrc(png);
+            if (!canceled) setSrc(png);
           },
           () => {},
         );
     }
     return () => {
-      cancelled = true;
+      canceled = true;
     };
   }, [placeholder, shouldDecode]);
   return src;

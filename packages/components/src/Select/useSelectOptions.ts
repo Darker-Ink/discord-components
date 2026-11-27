@@ -53,17 +53,17 @@ export const useSelectOptions = <T extends ListboxOption>({
     };
   }, [isAsync, query, applyQuery]);
   useEffect(() => {
-    let cancelled = false;
+    let canceled = false;
     if ((active && debouncedQuery !== null && isAsync) || !isAsync) {
       void (async () => {
         let next = await (typeof options === 'function' ? options(debouncedQuery) : Promise.resolve(options));
-        if (cancelled) return;
+        if (canceled) return;
         if (renderOption != null) next = (next as T[]).map(renderOption);
         setState((current) => ({ ...current, options: next, loading: false }));
       })();
     }
     return () => {
-      cancelled = true;
+      canceled = true;
     };
   }, [active, options, debouncedQuery, renderOption, isAsync]);
   const onQueryChange = useCallback((value: string) => {

@@ -1,4 +1,4 @@
-/* Drop indicators and the drag preview: brand-coloured like the client's own reordering (channels, servers). */
+/* Drop indicators and the drag preview: brand-colored like the client's own reordering (channels, servers). */
 
 .dropLine {
   background: var(--control-brand-foreground-new, var(--brand-500));

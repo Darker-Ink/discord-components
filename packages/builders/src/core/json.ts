@@ -337,7 +337,7 @@ const toAPI = (node: BuilderNode, kind: NodeKind): unknown => {
 
 /**
  * The API object for one node and everything under it (an embed with its fields, a container with its
- * children). Memoised per node object, so unchanged parts of the document keep the same API object.
+ * children). Memoized per node object, so unchanged parts of the document keep the same API object.
  */
 export const nodeToAPI = <T = unknown>(doc: BuilderDocument, uid: string): T | null => {
   const location = findNode(doc, uid);

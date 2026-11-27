@@ -204,5 +204,5 @@ export const AnchoredPopout = ({
 
 AnchoredPopout.displayName = 'AnchoredPopout';
 
-/** A popout opened by clicking something on the canvas (an "add image" placeholder, a colour bar). */
+/** A popout opened by clicking something on the canvas (an "add image" placeholder, a color bar). */
 export const SlotPopout = AnchoredPopout;

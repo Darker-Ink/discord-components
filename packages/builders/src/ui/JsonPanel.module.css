@@ -80,7 +80,7 @@
   box-shadow: -12px 0 0 color-mix(in srgb, var(--status-danger) 18%, transparent);
 }
 
-/* The client's code block colours (its JSON highlighting). */
+/* The client's code block colors (its JSON highlighting). */
 .key {
   color: var(--text-code-property);
 }

@@ -70,7 +70,7 @@
   color: var(--text-default);
 }
 
-/* The colour bar is the embed's left border; this covers it (and a little more) to open the colour picker. */
+/* The color bar is the embed's left border; this covers it (and a little more) to open the color picker. */
 .colorBar {
   appearance: none;
   background: none;

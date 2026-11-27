@@ -100,7 +100,7 @@ export interface EmbedProps {
   embedIndex?: number;
   /** Why the embed is hidden (spoiler, explicit content…), as computed by the app. */
   obscureReason?: ObscureReason;
-  /** Age-gated content renders as grey placeholders. */
+  /** Age-gated content renders as gray placeholders. */
   shouldAgeVerify?: boolean;
   autoPlayGif?: boolean;
   /** The "show embeds and preview website links" setting turned off: no images, videos or thumbnails. */
@@ -115,7 +115,7 @@ export interface EmbedProps {
   renderImageComponent: RenderImageComponent;
   renderVideoComponent: RenderVideoComponent;
   renderLinkComponent: RenderLinkComponent;
-  /** The GIF favourite star for a gallery image (needs the app's favourites). */
+  /** The GIF favorite star for a gallery image (needs the app's favorites). */
   renderGifFavoriteButton?: (image: EmbedMedia) => () => ReactNode;
   onImageHover?: () => void;
 }

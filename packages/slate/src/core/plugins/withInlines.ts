@@ -4,7 +4,7 @@ import { EditorUtils, PathUtils, PointUtils, RangeUtils, TextUtils } from '../sl
 import { SlateTransforms } from '../transforms';
 
 // Deleting next to or inside inline elements: a pill goes away in one keystroke, an empty inline input is removed,
-// and deleting never reaches across into the neighbouring block's inline. Also keeps the caret from leaving an
+// and deleting never reaches across into the neighboring block's inline. Also keeps the caret from leaving an
 // inline input during IME composition.
 
 // Returns true when it handled the deletion.

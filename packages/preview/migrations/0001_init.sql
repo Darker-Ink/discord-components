@@ -13,7 +13,7 @@ CREATE TABLE previews (
   key_id TEXT NOT NULL REFERENCES api_keys (id) ON DELETE CASCADE,
   secret INTEGER NOT NULL DEFAULT 0,
   message_count INTEGER NOT NULL,
-  -- Size of the normalised JSON payload in bytes (what the per-key storage quota counts).
+  -- Size of the normalized JSON payload in bytes (what the per-key storage quota counts).
   size INTEGER NOT NULL,
   options TEXT NOT NULL,
   created_at INTEGER NOT NULL,

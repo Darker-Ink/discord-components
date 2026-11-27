@@ -9,7 +9,7 @@ import { chromium } from 'playwright-core';
 const OUT = path.resolve('packages/playground/public/messages/attachments');
 fs.mkdirSync(OUT, { recursive: true });
 
-// name, width, height, two gradient colours
+// name, width, height, two gradient colors
 const IMAGES = [
   ['photo-1', 1600, 900, '#5865f2', '#eb459e'],
   ['photo-2', 900, 1200, '#57f287', '#1e6b3a'],
@@ -118,7 +118,7 @@ const gif = (() => {
   push(...Buffer.from('GIF89a'));
   word(width);
   word(height);
-  push(0xf1, 0, 0); // global colour table, 4 entries
+  push(0xf1, 0, 0); // global color table, 4 entries
   for (let i = 0; i < 4; i++) push(...(palette[i] ?? [0, 0, 0]));
   push(0x21, 0xff, 11, ...Buffer.from('NETSCAPE2.0'), 3, 1, 0, 0, 0); // loop forever
   for (let frame = 0; frame < 4; frame++) {

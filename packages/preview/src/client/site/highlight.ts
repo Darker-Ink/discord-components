@@ -1,4 +1,4 @@
-// A small highlighter for the docs' curl, JavaScript and JSON samples, coloured with Discord's code tokens.
+// A small highlighter for the docs' curl, JavaScript and JSON samples, colored with Discord's code tokens.
 
 export type TokenKind = 'comment' | 'string' | 'key' | 'number' | 'keyword' | 'literal' | 'plain';
 

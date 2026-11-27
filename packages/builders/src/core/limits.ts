@@ -121,7 +121,7 @@ export interface LimitSource {
   /** File in discord-api-docs, under `developers/`. */
   file: string;
   heading: string;
-  /** Not stated by the docs; inferred from the API's behaviour or neighbouring rules. */
+  /** Not stated by the docs; inferred from the API's behavior or neighboring rules. */
   inferred?: boolean;
   note?: string;
 }

@@ -307,7 +307,7 @@ const validateEmbedInto = (ctx: Context, embed: unknown, path: IssuePath) => {
   });
   checkUrl(ctx, [...path, 'url'], embed.url, 'embed URL', ['http']);
   checkTimestamp(ctx, [...path, 'timestamp'], embed.timestamp, 'timestamp');
-  checkColor(ctx, [...path, 'color'], embed.color, 'colour');
+  checkColor(ctx, [...path, 'color'], embed.color, 'color');
   if (embed.type !== undefined && embed.type !== 'rich')
     ignored(ctx, [...path, 'type'], 'embed type', 'webhook and bot embeds are always "rich"');
   if (embed.provider !== undefined) ignored(ctx, [...path, 'provider'], 'provider', "it can't be set");
@@ -827,7 +827,7 @@ const validateComponentInto = (ctx: Context, component: unknown, path: IssuePath
       if (list.length < limits.container.minComponents) {
         report(ctx, [...path, 'components'], 'MIN_ITEMS', 'Container is empty', 'error', { limit: 1, actual: 0 });
       }
-      checkColor(ctx, [...path, 'accent_color'], component.accent_color, 'accent colour');
+      checkColor(ctx, [...path, 'accent_color'], component.accent_color, 'accent color');
       checkBoolean(ctx, [...path, 'spoiler'], component.spoiler, 'spoiler');
       break;
     }
@@ -1248,7 +1248,7 @@ const documentIssues = new WeakMap<BuilderDocument, { key: string; issues: Valid
 /**
  * Validates a builder document (via `toJSON`). Each issue also gets `nodeId`, the deepest node it is about
  * (`ROOT_UID` for the message), and `field`, the dotted property path in that node (`author.name`).
- * Memoised per document and options.
+ * Memoized per document and options.
  */
 export const validateDocument = (doc: BuilderDocument, options: ValidateOptions = {}): ValidationIssue[] => {
   const key = JSON.stringify(options);
@@ -1363,7 +1363,7 @@ const statsCache = new WeakMap<BuilderDocument, { key: string; stats: DocumentSt
 
 /**
  * Totals for counters (characters across embeds, components, text display characters), with the limits
- * lowered by `restrictions` when given. Memoised.
+ * lowered by `restrictions` when given. Memoized.
  */
 export const getDocumentStats = (doc: BuilderDocument, restrictions?: BuilderRestrictions): DocumentStats => {
   const key = restrictions ? JSON.stringify(restrictions.limits ?? {}) : '';

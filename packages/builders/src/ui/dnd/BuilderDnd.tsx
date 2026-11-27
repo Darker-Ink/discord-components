@@ -292,7 +292,7 @@ export const BuilderDndProvider = ({ children }: { children: ReactNode }) => {
   const onDragCancel = useCallback(() => {
     const current = ui.getState().drag;
     finish();
-    if (current != null) AccessibilityAnnouncer.announce(`Cancelled. ${current.label} was not moved.`, 'polite');
+    if (current != null) AccessibilityAnnouncer.announce(`Canceled. ${current.label} was not moved.`, 'polite');
   }, [finish, ui]);
 
   const accessibility = useMemo(

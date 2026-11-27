@@ -21,7 +21,7 @@ export interface EmbedGalleryProps {
   renderImageComponent: RenderImageComponent;
   /** Alt text for images without a description. */
   defaultAlt: string;
-  /** The GIF favourite star for an image (needs the app's favourites). */
+  /** The GIF favorite star for an image (needs the app's favorites). */
   renderGifFavoriteButton?: (image: EmbedMedia) => () => ReactNode;
 }
 

@@ -3,10 +3,10 @@
 async (ref, data) => {
   // The viewer (2323) is lazily loaded; booting it pulls its dependencies from the main bundle too.
   await ref.boot(['638495', '256905', '192308', '2323']);
-  // The clips player (682176) needs the client's Flux stores to initialise; clips aren't covered here.
+  // The clips player (682176) needs the client's Flux stores to initialize; clips aren't covered here.
   if (window.__ref.req.c['682176'] == null)
     window.__ref.modules['682176'] = (module) => (module.exports = { A: () => null });
-  // The keybind manager (775121) hooks a key-combo library that doesn't initialise outside the client; the
+  // The keybind manager (775121) hooks a key-combo library that doesn't initialize outside the client; the
   // viewer only toggles its arrow/escape bindings through it.
   if (window.__ref.req.c['775121'] == null) {
     const keybinds = { disable() {}, enable() {}, enableTemp() {}, disableTemp() {} };

@@ -4,7 +4,7 @@ import type { ChatInputType } from '../chatInputTypes';
 import type { EditorContextValue } from './context';
 
 // The node shapes of the client's rich chat input: lines and block quotes hold text and inline elements; mentions,
-// emoji and timestamps are inline voids that serialise back to their message syntax.
+// emoji and timestamps are inline voids that serialize back to their message syntax.
 
 export interface CodeBlockState {
   lang: string | null;
@@ -14,7 +14,7 @@ export interface CodeBlockState {
   hljsTypes: CodeHighlightSpan[] | null;
 }
 
-/** A highlighted span of a code block line: `types` are class names, `style` an inline style (ANSI colours). */
+/** A highlighted span of a code block line: `types` are class names, `style` an inline style (ANSI colors). */
 export interface CodeHighlightSpan {
   types: string[];
   start: number;
@@ -113,7 +113,7 @@ export interface GameMentionElement {
   children: VoidChildren;
 }
 
-/** A void the host app inserted that serialises to `raw` verbatim. */
+/** A void the host app inserted that serializes to `raw` verbatim. */
 export interface HostInlineVoidElement {
   type: 'hostInlineVoid';
   raw: string;

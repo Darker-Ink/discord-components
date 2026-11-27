@@ -41,7 +41,7 @@ export default defineConfig({
         codeSplitting: {
           groups: [
             {
-              // What is already loaded lazily (animations, the colour picker) stays out of these.
+              // What is already loaded lazily (animations, the color picker) stays out of these.
               name: (id: string) => (LAZY.test(id) ? null : (CHUNKS.find(([, test]) => test.test(id))?.[0] ?? null)),
             },
           ],

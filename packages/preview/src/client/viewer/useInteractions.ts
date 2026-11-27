@@ -195,11 +195,11 @@ export const useInteractions = ({
 
   useEffect(() => {
     if (!enabled) return;
-    let cancelled = false;
+    let canceled = false;
     let detach = () => {};
     // The validation code (zod and the API's schemas) only loads for pages that use interactions.
     void import('./commands').then(({ parseCommand }) => {
-      if (cancelled) return;
+      if (canceled) return;
       let queue = Promise.resolve();
       const onMessage = (event: MessageEvent) => {
         if (event.source !== window.parent) return;
@@ -223,7 +223,7 @@ export const useInteractions = ({
     });
     const entries = pending.current;
     return () => {
-      cancelled = true;
+      canceled = true;
       detach();
       for (const entry of entries.values()) window.clearTimeout(entry.timer);
       entries.clear();

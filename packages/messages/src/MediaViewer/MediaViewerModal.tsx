@@ -140,7 +140,7 @@ const MediaArea = memo(
       window.addEventListener('resize', handleResize);
       return () => window.removeEventListener('resize', handleResize);
     }, []);
-    // Neighbours are fetched ahead so stepping through the carousel is instant.
+    // Neighbors are fetched ahead so stepping through the carousel is instant.
     useEffect(() => {
       if (items.length > 1) {
         preloadItem(items[wrapIndex(currentIndex - 1, items.length)], true);

@@ -102,10 +102,10 @@ export const LottieIcon = ({
     if (container == null) return;
     const names = Object.values(markers);
     const initial = names.length === 1 ? names[0] : undefined;
-    let cancelled = false;
+    let canceled = false;
     // Loaded on demand: lottie-web touches `document` as soon as it's imported, which breaks server rendering.
     void loadLottie().then((lottie) => {
-      if (cancelled) return;
+      if (canceled) return;
       animationRef.current = lottie.loadAnimation({
         container,
         renderer: 'svg',
@@ -116,7 +116,7 @@ export const LottieIcon = ({
       });
     });
     return () => {
-      cancelled = true;
+      canceled = true;
       animationRef.current?.destroy();
       animationRef.current = null;
     };
@@ -254,7 +254,7 @@ ChannelTextAreaButton.displayName = 'ChannelTextAreaButton';
 
 const SPRITE_COUNT = 77;
 
-/** The emoji picker button: a greyscale emoji face that turns into a random coloured one on hover. */
+/** The emoji picker button: a grayscale emoji face that turns into a random colored one on hover. */
 export const EmojiButton = ({
   ref,
   className,
@@ -385,7 +385,7 @@ const LottieButton = ({
 }: {
   animationData: object;
   label: string;
-  /** The GIF button carries a tooltip that only shows after a GIF is favourited. */
+  /** The GIF button carries a tooltip that only shows after a GIF is favorited. */
   tooltip?: string;
   className?: string;
   onClick?: () => void;
@@ -422,7 +422,7 @@ const LottieButton = ({
 
 LottieButton.displayName = 'LottieButton';
 
-/** The Nitro gift button (the generic gift icon; seasonal gift promotions aren't modelled). */
+/** The Nitro gift button (the generic gift icon; seasonal gift promotions aren't modeled). */
 const GiftButton = ({ onClick }: { onClick?: () => void }) => {
   const [hovered, setHovered] = useState(false);
   const { Component, events, play } = useLottieButton(giftAnimation);

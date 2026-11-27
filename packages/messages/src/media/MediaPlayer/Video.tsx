@@ -17,7 +17,7 @@ const assignRef = (ref: Ref<HTMLVideoElement> | undefined, value: HTMLVideoEleme
   else if (ref != null) ref.current = value;
 };
 
-/** A `<video>` that honours reduced motion for autoplay and releases its source on unmount. */
+/** A `<video>` that honors reduced motion for autoplay and releases its source on unmount. */
 export const Video = ({
   alt,
   ref,

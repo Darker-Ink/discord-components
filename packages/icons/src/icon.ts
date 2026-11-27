@@ -36,7 +36,7 @@ export const getIconSize = (size: IconSize) => {
 
 export const resolveIconColor = (color: IconColor) => (typeof color === 'string' ? color : color.css);
 
-// Icons are decorative unless labelled.
+// Icons are decorative unless labeled.
 export const iconA11yProps = <Props extends Pick<ComponentProps<'svg'>, 'aria-label' | 'aria-hidden' | 'role'>>(
   props: Props,
 ) => ({

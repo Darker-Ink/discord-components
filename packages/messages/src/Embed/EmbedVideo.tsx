@@ -404,7 +404,7 @@ export interface EmbedGIFVProps {
   placeholderVersion?: number;
   sourceMetadata?: EmbedSourceMetadata;
   renderImageComponent: RenderImageComponent;
-  /** Gif favourite button and similar overlays. */
+  /** Gif favorite button and similar overlays. */
   renderAccessory?: () => ReactNode;
 }
 

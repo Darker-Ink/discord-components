@@ -207,7 +207,7 @@ const renderDefaultElement = (props: RenderElementProps, spellCheck: boolean | u
     case 'gameMention':
     case 'hostInlineVoid':
       // Server guide links, soundmoji and game mentions need app data this package doesn't model; they keep
-      // their place (and serialise) but render empty.
+      // their place (and serialize) but render empty.
       return (
         <InlineVoid attributes={attributes} className={className}>
           {children}
@@ -611,7 +611,7 @@ export class RichEditor extends Component<RichEditorProps, RichEditorState> {
 }
 
 // The placeholder of the inline appearance: Slate's own (inside the first line, so it keeps the host's
-// typography), in the chat input's placeholder colour.
+// typography), in the chat input's placeholder color.
 const renderInlinePlaceholder = ({ attributes, children }: RenderPlaceholderProps) => (
   <span
     {...attributes}

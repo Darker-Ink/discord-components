@@ -243,7 +243,7 @@ export const TEMPLATES: readonly TemplateInfo[] = [
     type: 'container',
     kind: 'container',
     label: 'Container',
-    description: 'A box with an accent colour around components',
+    description: 'A box with an accent color around components',
     modes: CV2,
     componentCount: 2,
   },

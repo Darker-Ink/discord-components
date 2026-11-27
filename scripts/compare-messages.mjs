@@ -198,7 +198,7 @@ const capture = async (page, errors, fixture) => {
 };
 
 // Discord sniffs the browser from the user agent (e.g. to request webp from the media proxy); headless
-// Chromium's "HeadlessChrome" isn't recognised, so present a regular Chrome.
+// Chromium's "HeadlessChrome" isn't recognized, so present a regular Chrome.
 const userAgent = (
   await browser.newContext().then((c) => c.newPage().then((p) => p.evaluate(() => navigator.userAgent)))
 ).replace('HeadlessChrome', 'Chrome');

@@ -100,7 +100,7 @@ export const PALETTE_ITEMS: readonly PaletteItem[] = [
     template: 'container',
     kind: 'container',
     label: 'Container',
-    description: 'A box around components, with an accent colour',
+    description: 'A box around components, with an accent color',
     icon: WindowTopOutlineIcon,
     modes: ['cv2'],
   },

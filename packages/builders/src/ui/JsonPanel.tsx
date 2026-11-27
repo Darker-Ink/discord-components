@@ -8,7 +8,7 @@ import styles from './JsonPanel.module.css';
 
 const TOKEN = /("(?:[^"\\]|\\.)*")(\s*:)?|(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)|\b(true|false|null)\b|([{}[\],])/g;
 
-/** JSON with each token wrapped for colour (keys, strings, numbers, literals, punctuation). */
+/** JSON with each token wrapped for color (keys, strings, numbers, literals, punctuation). */
 export const highlightJSON = (text: string): ReactNode[] => {
   const result: ReactNode[] = [];
   let last = 0;

@@ -491,7 +491,7 @@ export const validateRestrictions = (
           report(
             [...path, part],
             'EMBED_FIELD_NOT_ALLOWED',
-            `Embed ${part === 'color' ? 'colours' : `${part}s`} aren't allowed in this builder`,
+            `Embed ${part === 'color' ? 'colors' : `${part}s`} aren't allowed in this builder`,
           );
         }
       }

@@ -29,7 +29,7 @@ interface UseSpring {
   <Props extends object>(props: Props, mode: MotionPreference, deps: Deps): SpringTuple<Props>;
 }
 
-// react-spring's useSpring, honouring the user's reduced motion preference.
+// react-spring's useSpring, honoring the user's reduced motion preference.
 export const useSpring = ((...args: [object | (() => object), MotionPreference?, Deps?]) => {
   const [props, mode = 'respect-motion-settings', deps] = args;
   const skip = useSkipAnimation(mode);
@@ -59,7 +59,7 @@ interface UseTransition {
   ): TransitionTuple<Item, Props>;
 }
 
-// react-spring's useTransition, honouring the user's reduced motion preference.
+// react-spring's useTransition, honoring the user's reduced motion preference.
 export const useTransition = ((...args: [unknown, object, MotionPreference?, Deps?]) => {
   const [data, props, mode = 'respect-motion-settings', deps] = args;
   const skip = useSkipAnimation(mode);

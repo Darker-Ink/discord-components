@@ -1,5 +1,5 @@
 /* The loading skeleton preview pages show before the app's JS arrives (the Worker puts it in the HTML) and while
-   the messages load. Plain colours per theme, since the design tokens come with the JS. */
+   the messages load. Plain colors per theme, since the design tokens come with the JS. */
 html[data-boot-theme] body {
   margin: 0;
 }

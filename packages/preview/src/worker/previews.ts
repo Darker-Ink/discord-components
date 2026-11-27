@@ -21,7 +21,7 @@ const ID_RE = /^[0-9A-Za-z]{16}$/;
 
 export const previewPath = (id: string) => `/p/${id}`;
 
-/** Where a preview's messages live in the PAYLOADS bucket: gzipped JSON of the normalised message array. */
+/** Where a preview's messages live in the PAYLOADS bucket: gzipped JSON of the normalized message array. */
 export const payloadKey = (id: string) => `previews/${id}.json.gz`;
 
 /** Deletes payloads from R2, at most 1000 keys per call as R2 allows. */
@@ -227,7 +227,7 @@ export const getPreviewContent = async (
   limits: Limits,
 ): Promise<ReadableStream | PreviewContent> => {
   if (id === DEMO_PREVIEW_ID) {
-    // Normalised like any preview, but not held to the deployment's message limit.
+    // Normalized like any preview, but not held to the deployment's message limit.
     const demoLimits = {
       ...limits,
       maxMessagesPerPreview: Math.max(limits.maxMessagesPerPreview, EXAMPLE_MESSAGES.length),

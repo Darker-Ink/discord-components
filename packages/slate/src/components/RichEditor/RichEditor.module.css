@@ -25,7 +25,7 @@
 :global(.theme-dark):global(.custom-theme-background):global(.custom-client-theme) .placeholder {
   color: color-mix(in oklab, var(--text-default) 40%, transparent);
 }
-/* Not in the client: the inline editor's placeholder, in the chat input's placeholder colour. */
+/* Not in the client: the inline editor's placeholder, in the chat input's placeholder color. */
 .inlinePlaceholder {
   color: var(--channel-text-area-placeholder);
   pointer-events: none;

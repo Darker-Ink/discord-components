@@ -6,7 +6,7 @@ async (ref, data) => {
   const fileIcons = ['393105', '209899', '862047', '262369', '439205', '602462', '655514', '528736', '426658'];
   fileIcons.push('101233', '368877', '531449', '347810', '144374');
   await ref.boot(['349878', '96782', '450568', '492230', '731068', '253932', ...fileIcons]);
-  // The clips player (682176) needs the client's Flux stores to initialise; clips aren't covered here.
+  // The clips player (682176) needs the client's Flux stores to initialize; clips aren't covered here.
   if (window.__ref.req.c['682176'] == null)
     window.__ref.modules['682176'] = (module) => (module.exports = { A: () => null });
   const h = ref.React.createElement;

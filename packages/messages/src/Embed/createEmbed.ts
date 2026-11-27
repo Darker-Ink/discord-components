@@ -197,7 +197,7 @@ export const mergeEmbedsByUrl = (embeds: MessageEmbed[]) => {
   return result;
 };
 
-/** Converts a message's API embeds the way the client does: normalise each, then merge by url. */
+/** Converts a message's API embeds the way the client does: normalize each, then merge by url. */
 export const createEmbeds = (
   embeds: readonly APIEmbed[] | null | undefined,
   channelId?: string | null,

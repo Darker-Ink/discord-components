@@ -58,10 +58,10 @@ for (const theme of THEMES) {
   await settle();
   await shot(theme, '02-embed-selected');
 
-  // The colour bar opens the client's colour picker.
-  await page.locator('[aria-label="Embed colour"]').click();
+  // The color bar opens the client's color picker.
+  await page.locator('[aria-label="Embed color"]').click();
   await settle(500);
-  await shot(theme, '03-embed-colour');
+  await shot(theme, '03-embed-color');
   await page.keyboard.press('Escape');
   await settle();
 

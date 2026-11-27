@@ -53,7 +53,7 @@ export function connectPreview(iframe, options = {}) {
 
   /**
    * Calls a handler with helpers bound to the interaction, and answers for it if the handler doesn't: an
-   * acknowledgement once it returns, "thinking…" while its promise is pending, and a failure if it throws.
+   * acknowledgment once it returns, "thinking…" while its promise is pending, and a failure if it throws.
    * @param {((event: any, context: InteractionContext) => unknown) | undefined} handler
    * @param {any} event
    */

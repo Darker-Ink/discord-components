@@ -29,7 +29,7 @@ export const IndicatorDot = ({
   ref,
   'aria-label': ariaLabel,
 }: IndicatorDotProps) => {
-  const labelled = ariaLabel != null;
+  const labeled = ariaLabel != null;
   return (
     <span
       ref={ref}
@@ -40,9 +40,9 @@ export const IndicatorDot = ({
         styles[size],
         cutout != null && styles[`cutout-${cutout}`],
       )}
-      role={labelled ? 'img' : undefined}
+      role={labeled ? 'img' : undefined}
       aria-label={ariaLabel}
-      aria-hidden={!labelled || undefined}
+      aria-hidden={!labeled || undefined}
     />
   );
 };

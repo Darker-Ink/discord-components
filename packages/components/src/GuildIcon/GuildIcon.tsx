@@ -88,15 +88,15 @@ const useCachedImage = (url: string | null) => {
       return;
     }
     if (url == null || url === state.cached || !state.loaded) return;
-    let cancelled = false;
+    let canceled = false;
     setState((current) => ({ ...current, loaded: false }));
     const image = new Image();
     image.onload = () => {
-      if (!cancelled) setState((current) => ({ cached: url, loaded: true, seen: [...current.seen, url] }));
+      if (!canceled) setState((current) => ({ cached: url, loaded: true, seen: [...current.seen, url] }));
     };
     image.src = url;
     return () => {
-      cancelled = true;
+      canceled = true;
     };
   }, [url, state]);
   /* eslint-enable react-hooks/set-state-in-effect */

@@ -2,7 +2,7 @@ import { createContext, useContext } from 'react';
 import type { StatusType } from '@discord-mana/components';
 
 // Users, roles and channels the client reads from its stores. Apps pass resolvers (and the message's
-// `resolved` data is used as a fallback) so selects, mentions and headers can show names, avatars and colours.
+// `resolved` data is used as a fallback) so selects, mentions and headers can show names, avatars and colors.
 
 export interface APIResolvedUser {
   id: string;
@@ -26,7 +26,7 @@ export interface APIResolvedRole {
   id: string;
   name: string;
   color: number;
-  /** Gradient role colours; markdown role mentions draw them when the server has enhanced role colours. */
+  /** Gradient role colors; markdown role mentions draw them when the server has enhanced role colors. */
   colors?: { primary_color: number; secondary_color?: number | null; tertiary_color?: number | null } | null;
   position?: number;
   icon?: string | null;
@@ -54,7 +54,7 @@ export interface APIResolvedGuild {
   id: string;
   name: string;
   icon?: string | null;
-  /** Server features; `ENHANCED_ROLE_COLORS` makes role mentions draw gradient colours. */
+  /** Server features; `ENHANCED_ROLE_COLORS` makes role mentions draw gradient colors. */
   features?: string[];
 }
 
@@ -84,7 +84,7 @@ export interface EmojiURLOptions {
 
 export interface MessageResolvers {
   resolveUser?: (id: string) => APIResolvedUser | null | undefined;
-  /** The author's guild member (nickname, roles for the name colour). */
+  /** The author's guild member (nickname, roles for the name color). */
   resolveMember?: (userId: string) => APIResolvedMember | null | undefined;
   resolveRole?: (id: string) => APIResolvedRole | null | undefined;
   resolveChannel?: (id: string) => APIResolvedChannel | null | undefined;

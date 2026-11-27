@@ -50,7 +50,7 @@ export interface MenuCustomItemRenderProps {
 export interface MenuItemProps {
   id: string;
   label?: MenuLabel<Omit<MenuItemProps, 'id'> & { isFocused: boolean }>;
-  // A label for the empty-menu placeholder and other unlocalised content.
+  // A label for the empty-menu placeholder and other unlocalized content.
   void_label?: MenuLabel<Omit<MenuItemProps, 'id'> & { isFocused: boolean }>;
   color?: MenuItemColor;
   icon?: MenuIconSource;

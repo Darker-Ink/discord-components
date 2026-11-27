@@ -85,7 +85,7 @@ const parseLink = (value: string) => {
   return match ? { label: match[1], url: match[2] } : { label: value, url: undefined };
 };
 
-/** A container as an embed: accent colour, text as title/description/footer, first thumbnail and image. */
+/** A container as an embed: accent color, text as title/description/footer, first thumbnail and image. */
 const containerToEmbed = (
   container: Extract<TopLevelComponentNode, { type: 17 }>,
   buttons: ButtonNode[],

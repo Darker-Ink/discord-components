@@ -30,7 +30,7 @@ export interface NodeToolbarButtonProps {
   /** Shows the button pressed (a toggle that is on). */
   active?: boolean;
   danger?: boolean;
-  /** Content drawn instead of the icon (a colour swatch, an emoji). */
+  /** Content drawn instead of the icon (a color swatch, an emoji). */
   children?: ReactNode;
 }
 

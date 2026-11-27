@@ -39,8 +39,8 @@ const FIELD_LABELS: Record<string, string> = {
   placeholder: 'placeholder',
   username: 'username',
   avatar_url: 'avatar',
-  color: 'colour',
-  accent_color: 'accent colour',
+  color: 'color',
+  accent_color: 'accent color',
   timestamp: 'timestamp',
 };
 

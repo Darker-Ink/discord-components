@@ -34,7 +34,7 @@ export interface MessageAuthor {
 
 const toHex = (color: number) => `#${color.toString(16).padStart(6, '0')}`;
 
-/** The author's display name and role colour (nickname, global name, then username). */
+/** The author's display name and role color (nickname, global name, then username). */
 export const getMessageAuthor = (
   user: APIResolvedUser | null | undefined,
   resolver: Resolver,
